@@ -1,0 +1,53 @@
+You can jump to fill al the fields relative to unwanted steps.
+
+DATA PATH AND MEASURE
+dataPath=D:\Ricerca\prova\
+measure=PSDr
+
+LOCATIONS AND SUBJECTS FILES
+The locations file is needed in analysis.
+The subjects file is needed in Epochs Average step and Epochs Analysis.
+Locations=D:\Ricerca\Ricerca3_Comparison\ROI_pre.mat
+Subjects=D:\Ricerca\Ricerca3_Comparison\Subjects.mat
+
+MEASURE PARAMETERS
+MeasureExtraction=true
+fs=500
+cf=1 4 8 13 30 40 
+epNum=3
+epTime=16
+tStart=6
+totBand=1 40
+
+EPOCHS AVERAGE
+EpochsAverage=true
+
+INDEX CORRELATION
+IndexCorrelation=true
+Index=D:\Ricerca\Ricerca3_Comparison\Ind.mat
+Group_IC=PAT
+Areas_IC=Areas Global Asymmetry
+Conservativeness_IC=min
+
+EPOCHS ANALYSIS
+EpochsAnalysis=true
+Subject=509
+Areas_EA=Areas Global Asymmetry
+
+STATISTICAL ANALYSIS
+StatisticalAnalysis=true
+Areas_SA=Total Areas Global Asymmetry
+Conservativeness_SA=max
+
+MEASURES CORRELATION
+MeasuresCorrelation=true
+Measure1=PSDr
+Measure2=PLI
+Areas_MC=Total Areas Global Asymmetry
+Conservativeness_MC=max
+Group_MC=PAT
+
+CLASSIFICATION DATA
+ClassificationData=true
+MergingMeasures=PLI PLV AEC AECc PSDr offset exponent
+MergingAreas=Total Areas Global Asymmetry
