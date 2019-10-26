@@ -86,18 +86,15 @@ function []=connectivity(fs, cf, nEpochs, dt, inDir, tStart, outTypes)
 
     for c=1:length(outTypes)
         for i=1:length(cases)     
-            load(strcat(inDir,cases(i).name));
-            if exist('EEGs','var')==1
-                EEG=EEGs;
-            end
-            EEG=EEG(:,tStart:end);
-            nLoc=size(EEG,1);
+            time_series=load_data(strcat(inDir,cases(i).name));
+            time_series=time_series(:,tStart:end);
+            nLoc=size(time_series,1);
             conn=zeros(nBands,nEpochs,nLoc,nLoc);
             for j=1:nBands
                 for k=1:nEpochs
                     ti=((k-1)*dt)+tStart+1;
                     tf=k*dt+tStart;
-                    data=athena_filter(EEG(:,ti:tf),fs,cf(j),cf(j+1));                 
+                    data=athena_filter(time_series(:,ti:tf),fs,cf(j),cf(j+1));                 
                     data=data';
                     if strcmp(outTypes(c),"PLI")
                         conn(j,k,:,:)=phase_lag_index(data);

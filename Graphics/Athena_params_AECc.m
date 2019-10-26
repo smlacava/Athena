@@ -41,7 +41,24 @@ function varargout = Athena_params_AECc_OutputFcn(hObject, eventdata, handles)
     varargout{1} = handles.output;
 
 function fs_text_Callback(hObject, eventdata, handles)
-
+    dataPath=pwd;
+    dataPath=path_check(dataPath);
+    cases=dir(fullfile(dataPath,'*.mat'));
+    time_series=load_data(strcat(path_check(dataPath),cases(1).name));
+    fs=str2double(get(handles.fs_text,'String'));
+    totlen=size(time_series,2)/fs;
+    if((totlen>(12*4)))
+        eplen=floor((totlen-12)/3);
+        set(handles.epNum_text,'String',"3");
+    elseif((totlen>(12*3)))
+        eplen=floor((totlen-12)/2);
+        set(handles.epNum_text,'String',"2");
+    elseif((totlen>(12*2)))
+        eplen=12;
+        set(handles.epNum_text,'String',"1");
+    end
+    set(handles.epTime_text,'String',string(eplen));
+    
 
 % --- Executes during object creation, after setting all properties.
 function fs_text_CreateFcn(hObject, eventdata, handles)

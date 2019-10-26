@@ -105,12 +105,9 @@ function []=FOOOFer(fs, cf, nEpochs, dt, inDir, tStart, outTypes, maxPeaks)
     % initial setting
     settings = struct();
     settings.max_n_peaks=maxPeaks;
-    load(strcat(inDir,cases(1).name));
-    if exist('EEG','var')~=1
-        EEG=EEGs;
-    end
-    EEG=EEG(:,tStart:end);
-    data=squeeze(EEG(1,1:dt));           
+    time_series=load_data(strcat(inDir,cases(1).name));
+    time_series=time_series(:,tStart:end);
+    data=squeeze(time_series(1,1:dt));           
     [pxx,w]=pwelch(data,[],0,[],fs);
     sup=[find(w>cf(1),1),find(w>cf(1),1)-1];
     [x,y]=min([w(find(w>cf(1),1))-cf(1),cf(1)-w(find(w>cf(1),1)-1)]);
@@ -126,11 +123,11 @@ function []=FOOOFer(fs, cf, nEpochs, dt, inDir, tStart, outTypes, maxPeaks)
     for i=1:length(cases)
         load(strcat(inDir,cases(i).name));
         if exist('EEGs','var')==1
-            EEG=EEGs;
+            time_series=EEGs;
             clear EEGs
         end
-        EEG=EEG(:,tStart:end);
-        nLoc=size(EEG,1);
+        time_series=time_series(:,tStart:end);
+        nLoc=size(time_series,1);
         offset = zeros(nEpochs, nLoc);   %epochs * locations
         exponent = offset;
         error = offset;
@@ -142,7 +139,7 @@ function []=FOOOFer(fs, cf, nEpochs, dt, inDir, tStart, outTypes, maxPeaks)
         power_spectrum = bg_fit;
         for k = 1:nEpochs
             for j=1:nLoc
-                data=squeeze(EEG(j,dt*(k-1)+1:k*dt));           
+                data=squeeze(time_series(j,dt*(k-1)+1:k*dt));           
                 [pxx,w]=pwelch(data,[],0,[],fs);
                 fooof_results = fooof(w', pxx, f_range, settings, 1);
                 offset(k,j) = fooof_results.background_params(1);
@@ -159,7 +156,7 @@ function []=FOOOFer(fs, cf, nEpochs, dt, inDir, tStart, outTypes, maxPeaks)
                 
             end
         end
-        i
+        
         for s=1:length(outTypes)  
             outDir=strcat(inDir,outTypes(s));
             outDir=path_check(outDir);

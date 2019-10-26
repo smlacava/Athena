@@ -46,12 +46,9 @@ function fs_text_Callback(hObject, eventdata, handles)
     dataPath=pwd;
     dataPath=path_check(dataPath);
     cases=dir(fullfile(dataPath,'*.mat'));
-    load(strcat(path_check(dataPath),cases(1).name));
+    time_series=load_data(strcat(path_check(dataPath),cases(1).name));
     fs=str2double(get(handles.fs_text,'String'));
-    if exist('EEG','var')~=1
-        EEG=EEGs;
-    end
-    totlen=size(EEG,2)/fs;
+    totlen=size(time_series,2)/fs;
     if((totlen>(12*4)))
         eplen=floor((totlen-12)/3);
         set(handles.epNum_text,'String',"3");

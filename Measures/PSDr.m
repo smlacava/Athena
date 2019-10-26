@@ -52,20 +52,16 @@ function []=PSDr(fs,cf, nEpochs,dt,inDir, tStart, relBand)
     cases=dir(fullfile(inDir,fil));
 
     for i=1:length(cases)
-        load(strcat(inDir,cases(i).name));
-        if exist('EEGs','var')==1
-            EEG=EEGs;
-            clear EEGs
-        end
-        EEG=EEG(:,tStart:end);
-        psdr=zeros(nBands, nEpochs, size(EEG,1));   % bands*epochs*chan/ROI
+        time_series=load_data(strcat(inDir,cases(i).name));
+        time_series=time_series(:,tStart:end);
+        psdr=zeros(nBands, nEpochs, size(time_series,1));
         for k = 1:nEpochs
         
-            for j=1:size(EEG,1)
-                data=squeeze(EEG(j,dt*(k-1)+1:k*dt));           
+            for j=1:size(time_series,1)
+                data=squeeze(time_series(j,dt*(k-1)+1:k*dt));           
                 [pxx,w]=pwelch(data,[],0,[],fs);
                 bandPower=zeros(nBands,1);
-            % PSD of each band
+
                 for b=1:nBands
                     fPre=[find(w>cf(b+cfstart),1),find(w>cf(b+cfstart),1)-1];
                     [x,y]=min([w(fPre(1))-cf(b+cfstart),cf(b+cfstart)-w(fPre(2))]);
@@ -78,7 +74,6 @@ function []=PSDr(fs,cf, nEpochs,dt,inDir, tStart, relBand)
                     bandPower(b,1)=sum(pxx(infft:supft));
                 end     
             
-                % totalPower
                 fPre=[find(w>relBand(1),1),find(w>relBand(1),1)-1];
                 [x,y]=min([w(fPre(1))-relBand(1),relBand(1)-w(fPre(2))]);
                 infft=fPre(y);
