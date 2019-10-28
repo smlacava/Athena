@@ -122,7 +122,7 @@ function meaext_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 close(Athena_an)
-Athena
+Athena_guided
 
 % --- Executes on button press in tempav.
 function tempav_Callback(hObject, eventdata, handles)
