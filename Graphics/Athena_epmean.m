@@ -41,6 +41,10 @@ function Athena_epmean_OpeningFcn(hObject, eventdata, handles, varargin)
     axes(handles.axes3);
     imshow(myImage);
     set(handles.axes3,'Units','normalized');
+    if nargin==4
+        dataPath=varargin{1};
+        cd(path_check(dataPath))
+    end
     if exist('auxiliary.txt', 'file')
         auxID=fopen('auxiliary.txt','r');
         fseek(auxID, 0, 'bof');

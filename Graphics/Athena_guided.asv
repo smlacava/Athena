@@ -1,23 +1,29 @@
+%Athena_guided (Automatic Toolbox for Handling Easy Neural Analyzes)
 function varargout = Athena_guided(varargin)
-    gui_Singleton = 1;
-    gui_State = struct('gui_Name',       mfilename, ...
-        'gui_Singleton',  gui_Singleton, ...
-        'gui_OpeningFcn', @Athena_guided_OpeningFcn, ...
-        'gui_OutputFcn',  @Athena_guided_OutputFcn, ...
-        'gui_LayoutFcn',  [] , ...
-        'gui_Callback',   []);
-    if nargin && ischar(varargin{1})
-        gui_State.gui_Callback = str2func(varargin{1});
-    end
 
-    if nargout
-        [varargout{1:nargout}] = gui_mainfcn(gui_State, varargin{:});
-    else
-        gui_mainfcn(gui_State, varargin{:});
-    end
+% Begin initialization code
+gui_Singleton = 1;
+gui_State = struct('gui_Name',       mfilename, ...
+                   'gui_Singleton',  gui_Singleton, ...
+                   'gui_OpeningFcn', @Athena_guided_OpeningFcn, ...
+                   'gui_OutputFcn',  @Athena_guided_OutputFcn, ...
+                   'gui_LayoutFcn',  [] , ...
+                   'gui_Callback',   []);
+if nargin && ischar(varargin{1})
+    gui_State.gui_Callback = str2func(varargin{1});
+end
+
+if nargout
+    [varargout{1:nargout}] = gui_mainfcn(gui_State, varargin{:});
+else
+    gui_mainfcn(gui_State, varargin{:});
+end
+% End initialization code
 
 
+% --- Executes just before the GUI is made visible.
 function Athena_guided_OpeningFcn(hObject, eventdata, handles, varargin)
+
     handles.output = hObject;
     guidata(hObject, handles);
     myImage = imread('untitled3.png');
@@ -45,16 +51,19 @@ function Athena_guided_OpeningFcn(hObject, eventdata, handles, varargin)
     end
 
     
+% --- Outputs from this function are returned to the command line.
 function varargout = Athena_guided_OutputFcn(hObject, eventdata, handles) 
+
     varargout{1} = handles.output;
 
 
 function dataPath_text_Callback(hObject, eventdata, handles)
 
 
+% --- Executes during object creation, after setting all properties.
 function dataPath_text_CreateFcn(hObject, eventdata, handles)
-    if ispc && isequal(get(hObject,'BackgroundColor'), ...
-            get(0,'defaultUicontrolBackgroundColor'))
+
+    if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
         set(hObject,'BackgroundColor','white');
     end
 
@@ -62,6 +71,7 @@ function dataPath_text_CreateFcn(hObject, eventdata, handles)
 function fs_text_Callback(hObject, eventdata, handles)
 
 
+% --- Executes during object creation, after setting all properties.
 function fs_text_CreateFcn(hObject, eventdata, handles)
     if ispc && isequal(get(hObject,'BackgroundColor'), ...
             get(0,'defaultUicontrolBackgroundColor'))
@@ -85,7 +95,7 @@ function epNum_text_Callback(hObject, eventdata, handles)
 function epNum_text_CreateFcn(hObject, eventdata, handles)
     if ispc && isequal(get(hObject,'BackgroundColor'), ...
             get(0,'defaultUicontrolBackgroundColor'))
-        set(hObject,'BackgroundColor','white');
+            set(hObject,'BackgroundColor','white');
     end
 
 
@@ -115,7 +125,7 @@ function totBand_text_Callback(hObject, eventdata, handles)
 function totBand_text_CreateFcn(hObject, eventdata, handles)
     if ispc && isequal(get(hObject,'BackgroundColor'), ...
             get(0,'defaultUicontrolBackgroundColor'))
-        set(hObject,'BackgroundColor','white');
+            set(hObject,'BackgroundColor','white');
     end
 
 
@@ -140,8 +150,7 @@ function data_search_Callback(hObject, eventdata, handles)
 
     
 function meas_CreateFcn(hObject, eventdata, handles)
-    if ispc && isequal(get(hObject,'BackgroundColor'), ...
-            get(0,'defaultUicontrolBackgroundColor'))
+    if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
         set(hObject,'BackgroundColor','white');
     end
     

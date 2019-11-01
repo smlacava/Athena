@@ -18,6 +18,8 @@ if nargout
 else
     gui_mainfcn(gui_State, varargin{:});
 end
+
+    
 % End initialization code
 
 
@@ -33,6 +35,21 @@ function Athena_params_psd_OpeningFcn(hObject, eventdata, handles, varargin)
     axes(handles.axes3);
     imshow(myImage);
     set(handles.axes3,'Units','normalized');
+    if nargin==4
+        dataPath=varargin{1};
+        dataPath=path_check(dataPath);
+        cases=dir(fullfile(dataPath,'*.edf'));
+        if not(isempty(cases))
+            [data, fs]=load_data(strcat(dataPath,cases(1).name));
+            if not(isempty(fs))
+                set(handles.fs_text,'String', string(fs));
+            end
+        end
+        cd(dataPath)
+    end
+
+    
+    
     
     
     
