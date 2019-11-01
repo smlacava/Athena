@@ -1,31 +1,23 @@
-%Athena_params_psd (Automatic Toolbox for Handling Easy Neural Analyzes)
 function varargout = Athena_params_psd(varargin)
-
-% Begin initialization code
-gui_Singleton = 1;
-gui_State = struct('gui_Name',       mfilename, ...
+    gui_Singleton = 1;
+    gui_State = struct('gui_Name',       mfilename, ...
                    'gui_Singleton',  gui_Singleton, ...
                    'gui_OpeningFcn', @Athena_params_psd_OpeningFcn, ...
                    'gui_OutputFcn',  @Athena_params_psd_OutputFcn, ...
                    'gui_LayoutFcn',  [] , ...
                    'gui_Callback',   []);
-if nargin && ischar(varargin{1})
-    gui_State.gui_Callback = str2func(varargin{1});
-end
+    if nargin && ischar(varargin{1})
+        gui_State.gui_Callback = str2func(varargin{1});
+    end
 
-if nargout
-    [varargout{1:nargout}] = gui_mainfcn(gui_State, varargin{:});
-else
-    gui_mainfcn(gui_State, varargin{:});
-end
+    if nargout
+        [varargout{1:nargout}] = gui_mainfcn(gui_State, varargin{:});
+    else
+        gui_mainfcn(gui_State, varargin{:});
+    end
 
     
-% End initialization code
-
-
-% --- Executes just before the GUI is made visible.
 function Athena_params_psd_OpeningFcn(hObject, eventdata, handles, varargin)
-
     handles.output = hObject;
     guidata(hObject, handles);
     myImage = imread('untitled3.png');
@@ -49,13 +41,7 @@ function Athena_params_psd_OpeningFcn(hObject, eventdata, handles, varargin)
     end
 
     
-    
-    
-    
-    
-% --- Outputs from this function are returned to the command line.
 function varargout = Athena_params_psd_OutputFcn(hObject, eventdata, handles) 
-
     varargout{1} = handles.output;
 
 
@@ -77,24 +63,19 @@ function fs_text_Callback(hObject, eventdata, handles)
         set(handles.epNum_text,'String',"1");
     end
     set(handles.epTime_text,'String',string(eplen));
-    
-    
+        
 
-% --- Executes during object creation, after setting all properties.
 function fs_text_CreateFcn(hObject, eventdata, handles)
-
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
-end
-
+    if ispc && isequal(get(hObject,'BackgroundColor'), ...
+            get(0,'defaultUicontrolBackgroundColor'))
+        set(hObject,'BackgroundColor','white');
+    end
 
 
 function cf_text_Callback(hObject, eventdata, handles)
 
 
-% --- Executes during object creation, after setting all properties.
 function cf_text_CreateFcn(hObject, eventdata, handles)
-
     if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
         set(hObject,'BackgroundColor','white');
     end
@@ -103,22 +84,19 @@ function cf_text_CreateFcn(hObject, eventdata, handles)
 function epNum_text_Callback(hObject, eventdata, handles)
 
 
-% --- Executes during object creation, after setting all properties.
 function epNum_text_CreateFcn(hObject, eventdata, handles)
-
-    if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    if ispc && isequal(get(hObject,'BackgroundColor'), ...
+            get(0,'defaultUicontrolBackgroundColor'))
         set(hObject,'BackgroundColor','white');
     end
-
 
 
 function epTime_text_Callback(hObject, eventdata, handles)
 
 
-% --- Executes during object creation, after setting all properties.
 function epTime_text_CreateFcn(hObject, eventdata, handles)
-
-    if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    if ispc && isequal(get(hObject,'BackgroundColor'), ...
+            get(0,'defaultUicontrolBackgroundColor'))
         set(hObject,'BackgroundColor','white');
     end
 
@@ -126,27 +104,24 @@ function epTime_text_CreateFcn(hObject, eventdata, handles)
 function tStart_text_Callback(hObject, eventdata, handles)
 
 
-% --- Executes during object creation, after setting all properties.
 function tStart_text_CreateFcn(hObject, eventdata, handles)
-
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
-end
+    if ispc && isequal(get(hObject,'BackgroundColor'), ...
+            get(0,'defaultUicontrolBackgroundColor'))
+        set(hObject,'BackgroundColor','white');
+    end
 
 
 function totBand_text_Callback(hObject, eventdata, handles)
 
 
-% --- Executes during object creation, after setting all properties.
 function totBand_text_CreateFcn(hObject, eventdata, handles)
-
-    if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    if ispc && isequal(get(hObject,'BackgroundColor'), ...
+            get(0,'defaultUicontrolBackgroundColor'))
         set(hObject,'BackgroundColor','white');
     end
 
-% --- Executes on button press in Run.
+
 function Run_Callback(hObject, eventdata, handles)
-    
     dataPath=pwd;
     dataPath=path_check(dataPath);
 
@@ -192,28 +167,17 @@ function Run_Callback(hObject, eventdata, handles)
     addpath(dataPathM);
     success();
 
-% --- Executes on button press in back.
+
 function back_Callback(hObject, eventdata, handles)
-% hObject    handle to back (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
+    dataPath=pwd;
     close(Athena_params_psd)
-    Athena
+    Athena_guided(string(dataPath))
 
 
-% --- Executes during object creation, after setting all properties.
 function axes3_CreateFcn(hObject, eventdata, handles)
 
-% hObject    handle to axes3 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
 
-% Hint: place code in OpeningFcn to populate axes3
-
-% --- Executes on button press in next.
 function next_Callback(~, eventdata, handles)
-% hObject    handle to next (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
+    dataPath=pwd;
     close(Athena_params_psd)
-    Athena_epmean
+    Athena_epmean(string(dataPath))

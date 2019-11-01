@@ -120,9 +120,13 @@ function totBand_text_CreateFcn(hObject, eventdata, handles)
 
 
 function Run_Callback(hObject, eventdata, handles)  
-    meas_state=get(handles.meas,'Value');
     dataPath=get(handles.dataPath_text,'String');
+    if strcmp(dataPath,'es. C:\User\Data')
+        problem('You forgot to select the data directory')
+        return
+    end
     dataPath=path_check(dataPath);
+    meas_state=get(handles.meas,'Value');
     params_GUI={@Athena_params_psd, @Athena_params_PLV, ...
         @Athena_params_PLI, @Athena_params_AEC, @Athena_params_AECc, ...
         @Athena_params_offset, @Athena_params_exponent};
@@ -158,8 +162,12 @@ function axes3_CreateFcn(hObject, eventdata, handles)
 
 
 function next_Callback(~, eventdata, handles)
-    dataPath=path_check(get(handles.dataPath_text,'String'));
-    measures=["PSD", "PLV", "PLI", "AEC", "AECo", "offset", "exponent"];
-    measure=measures(get(handles.meas,'Value'));
+    dataPath=string(get(handles.dataPath_text, 'String'));
+    measures=["PSDr", "PLV", "PLI", "AEC", "AECo", "offset", "exponent"];
+    measure=measures(get(handles.meas, 'Value'));
     close(Athena_guided)
-    Athena_epmean(strcat(dataPath,measure))
+    if strcmp('es. C:\User\Data', dataPath)
+        Athena_epmean
+    else
+        Athena_epmean(strcat(path_check(dataPath), measure))
+    end
