@@ -27,10 +27,22 @@ function Athena_epmean_OpeningFcn(hObject, eventdata, handles, varargin)
     axes(handles.axes3);
     imshow(myImage);
     set(handles.axes3,'Units','normalized');
-    if nargin==4
-        dataPath=path_check(varargin{1});
-        cd(dataPath)
-        set(handles.dataPath_text,'String',dataPath)
+    if nargin >= 4
+        aux_dataPath = varargin{1};
+        if not(strcmp(aux_dataPath, 'Static Text'))
+            dataPath=path_check(aux_dataPath);
+            cd(dataPath)
+            set(handles.dataPath_text,'String',dataPath)
+        end
+    end
+    if nargin >= 5
+        aux_sub = varargin{2};
+        if not(strcmp(aux_sub, 'Static Text'))
+            set(handles.subjectsFile, 'String', aux_sub)
+        end
+    end
+    if nargin == 6
+        set(handles.aux_loc, 'String', varargin{3})
     end
     if exist('auxiliary.txt', 'file')
         auxID=fopen('auxiliary.txt','r');
@@ -131,13 +143,15 @@ function data_search_Callback(hObject, eventdata, handles)
 
 
 function next_Callback(hObject, eventdata, handles)
+    dataPath = string_check(get(handles.dataPath_text, 'String'));
+    sub = string_check(get(handles.subjectsFile, 'String'));
+    loc = string_check(get(handles.aux_loc, 'String'));   
     close(Athena_epmean)
-    Athena_an
+    Athena_an(dataPath, sub, loc)
 
 
 function back_Callback(hObject, eventdata, handles)
-    close(Athena_epmean)
-    Athena_guided
+    meaext_Callback(hObject, eventdata, handles)
 
 
 function axes3_CreateFcn(hObject, eventdata, handles)
@@ -161,10 +175,24 @@ function sub_search_Callback(hObject, eventdata, handles)
 
 
 function meaext_Callback(hObject, eventdata, handles)
-    dataPath=char(path_check(get(handles.dataPath_text, 'String')));
-    paths=split(dataPath, dataPath(end));
+    sub = string(get(handles.subjectsFile, 'String'));
+    loc = string(get(handles.aux_loc, 'String'));
+    auxPath=pwd;
+    funDir=which('Athena.m');
+    funDir=split(funDir,'Athena.m');
+    cd(funDir{1});
+    addpath 'Auxiliary'
+    dataPath = char(path_check(string_check(get(handles.dataPath_text, ...
+        'String'))));
+    dataAux = split(dataPath, dataPath(end));
+    if not(strcmp(dataAux(1), 'S'))
+        dataPath = string(limit_path(dataPath, dataAux(end-1)));
+    end
+    if strcmp('es. C:\User\Sub.mat', sub)
+        sub = "Static Text";
+    end
     close(Athena_epmean)
-    Athena_guided(string(limit_path(dataPath, paths(end-1))))
+    Athena_guided(string(dataPath), sub, loc)
 
 
 function subMaking_Callback(hObject, eventdata, handles)

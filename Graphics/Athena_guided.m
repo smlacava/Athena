@@ -33,9 +33,20 @@ function Athena_guided_OpeningFcn(hObject, eventdata, handles, varargin)
     addpath 'Measures'
     addpath 'Auxiliary'
     addpath 'Graphics'
-    if nargin==4
-        set(handles.dataPath_text,'String',varargin{1})
+    
+    if nargin >= 4
+        aux_dataPath = varargin{1};
+        if not(strcmp(aux_dataPath, 'Static Text'))
+            set(handles.dataPath_text, 'String', varargin{1})
+        end
     end
+    if nargin >= 5
+        set(handles.aux_sub, 'String', varargin{2})
+    end
+    if nargin == 6
+        set(handles.aux_loc, 'String', varargin{3})
+    end
+    
     if exist('fooof','file')
         set(handles.meas,'String',["relative PSD", "PLV", "PLI", "AEC", ...
             "AEC corrected", "Offset", "Exponent"]);
@@ -162,12 +173,16 @@ function axes3_CreateFcn(hObject, eventdata, handles)
 
 
 function next_Callback(~, eventdata, handles)
+    sub = string(get(handles.aux_sub, 'String'));
+    loc = string(get(handles.aux_loc, 'String'));
     dataPath=string(get(handles.dataPath_text, 'String'));
     measures=["PSDr", "PLV", "PLI", "AEC", "AECo", "offset", "exponent"];
     measure=measures(get(handles.meas, 'Value'));
     close(Athena_guided)
-    if strcmp('es. C:\User\Data', dataPath)
-        Athena_epmean
+    if not(strcmp('es. C:\User\Data', dataPath))
+        dataPath = strcat(path_check(dataPath), measure);
     else
-        Athena_epmean(strcat(path_check(dataPath), measure))
+        dataPath = "Static Text";
     end
+    Athena_epmean(dataPath, sub, loc)
+    

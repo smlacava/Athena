@@ -1,37 +1,23 @@
-
-%Possible names:
-%Athena_an (Automatic Toolbox for Handling Easy Neural Analyzes)
-%Apheleia (Automatic Pipeline for Handling Easy Localized Initial Analyzes)
-
-% Multi GUI:
-% int1 => save data => int2 => load data => save data2 =>...
-% delete to delete partial output
-
 function varargout = Athena_an(varargin)
-
-% Begin initialization code
-gui_Singleton = 1;
-gui_State = struct('gui_Name',       mfilename, ...
+    gui_Singleton = 1;
+    gui_State = struct('gui_Name',       mfilename, ...
                    'gui_Singleton',  gui_Singleton, ...
                    'gui_OpeningFcn', @Athena_an_OpeningFcn, ...
                    'gui_OutputFcn',  @Athena_an_OutputFcn, ...
                    'gui_LayoutFcn',  [] , ...
                    'gui_Callback',   []);
-if nargin && ischar(varargin{1})
-    gui_State.gui_Callback = str2func(varargin{1});
-end
+    if nargin && ischar(varargin{1})
+        gui_State.gui_Callback = str2func(varargin{1});
+    end
 
-if nargout
-    [varargout{1:nargout}] = gui_mainfcn(gui_State, varargin{:});
-else
-    gui_mainfcn(gui_State, varargin{:});
-end
-% End initialization code
+    if nargout
+        [varargout{1:nargout}] = gui_mainfcn(gui_State, varargin{:});
+    else
+        gui_mainfcn(gui_State, varargin{:});
+    end
 
 
-% --- Executes just before the GUI is made visible.
 function Athena_an_OpeningFcn(hObject, eventdata, handles, varargin)
-
     handles.output = hObject;
     guidata(hObject, handles);
     myImage = imread('untitled3.png');
@@ -41,93 +27,124 @@ function Athena_an_OpeningFcn(hObject, eventdata, handles, varargin)
     axes(handles.axes3);
     imshow(myImage);
     set(handles.axes3,'Units','normalized');
-
+    if nargin >= 4
+        set(handles.aux_dataPath, 'String', varargin{1})
+    end
+    if nargin >= 5
+        set(handles.aux_sub, 'String', varargin{2})
+    end
+    if nargin == 6
+        set(handles.aux_loc, 'String', varargin{3})
+    end
     
-% --- Outputs from this function are returned to the command line.
-function varargout = Athena_an_OutputFcn(hObject, eventdata, handles) 
 
+function varargout = Athena_an_OutputFcn(hObject, eventdata, handles) 
     varargout{1} = handles.output;
 
 
-
-
-% --- Executes on button press in back.
 function back_Callback(hObject, eventdata, handles)
-% hObject    handle to back (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-    close(Athena_an)
-    Athena_epmean
-
-
-% --- Executes during object creation, after setting all properties.
+    tempav_Callback(hObject, eventdata, handles)
+    
+    
 function axes3_CreateFcn(hObject, eventdata, handles)
 
-% hObject    handle to axes3 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
 
-% Hint: place code in OpeningFcn to populate axes3
-
-
-
-
-% --- Executes on button press in IndCorr.
 function IndCorr_Callback(hObject, eventdata, handles)
-% hObject    handle to IndCorr (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
+    auxPath=pwd;
+    funDir=which('Athena.m');
+    funDir=split(funDir,'Athena.m');
+    cd(funDir{1});
+    addpath 'Auxiliary'
+    dataPath = string_check(get(handles.aux_dataPath, 'String'));
+    sub = string_check(get(handles.aux_sub, 'String'));
+    loc = string_check(get(handles.aux_loc, 'String'));
     close(Athena_an)
-    Athena_indcorr
+    Athena_indcorr(dataPath, sub, loc)
 
 
-% --- Executes on button press in MeasCorr.
 function MeasCorr_Callback(hObject, eventdata, handles)
-% hObject    handle to MeasCorr (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
+    auxPath=pwd;
+    funDir=which('Athena.m');
+    funDir=split(funDir,'Athena.m');
+    cd(funDir{1});
+    addpath 'Auxiliary'
+    dataPath = char(path_check(string_check(get(handles.aux_dataPath, ...
+        'String'))));
+    dataAux = split(dataPath, dataPath(end));
+    if not(strcmp(dataAux(1), 'S'))
+        dataPath = string(limit_path(dataPath, dataAux(end-1)));
+    end
+    sub = string(get(handles.aux_sub, 'String'));
+    loc = string(get(handles.aux_loc, 'String'));
     close(Athena_an)
-    Athena_meascorr
+    Athena_meascorr(dataPath, sub, loc)
 
-% --- Executes on button press in StatAn.
+
 function StatAn_Callback(hObject, eventdata, handles)
-% hObject    handle to StatAn (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
+    auxPath=pwd;
+    funDir=which('Athena.m');
+    funDir=split(funDir,'Athena.m');
+    cd(funDir{1});
+    addpath 'Auxiliary'
+    dataPath = string_check(get(handles.aux_dataPath, 'String'));
+    sub = string_check(get(handles.aux_sub, 'String'));
+    loc = string_check(get(handles.aux_loc, 'String'));
     close(Athena_an)
-    Athena_statan
+    Athena_statan(dataPath, sub, loc)
 
 
-% --- Executes on button press in clasData.
 function clasData_Callback(hObject, eventdata, handles)
-% hObject    handle to clasData (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
+    auxPath=pwd;
+    funDir=which('Athena.m');
+    funDir=split(funDir,'Athena.m');
+    cd(funDir{1});
+    addpath 'Auxiliary'
+    dataPath = string_check(get(handles.aux_dataPath, 'String'));
+    sub = string_check(get(handles.aux_sub, 'String'));
+    loc = string_check(get(handles.aux_loc, 'String'));
     close(Athena_an)
-    Athena_mergsig
+    Athena_mergsig(dataPath, sub, loc)
 
 
-% --- Executes on button press in EpAn.
 function EpAn_Callback(hObject, eventdata, handles)
-% hObject    handle to EpAn (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
+    auxPath=pwd;
+    funDir=which('Athena.m');
+    funDir=split(funDir,'Athena.m');
+    cd(funDir{1});
+    addpath 'Auxiliary'
+    dataPath = string_check(get(handles.aux_dataPath, 'String'));
+    sub = string_check(get(handles.aux_sub, 'String'));
+    loc = string_check(get(handles.aux_loc, 'String'));
     close(Athena_an)
-    Athena_epan
+    Athena_epan(dataPath, sub, loc)
 
-
-% --- Executes on button press in meaext.
+    
 function meaext_Callback(hObject, eventdata, handles)
-% hObject    handle to meaext (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-close(Athena_an)
-Athena_guided
+    auxPath=pwd;
+    funDir=which('Athena.m');
+    funDir=split(funDir,'Athena.m');
+    cd(funDir{1});
+    addpath 'Auxiliary'
+    dataPath = char(path_check(string_check(get(handles.aux_dataPath, ...
+        'String'))));
+    dataAux = split(dataPath, dataPath(end));
+    if not(strcmp(dataAux(1), 'S'))
+        dataPath = string(limit_path(dataPath, dataAux(end-1)));
+    end
+    sub = string_check(get(handles.aux_sub, 'String'));
+    loc = string_check(get(handles.aux_loc, 'String'));
+    close(Athena_an)
+    Athena_guided(string(dataPath), sub, loc)
 
-% --- Executes on button press in tempav.
+    
 function tempav_Callback(hObject, eventdata, handles)
-% hObject    handle to tempav (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-close(Athena_an)
-Athena_epmean
+    auxPath=pwd;
+    funDir=which('Athena.m');
+    funDir=split(funDir,'Athena.m');
+    cd(funDir{1});
+    addpath 'Auxiliary'
+    dataPath = string_check(get(handles.aux_dataPath, 'String'));
+    sub = string_check(get(handles.aux_sub, 'String'));
+    loc = string_check(get(handles.aux_loc, 'String'));
+    close(Athena_an)
+    Athena_epmean(dataPath, sub, loc)

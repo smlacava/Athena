@@ -1,37 +1,23 @@
-
-%Possible names:
-%Athena_mergsig (Automatic Toolbox for Handling Easy Neural Analyzes)
-%Apheleia (Automatic Pipeline for Handling Easy Localized Initial Analyzes)
-
-% Multi GUI:
-% int1 => save data => int2 => load data => save data2 =>...
-% delete to delete partial output
-
 function varargout = Athena_mergsig(varargin)
-
-% Begin initialization code
-gui_Singleton = 1;
-gui_State = struct('gui_Name',       mfilename, ...
+    gui_Singleton = 1;
+    gui_State = struct('gui_Name',       mfilename, ...
                    'gui_Singleton',  gui_Singleton, ...
                    'gui_OpeningFcn', @Athena_mergsig_OpeningFcn, ...
                    'gui_OutputFcn',  @Athena_mergsig_OutputFcn, ...
                    'gui_LayoutFcn',  [] , ...
                    'gui_Callback',   []);
-if nargin && ischar(varargin{1})
-    gui_State.gui_Callback = str2func(varargin{1});
-end
+    if nargin && ischar(varargin{1})
+        gui_State.gui_Callback = str2func(varargin{1});
+    end
 
-if nargout
-    [varargout{1:nargout}] = gui_mainfcn(gui_State, varargin{:});
-else
-    gui_mainfcn(gui_State, varargin{:});
-end
-% End initialization code
+    if nargout
+        [varargout{1:nargout}] = gui_mainfcn(gui_State, varargin{:});
+    else
+        gui_mainfcn(gui_State, varargin{:});
+    end
 
-
-% --- Executes just before the GUI is made visible.
+    
 function Athena_mergsig_OpeningFcn(hObject, eventdata, handles, varargin)
-
     handles.output = hObject;
     guidata(hObject, handles);
     myImage = imread('untitled3.png');
@@ -53,121 +39,68 @@ function Athena_mergsig_OpeningFcn(hObject, eventdata, handles, varargin)
     cd(funDir{1});
     addpath 'Auxiliary'
     addpath 'Graphics'
+    if nargin >= 4
+        set(handles.dataPath_text, 'String', varargin{1})
+    end
+    if nargin >= 5
+        set(handles.aux_sub, 'String', varargin{2})
+    end
+    if nargin == 6
+        loc = varargin{3};
+        if not(strcmp(loc, "Static Text"))
+            set(handles.aux_loc, 'String', varargin{3})
+        end
+    end
 
     
-% --- Outputs from this function are returned to the command line.
 function varargout = Athena_mergsig_OutputFcn(hObject, ~, handles) 
-
     varargout{1} = handles.output;
 
 
 function dataPath_text_Callback(hObject, eventdata, handles)
 
 
-% --- Executes during object creation, after setting all properties.
 function dataPath_text_CreateFcn(hObject, eventdata, handles)
-
-    if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    if ispc && isequal(get(hObject,'BackgroundColor'), ...
+            get(0,'defaultUicontrolBackgroundColor'))
         set(hObject,'BackgroundColor','white');
     end
 
-    % --- Executes on button press in checkTotal.
+
 function checkTotal_Callback(hObject, eventdata, handles)
-% hObject    handle to checkTotal (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hint: get(hObject,'Value') returns toggle state of checkTotal
 
 
-% --- Executes on button press in checkGlobal.
 function checkGlobal_Callback(hObject, eventdata, handles)
-% hObject    handle to checkGlobal (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hint: get(hObject,'Value') returns toggle state of checkGlobal
 
 
-% --- Executes on button press in checkAreas.
 function checkAreas_Callback(hObject, eventdata, handles)
-% hObject    handle to checkAreas (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hint: get(hObject,'Value') returns toggle state of checkAreas
 
 
-% --- Executes on button press in checkAsymmetry.
 function checkAsymmetry_Callback(hObject, eventdata, handles)
-% hObject    handle to checkAsymmetry (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hint: get(hObject,'Value') returns toggle state of checkAsymmetry
 
 
-% --- Executes on button press in checkPLI.
 function checkPLI_Callback(hObject, eventdata, handles)
-% hObject    handle to checkPLI (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hint: get(hObject,'Value') returns toggle state of checkPLI
 
 
-% --- Executes on button press in checkPLV.
 function checkPLV_Callback(hObject, eventdata, handles)
-% hObject    handle to checkPLV (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
 
-% Hint: get(hObject,'Value') returns toggle state of checkPLV
 
-% --- Executes on button press in checkAECc.
 function checkAECc_Callback(hObject, eventdata, handles)
-% hObject    handle to checkAECc (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
 
-% --- Executes on button press in checkPSDr.
+
 function checkPSDr_Callback(hObject, eventdata, handles)
-% hObject    handle to checkPSDr (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
 
-% Hint: get(hObject,'Value') returns toggle state of checkPSDr
 
-% Hint: get(hObject,'Value') returns toggle state of checkAECc
-% --- Executes on button press in checkAEC.
 function checkAEC_Callback(hObject, eventdata, handles)
-% hObject    handle to checkAEC (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hint: get(hObject,'Value') returns toggle state of checkAEC
 
 
-% --- Executes on button press in checkOffset.
 function checkOffset_Callback(hObject, eventdata, handles)
-% hObject    handle to checkOffset (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hint: get(hObject,'Value') returns toggle state of checkOffset
 
 
-% --- Executes on button press in checkExponent.
 function checkExponent_Callback(hObject, eventdata, handles)
-% hObject    handle to checkExponent (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
 
-% Hint: get(hObject,'Value') returns toggle state of checkExponent
 
-% --- Executes on button press in Run.
 function Run_Callback(hObject, eventdata, handles)
-    
     funDir=which('Athena.m');
     funDir=split(funDir,'Athena.m');
     cd(funDir{1});
@@ -257,10 +190,9 @@ function Run_Callback(hObject, eventdata, handles)
     
     success();
 
-% --- Executes on button press in data_search.
-function data_search_Callback(hObject, eventdata, handles)
 
-        d=uigetdir;
+function data_search_Callback(hObject, eventdata, handles)
+    d=uigetdir;
     if d~=0
         set(handles.dataPath_text,'String',d)
         auxPath=pwd;
@@ -290,38 +222,22 @@ function data_search_Callback(hObject, eventdata, handles)
         cd(auxPath)
     end
 
-% --- Executes on button press in back.
+
 function back_Callback(hObject, eventdata, handles)
-% hObject    handle to back (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
+    dataPath = string_check(get(handles.dataPath_text, 'String'));
+    sub = string_check(get(handles.aux_sub, 'String'));
+    loc = string_check(get(handles.aux_loc, 'String'));
+    if strcmp(dataPath, "es. C:\User\Data")
+        dataPath="Static Text";
+    end
     close(Athena_mergsig)
-    Athena_an
+    Athena_an(dataPath, sub, loc)
 
-
-% --- Executes during object creation, after setting all properties.
+    
 function axes3_CreateFcn(hObject, eventdata, handles)
 
-% hObject    handle to axes3 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
 
-% Hint: place code in OpeningFcn to populate axes3
-
-
-% --- Executes on button press in checkbox5.
 function checkbox5_Callback(hObject, eventdata, handles)
-% hObject    handle to checkbox5 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hint: get(hObject,'Value') returns toggle state of checkbox5
 
 
-% --- Executes on button press in checkbox7.
 function checkbox7_Callback(hObject, eventdata, handles)
-% hObject    handle to checkbox7 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hint: get(hObject,'Value') returns toggle state of checkbox7

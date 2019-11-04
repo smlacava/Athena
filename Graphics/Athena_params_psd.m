@@ -49,6 +49,9 @@ function fs_text_Callback(hObject, eventdata, handles)
     dataPath=pwd;
     dataPath=path_check(dataPath);
     cases=dir(fullfile(dataPath,'*.mat'));
+    if isempty(cases)
+        cases=dir(fullfile(dataPath,'*.edf'));
+    end
     time_series=load_data(strcat(path_check(dataPath),cases(1).name));
     fs=str2double(get(handles.fs_text,'String'));
     totlen=size(time_series,2)/fs;
