@@ -45,28 +45,44 @@ function Athena_epan_OpeningFcn(hObject, eventdata, handles, varargin)
                 subsFile=subsFile{2};
                 subs=load_data(subsFile);
                 subs=string(subs(:,1))';
+                set(handles.Subjects,'String',subs);
             end
             if contains(proper,'measure=')
                 measure=split(proper,'=');
                 measure=measure{2};
+                set(handles.dataPath_text, 'String', ...
+                    strcat(dataPath, measure));
             end
         end
         fclose(auxID);   
-        set(handles.dataPath_text,'String',strcat(dataPath, measure));
-        set(handles.Subjects,'String',subs);
     end
     if nargin >= 4
-        set(handles.dataPath_text, 'String', varargin{1})
+        path = varargin{1};
+        set(handles.aux_dataPath, 'String', path)
     end
     if nargin >= 5
-        set(handles.aux_sub, 'String', varargin{2})
-    end
-    if nargin == 6
-        loc = varargin{3};
-        if not(strcmp(loc, "Static Text"))
-            set(handles.loc_text, 'String', varargin{3})
+        measure = varargin{2};
+        set(handles.aux_measure, 'String', measure)
+        if not(strcmp(path, "Static Text")) && ...
+                not(strcmp(measure, "Static Text"))
+            dataPath = strcat(path_check(path), measure);
+            set(handles.dataPath_text,'String', dataPath)
         end
     end
+    if nargin >= 6
+        subs = varargin{3};
+        set(handles.aux_sub, 'String', subs)
+        sub_list = load_data(subs);
+        sub_list = string(sub_list(:,1))';
+        set(handles.Subjects, 'String', sub_list);
+    end
+    if nargin == 7
+        loc = varargin{4};
+        if not(strcmp(loc, "Static Text"))
+            set(handles.loc_text, 'String', loc)
+        end
+    end
+
 
 
 function varargout = Athena_epan_OutputFcn(hObject, eventdata, handles) 
@@ -198,7 +214,8 @@ function data_search_Callback(hObject, eventdata, handles)
 
     
 function back_Callback(hObject, eventdata, handles)
-    dataPath = string_check(get(handles.dataPath_text, 'String'));
+    dataPath = string_check(get(handles.aux_dataPath, 'String'));
+    measure = string_check(get(handles.aux_measure, 'String'));
     sub = string_check(get(handles.aux_sub, 'String'));
     loc = string_check(get(handles.loc_text, 'String'));
     if strcmp(loc, "es. C:\User\Locations.mat")
@@ -208,7 +225,7 @@ function back_Callback(hObject, eventdata, handles)
         dataPath="Static Text";
     end
     close(Athena_epan)
-    Athena_an(dataPath, sub, loc)
+    Athena_an(dataPath, measure, sub, loc)
 
     
 function axes3_CreateFcn(hObject, eventdata, handles)

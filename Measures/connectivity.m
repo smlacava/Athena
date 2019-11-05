@@ -32,14 +32,12 @@ function []=connectivity(fs, cf, nEpochs, dt, inDir, tStart, outTypes)
     fchild(1).JavaPeer.setForeground(fchild(1).JavaPeer.getBackground.BLUE)
     fchild(1).JavaPeer.setStringPainted(true)
     
-    fil='*.mat'; 
 	dt=fs*dt;
     tStart=tStart*fs; 
     nBands=length(cf)-1;
     
     inDir=path_check(inDir);
-    cases=dir(fullfile(inDir,fil));
-    
+    cases=define_cases(inDir);
     
     ctrl=0;
     if length(outTypes)==1

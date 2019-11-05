@@ -48,10 +48,7 @@ function []=PSDr(fs,cf, nEpochs,dt,inDir, tStart, relBand)
     inDir=path_check(inDir);
     
     bandPower=zeros(nBands,1);
-    cases=dir(fullfile(inDir,'*.mat'));
-    if isempty(cases)
-        cases=dir(fullfile(inDir,'*.edf'));
-    end
+    cases=define_cases(inDir);
 
     for i=1:length(cases)
         time_series=load_data(strcat(inDir,cases(i).name));

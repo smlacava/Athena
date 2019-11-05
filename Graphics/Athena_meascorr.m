@@ -43,15 +43,22 @@ function Athena_meascorr_OpeningFcn(hObject, eventdata, handles, varargin)
         fclose(auxID);
     end
     if nargin >= 4
-        set(handles.dataPath_text, 'String', varargin{1})
+        path = varargin{1};
+        set(handles.aux_dataPath, 'String', path)
+        if not(strcmp(path, "Static Text"))
+            set(handles.dataPath_text,'String', path)
+        end
     end
     if nargin >= 5
-        set(handles.aux_sub, 'String', varargin{2})
+        set(handles.aux_measure, 'String', varargin{2})
     end
-    if nargin == 6
-        loc = varargin{3};
+    if nargin >= 6
+        set(handles.aux_sub, 'String', varargin{3})
+    end
+    if nargin == 7
+        loc = varargin{4};
         if not(strcmp(loc, "Static Text"))
-            set(handles.loc_text, 'String', varargin{3})
+            set(handles.loc_text, 'String', loc)
         end
     end
 
@@ -232,6 +239,7 @@ function data_search_Callback(hObject, eventdata, handles)
 
 function back_Callback(hObject, eventdata, handles)
     dataPath = string_check(get(handles.dataPath_text, 'String'));
+    measure = string_check(get(handles.aux_measure, 'String'));
     sub = string_check(get(handles.aux_sub, 'String'));
     loc = string_check(get(handles.loc_text, 'String'));
     if strcmp(loc, "es. C:\User\Locations.mat")
@@ -241,7 +249,7 @@ function back_Callback(hObject, eventdata, handles)
         dataPath="Static Text";
     end
     close(Athena_meascorr)
-    Athena_an(dataPath, sub, loc)
+    Athena_an(dataPath, measure, sub, loc)
 
 
 function axes3_CreateFcn(hObject, eventdata, handles)

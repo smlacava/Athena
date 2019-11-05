@@ -179,10 +179,8 @@ function next_Callback(~, eventdata, handles)
     measures=["PSDr", "PLV", "PLI", "AEC", "AECo", "offset", "exponent"];
     measure=measures(get(handles.meas, 'Value'));
     close(Athena_guided)
-    if not(strcmp('es. C:\User\Data', dataPath))
-        dataPath = strcat(path_check(dataPath), measure);
-    else
+    if strcmp('es. C:\User\Data', dataPath)
         dataPath = "Static Text";
     end
-    Athena_epmean(dataPath, sub, loc)
+    Athena_epmean(dataPath, measure, sub, loc)
     

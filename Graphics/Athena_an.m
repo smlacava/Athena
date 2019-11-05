@@ -31,10 +31,13 @@ function Athena_an_OpeningFcn(hObject, eventdata, handles, varargin)
         set(handles.aux_dataPath, 'String', varargin{1})
     end
     if nargin >= 5
-        set(handles.aux_sub, 'String', varargin{2})
+        set(handles.aux_measure, 'String', varargin{2})
     end
-    if nargin == 6
-        set(handles.aux_loc, 'String', varargin{3})
+    if nargin >= 6
+        set(handles.aux_sub, 'String', varargin{3})
+    end
+    if nargin == 7
+        set(handles.aux_loc, 'String', varargin{4})
     end
     
 
@@ -58,8 +61,9 @@ function IndCorr_Callback(hObject, eventdata, handles)
     dataPath = string_check(get(handles.aux_dataPath, 'String'));
     sub = string_check(get(handles.aux_sub, 'String'));
     loc = string_check(get(handles.aux_loc, 'String'));
+    measure = string_check(get(handles.aux_measure, 'String'));
     close(Athena_an)
-    Athena_indcorr(dataPath, sub, loc)
+    Athena_indcorr(dataPath, measure, sub, loc)
 
 
 function MeasCorr_Callback(hObject, eventdata, handles)
@@ -68,16 +72,12 @@ function MeasCorr_Callback(hObject, eventdata, handles)
     funDir=split(funDir,'Athena.m');
     cd(funDir{1});
     addpath 'Auxiliary'
-    dataPath = char(path_check(string_check(get(handles.aux_dataPath, ...
-        'String'))));
-    dataAux = split(dataPath, dataPath(end));
-    if not(strcmp(dataAux(1), 'S'))
-        dataPath = string(limit_path(dataPath, dataAux(end-1)));
-    end
-    sub = string(get(handles.aux_sub, 'String'));
-    loc = string(get(handles.aux_loc, 'String'));
+    dataPath = string_check(get(handles.aux_dataPath, 'String'));
+    sub = string_check(get(handles.aux_sub, 'String'));
+    loc = string_check(get(handles.aux_loc, 'String'));
+    measure = string_check(get(handles.aux_measure, 'String'));
     close(Athena_an)
-    Athena_meascorr(dataPath, sub, loc)
+    Athena_meascorr(dataPath, measure, sub, loc)
 
 
 function StatAn_Callback(hObject, eventdata, handles)
@@ -89,8 +89,9 @@ function StatAn_Callback(hObject, eventdata, handles)
     dataPath = string_check(get(handles.aux_dataPath, 'String'));
     sub = string_check(get(handles.aux_sub, 'String'));
     loc = string_check(get(handles.aux_loc, 'String'));
+    measure = string_check(get(handles.aux_measure, 'String'));
     close(Athena_an)
-    Athena_statan(dataPath, sub, loc)
+    Athena_statan(dataPath, measure, sub, loc)
 
 
 function clasData_Callback(hObject, eventdata, handles)
@@ -102,8 +103,9 @@ function clasData_Callback(hObject, eventdata, handles)
     dataPath = string_check(get(handles.aux_dataPath, 'String'));
     sub = string_check(get(handles.aux_sub, 'String'));
     loc = string_check(get(handles.aux_loc, 'String'));
+    measure = string_check(get(handles.aux_measure, 'String'));
     close(Athena_an)
-    Athena_mergsig(dataPath, sub, loc)
+    Athena_mergsig(dataPath, measure, sub, loc)
 
 
 function EpAn_Callback(hObject, eventdata, handles)
@@ -115,29 +117,12 @@ function EpAn_Callback(hObject, eventdata, handles)
     dataPath = string_check(get(handles.aux_dataPath, 'String'));
     sub = string_check(get(handles.aux_sub, 'String'));
     loc = string_check(get(handles.aux_loc, 'String'));
+    measure = string_check(get(handles.aux_measure, 'String'));
     close(Athena_an)
-    Athena_epan(dataPath, sub, loc)
+    Athena_epan(dataPath, measure, sub, loc)
 
     
 function meaext_Callback(hObject, eventdata, handles)
-    auxPath=pwd;
-    funDir=which('Athena.m');
-    funDir=split(funDir,'Athena.m');
-    cd(funDir{1});
-    addpath 'Auxiliary'
-    dataPath = char(path_check(string_check(get(handles.aux_dataPath, ...
-        'String'))));
-    dataAux = split(dataPath, dataPath(end));
-    if not(strcmp(dataAux(1), 'S'))
-        dataPath = string(limit_path(dataPath, dataAux(end-1)));
-    end
-    sub = string_check(get(handles.aux_sub, 'String'));
-    loc = string_check(get(handles.aux_loc, 'String'));
-    close(Athena_an)
-    Athena_guided(string(dataPath), sub, loc)
-
-    
-function tempav_Callback(hObject, eventdata, handles)
     auxPath=pwd;
     funDir=which('Athena.m');
     funDir=split(funDir,'Athena.m');
@@ -147,4 +132,18 @@ function tempav_Callback(hObject, eventdata, handles)
     sub = string_check(get(handles.aux_sub, 'String'));
     loc = string_check(get(handles.aux_loc, 'String'));
     close(Athena_an)
-    Athena_epmean(dataPath, sub, loc)
+    Athena_guided(dataPath, sub, loc)
+
+    
+function tempav_Callback(hObject, eventdata, handles)
+    auxPath=pwd;
+    funDir=which('Athena.m');
+    funDir=split(funDir,'Athena.m');
+    cd(funDir{1});
+    addpath 'Auxiliary'
+    dataPath = string_check(get(handles.aux_dataPath, 'String'));
+    measure = string_check(get(handles.aux_measure, 'String'));
+    sub = string_check(get(handles.aux_sub, 'String'));
+    loc = string_check(get(handles.aux_loc, 'String'));
+    close(Athena_an)
+    Athena_epmean(dataPath, measure, sub, loc)

@@ -43,12 +43,11 @@ function []=FOOOFer(fs, cf, nEpochs, dt, inDir, tStart, outTypes, maxPeaks)
     fchild(1).JavaPeer.setForeground(fchild(1).JavaPeer.getBackground.BLUE)
     fchild(1).JavaPeer.setStringPainted(true)
     
-    fil='*.mat'; 
 	dt=fs*dt;
     tStart=tStart*fs+1;    
     
     inDir=path_check(inDir);
-    cases=dir(fullfile(inDir,fil));
+    cases=define_cases(inDir);
 
     if strcmp(outTypes,"")
     	outTypes=[];
