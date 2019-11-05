@@ -39,6 +39,18 @@ function Athena_params_exponent_OpeningFcn(hObject, eventdata, handles, varargin
         end
         cd(dataPath)
     end
+    if nargin >= 4
+        set(handles.aux_dataPath, 'String', varargin{1})
+    end
+    if nargin >= 5
+        set(handles.aux_measure, 'String', varargin{2})
+    end
+    if nargin >= 6
+        set(handles.aux_sub, 'String', varargin{3})
+    end
+    if nargin == 7
+        set(handles.aux_loc, 'String', varargin{4})
+    end
 
     
 function varargout = Athena_params_exponent_OutputFcn(hObject, eventdata, handles) 
@@ -161,15 +173,21 @@ function Run_Callback(hObject, eventdata, handles)
 
 
 function back_Callback(hObject, eventdata, handles)
-    dataPath=pwd;
+    dataPath = string_check(get(handles.aux_dataPath, 'String'));
+    measure = string_check(get(handles.aux_measure, 'String'));
+    sub = string_check(get(handles.aux_sub, 'String'));
+    loc = string_check(get(handles.aux_loc, 'String'));
     close(Athena_params_exponent)
-    Athena_guided(string(dataPath))
+    Athena_guided(dataPath, measure, sub, loc)
 
     
 function axes3_CreateFcn(hObject, eventdata, handles)
 
 
 function next_Callback(~, eventdata, handles)
-    dataPath=pwd;
+    dataPath = string_check(get(handles.aux_dataPath, 'String'));
+    measure = string_check(get(handles.aux_measure, 'String'));
+    sub = string_check(get(handles.aux_sub, 'String'));
+    loc = string_check(get(handles.aux_loc, 'String'));
     close(Athena_params_exponent)
-    Athena_epmean(string(dataPath))
+    Athena_epmean(dataPath, measure, sub, loc)

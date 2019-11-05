@@ -131,7 +131,8 @@ function totBand_text_CreateFcn(hObject, eventdata, handles)
 
 
 function Run_Callback(hObject, eventdata, handles)  
-    dataPath=get(handles.dataPath_text,'String');
+    dataPath = get(handles.dataPath_text,'String');
+    measures = ["PSDr", "PLV", "PLI", "AEC", "AECo", "offset", "exponent"];
     if strcmp(dataPath,'es. C:\User\Data')
         problem('You forgot to select the data directory')
         return
@@ -142,8 +143,10 @@ function Run_Callback(hObject, eventdata, handles)
         @Athena_params_PLI, @Athena_params_AEC, @Athena_params_AECc, ...
         @Athena_params_offset, @Athena_params_exponent};
     meas_GUI=params_GUI{meas_state};
+    sub = string_check(get(handles.aux_sub, 'String'));
+    loc = string_check(get(handles.aux_loc, 'String'));
     close(Athena_guided)
-    meas_GUI(dataPath);
+    meas_GUI(string_check(dataPath), measures(meas_state), sub, loc);
     cd(dataPath)
     
     
