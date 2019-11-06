@@ -1,28 +1,23 @@
 function varargout = Athena_batch(varargin)
-
-% Begin initialization code
-gui_Singleton = 1;
-gui_State = struct('gui_Name',       mfilename, ...
+    gui_Singleton = 1;
+    gui_State = struct('gui_Name',       mfilename, ...
                    'gui_Singleton',  gui_Singleton, ...
                    'gui_OpeningFcn', @Athena_batch_OpeningFcn, ...
                    'gui_OutputFcn',  @Athena_batch_OutputFcn, ...
                    'gui_LayoutFcn',  [] , ...
                    'gui_Callback',   []);
-if nargin && ischar(varargin{1})
-    gui_State.gui_Callback = str2func(varargin{1});
-end
+    if nargin && ischar(varargin{1})
+        gui_State.gui_Callback = str2func(varargin{1});
+    end
 
-if nargout
-    [varargout{1:nargout}] = gui_mainfcn(gui_State, varargin{:});
-else
-    gui_mainfcn(gui_State, varargin{:});
-end
-% End initialization code
+    if nargout
+        [varargout{1:nargout}] = gui_mainfcn(gui_State, varargin{:});
+    else
+        gui_mainfcn(gui_State, varargin{:});
+    end
 
-
-% --- Executes just before the GUI is made visible.
+    
 function Athena_batch_OpeningFcn(hObject, eventdata, handles, varargin)
-
     handles.output = hObject;
     guidata(hObject, handles);
     myImage = imread('untitled3.png');
@@ -39,22 +34,31 @@ function Athena_batch_OpeningFcn(hObject, eventdata, handles, varargin)
         set(handles.dataPath_text,'String',dataPath_line(2))
         fclose(auxID);
     end
+    addpath 'Auxiliary'
+    if nargin >= 4
+        set(handles.aux_dataPath, 'String', varargin{1})
+    end
+    if nargin >= 5
+        set(handles.aux_measure, 'String', varargin{2})
+    end
+    if nargin >= 6
+        set(handles.aux_sub, 'String', varargin{3})
+    end
+    if nargin == 7
+        set(handles.aux_loc, 'String', varargin{4})
+    end
         
 
-    
-% --- Outputs from this function are returned to the command line.
 function varargout = Athena_batch_OutputFcn(hObject, eventdata, handles) 
-
     varargout{1} = handles.output;
 
 
 function sub_text_Callback(hObject, eventdata, handles)
 
 
-% --- Executes during object creation, after setting all properties.
 function sub_text_CreateFcn(hObject, eventdata, handles)
-
-    if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    if ispc && isequal(get(hObject,'BackgroundColor'), ...
+            get(0,'defaultUicontrolBackgroundColor'))
         set(hObject,'BackgroundColor','white');
     end
 
@@ -62,17 +66,14 @@ function sub_text_CreateFcn(hObject, eventdata, handles)
 function dataPath_text_Callback(hObject, eventdata, handles)
 
 
-% --- Executes during object creation, after setting all properties.
 function dataPath_text_CreateFcn(hObject, eventdata, handles)
-
-    if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    if ispc && isequal(get(hObject,'BackgroundColor'), ...
+            get(0,'defaultUicontrolBackgroundColor'))
         set(hObject,'BackgroundColor','white');
     end
 
 
-% --- Executes on button press in Run.
 function Run_Callback(~, eventdata, handles)
-
     auxPath=pwd;
     funDir=which('Athena.m');
     funDir=split(funDir,'Athena.m');
@@ -253,8 +254,6 @@ function Run_Callback(~, eventdata, handles)
             end
         end
     
-    
-    
         if sum(strcmp(MeasuresCorrelation,true))
             type=[string(Measure1) string(Measure2)];
             if strcmp(Group_MC,"PAT")
@@ -294,7 +293,6 @@ function Run_Callback(~, eventdata, handles)
                 end
             end
         end
-    
     
         if sum(strcmp(ClassificationData,true))
             dataSig=[];
@@ -337,33 +335,23 @@ function Run_Callback(~, eventdata, handles)
             fclose(srID);            
         end
     end
-    
     success()
     
-% --- Executes on button press in data_search.
+    
 function data_search_Callback(hObject, ~, handles)
-
-        [i,ip]=uigetfile;
+    [i,ip]=uigetfile;
     if i~=0
         set(handles.dataPath_text,'String',strcat(string(ip),string(i)))
     end
 
 
-
-% --- Executes on button press in back.
 function back_Callback(hObject, eventdata, handles)
-% hObject    handle to back (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
+    dataPath = string_check(get(handles.aux_dataPath, 'String'));
+    measure = string_check(get(handles.aux_measure, 'String'));
+    sub = string_check(get(handles.aux_sub, 'String'));
+    loc = string_check(get(handles.aux_loc, 'String'));
     close(Athena_batch)
-    Athena
+    Athena(dataPath, measure, sub, loc)
 
 
-% --- Executes during object creation, after setting all properties.
 function axes3_CreateFcn(hObject, eventdata, handles)
-
-% hObject    handle to axes3 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: place code in OpeningFcn to populate axes3

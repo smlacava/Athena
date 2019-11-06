@@ -40,10 +40,10 @@ function Athena_guided_OpeningFcn(hObject, eventdata, handles, varargin)
             set(handles.dataPath_text, 'String', varargin{1})
         end
     end
-    if nargin >= 5
+    if nargin >= 6
         set(handles.aux_sub, 'String', varargin{2})
     end
-    if nargin == 6
+    if nargin == 7
         set(handles.aux_loc, 'String', varargin{3})
     end
     
@@ -168,8 +168,16 @@ function meas_Callback(hObject, eventdata, handles)
 
 
 function back_Callback(hObject, eventdata, handles)
+    sub = string(get(handles.aux_sub, 'String'));
+    loc = string(get(handles.aux_loc, 'String'));
+    dataPath=string(get(handles.dataPath_text, 'String'));
+    measures=["PSDr", "PLV", "PLI", "AEC", "AECo", "offset", "exponent"];
+    measure=measures(get(handles.meas, 'Value'));
     close(Athena_guided)
-    Athena
+    if strcmp('es. C:\User\Data', dataPath)
+        dataPath = "Static Text";
+    end
+    Athena(dataPath, measure, sub, loc)
 
     
 function axes3_CreateFcn(hObject, eventdata, handles)

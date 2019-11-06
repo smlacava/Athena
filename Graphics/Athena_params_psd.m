@@ -58,9 +58,9 @@ function varargout = Athena_params_psd_OutputFcn(hObject, eventdata, handles)
 
 
 function fs_text_Callback(hObject, eventdata, handles)
-    dataPath=pwd;
+    dataPath = string_check(get(handles.aux_dataPath, 'String'));
     dataPath=path_check(dataPath);
-    cases=dir(fullfile(dataPath,'*.mat'));
+    cases=define_cases(dataPath);
     if isempty(cases)
         cases=dir(fullfile(dataPath,'*.edf'));
     end
@@ -137,8 +137,10 @@ function totBand_text_CreateFcn(hObject, eventdata, handles)
 
 
 function Run_Callback(hObject, eventdata, handles)
-    dataPath=pwd;
+    dataPath = string_check(get(handles.aux_dataPath, 'String'));
     dataPath=path_check(dataPath);
+    dataPath = strcat(dataPath, ...
+        string_check(get(handles.aux_measure, 'String')));
 
     funDir=which('Athena.m');
     funDir=split(funDir,'Athena.m');

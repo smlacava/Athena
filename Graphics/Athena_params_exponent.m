@@ -58,9 +58,9 @@ function varargout = Athena_params_exponent_OutputFcn(hObject, eventdata, handle
 
 
 function fs_text_Callback(hObject, eventdata, handles)
-    dataPath=pwd;
+    dataPath = string_check(get(handles.aux_dataPath, 'String'));
     dataPath=path_check(dataPath);
-    cases=dir(fullfile(dataPath,'*.mat'));
+    cases=define_cases(dataPath);
     time_series=load_data(strcat(path_check(dataPath),cases(1).name));
     fs=str2double(get(handles.fs_text,'String'));
     totlen=size(time_series,2)/fs;
@@ -125,8 +125,10 @@ function tStart_text_CreateFcn(hObject, eventdata, handles)
 
 
 function Run_Callback(hObject, eventdata, handles)
-    dataPath=pwd;
+    dataPath = string_check(get(handles.aux_dataPath, 'String'));
     dataPath=path_check(dataPath);
+    dataPath = strcat(dataPath, ...
+        string_check(get(handles.aux_measure, 'String')));
 
     funDir=which('Athena.m');
     funDir=split(funDir,'Athena.m');

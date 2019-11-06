@@ -166,14 +166,15 @@ function sub_search_Callback(hObject, eventdata, handles)
 
 
 function meaext_Callback(hObject, eventdata, handles)
-    path = string_check(get(handles.aux_dataPath, 'String'));
+    dataPath = string_check(get(handles.aux_dataPath, 'String'));
+    measure = string_check(get(handles.aux_measure, 'String'));
     sub = string_check(get(handles.subjectsFile, 'String'));
     loc = string_check(get(handles.aux_loc, 'String'));
     if strcmp('es. C:\User\Sub.mat', sub)
         sub = "Static Text";
     end
     close(Athena_epmean)
-    Athena_guided(path, sub, loc)
+    Athena_guided(dataPath, measure, sub, loc)
 
 
 function subMaking_Callback(hObject, eventdata, handles)

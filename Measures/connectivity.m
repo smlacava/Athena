@@ -26,8 +26,7 @@ function []=connectivity(fs, cf, nEpochs, dt, inDir, tStart, outTypes)
             outTypes="";
     end
     
-    f=waitbar(0,'Processing your data');
-    f.Color=[0.67 0.98 0.92];
+    f=waitbar(0,'Processing your data','Color','[0.67 0.98 0.92]');
     fchild=allchild(f);
     fchild(1).JavaPeer.setForeground(fchild(1).JavaPeer.getBackground.BLUE)
     fchild(1).JavaPeer.setStringPainted(true)

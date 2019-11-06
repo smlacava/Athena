@@ -39,6 +39,12 @@ function Athena_an_OpeningFcn(hObject, eventdata, handles, varargin)
     if nargin == 7
         set(handles.aux_loc, 'String', varargin{4})
     end
+    auxPath=pwd;
+    funDir=which('Athena.m');
+    funDir=split(funDir,'Athena.m');
+    cd(funDir{1});
+    addpath 'Auxiliary'
+    cd(auxPath)
     
 
 function varargout = Athena_an_OutputFcn(hObject, eventdata, handles) 
@@ -131,8 +137,9 @@ function meaext_Callback(hObject, eventdata, handles)
     dataPath = string_check(get(handles.aux_dataPath, 'String'));
     sub = string_check(get(handles.aux_sub, 'String'));
     loc = string_check(get(handles.aux_loc, 'String'));
+    measure = string_check(get(handles.aux_measure, 'String'));
     close(Athena_an)
-    Athena_guided(dataPath, sub, loc)
+    Athena_guided(dataPath, measure, sub, loc)
 
     
 function tempav_Callback(hObject, eventdata, handles)

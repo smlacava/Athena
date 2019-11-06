@@ -2,7 +2,7 @@
 % This function checks the absence of the final separator in the path and
 % adds the correct separator based on the operating system used.
 % 
-% outPath=path_check(inPath)
+% outPath = path_check(inPath)
 %
 % input:
 %   inPath is the path to check

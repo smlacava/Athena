@@ -9,7 +9,6 @@
 %   inDir is the data directory 
 %   type is the measure type (offset, plv, aec, etc.)
 %   subFile is the file which contains the subjects list with their class
-%   (0=PAT, 1=HC)
 
 function []=epmean_and_manage(inDir, type, subFile)
 
