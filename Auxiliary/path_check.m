@@ -14,14 +14,13 @@ function outPath=path_check(inPath)
     if iscell(inPath)
         inPath=inPath{1};
     end
-    pathCheck=split(inPath,"");
-    if pathCheck(end-1)=="\" || pathCheck(end-1)=="/"
-        outPath=inPath;
+    if strcmp(inPath(end),'\') || strcmp(inPath(end),'/')
+        outPath=char(inPath);
     else
         os=computer;
-        if os=='PCWIN64'
-            outPath=strcat(inPath,"\");
+        if strcmp(os,'PCWIN64')
+            outPath=char(strcat(inPath,'\'));
         else
-            outPath=strcat(inPath,"/");
+            outPath=char(strcat(inPath,'/'));
         end
     end

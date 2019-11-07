@@ -61,9 +61,6 @@ function fs_text_Callback(hObject, eventdata, handles)
     dataPath = string_check(get(handles.aux_dataPath, 'String'));
     dataPath=path_check(dataPath);
     cases=define_cases(dataPath);
-    if isempty(cases)
-        cases=dir(fullfile(dataPath,'*.edf'));
-    end
     time_series=load_data(strcat(path_check(dataPath),cases(1).name));
     fs=str2double(get(handles.fs_text,'String'));
     totlen=size(time_series,2)/fs;
@@ -139,8 +136,6 @@ function totBand_text_CreateFcn(hObject, eventdata, handles)
 function Run_Callback(hObject, eventdata, handles)
     dataPath = string_check(get(handles.aux_dataPath, 'String'));
     dataPath=path_check(dataPath);
-    dataPath = strcat(dataPath, ...
-        string_check(get(handles.aux_measure, 'String')));
 
     funDir=which('Athena.m');
     funDir=split(funDir,'Athena.m');
@@ -162,7 +157,8 @@ function Run_Callback(hObject, eventdata, handles)
         
     PSDr(fs, cf, epNum, epTime, dataPath, tStart, totBand)
     
-    dataPathM=strcat(dataPath,measure);
+    dataPathM = char(strcat(dataPath, ...
+        string_check(get(handles.aux_measure, 'String'))));
     dataPathM=path_check(dataPathM);   
     cd(dataPathM);
             

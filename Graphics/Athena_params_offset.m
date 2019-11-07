@@ -130,8 +130,6 @@ function totBand_text_Callback(hObject, eventdata, handles)
 function Run_Callback(hObject, eventdata, handles)
     dataPath = string_check(get(handles.aux_dataPath, 'String'));
     dataPath=path_check(dataPath);
-    dataPath = strcat(dataPath, ...
-        string_check(get(handles.aux_measure, 'String')));
 
     funDir=which('Athena.m');
     funDir=split(funDir,'Athena.m');
@@ -153,7 +151,8 @@ function Run_Callback(hObject, eventdata, handles)
     
     FOOOFer(fs, cf, epNum, epTime, dataPath, tStart, "OFF")
         
-    dataPathM=strcat(dataPath,measure);
+    dataPathM = strcat(dataPath, ...
+        string_check(get(handles.aux_measure, 'String')));
     dataPathM=path_check(dataPathM);   
     cd(dataPathM);
             
