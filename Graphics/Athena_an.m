@@ -21,12 +21,12 @@ function Athena_an_OpeningFcn(hObject, eventdata, handles, varargin)
     handles.output = hObject;
     guidata(hObject, handles);
     myImage = imread('untitled3.png');
-    set(handles.axes3,'Units','pixels');
-    resizePos = get(handles.axes3,'Position');
+    set(handles.axes3,'Units', 'pixels');
+    resizePos = get(handles.axes3, 'Position');
     myImage= imresize(myImage, [resizePos(3) resizePos(3)]);
     axes(handles.axes3);
     imshow(myImage);
-    set(handles.axes3,'Units','normalized');
+    set(handles.axes3,'Units', 'normalized');
     if nargin >= 4
         set(handles.aux_dataPath, 'String', varargin{1})
     end
@@ -39,9 +39,9 @@ function Athena_an_OpeningFcn(hObject, eventdata, handles, varargin)
     if nargin == 7
         set(handles.aux_loc, 'String', varargin{4})
     end
-    auxPath=pwd;
-    funDir=which('Athena.m');
-    funDir=split(funDir,'Athena.m');
+    auxPath = pwd;
+    funDir = which('Athena.m');
+    funDir = split(funDir, 'Athena.m');
     cd(funDir{1});
     addpath 'Auxiliary'
     cd(auxPath)
@@ -59,98 +59,91 @@ function axes3_CreateFcn(hObject, eventdata, handles)
 
 
 function IndCorr_Callback(hObject, eventdata, handles)
-    auxPath=pwd;
-    funDir=which('Athena.m');
-    funDir=split(funDir,'Athena.m');
+    funDir = which('Athena.m');
+    funDir = split(funDir,'Athena.m');
     cd(funDir{1});
     addpath 'Auxiliary'
-    dataPath = string_check(get(handles.aux_dataPath, 'String'));
-    sub = string_check(get(handles.aux_sub, 'String'));
-    loc = string_check(get(handles.aux_loc, 'String'));
-    measure = string_check(get(handles.aux_measure, 'String'));
+    dataPath = char_check(get(handles.aux_dataPath, 'String'));
+    sub = char_check(get(handles.aux_sub, 'String'));
+    loc = char_check(get(handles.aux_loc, 'String'));
+    measure = char_check(get(handles.aux_measure, 'String'));
     close(Athena_an)
     Athena_indcorr(dataPath, measure, sub, loc)
 
 
 function MeasCorr_Callback(hObject, eventdata, handles)
-    auxPath=pwd;
-    funDir=which('Athena.m');
-    funDir=split(funDir,'Athena.m');
+    funDir = which('Athena.m');
+    funDir = split(funDir,'Athena.m');
     cd(funDir{1});
     addpath 'Auxiliary'
-    dataPath = string_check(get(handles.aux_dataPath, 'String'));
-    sub = string_check(get(handles.aux_sub, 'String'));
-    loc = string_check(get(handles.aux_loc, 'String'));
-    measure = string_check(get(handles.aux_measure, 'String'));
+    dataPath = char_check(get(handles.aux_dataPath, 'String'));
+    sub = char_check(get(handles.aux_sub, 'String'));
+    loc = char_check(get(handles.aux_loc, 'String'));
+    measure = char_check(get(handles.aux_measure, 'String'));
     close(Athena_an)
     Athena_meascorr(dataPath, measure, sub, loc)
 
 
 function StatAn_Callback(hObject, eventdata, handles)
-    auxPath=pwd;
-    funDir=which('Athena.m');
-    funDir=split(funDir,'Athena.m');
+    funDir = which('Athena.m');
+    funDir = split(funDir,'Athena.m');
     cd(funDir{1});
     addpath 'Auxiliary'
-    dataPath = string_check(get(handles.aux_dataPath, 'String'));
-    sub = string_check(get(handles.aux_sub, 'String'));
-    loc = string_check(get(handles.aux_loc, 'String'));
-    measure = string_check(get(handles.aux_measure, 'String'));
+    dataPath = char_check(get(handles.aux_dataPath, 'String'));
+    sub = char_check(get(handles.aux_sub, 'String'));
+    loc = char_check(get(handles.aux_loc, 'String'));
+    measure = char_check(get(handles.aux_measure, 'String'));
     close(Athena_an)
     Athena_statan(dataPath, measure, sub, loc)
 
 
 function clasData_Callback(hObject, eventdata, handles)
-    auxPath=pwd;
-    funDir=which('Athena.m');
-    funDir=split(funDir,'Athena.m');
+    funDir = which('Athena.m');
+    funDir = split(funDir,'Athena.m');
     cd(funDir{1});
     addpath 'Auxiliary'
-    dataPath = string_check(get(handles.aux_dataPath, 'String'));
-    sub = string_check(get(handles.aux_sub, 'String'));
-    loc = string_check(get(handles.aux_loc, 'String'));
-    measure = string_check(get(handles.aux_measure, 'String'));
+    dataPath = char_check(get(handles.aux_dataPath, 'String'));
+    sub = char_check(get(handles.aux_sub, 'String'));
+    loc = char_check(get(handles.aux_loc, 'String'));
+    measure = char_check(get(handles.aux_measure, 'String'));
     close(Athena_an)
     Athena_mergsig(dataPath, measure, sub, loc)
 
 
 function EpAn_Callback(hObject, eventdata, handles)
-    auxPath=pwd;
-    funDir=which('Athena.m');
-    funDir=split(funDir,'Athena.m');
+    funDir = which('Athena.m');
+    funDir = split(funDir,'Athena.m');
     cd(funDir{1});
     addpath 'Auxiliary'
-    dataPath = string_check(get(handles.aux_dataPath, 'String'));
-    sub = string_check(get(handles.aux_sub, 'String'));
-    loc = string_check(get(handles.aux_loc, 'String'));
-    measure = string_check(get(handles.aux_measure, 'String'));
+    dataPath = char_check(get(handles.aux_dataPath, 'String'));
+    sub = char_check(get(handles.aux_sub, 'String'));
+    loc = char_check(get(handles.aux_loc, 'String'));
+    measure = char_check(get(handles.aux_measure, 'String'));
     close(Athena_an)
     Athena_epan(dataPath, measure, sub, loc)
 
     
 function meaext_Callback(hObject, eventdata, handles)
-    auxPath=pwd;
-    funDir=which('Athena.m');
-    funDir=split(funDir,'Athena.m');
+    funDir = which('Athena.m');
+    funDir = split(funDir,'Athena.m');
     cd(funDir{1});
     addpath 'Auxiliary'
-    dataPath = string_check(get(handles.aux_dataPath, 'String'));
-    sub = string_check(get(handles.aux_sub, 'String'));
-    loc = string_check(get(handles.aux_loc, 'String'));
-    measure = string_check(get(handles.aux_measure, 'String'));
+    dataPath = char_check(get(handles.aux_dataPath, 'String'));
+    sub = char_check(get(handles.aux_sub, 'String'));
+    loc = char_check(get(handles.aux_loc, 'String'));
+    measure = char_check(get(handles.aux_measure, 'String'));
     close(Athena_an)
     Athena_guided(dataPath, measure, sub, loc)
 
     
 function tempav_Callback(hObject, eventdata, handles)
-    auxPath=pwd;
-    funDir=which('Athena.m');
-    funDir=split(funDir,'Athena.m');
+    funDir = which('Athena.m');
+    funDir = split(funDir,'Athena.m');
     cd(funDir{1});
     addpath 'Auxiliary'
-    dataPath = string_check(get(handles.aux_dataPath, 'String'));
-    measure = string_check(get(handles.aux_measure, 'String'));
-    sub = string_check(get(handles.aux_sub, 'String'));
-    loc = string_check(get(handles.aux_loc, 'String'));
+    dataPath = char_check(get(handles.aux_dataPath, 'String'));
+    measure = char_check(get(handles.aux_measure, 'String'));
+    sub = char_check(get(handles.aux_sub, 'String'));
+    loc = char_check(get(handles.aux_loc, 'String'));
     close(Athena_an)
     Athena_epmean(dataPath, measure, sub, loc)

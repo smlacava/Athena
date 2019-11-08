@@ -1,8 +1,8 @@
 %% limit_path
 % This function returns the path in input until a selected last node
-% (excluded).
+% (which will be the first excluded node).
 %
-% [outDir] = limit_path(inDir, last)
+% outDir = limit_path(inDir, last)
 %
 % input:
 %   inDir is the path to be limited
@@ -13,9 +13,8 @@
 
 function outDir = limit_path(inDir, last)
     inDir = path_check(inDir);
-    inDir = char(inDir);
     auxDir = split(inDir, inDir(end));
-    outDir = "";
+    outDir = '';
     
     for i = 1:length(auxDir)
         if strcmp(auxDir(i), last)

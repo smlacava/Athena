@@ -10,17 +10,17 @@
 % output:
 %   outPath is the corrected path
 
-function outPath=path_check(inPath)
+function outPath = path_check(inPath)
     if iscell(inPath)
-        inPath=inPath{1};
+        inPath = inPath{1};
     end
-    if strcmp(inPath(end),'\') || strcmp(inPath(end),'/')
-        outPath=char(inPath);
+    if strcmp(inPath(end), '\') || strcmp(inPath(end), '/')
+        outPath = char(inPath);
     else
-        os=computer;
-        if strcmp(os,'PCWIN64')
-            outPath=char(strcat(inPath,'\'));
+        os = computer;
+        if strcmp(os, 'PCWIN64')
+            outPath = char(strcat(inPath, '\'));
         else
-            outPath=char(strcat(inPath,'/'));
+            outPath = char(strcat(inPath, '/'));
         end
     end

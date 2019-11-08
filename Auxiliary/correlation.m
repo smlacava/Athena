@@ -13,35 +13,35 @@
 %   type2 is the second data type (optional)
 %   sub is the array of the names of the subjects (optional)
 
-function []=correlation(data1, data2, loc, type1, type2, sub)
+function [] = correlation(data1, data2, loc, type1, type2, sub)
 switch nargin
     case 2
-        loc="Correlation";
-        type1="Data 1";
-        type2="Data 2";
-        sub=[];
+        loc = "Correlation";
+        type1 = "Data 1";
+        type2 = "Data 2";
+        sub = [];
     case 3
-        type1="Data 1";
-        type2="Data 2";
-        sub=[];
+        type1 = "Data 1";
+        type2 = "Data 2";
+        sub = [];
     case 4
-        type2="Data 2";
-        sub=[];
+        type2 = "Data 2";
+        sub = [];
     case 5
-        sub=[];
+        sub = [];
 end
 
-    [RHO,PVAL]=corr(data1,data2,'type','Spearman');
-    figure('Name',loc,'NumberTitle','off','ToolBar','none')
+    [RHO, PVAL] = corr(data1, data2, 'type', 'Spearman');
+    figure('Name', loc, 'NumberTitle', 'off', 'ToolBar', 'none')
     set(gcf, 'color', [0.67 0.98 0.92])
-    scatter(data1,data2,'MarkerEdgeColor',[0.05 0.02 0.8])
-    title(strcat('p-value=',string(PVAL),', rho=', string(RHO)))
+    scatter(data1, data2, 'MarkerEdgeColor', [0.05 0.02 0.8])
+    title(strcat('p-value=', char_check(PVAL), ', rho=', string(RHO)))
     xlabel(type1)
     ylabel(type2)
         
     coefficients = polyfit(data1, data2, 1);
     xFit = linspace(min(data1), max(data1), 1000);
-    yFit = polyval(coefficients , xFit);
+    yFit = polyval(coefficients, xFit);
     hold on;
     p=plot(xFit, yFit, 'k-', 'LineWidth', 2);
     grid on;

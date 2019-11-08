@@ -1,11 +1,11 @@
 function ep_scatter(data, nEpochs, nBands, name, yname)
     if nargin==3
-        name="";
-        yname="";
+        name='';
+        yname='';
     end
     figure('Name',name,'NumberTitle','off','ToolBar','none')
     set(gcf, 'color', [0.67 0.98 0.92])
-    xlabel("Bands")
+    xlabel('Bands')
     ylabel(yname)
     xticks([1:nBands])
     xlim([0, nBands+1])
