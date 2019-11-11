@@ -13,6 +13,7 @@
 %   fs is the sampling frequency obtained from the loaded file (optional)
 
 function [data, fs] = load_data(dataFile)
+    fs=[];
     if contains(dataFile, '.mat')
         data = load(dataFile);
         data = struct2cell(data);

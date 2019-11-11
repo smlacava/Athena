@@ -58,17 +58,17 @@ function axes3_CreateFcn(hObject, eventdata, handles)
 
 
 function guided_Callback(hObject, eventdata, handles)
-    dataPath = string_check(get(handles.aux_dataPath, 'String'));
-    sub = string_check(get(handles.aux_sub, 'String'));
-    loc = string_check(get(handles.aux_loc, 'String'));
+    dataPath = char_check(get(handles.aux_dataPath, 'String'));
+    sub = char_check(get(handles.aux_sub, 'String'));
+    loc = char_check(get(handles.aux_loc, 'String'));
     close(Athena)
     Athena_guided(dataPath, sub, loc)
 
     
 function batch_Callback(hObject, eventdata, handles)
-    dataPath = string_check(get(handles.aux_dataPath, 'String'));
-    measure = string_check(get(handles.aux_measure, 'String'));
-    sub = string_check(get(handles.aux_sub, 'String'));
-    loc = string_check(get(handles.aux_loc, 'String'));
+    dataPath = char_check(get(handles.aux_dataPath, 'String'));
+    measure = char_check(get(handles.aux_measure, 'String'));
+    sub = char_check(get(handles.aux_sub, 'String'));
+    loc = char_check(get(handles.aux_loc, 'String'));
     close(Athena)
     Athena_batch(dataPath, measure, sub, loc)

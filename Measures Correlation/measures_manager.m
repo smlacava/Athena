@@ -2,7 +2,8 @@
 % This function manages the data matrix to compute the following
 % correlation between two measures.
 % 
-% [data, locList]=measures_manager(data_pre, locations, connCheck, studyType)
+% [data, locList] = measures_manager(data_pre, locations, connCheck, ...
+%     studyType)
 %
 % input:
 %   data_pre is the data matrix to manage
@@ -19,17 +20,7 @@
 
 function [data, locList]=measures_manager(data_pre, locFile, connCheck, studyType)
     
-    load(data_pre)
-    
-    if exist('PAT','var')
-        data_pre=PAT;
-        clear PAT
-    elseif exist('HC','var')
-        data_pre=HC;
-        clear HC
-    end
-    
-    
+    data_pre=load_data(data_pre);    
     locations=load_data(locFile);
     
     switch studyType

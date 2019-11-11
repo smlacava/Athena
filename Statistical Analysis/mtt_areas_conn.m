@@ -1,156 +1,206 @@
 %% mtt_areas_conn
-% This function is used by the mult_t_test function to compute the
-% statistical analysis in the areas on connectivity measures
+% This function computes the Wicox's analysis between connectivity measures
+% of 2 different groups in Frontal, Temporal, Central, Parietal and 
+% Occipital areas.
+% 
+% [P, Psig, data, dataSig, areas] = mtt_areas_conn(PAT, HC, FrontalLoc, ...
+%     TemporalLoc, OccipitalLoc, ParietalLoc, CentralLoc, cons)
+%
+% input:
+%   PAT is the name of the file (with its directory) which contains the
+%   	matrix subjects*bands*locations of the patients group
+%   HC is the name of the file (with its directory) which contains the
+%       matrix subjects*bands*locations of the healthy controls group
+%   FrontalLoc is the array of indexes of the frontal locations
+%   TemporalLoc is the array of the indexes of the temporal locations
+%   OccipitalLoc is the array of the indexes of the occipital locations
+%   ParietalLoc is the array of the indexes of the parietal locations
+%   CentralLoc is the array of the indexes of the central locations
+%   cons is the level of conservativeness which determinates the
+%       significativity of any difference (0=no conservativeness [default],
+%       1=max conservativeness)
+%
+% output:
+%   P is the p-value matrix
+%   Psig is the significativity matrix
+%   data is the output matrix subjects*(bands*locations) useful
+%       for external analysis (for example, other statistical analysis,
+%       correlation analysis or classification)
+%   dataSig is the matrix related to the measure of each subject in 
+%       significant comparisons
+%   areas is the array which contains the names of the compared areas
 
-function [P, Psig, data, dataSig, areas]=mtt_areas_conn(PAT, HC, FrontalLoc, TemporalLoc, OccipitalLoc, ParietalLoc, CentralLoc, cons)
-    Front=length(FrontalLoc);
-    Front=Front*Front-Front;
-    Temp=length(TemporalLoc);
-    Temp=Temp*Temp-Temp;
-    Occ=length(OccipitalLoc);
-    Occ=Occ*Occ-Occ;
-    Par=length(ParietalLoc);
-    Par=Par*Par-Par;
-    Cent=length(CentralLoc);
-    Cent=Cent*Cent-Cent;
+function [P, Psig, data, dataSig, areas] = mtt_areas_conn(PAT, HC, ...
+    FrontalLoc, TemporalLoc, OccipitalLoc, ParietalLoc, CentralLoc, cons)
+    Front = length(FrontalLoc);
+    Front = Front*Front-Front;
+    Temp = length(TemporalLoc);
+    Temp = Temp*Temp-Temp;
+    Occ = length(OccipitalLoc);
+    Occ = Occ*Occ-Occ;
+    Par = length(ParietalLoc);
+    Par = Par*Par-Par;
+    Cent = length(CentralLoc);
+    Cent = Cent*Cent-Cent;
     
-    areas=string();
-    nLoc=0;
-    dataSig=[];
+    areas = string();
+    nLoc = 0;
+    dataSig = [];
     
-    if Front~=0
-        nLoc=nLoc+1;
-        areas=[areas, "Frontal"];
+    if Front ~= 0
+        nLoc = nLoc+1;
+        areas = [areas, "Frontal"];
     end
-    if Temp~=0
-        nLoc=nLoc+1;
-        areas=[areas, "Temporal"];
+    if Temp ~= 0
+        nLoc = nLoc+1;
+        areas = [areas, "Temporal"];
     end
-    if Occ~=0
-        nLoc=nLoc+1;
-        areas=[areas, "Occipital"];
+    if Occ ~= 0
+        nLoc = nLoc+1;
+        areas = [areas, "Occipital"];
     end
-    if Par~=0
-        nLoc=nLoc+1;
-        areas=[areas, "Parietal"];
+    if Par ~= 0
+        nLoc = nLoc+1;
+        areas = [areas, "Parietal"];
     end
-    if Cent~=0
-        nLoc=nLoc+1;
-        areas=[areas, "Central"];
+    if Cent ~= 0
+        nLoc = nLoc+1;
+        areas = [areas, "Central"];
     end
-    areas(1)=[];
+    areas(1) = [];
     
-    if length(size(HC))==4
-        nBands=size(HC,2);
-        nPAT=size(PAT,1);
-        nHC=size(HC,1);
+    if length(size(HC)) == 4
+        nBands = size(HC, 2);
+        nPAT = size(PAT, 1);
+        nHC = size(HC, 1);
         
-        HC_areas=zeros(nHC,nBands,nLoc);
-        PAT_areas=zeros(nPAT, nBands, nLoc);
+        HC_areas = zeros(nHC, nBands, nLoc);
+        PAT_areas = zeros(nPAT, nBands, nLoc);
         
-        loc=1;
-        if Front~=0
-            HC_areas(:,:,loc)=sum(squeeze(sum(HC(:,:,FrontalLoc,FrontalLoc),3)),3)/Front;
-            PAT_areas(:,:,loc)=sum(squeeze(sum(PAT(:,:,FrontalLoc,FrontalLoc),3)),3)/Front;
-            loc=loc+1;
+        loc = 1;
+        if Front ~= 0
+            HC_areas(:, :, loc) = sum(squeeze(sum(...
+                HC(:, :, FrontalLoc, FrontalLoc), 3)), 3)/Front;
+            PAT_areas(:, :, loc) = sum(squeeze(sum(...
+                PAT(:, :, FrontalLoc, FrontalLoc), 3)), 3)/Front;
+            loc = loc+1;
         end
-        if Temp~=0
-            HC_areas(:,:,loc)=sum(squeeze(sum(HC(:,:,TemporalLoc,TemporalLoc),3)),3)/Temp;
-            PAT_areas(:,:,loc)=sum(squeeze(sum(PAT(:,:,TemporalLoc,TemporalLoc),3)),3)/Temp;
-            loc=loc+1;
+        if Temp ~= 0
+            HC_areas(:, :, loc) = sum(squeeze(sum(...
+                HC(:, :, TemporalLoc, TemporalLoc), 3)), 3)/Temp;
+            PAT_areas(:, :, loc) = sum(squeeze(sum(...
+                PAT(:, :, TemporalLoc, TemporalLoc), 3)), 3)/Temp;
+            loc = loc+1;
         end
-        if Occ~=0
-            HC_areas(:,:,loc)=sum(squeeze(sum(HC(:,:,OccipitalLoc,OccipitalLoc),3)),3)/Occ;
-            PAT_areas(:,:,loc)=sum(squeeze(sum(PAT(:,:,OccipitalLoc,OccipitalLoc),3)),3)/Occ;
-            loc=loc+1;
+        if Occ ~= 0
+            HC_areas(:, :, loc) = sum(squeeze(sum(...
+                HC(:, :, OccipitalLoc, OccipitalLoc), 3)), 3)/Occ;
+            PAT_areas(:, :, loc) = sum(squeeze(sum(...
+                PAT(:, :, OccipitalLoc, OccipitalLoc), 3)), 3)/Occ;
+            loc = loc+1;
         end
-        if Par~=0
-            HC_areas(:,:,loc)=sum(squeeze(sum(HC(:,:,ParietalLoc,ParietalLoc),3)),3)/Par;
-            PAT_areas(:,:,loc)=sum(squeeze(sum(PAT(:,:,ParietalLoc,ParietalLoc),3)),3)/Par;
-            loc=loc+1;
+        if Par ~= 0
+            HC_areas(:, :, loc) = sum(squeeze(sum(...
+                HC(:, :, ParietalLoc, ParietalLoc), 3)), 3)/Par;
+            PAT_areas(:, :, loc) = sum(squeeze(sum(...
+                PAT(:, :, ParietalLoc, ParietalLoc), 3)), 3)/Par;
+            loc = loc+1;
         end
-        if Cent~=0
-            HC_areas(:,:,loc)=sum(squeeze(sum(HC(:,:,CentralLoc,CentralLoc),3)),3)/Cent;
-            PAT_areas(:,:,loc)=sum(squeeze(sum(PAT(:,:,CentralLoc,CentralLoc),3)),3)/Cent;
-            loc=loc+1;
+        if Cent ~= 0
+            HC_areas(:, :, loc) = sum(squeeze(sum(...
+                HC(:, :, CentralLoc, CentralLoc), 3)), 3)/Cent;
+            PAT_areas(:, :, loc) = sum(squeeze(sum(...
+                PAT(:, :, CentralLoc, CentralLoc), 3)), 3)/Cent;
         end
         
-        data=zeros(nHC+nPAT,nBands,nLoc);
-        Psig=[string(), string(), string()];
-        P=zeros(nBands,nLoc);
-        alpha=alpha_levelling(cons,nLoc,nBands);
+        data = zeros(nHC+nPAT, nBands, nLoc);
+        Psig = [string(), string(), string()];
+        P = zeros(nBands, nLoc);
+        alpha = alpha_levelling(cons, nLoc, nBands);
         
         for i = 1:nBands
             for j = 1:nLoc
-                data(1:nHC,i,j)=HC_areas(:,i,j);
-                data(nHC+1:end,i,j)=PAT_areas(:,i,j);
-                P(i,j) = ranksum(data(1:nHC,i,j),data(nHC+1:end,i,j));            
-                if P(i,j)<alpha
-                    diff=mean(data(1:nHC,i,j))-mean(data(nHC+1:end,i,j));
-                    dataSig=[dataSig data(:,i,j)];
-                    if diff>0
-                        Psig=[Psig; strcat("Band",string(i)), areas(j),"major in HC"];
+                data(1:nHC, i, j) = HC_areas(:, i, j);
+                data(nHC+1:end, i, j) = PAT_areas(:, i, j);
+                P(i, j) = ranksum(data(1:nHC, i, j), ...
+                    data(nHC+1:end, i, j));            
+                if P(i, j) < alpha
+                    diff = mean(data(1:nHC, i, j))-...
+                        mean(data(nHC+1:end, i, j));
+                    dataSig = [dataSig data(:, i, j)];
+                    if diff > 0
+                        Psig = [Psig; strcat("Band",string(i)), ...
+                            areas(j), "major in HC"];
                     else
-                        Psig=[Psig; strcat("Band",string(i)), areas(j), "major in PAT"];
+                        Psig = [Psig; strcat("Band",string(i)), ...
+                            areas(j), "major in PAT"];
                     end   
                 end
             end
         end
     else
-        nPAT=size(PAT,1);
-        nHC=size(HC,1);
+        nPAT = size(PAT, 1);
+        nHC = size(HC, 1);
         
-        HC_areas=zeros(nHC, nLoc);
-        PAT_areas=zeros(nPAT, nLoc);
+        HC_areas = zeros(nHC, nLoc);
+        PAT_areas = zeros(nPAT, nLoc);
         
-        loc=1;
-        if Front~=0
-            HC_areas(:,loc)=sum(squeeze(sum(HC(:,FrontalLoc,FrontalLoc),2)),2)/Front;
-            PAT_areas(:,loc)=sum(squeeze(sum(PAT(:,FrontalLoc,FrontalLoc),2)),2)/Front;
-            loc=loc+1;
+        loc = 1;
+        if Front ~= 0
+            HC_areas(:, loc) = sum(squeeze(sum(...
+                HC(:, FrontalLoc, FrontalLoc), 2)), 2)/Front;
+            PAT_areas(:, loc) = sum(squeeze(sum(...
+                PAT(:, FrontalLoc, FrontalLoc), 2)), 2)/Front;
+            loc = loc+1;
         end
-        if Temp~=0
-            HC_areas(:,loc)=sum(squeeze(sum(HC(:,TemporalLoc,TemporalLoc),2)),2)/Temp;
-            PAT_areas(:,loc)=sum(squeeze(sum(PAT(:,TemporalLoc,TemporalLoc),2)),2)/Temp;
-            loc=loc+1;
+        if Temp ~= 0
+            HC_areas(:, loc) = sum(squeeze(sum(...
+                HC(:, TemporalLoc, TemporalLoc), 2)), 2)/Temp;
+            PAT_areas(:, loc) = sum(squeeze(sum(...
+                PAT(:, TemporalLoc, TemporalLoc), 2)), 2)/Temp;
+            loc = loc+1;
         end
-        if Occ~=0
-            HC_areas(:,loc)=sum(squeeze(sum(HC(:,OccipitalLoc,OccipitalLoc),2)),2)/Occ;
-            PAT_areas(:,loc)=sum(squeeze(sum(PAT(:,OccipitalLoc,OccipitalLoc),2)),2)/Occ;
-            loc=loc+1;
+        if Occ ~= 0
+            HC_areas(:, loc) = sum(squeeze(sum(...
+                HC(:, OccipitalLoc, OccipitalLoc), 2)), 2)/Occ;
+            PAT_areas(:, loc) = sum(squeeze(sum(...
+                PAT(:, OccipitalLoc, OccipitalLoc), 2)), 2)/Occ;
+            loc = loc+1;
         end
-        if Par~=0
-            HC_areas(:,loc)=sum(squeeze(sum(HC(:,ParietalLoc,ParietalLoc),2)),2)/Par;
-            PAT_areas(:,loc)=sum(squeeze(sum(PAT(:,ParietalLoc,ParietalLoc),2)),2)/Par;
-            loc=loc+1;
+        if Par ~= 0
+            HC_areas(:, loc) = sum(squeeze(sum(...
+                HC(:, ParietalLoc, ParietalLoc), 2)), 2)/Par;
+            PAT_areas(:, loc) = sum(squeeze(sum(...
+                PAT(:, ParietalLoc, ParietalLoc), 2)), 2)/Par;
+            loc = loc+1;
         end
-        if Cent~=0
-            HC_areas(:,loc)=sum(squeeze(sum(HC(:,CentralLoc,CentralLoc),2)),2)/Cent;
-            PAT_areas(:,loc)=sum(squeeze(sum(PAT(:,CentralLoc,CentralLoc),2)),2)/Cent;
-            loc=loc+1;
+        if Cent ~= 0
+            HC_areas(:, loc) = sum(squeeze(sum(...
+                HC(:, CentralLoc, CentralLoc), 2)), 2)/Cent;
+            PAT_areas(:, loc) = sum(squeeze(sum(...
+                PAT(:, CentralLoc, CentralLoc), 2)), 2)/Cent;
         end
         
-        data=zeros(nHC+nPAT,nLoc);
-        Psig=[string() string()];
-        P=zeros(1,nLoc);
-        alpha=alpha_levelling(cons,nLoc);
+        data = zeros(nHC+nPAT, nLoc);
+        Psig = [string() string()];
+        P = zeros(1, nLoc);
+        alpha = alpha_levelling(cons, nLoc);
         
         for i = 1:nLoc
-        	data(1:nHC,i)=HC_areas(:,i);
-            data(nHC+1:end,i)=PAT_areas(:,i);
-            P(1,i) = ranksum(data(1:nHC,i),data(nHC+1:end,i));
+        	data(1:nHC, i) = HC_areas(:, i);
+            data(nHC+1:end, i) = PAT_areas(:, i);
+            P(1, i) = ranksum(data(1:nHC, i),data(nHC+1:end, i));
             
-            if P(1,i)<alpha
-                diff=mean(data(1:nHC,i))-mean(data(nHC+1:end,i));
-                dataSig=[dataSig data(:,i)];
-                if diff>0
-                    Psig=[Psig; areas(i), "major in HC"];
+            if P(1, i) < alpha
+                diff = mean(data(1:nHC, i))-mean(data(nHC+1:end, i));
+                dataSig = [dataSig data(:, i)];
+                if diff > 0
+                    Psig = [Psig; areas(i), "major in HC"];
                 else
-                    Psig=[Psig; areas(i), "major in PAT"];
+                    Psig = [Psig; areas(i), "major in PAT"];
                 end
-                
             end
         end
     end
-    Psig(1,:)=[];
+    Psig(1, :) = [];
 end

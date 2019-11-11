@@ -21,14 +21,14 @@ function Athena_guided_OpeningFcn(hObject, eventdata, handles, varargin)
     handles.output = hObject;
     guidata(hObject, handles);
     myImage = imread('untitled3.png');
-    set(handles.axes3,'Units','pixels');
-    resizePos = get(handles.axes3,'Position');
+    set(handles.axes3, 'Units', 'pixels');
+    resizePos = get(handles.axes3, 'Position');
     myImage= imresize(myImage, [resizePos(3) resizePos(3)]);
     axes(handles.axes3);
     imshow(myImage);
-    set(handles.axes3,'Units','normalized');
-    funDir=which('Athena.m');
-    funDir=split(funDir,'Athena.m');
+    set(handles.axes3, 'Units', 'normalized');
+    funDir = which('Athena.m');
+    funDir = split(funDir, 'Athena.m');
     cd(funDir{1});
     addpath 'Measures'
     addpath 'Auxiliary'
@@ -47,12 +47,12 @@ function Athena_guided_OpeningFcn(hObject, eventdata, handles, varargin)
         set(handles.aux_loc, 'String', varargin{3})
     end
     
-    if exist('fooof','file')
-        set(handles.meas,'String',["relative PSD", "PLV", "PLI", "AEC", ...
-            "AEC corrected", "Offset", "Exponent"]);
+    if exist('fooof', 'file')
+        set(handles.meas, 'String', ["relative PSD", "PLV", "PLI", ...
+            "AEC", "AEC corrected", "Offset", "Exponent"]);
     else
-        set(handles.meas,'String',["relative PSD", "PLV", "PLI", "AEC", ...
-            "AEC corrected"]);
+        set(handles.meas, 'String', ["relative PSD", "PLV", "PLI", ...
+            "AEC", "AEC corrected"]);
     end
 
     
@@ -64,9 +64,9 @@ function dataPath_text_Callback(hObject, eventdata, handles)
 
 
 function dataPath_text_CreateFcn(hObject, eventdata, handles)
-    if ispc && isequal(get(hObject,'BackgroundColor'), ...
-            get(0,'defaultUicontrolBackgroundColor'))
-        set(hObject,'BackgroundColor','white');
+    if ispc && isequal(get(hObject, 'BackgroundColor'), ...
+            get(0, 'defaultUicontrolBackgroundColor'))
+        set(hObject, 'BackgroundColor', 'white');
     end
 
 
@@ -74,9 +74,9 @@ function fs_text_Callback(hObject, eventdata, handles)
 
 
 function fs_text_CreateFcn(hObject, eventdata, handles)
-    if ispc && isequal(get(hObject,'BackgroundColor'), ...
-            get(0,'defaultUicontrolBackgroundColor'))
-        set(hObject,'BackgroundColor','white');
+    if ispc && isequal(get(hObject, 'BackgroundColor'), ...
+            get(0, 'defaultUicontrolBackgroundColor'))
+        set(hObject, 'BackgroundColor', 'white');
     end
 
 
@@ -84,9 +84,9 @@ function cf_text_Callback(hObject, eventdata, handles)
 
 
 function cf_text_CreateFcn(hObject, eventdata, handles)
-    if ispc && isequal(get(hObject,'BackgroundColor'), ...
-            get(0,'defaultUicontrolBackgroundColor'))
-        set(hObject,'BackgroundColor','white');
+    if ispc && isequal(get(hObject, 'BackgroundColor'), ...
+            get(0, 'defaultUicontrolBackgroundColor'))
+        set(hObject, 'BackgroundColor', 'white');
     end
 
 
@@ -94,9 +94,9 @@ function epNum_text_Callback(hObject, eventdata, handles)
 
 
 function epNum_text_CreateFcn(hObject, eventdata, handles)
-    if ispc && isequal(get(hObject,'BackgroundColor'), ...
-            get(0,'defaultUicontrolBackgroundColor'))
-        set(hObject,'BackgroundColor','white');
+    if ispc && isequal(get(hObject, 'BackgroundColor'), ...
+            get(0, 'defaultUicontrolBackgroundColor'))
+        set(hObject, 'BackgroundColor', 'white');
     end
 
 
@@ -104,9 +104,9 @@ function epTime_text_Callback(hObject, eventdata, handles)
 
 
 function epTime_text_CreateFcn(hObject, eventdata, handles)
-    if ispc && isequal(get(hObject,'BackgroundColor'), ...
-            get(0,'defaultUicontrolBackgroundColor'))
-            set(hObject,'BackgroundColor','white');
+    if ispc && isequal(get(hObject, 'BackgroundColor'), ...
+            get(0, 'defaultUicontrolBackgroundColor'))
+            set(hObject, 'BackgroundColor', 'white');
     end
 
 
@@ -114,9 +114,9 @@ function tStart_text_Callback(hObject, eventdata, handles)
 
 
 function tStart_text_CreateFcn(hObject, eventdata, handles)
-    if ispc && isequal(get(hObject,'BackgroundColor'), ...
-            get(0,'defaultUicontrolBackgroundColor'))
-        set(hObject,'BackgroundColor','white');
+    if ispc && isequal(get(hObject, 'BackgroundColor'), ...
+            get(0, 'defaultUicontrolBackgroundColor'))
+        set(hObject, 'BackgroundColor', 'white');
     end
 
 
@@ -124,9 +124,9 @@ function totBand_text_Callback(hObject, eventdata, handles)
 
 
 function totBand_text_CreateFcn(hObject, eventdata, handles)
-    if ispc && isequal(get(hObject,'BackgroundColor'), ...
-            get(0,'defaultUicontrolBackgroundColor'))
-        set(hObject,'BackgroundColor','white');
+    if ispc && isequal(get(hObject, 'BackgroundColor'), ...
+            get(0, 'defaultUicontrolBackgroundColor'))
+        set(hObject, 'BackgroundColor', 'white');
     end
 
 
@@ -138,7 +138,7 @@ function Run_Callback(hObject, eventdata, handles)
         return
     end
     dataPath = path_check(dataPath);
-    meas_state = get(handles.meas,'Value');
+    meas_state = get(handles.meas, 'Value');
     params_GUI = {@Athena_params_psd, @Athena_params_PLV, ...
         @Athena_params_PLI, @Athena_params_AEC, @Athena_params_AECc, ...
         @Athena_params_offset, @Athena_params_exponent};
@@ -150,16 +150,16 @@ function Run_Callback(hObject, eventdata, handles)
     
     
 function data_search_Callback(hObject, eventdata, handles)
-    d=uigetdir;
-    if d~=0
-        set(handles.dataPath_text,'String',d)
+    d = uigetdir;
+    if d ~= 0
+        set(handles.dataPath_text, 'String', d)
     end
 
     
 function meas_CreateFcn(hObject, eventdata, handles)
-    if ispc && isequal(get(hObject,'BackgroundColor'), ...
-            get(0,'defaultUicontrolBackgroundColor'))
-        set(hObject,'BackgroundColor','white');
+    if ispc && isequal(get(hObject, 'BackgroundColor'), ...
+            get(0, 'defaultUicontrolBackgroundColor'))
+        set(hObject, 'BackgroundColor', 'white');
     end
     
     
@@ -169,9 +169,9 @@ function meas_Callback(hObject, eventdata, handles)
 function back_Callback(hObject, eventdata, handles)
     sub = string(get(handles.aux_sub, 'String'));
     loc = string(get(handles.aux_loc, 'String'));
-    dataPath=string(get(handles.dataPath_text, 'String'));
-    measures=["PSDr", "PLV", "PLI", "AEC", "AECo", "offset", "exponent"];
-    measure=measures(get(handles.meas, 'Value'));
+    dataPath = string(get(handles.dataPath_text, 'String'));
+    measures = ["PSDr", "PLV", "PLI", "AEC", "AECo", "offset", "exponent"];
+    measure = measures(get(handles.meas, 'Value'));
     close(Athena_guided)
     if strcmp('es. C:\User\Data', dataPath)
         dataPath = "Static Text";
@@ -186,11 +186,10 @@ function next_Callback(~, eventdata, handles)
     sub = string(get(handles.aux_sub, 'String'));
     loc = string(get(handles.aux_loc, 'String'));
     dataPath=string(get(handles.dataPath_text, 'String'));
-    measures=["PSDr", "PLV", "PLI", "AEC", "AECo", "offset", "exponent"];
-    measure=measures(get(handles.meas, 'Value'));
+    measures = ["PSDr", "PLV", "PLI", "AEC", "AECo", "offset", "exponent"];
+    measure = measures(get(handles.meas, 'Value'));
     close(Athena_guided)
     if strcmp('es. C:\User\Data', dataPath)
         dataPath = "Static Text";
     end
     Athena_epmean(dataPath, measure, sub, loc)
-    
