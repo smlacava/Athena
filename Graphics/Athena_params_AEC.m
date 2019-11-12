@@ -169,10 +169,7 @@ function Run_Callback(hObject, eventdata, handles)
 
 
 function back_Callback(hObject, eventdata, handles)
-    dataPath = char_check(get(handles.aux_dataPath, 'String'));
-    measure = char_check(get(handles.aux_measure, 'String'));
-    sub = char_check(get(handles.aux_sub, 'String'));
-    loc = char_check(get(handles.aux_loc, 'String'));
+    [dataPath, measure, sub, loc] = GUI_transition(handles);
     close(Athena_params_AEC)
     Athena_guided(dataPath, measure, sub, loc)
 
@@ -181,9 +178,6 @@ function axes3_CreateFcn(hObject, eventdata, handles)
 
 
 function next_Callback(~, eventdata, handles)
-    dataPath = char_check(get(handles.aux_dataPath, 'String'));
-    measure = char_check(get(handles.aux_measure, 'String'));
-    sub = char_check(get(handles.aux_sub, 'String'));
-    loc = char_check(get(handles.aux_loc, 'String'));
+    [dataPath, measure, sub, loc] = GUI_transition(handles);
     close(Athena_params_AEC)
     Athena_epmean(dataPath, measure, sub, loc)

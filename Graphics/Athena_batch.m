@@ -91,6 +91,7 @@ function Run_Callback(~, eventdata, handles)
     
     MEASURES = ["PLV", "PLI", "AEC", "AECo", "offset", "exponent", "PSDr"];
     MEASURESconn = ["PLV", "PLI", "AEC", "AECo"];
+    MEASURESbg = ["offset", "exponent"];
     true = ["True", "true", "TRUE", "t", "1", "OK", "ok"];
 	dataFile = char_check(get(handles.dataPath_text, 'String'));
     
@@ -117,12 +118,14 @@ function Run_Callback(~, eventdata, handles)
         problem(strcat(measure, ' is an invalid measure'))
         return
     end
+    connCheck = 0;
+    type = measure;
     if sum(strcmp(measure, MEASURESconn))
         connCheck = 1;
         type = 'CONN';
-    else
-        connCheck = 0;
-        type = measure;
+    elseif sum(strcmp(measure, MEASURESbg))
+        cf = [cf(1), cf(end)];
+        nBands = 1;
     end
  
     
@@ -165,6 +168,7 @@ function Run_Callback(~, eventdata, handles)
     else
         cd(dataPath)
         
+        Subjects = load_data(Subjects);
         if sum(strcmp(IndexCorrelation, true))
             for i = 1:length(Areas_IC)
                 if strcmp(Group_IC, 'PAT')
@@ -305,7 +309,7 @@ function Run_Callback(~, eventdata, handles)
     
         if sum(strcmp(ClassificationData, true))
             dataSig = [];
-            Psig = [string() string() string() string()];
+            Psig = [];
             SApath = strcat(dataPath, 'statAn');
             SApath = path_check(SApath);
             for i = 1:length(MergingAreas)
@@ -319,13 +323,22 @@ function Run_Callback(~, eventdata, handles)
                         if not(isempty(col))
                             if col == 2
                                 for r = 1:size(statAnResult.Psig, 1)
-                                    Psig=[Psig; [MergingMeasures(j), ...
+                                    Psig = [Psig; ...
+                                        [string(MergingMeasures{j}), ...
                                         MergingAreas(i), ...
                                         statAnResult.Psig(r, :)]];
                                 end
-                            else
+                            elseif col == 3
                                 for r = 1:size(statAnResult.Psig, 1)
-                                    Psig = [Psig; [MergingMeasures(j), ...
+                                    Psig = [Psig; ...
+                                        [string(MergingMeasures{j}), ...
+                                        statAnResult.Psig(r, :)]];
+                                end
+                            else 
+                                for r = 1:size(statAnResult.Psig, 1)
+                                    Psig = [Psig; ...
+                                        [string(MergingMeasures{j}), ...
+                                        MergingAreas(i), "Band 1", ...
                                         statAnResult.Psig(r, :)]];
                                 end
                             end
@@ -352,17 +365,14 @@ function Run_Callback(~, eventdata, handles)
     
     
 function data_search_Callback(hObject, ~, handles)
-    [i,ip] = uigetfile;
+    [i, ip] = uigetfile;
     if i ~= 0
         set(handles.dataPath_text, 'String', strcat(string(ip), string(i)))
     end
 
 
 function back_Callback(hObject, eventdata, handles)
-    dataPath = char_check(get(handles.aux_dataPath, 'String'));
-    measure = char_check(get(handles.aux_measure, 'String'));
-    sub = char_check(get(handles.aux_sub, 'String'));
-    loc = char_check(get(handles.aux_loc, 'String'));
+    [dataPath, measure, sub, loc] = GUI_transition(handles);
     close(Athena_batch)
     Athena(dataPath, measure, sub, loc)
 

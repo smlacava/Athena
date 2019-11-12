@@ -132,11 +132,12 @@ function data_search_Callback(hObject, eventdata, handles)
     end
 
 
-function next_Callback(hObject, eventdata, handles)
-    dataPath = char_check(get(handles.aux_dataPath, 'String'));
-    measure = char_check(get(handles.aux_measure, 'String'));
-    sub = char_check(get(handles.subjectsFile, 'String'));
-    loc = char_check(get(handles.aux_loc, 'String'));   
+function next_Callback(~, ~, handles)
+    [dataPath, measure, ~, loc] = GUI_transition(handles, 'sub');
+    sub = get(handles.subjectsFile, 'String');
+    if strcmp('es. C:\User\Sub.mat', sub)
+        sub = "Static Text";
+    end
     close(Athena_epmean)
     Athena_an(dataPath, measure, sub, loc)
 
@@ -158,7 +159,7 @@ function subjectsFile_CreateFcn(hObject, eventdata, handles)
     end
 
 
-function sub_search_Callback(hObject, eventdata, handles)
+function sub_search_Callback(~, eventdata, handles)
     [s,sp] = uigetfile;
     if s ~= 0
         set(handles.subjectsFile, 'String', strcat(string(sp), string(s)))
@@ -166,10 +167,8 @@ function sub_search_Callback(hObject, eventdata, handles)
 
 
 function meaext_Callback(hObject, eventdata, handles)
-    dataPath = char_check(get(handles.aux_dataPath, 'String'));
-    measure = char_check(get(handles.aux_measure, 'String'));
-    sub = char_check(get(handles.subjectsFile, 'String'));
-    loc = char_check(get(handles.aux_loc, 'String'));
+    [dataPath, measure, ~, loc] = GUI_transition(handles, 'sub');
+    sub = get(handles.subjectsFile, 'String');
     if strcmp('es. C:\User\Sub.mat', sub)
         sub = "Static Text";
     end

@@ -183,10 +183,8 @@ function data_search_Callback(hObject, eventdata, handles)
 
     
 function back_Callback(hObject, eventdata, handles)
-    dataPath = char_check(get(handles.aux_dataPath, 'String'));
-    measure = char_check(get(handles.aux_measure, 'String'));
-    sub = char_check(get(handles.aux_sub, 'String'));
-    loc = char_check(get(handles.loc_text, 'String'));
+    [dataPath, measure, sub, ~] = GUI_transition(handles, 'loc');
+    loc = string(get(handles.loc_text, 'String'));
     if strcmp(loc, 'es. C:\User\Locations.mat')
         loc="Static Text";
     end

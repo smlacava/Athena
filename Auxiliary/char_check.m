@@ -12,7 +12,6 @@
 function [charOUT]=char_check(dataIN)
     if isnumeric(dataIN)
         dataIN=string(dataIN);
-    else 
-        charOUT=char(dataIN);
     end
+    charOUT=char(dataIN);
 end

@@ -176,7 +176,7 @@ function Run_Callback(hObject, eventdata, handles)
     Psig(1, :) = [];
     
     SDfile = strcat(dataPath, 'Significant_Data.csv');
-    SRfile = strcat(dataPath,"Significant_Results.txt");
+    SRfile = strcat(dataPath, "Significant_Results.txt");
     if exist(SDfile, 'file')
         delete(SDfile);
     end
@@ -226,10 +226,7 @@ function data_search_Callback(hObject, eventdata, handles)
 
 
 function back_Callback(hObject, eventdata, handles)
-    dataPath = char_check(get(handles.aux_dataPath, 'String'));
-    measure = char_check(get(handles.aux_measure, 'String'));
-    sub = char_check(get(handles.aux_sub, 'String'));
-    loc = char_check(get(handles.aux_loc, 'String'));
+    [dataPath, measure, sub, loc] = GUI_transition(handles);
     if strcmp(dataPath, 'es. C:\User\Data')
         dataPath="Static Text";
     end

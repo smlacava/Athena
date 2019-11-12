@@ -14,6 +14,7 @@ function outPath = path_check(inPath)
     if iscell(inPath)
         inPath = inPath{1};
     end
+    inPath = char(inPath);
     if strcmp(inPath(end), '\') || strcmp(inPath(end), '/')
         outPath = char(inPath);
     else
@@ -24,3 +25,4 @@ function outPath = path_check(inPath)
             outPath = char(strcat(inPath, '/'));
         end
     end
+end

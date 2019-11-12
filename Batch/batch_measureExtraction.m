@@ -20,9 +20,9 @@
 function []=batch_measureExtraction(measure, fs, cf, epNum, epTime, ...
     dataPath, tStart, totBand)
 
-    if strcmp(measure, 'PSDr')
+    if strcmp(measure, "PSDr")
         PSDr(fs, cf, epNum, epTime, dataPath, tStart, totBand)
-    elseif sum(strcmp(measure, ['exponent', 'offset']))
+    elseif sum(strcmp(measure, ["exponent", "offset"]))
         FOOOFer(fs, cf, epNum, epTime, dataPath, tStart, measure)
     else
         connectivity(fs, cf, epNum, epTime, dataPath, tStart, measure)

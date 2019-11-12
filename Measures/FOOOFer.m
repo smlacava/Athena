@@ -28,7 +28,7 @@ function [] = FOOOFer(fs, cf, nEpochs, dt, inDir, tStart, outTypes, ...
 
     switch nargin
         case 5
-            tStart=0;
+            tStart = 0;
             outTypes = "";
             maxPeaks = (cf(end)-cf(1))*2;
         case 6
@@ -38,8 +38,7 @@ function [] = FOOOFer(fs, cf, nEpochs, dt, inDir, tStart, outTypes, ...
             maxPeaks = (cf(end)-cf(1))*2;
     end
            
-    f = waitbar(0, 'Processing your data');
-    f.Color = [0.67 0.98 0.92];
+    f = waitbar(0, 'Processing your data', 'Color', '[0.67 0.98 0.92]');
     fchild = allchild(f);
     fchild(1).JavaPeer.setForeground(fchild(1).JavaPeer.getBackground.BLUE)
     fchild(1).JavaPeer.setStringPainted(true)
@@ -51,6 +50,7 @@ function [] = FOOOFer(fs, cf, nEpochs, dt, inDir, tStart, outTypes, ...
     
     inDir = path_check(inDir);
     cases = define_cases(inDir);
+    outTypes = string(outTypes);
 
     if strcmp(outTypes, "")
     	outTypes = [];

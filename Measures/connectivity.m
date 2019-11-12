@@ -44,6 +44,7 @@ function []=connectivity(fs, cf, nEpochs, dt, inDir, tStart, outTypes)
     
     inDir = path_check(inDir);
     cases = define_cases(inDir);
+    outTypes = string(outTypes);
     
     ctrl = 0;
     if length(outTypes) == 1
