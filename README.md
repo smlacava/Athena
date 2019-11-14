@@ -48,4 +48,23 @@ In this step a table which contins the subjects names and their group (patients 
 If it is not present, the user can select the patients between the subject list in a graphic interface that will be create by ATHENA
 if the button ␚ is pressed and save the resulting table to use it to compute the step.
 
+
+## Analysis
+For every analysis a file which contains the locations representing each row of the time series is requested.
+This file allow to choose to compute the analysis on the measure pattern of each location, on the asymmetry between the pattern of the
+right hemisphere and the left one, on the global pattern or on the frontal, temporal, central, parietal and occipital areas.
+Furthermore, the user can select the conservativeness level which will define the alpha level for the correlation and statistical
+analysis.
+In these analysis, the results will be showed to the user through a p-values table and the significant results will be showed through a
+table and in a graphical way.
+
+
+The user can choose between N analysis:
+- **Statistical analysis**: the user can verify the presence of statistical differences between the patterns of the patients and the
+       patterns of the healthy controls
+- **Index Correlation analysis**: the user can verify the correlation between a group pattern and an index corresponding to each
+       subject, an external file containing the index for each subject is required
+- **Measures Correlation analysis**: the user can verify the presence of a correlation in a group between the patterns of two different
+       measures
+
 > The toolbox is still under construction
