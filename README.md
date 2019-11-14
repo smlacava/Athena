@@ -17,6 +17,7 @@ The pipelina can be subdivided in 3 main steps:
    subjects in their group (patients or healthy controls)
 3) The analysis: in this step,, the user can choose the analysis to compute and their parameters
 
+
 ## Measure extraction
 The measures extractably by ATHENA can be divided in:
 - Connectivity measures
@@ -30,6 +31,7 @@ The measures extractably by ATHENA can be divided in:
   - **Exponent**
   - **Offset**
   
+  
 The parameters to choose to extract the measures are:
 - **fs**: it is the sampling frequency, it can be automatically chosen if the parameter is present in the time series
 - **cf**: it is the list of cut frequencies, they define each studied frequency band which will be define between two of the chosen cut 
@@ -39,5 +41,11 @@ The parameters to choose to extract the measures are:
 - **starting time**: it is the starting time of the first epoch, it is useful to avoid initial noise or altered signal due to preprocessing,
        sources reconstruction, etc.
 - **relative band**: it is used to extract the relative PSD as relative band
+
+
+## Epochs averaging
+In this step a table which contins the subjects names and their group (patients group or healthy controls group) is required.
+If it is not present, the user can select the patients between the subject list in a graphic interface that will be create by ATHENA
+if the button ␚ is pressed and save the resulting table to use it to compute the step.
 
 > The toolbox is still under construction
