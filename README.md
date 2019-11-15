@@ -1,6 +1,6 @@
 # ATHENA
 <p align="center">
-  <img src="untitled3.png" width="200" title="hover text">
+  <img src="icon.png" width="200" title="hover text">
 </p>
 
 ***ATHENA*** *(Automatic Toolbox for Handling Efficient/Effortless/Experimental/Effective Neural Analyzes)* is a toolbox which allow 
@@ -13,24 +13,13 @@ It is possible to choose between a guided or a batch mode:
 - The guide mode drive the user throw all the steps which compose the pipeline, allowing him to change parameters during the study
 - The batch mode allow the user to compute the entire study automatically, chosing all the parameters before starting it
 
-The pipelina can be subdivided in 3 main steps:
+The pipeline can be subdivided in 3 main steps:
 1) The measure extraction: in this step the  user can choose the measure to extract and its parameters as sampling frequency, cut
    frequencies to define the studied frequency bands, the number of epochs and the time window of each one and the starting time and,
    finally, extract it
 2) The epochs averaging: in this step the user can compute the averanging of the measure values of each epoch end subdivide the studied
    subjects in their group (patients or healthy controls)
 3) The analysis: in this step,, the user can choose the analysis to compute and their parameters
-
-<script src="mermaid.min.js"></script>
-<script>mermaid.initialize({startOnLoad:true});</script>
-<div class="mermaid">
-    graph TD;
-  A[Study Type Selection] -- Guided mode --> B[Measure Selection];
-  B --> C[Measure Parameters Selection];
-  C --> D[Epochs Average and Group Subdivision];
-  D --> E[Analysis Selection];
-  A -- Batch mode --> F[Instruction File Selection];
-</div>
 
 
 ## Measure extraction
