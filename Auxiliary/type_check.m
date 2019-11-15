@@ -13,14 +13,14 @@
 %       connectivity measure, as 0 otherwise
 
 function [type, connCheck] = type_check(measure)
-    type = char_check(measure);
+    type = string(measure);
     connCheck = 0;
     if sum(strcmp(measure, ["PLI", "PLV", "AEC", "AECo"]))
-        type = 'CONN';
+        type = "CONN";
         connCheck = 1;
     elseif strcmp(measure, "exponent")
-        type = 'EXP';
+        type = "EXP";
     elseif strcmp(measure, "offset")
-        type = 'OFF';
+        type = "OFF";
     end
 end

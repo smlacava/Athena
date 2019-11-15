@@ -145,7 +145,7 @@ function Run_Callback(hObject, eventdata, handles)
     epTime = str2double(get(handles.epTime_text, 'String'));
     tStart = str2double(get(handles.tStart_text, 'String'));
     totBand = str2double(split(get(handles.totBand_text, 'String'), ' '))';
-    measure = get(handles.aux_measure, 'String');
+    measure = string(get(handles.aux_measure, 'String'));
     
     [type, connCheck] = type_check(measure);
     

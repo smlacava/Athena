@@ -17,7 +17,7 @@ function varargout = Athena(varargin)
     end
 
 
-function Athena_OpeningFcn(hObject, eventdata, handles, varargin)
+function Athena_OpeningFcn(hObject, ~, handles, varargin)
     handles.output = hObject;
     guidata(hObject, handles);
     myImage = imread('untitled3.png');
@@ -46,18 +46,18 @@ function Athena_OpeningFcn(hObject, eventdata, handles, varargin)
     end
 
     
-function varargout = Athena_OutputFcn(hObject, eventdata, handles) 
+function varargout = Athena_OutputFcn(~, ~, handles) 
     varargout{1} = handles.output;
 
 
-function back_Callback(hObject, eventdata, handles)
+function back_Callback(~, ~, ~)
     close(Athena)
 
     
-function axes3_CreateFcn(hObject, eventdata, handles)
+function axes3_CreateFcn(~, ~, ~)
 
 
-function guided_Callback(hObject, eventdata, handles)
+function guided_Callback(~, ~, handles)
     [dataPath, measure, sub, loc] = GUI_transition(handles);
     close(Athena)
     Athena_guided(dataPath, measure, sub, loc)

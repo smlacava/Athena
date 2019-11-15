@@ -33,7 +33,7 @@ function []=connectivity(fs, cf, nEpochs, dt, inDir, tStart, outTypes)
     askList = 'Insert the connectivity measures separated by a comma';
     
 	dt = fs*dt;
-    tStart = tStart*fs; 
+    tStart = tStart*fs+1; 
     nBands = length(cf)-1;
     
     PLInames = ["pli", "PLI", "Pli"];
@@ -97,8 +97,8 @@ function []=connectivity(fs, cf, nEpochs, dt, inDir, tStart, outTypes)
             conn = zeros(nBands, nEpochs, nLoc, nLoc);
             for j = 1:nBands
                 for k = 1:nEpochs
-                    ti = ((k-1)*dt)+tStart+1;
-                    tf = k*dt+tStart;
+                    ti = ((k-1)*dt)+tStart;
+                    tf = k*dt+tStart-1;
                     data = athena_filter(time_series(:, ti:tf), fs, ...
                         cf(j), cf(j+1));                 
                     data = data';

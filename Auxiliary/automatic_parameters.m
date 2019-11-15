@@ -51,7 +51,7 @@ function [epNum, epTime, totBand] = automatic_parameters(handles, ...
     if strcmp(modified_param, "epTime")
         epTime = str2double(get(handles.epTime_text, 'String'));
         epNum = floor((totlen-tStart)/epTime);
-        if str2double(get(handles.epNum_text, 'String')) < epNum
+        if str2double(get(handles.epNum_text, 'String')) > epNum
             problem("The total time is higher than the time series one")
         end
     end
