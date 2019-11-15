@@ -138,14 +138,16 @@ function Run_Callback(hObject, eventdata, handles)
         problem('You forgot to select the data directory')
         return
     end
-    dataPath = path_check(dataPath);
+    dataPath = string(path_check(dataPath));
     meas_state = get(handles.meas, 'Value');
-    params_GUI = {@Athena_params_psd, @Athena_params_PLV, ...
-        @Athena_params_PLI, @Athena_params_AEC, @Athena_params_AECc, ...
-        @Athena_params_offset, @Athena_params_exponent};
-    meas_GUI = params_GUI{meas_state};
+    %params_GUI = {@Athena_params_psd, @Athena_params_PLV, ...
+        %@Athena_params_PLI, @Athena_params_AEC, @Athena_params_AECc, ...
+        %@Athena_params_offset, @Athena_params_exponent};
+    %meas_GUI = params_GUI{meas_state};
+    measure = measures(meas_state);
     close(Athena_guided)
-    meas_GUI(string(dataPath), measures(meas_state), sub, loc);
+    %meas_GUI(dataPath, measure, sub, loc);
+    Athena_params(dataPath, measure, sub, loc)
     
     
 function data_search_Callback(hObject, eventdata, handles)

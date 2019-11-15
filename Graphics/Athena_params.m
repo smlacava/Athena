@@ -1,9 +1,9 @@
-function varargout = Athena_params_psd(varargin)
+function varargout = Athena_params(varargin)
     gui_Singleton = 1;
     gui_State = struct('gui_Name',       mfilename, ...
                    'gui_Singleton',  gui_Singleton, ...
-                   'gui_OpeningFcn', @Athena_params_psd_OpeningFcn, ...
-                   'gui_OutputFcn',  @Athena_params_psd_OutputFcn, ...
+                   'gui_OpeningFcn', @Athena_params_OpeningFcn, ...
+                   'gui_OutputFcn',  @Athena_params_OutputFcn, ...
                    'gui_LayoutFcn',  [] , ...
                    'gui_Callback',   []);
     if nargin && ischar(varargin{1})
@@ -17,7 +17,7 @@ function varargout = Athena_params_psd(varargin)
     end
 
     
-function Athena_params_psd_OpeningFcn(hObject, eventdata, handles, ...
+function Athena_params_OpeningFcn(hObject, eventdata, handles, ...
     varargin)
     handles.output = hObject;
     guidata(hObject, handles);
@@ -39,7 +39,15 @@ function Athena_params_psd_OpeningFcn(hObject, eventdata, handles, ...
         end
     end
     if nargin >= 5
-        set(handles.aux_measure, 'String', varargin{2})
+        measure = varargin{2};
+        set(handles.aux_measure, 'String', measure)
+        set(handles.Title, 'String', strcat("     Step 1: ", measure, ...
+            " extraction"))
+        if strcmp(measure, "PSDr")
+            set(handles.totBand, 'Visible', 'on')
+            set(handles.totBand_text, 'Visible', 'on')
+            set(handles.totBand_Hz, 'Visible', 'on')
+        end  
     end
     if nargin >= 6
         set(handles.aux_sub, 'String', varargin{3})
@@ -49,30 +57,15 @@ function Athena_params_psd_OpeningFcn(hObject, eventdata, handles, ...
     end
 
     
-function varargout = Athena_params_psd_OutputFcn(hObject, eventdata, ...
+function varargout = Athena_params_OutputFcn(hObject, eventdata, ...
     handles) 
     varargout{1} = handles.output;
 
 
 function fs_text_Callback(hObject, eventdata, handles)
-    dataPath = char_check(get(handles.aux_dataPath, 'String'));
-    dataPath = path_check(dataPath);
-    cases = define_cases(dataPath);
-    time_series = load_data(strcat(dataPath, cases(1).name));
-    fs = str2double(get(handles.fs_text, 'String'));
-    totlen = size(time_series, 2)/fs;
-    if (totlen>(12*4))
-        eplen = floor((totlen-12)/3);
-        set(handles.epNum_text, 'String', "3");
-    elseif (totlen>(12*3))
-        eplen = floor((totlen-12)/2);
-        set(handles.epNum_text, 'String', "2");
-    elseif (totlen>(12*2))
-        eplen = 12;
-        set(handles.epNum_text, 'String', "1");
-    end
-    set(handles.epTime_text, 'String', string(eplen));
-        
+    [epNum, epTime, ~] = automatic_parameters(handles, "fs");
+    set(handles.epNum_text, 'String', epNum)
+    set(handles.epTime_text, 'String', epTime)
 
 function fs_text_CreateFcn(hObject, eventdata, handles)
     if ispc && isequal(get(hObject, 'BackgroundColor'), ...
@@ -82,7 +75,8 @@ function fs_text_CreateFcn(hObject, eventdata, handles)
 
 
 function cf_text_Callback(hObject, eventdata, handles)
-
+    [~, ~, totBand] = automatic_parameters(handles, "cf");
+    set(handles.totBand_text, 'String', totBand)
 
 function cf_text_CreateFcn(hObject, eventdata, handles)
     if ispc && isequal(get(hObject, 'BackgroundColor'), ...
@@ -92,7 +86,8 @@ function cf_text_CreateFcn(hObject, eventdata, handles)
 
 
 function epNum_text_Callback(hObject, eventdata, handles)
-
+    [~, epTime, ~] = automatic_parameters(handles, "epNum");
+    set(handles.epTime_text, 'String', epTime)
 
 function epNum_text_CreateFcn(hObject, eventdata, handles)
     if ispc && isequal(get(hObject, 'BackgroundColor'), ...
@@ -102,7 +97,7 @@ function epNum_text_CreateFcn(hObject, eventdata, handles)
 
 
 function epTime_text_Callback(hObject, eventdata, handles)
-
+    [~, ~, ~] = automatic_parameters(handles, "epTime");
 
 function epTime_text_CreateFcn(hObject, eventdata, handles)
     if ispc && isequal(get(hObject, 'BackgroundColor'), ...
@@ -112,7 +107,9 @@ function epTime_text_CreateFcn(hObject, eventdata, handles)
 
 
 function tStart_text_Callback(hObject, eventdata, handles)
-
+    [epNum, epTime, ~] = automatic_parameters(handles, "tStart");
+    set(handles.epNum_text, 'String', epNum)
+    set(handles.epTime_text, 'String', epTime)
 
 function tStart_text_CreateFcn(hObject, eventdata, handles)
     if ispc && isequal(get(hObject, 'BackgroundColor'), ...
@@ -148,12 +145,17 @@ function Run_Callback(hObject, eventdata, handles)
     epTime = str2double(get(handles.epTime_text, 'String'));
     tStart = str2double(get(handles.tStart_text, 'String'));
     totBand = str2double(split(get(handles.totBand_text, 'String'), ' '))';
+    measure = get(handles.aux_measure, 'String');
     
-    type = 'PSDr';
-    measure = type;
-    connCheck = 0;
-        
-    PSDr(fs, cf, epNum, epTime, dataPath, tStart, totBand)
+    [type, connCheck] = type_check(measure);
+    
+    if strcmp(measure, "PSDr")
+        PSDr(fs, cf, epNum, epTime, dataPath, tStart, totBand)
+    elseif connCheck == 1
+        connectivity(fs, cf, epNum, epTime, dataPath, tStart, measure)
+    else
+        FOOOFer(fs, cf, epNum, epTime, dataPath, tStart, type)
+    end
     
     dataPathM = char(strcat(dataPath, ...
         char_check(get(handles.aux_measure, 'String'))));
@@ -170,7 +172,9 @@ function Run_Callback(hObject, eventdata, handles)
     fprintf(auxID, '\nepNum=%d', epNum);
     fprintf(auxID, '\nepTime=%d', epTime);
     fprintf(auxID, '\ntStart=%d', tStart);
-    fprintf(auxID, '\ntotBand=%d %d', totBand(1), totBand(2));
+    if strcmp(measure, "PSDr")
+        fprintf(auxID, '\ntotBand=%d %d', totBand(1), totBand(2));
+    end
     fprintf(auxID, '\ntype=%s', type);
     fprintf(auxID, '\nmeasure=%s', measure);
     fprintf(auxID, '\nconnCheck=%d', connCheck);
@@ -181,7 +185,7 @@ function Run_Callback(hObject, eventdata, handles)
 
 function back_Callback(hObject, eventdata, handles)
     [dataPath, measure, sub, loc] = GUI_transition(handles);
-    close(Athena_params_psd)
+    close(Athena_params)
     Athena_guided(dataPath, measure, sub, loc)
 
 
@@ -190,5 +194,6 @@ function axes3_CreateFcn(hObject, eventdata, handles)
 
 function next_Callback(~, eventdata, handles)
     [dataPath, measure, sub, loc] = GUI_transition(handles);
-    close(Athena_params_psd)
+    close(Athena_params)
     Athena_epmean(dataPath, measure, sub, loc)
+    
