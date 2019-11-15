@@ -1,5 +1,8 @@
+<!-- background: #aafaea -->
 # ATHENA
-![Image of logo](untitled3.png)
+<p align="center">
+  <img src="untitled3.png" width="200" title="hover text">
+</p>
 
 ***ATHENA*** *(Automatic Toolbox for Handling Efficient/Effortless/Experimental/Effective Neural Analyzes)* is a toolbox which allow 
 to automatically extract commonly analyzed measures, used to study neural time series, such as EEG and MEG. 
