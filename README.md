@@ -1,4 +1,3 @@
-<!-- background: #aafaea -->
 # ATHENA
 <p align="center">
   <img src="untitled3.png" width="200" title="hover text">
@@ -21,6 +20,17 @@ The pipelina can be subdivided in 3 main steps:
 2) The epochs averaging: in this step the user can compute the averanging of the measure values of each epoch end subdivide the studied
    subjects in their group (patients or healthy controls)
 3) The analysis: in this step,, the user can choose the analysis to compute and their parameters
+
+<script src="mermaid.min.js"></script>
+<script>mermaid.initialize({startOnLoad:true});</script>
+<div class="mermaid">
+    graph TD;
+  A[Study Type Selection] -- Guided mode --> B[Measure Selection];
+  B --> C[Measure Parameters Selection];
+  C --> D[Epochs Average and Group Subdivision];
+  D --> E[Analysis Selection];
+  A -- Batch mode --> F[Instruction File Selection];
+</div>
 
 
 ## Measure extraction
