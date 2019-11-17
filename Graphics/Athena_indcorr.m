@@ -101,6 +101,10 @@ function Run_Callback(hObject, eventdata, handles)
         dataPath = dataPath{1};
     end
     dataPath = path_check(dataPath);
+    if not(exist(dataPath, 'dir'))
+        problem(strcat("Directory ", dataPath, " not found"))
+        return
+    end
     cd(dataPath)
     EMflag = 0;
     LOCflag = 0;
@@ -149,9 +153,20 @@ function Run_Callback(hObject, eventdata, handles)
         addpath 'Graphics'
     
         Ind = get(handles.ind_text, 'String');
+        if not(exist(Ind, 'file'))
+            problem(strcat("File ", Ind, " not found"))
+            return
+        end
+        
         pat_corr_state = get(handles.PAT, 'Value');
         hc_corr_state = get(handles.HC, 'Value');
+        
         loc = get(handles.loc_text, 'String');
+        if not(exist(loc, 'file'))
+            problem(strcat("File ", loc, " not found"))
+            return
+        end
+    
         if LOCflag == 0
             fprintf(auxID, '\nLocations=%s', loc);
         end

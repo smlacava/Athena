@@ -108,6 +108,10 @@ function Run_Callback(hObject, eventdata, handles)
     addpath 'Graphics'
     dataPath = get(handles.dataPath_text, 'String');
     dataPath = path_check(dataPath);
+    if not(exist(dataPath, 'dir'))
+        problem(strcat("Directory ", dataPath, " not found"))
+        return
+    end
 
     anType=[];
     if get(handles.checkAsymmetry, 'Value') == 1

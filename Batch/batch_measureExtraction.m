@@ -19,7 +19,14 @@
 
 function []=batch_measureExtraction(measure, fs, cf, epNum, epTime, ...
     dataPath, tStart, totBand)
-
+    
+    cases = define_cases(dataPath);
+    time_series = load(strcat(dataPath, cases(1).name));
+    if length(time_series) < (tStart+(epNum*epTime))
+        problem("The time series has not enough samples")
+        return
+    end
+    
     if strcmp(measure, "PSDr")
         PSDr(fs, cf, epNum, epTime, dataPath, tStart, totBand)
     elseif sum(strcmp(measure, ["exponent", "offset"]))

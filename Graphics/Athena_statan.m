@@ -93,6 +93,10 @@ function Run_Callback(hObject, eventdata, handles)
     im = imread('untitled3.png');
     dataPath = get(handles.dataPath_text, 'String');
     dataPath = path_check(dataPath);
+    if not(exist(dataPath, 'dir'))
+    	problem(strcat("Directory ", dataPath, " not found"))
+        return
+    end
     cd(dataPath)
     EMflag = 0;
     LOCflag = 0;
@@ -138,6 +142,10 @@ function Run_Callback(hObject, eventdata, handles)
         addpath 'Graphics'
     
         loc = get(handles.loc_text, 'String');
+        if not(exist(loc, 'file'))
+            problem(strcat("File ", loc, " not found"))
+            return
+        end
         if LOCflag == 0
             fprintf(auxID, '\nLocations=%s', loc);
         end

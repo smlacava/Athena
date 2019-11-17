@@ -106,6 +106,10 @@ function Run_Callback(hObject, eventdata, handles)
     measure = char_check(get(handles.aux_measure, 'String'));
     dataPath = get(handles.dataPath_text, 'String');
     dataPath = path_check(dataPath);
+    if not(exist(dataPath, 'dir'))
+    	problem(strcat("Directory ", dataPath, " not found"))
+    	return
+    end
     cd(dataPath)
     
     if exist('auxiliary.txt', 'file')
@@ -134,6 +138,10 @@ function Run_Callback(hObject, eventdata, handles)
     addpath 'Epochs Analysis'
 
     loc = get(handles.loc_text, 'String');
+    if not(exist(loc, 'file'))
+        problem(strcat("File ", loc, " not found"))
+        return
+    end
     subList = get(handles.Subjects, 'String');
     subName = subList(get(handles.Subjects, 'Value'));
     

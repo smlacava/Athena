@@ -1,4 +1,4 @@
-%Athena (Automatic Toolbox for Handling Easy Neural Analyzes)
+Athena (Automatic Toolbox for Handling Easy Neural Analyzes)
 function varargout = Athena(varargin)
 
 % Begin initialization code

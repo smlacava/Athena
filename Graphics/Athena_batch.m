@@ -95,6 +95,11 @@ function Run_Callback(~, eventdata, handles)
     true = ["True", "true", "TRUE", "t", "1", "OK", "ok"];
 	dataFile = char_check(get(handles.dataPath_text, 'String'));
     
+    if not(exist(dataFile, 'file'))
+        problem(strcat("File ", dataFile, " not found"))
+        return
+    end
+    
     [dataPath, fs, cf, epNum, epTime, tStart, totBand, measure, ...
     Subjects, locations, Index, MeasureExtraction, EpochsAverage, ...
     EpochsAnalysis, IndexCorrelation, StatisticalAnalysis, ...
@@ -149,6 +154,10 @@ function Run_Callback(~, eventdata, handles)
     end
     
     if sum(strcmp(EpochsAnalysis, true))
+        if not(exist(locations, 'file'))
+        problem(strcat("File ", locations, " not found"))
+        return
+    end
         for i = 1:length(Areas_EA)
             epochs_analysis(measurePath, Subject, ...
                 areas_check(Areas_EA{i,1}), measure, epNum, nBands, ...
@@ -170,6 +179,10 @@ function Run_Callback(~, eventdata, handles)
         
         Subjects = load_data(Subjects);
         if sum(strcmp(IndexCorrelation, true))
+            if not(exist(Index, 'file'))
+                problem(strcat("File ", Index, " not found"))
+                return
+            end
             for i = 1:length(Areas_IC)
                 if strcmp(Group_IC, 'PAT')
                     sub = Subjects(Subjects(:, end) == 1, 1);

@@ -91,6 +91,10 @@ function Run_Callback(hObject, eventdata, handles)
     im = imread('untitled3.png');
     dataPath = get(handles.dataPath_text, 'String');
     dataPath = path_check(dataPath);
+    if not(exist(dataPath, 'dir'))
+        problem(strcat("Directory ", dataPath, " not found"))
+        return
+    end
     cd(dataPath)
     
     funDir = which('Athena.m');
@@ -103,6 +107,10 @@ function Run_Callback(hObject, eventdata, handles)
     pat_state = get(handles.PAT, 'Value');
     hc_state = get(handles.HC, 'Value');
     loc = get(handles.loc_text, 'String');
+    if not(exist(loc, 'file'))
+        problem(strcat("File ", loc, " not found"))
+        return
+    end
     minCons_state = get(handles.minCons, 'Value');
     maxCons_state = get(handles.maxCons, 'Value');
     

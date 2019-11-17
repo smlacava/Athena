@@ -17,7 +17,7 @@ function varargout = Athena_submaking(varargin)
     end
 
 
-function Athena_submaking_OpeningFcn(hObject, eventdata, handles, varargin)
+function Athena_submaking_OpeningFcn(hObject, ~, handles, varargin)
     handles.output = hObject;
     guidata(hObject, handles);
     myImage = imread('untitled3.png');
@@ -27,40 +27,61 @@ function Athena_submaking_OpeningFcn(hObject, eventdata, handles, varargin)
     axes(handles.axes3);
     imshow(myImage);
     set(handles.axes3, 'Units', 'normalized');
-    cases = define_cases('');
-    n = length(cases);
-    subs = string(zeros(n, 1));
-    for i = 1:n
-        aux_s = cases(i).name;
-        aux_s = split(aux_s, '.');
-        subs(i) = aux_s{1};
+    if nargin >= 4
+        dataPath = varargin{1};
+        set(handles.aux_dataPath, 'String', dataPath)
+        cd(dataPath)
+        cases = define_cases('');
+        n = length(cases);
+        subs = string(zeros(n, 1));
+        for i = 1:n
+            aux_s = cases(i).name;
+            aux_s = split(aux_s, '.');
+            subs(i) = aux_s{1};
+        end
+        set(handles.subs, 'String', subs);
+        set(handles.subs, 'Max', n, 'Min', 0);
     end
-    set(handles.subs, 'String', subs);
-    set(handles.subs, 'Max', n, 'Min', 0);
+    if nargin >= 5
+        set(handles.aux_measure, 'String', varargin{2})
+    end
+    if nargin >= 6
+        set(handles.aux_sub, 'String', varargin{3})
+    end
+    if nargin == 7
+        loc = varargin{4};
+        if not(strcmp(loc, "Static Text"))
+            set(handles.loc_text, 'String', loc)
+        end
+    end
     
 
-function varargout = Athena_submaking_OutputFcn(hObject, eventdata, handles) 
+function varargout = Athena_submaking_OutputFcn(~, ~, handles) 
     varargout{1} = handles.output;
 
 
-function back_Callback(hObject, eventdata, handles)
+function back_Callback(~, ~, handles)
+    [dataPath, measure, ~, loc] = GUI_transition(handles);
+    sub = string(get(handles.dataPath, 'String'));
+    sub = strcat(path_check(sub), 'Subjects.mat');
+    Athena_epmean(dataPath, measure, sub, loc)
     close(Athena_submaking)
     
 
-function axes3_CreateFcn(hObject, eventdata, handles)
+function axes3_CreateFcn(~, ~, ~)
 
 
-function subs_Callback(hObject, eventdata, handles)
+function subs_Callback(~, ~, ~)
 
 
-function subs_CreateFcn(hObject, eventdata, handles)
+function subs_CreateFcn(hObject, ~, ~)
     if ispc && isequal(get(hObject, 'BackgroundColor'), ...
         get(0, 'defaultUicontrolBackgroundColor'))
         set(hObject, 'BackgroundColor', 'white');
     end
 
 
-function save_Callback(hObject, eventdata, handles)
+function save_Callback(~, ~, handles)
     auxDir = pwd;
     funDir = which('Athena.m');
     funDir = split(funDir, 'Athena.m');
@@ -84,17 +105,17 @@ function save_Callback(hObject, eventdata, handles)
 
 
 
-function dataPath_Callback(hObject, eventdata, handles)
+function dataPath_Callback(~, ~, ~)
 
 
-function dataPath_CreateFcn(hObject, eventdata, handles)
+function dataPath_CreateFcn(hObject, ~, ~)
     if ispc && isequal(get(hObject, 'BackgroundColor'), ...
         get(0, 'defaultUicontrolBackgroundColor'))
         set(hObject, 'BackgroundColor', 'white');
     end
 
 
-function search_dir_Callback(hObject, eventdata, handles)
+function search_dir_Callback(~, ~, handles)
     d = uigetdir;
     if d ~= 0
         set(handles.dataPath, 'String', d)

@@ -78,6 +78,11 @@ function dataPath_text_CreateFcn(hObject, eventdata, handles)
 function Run_Callback(hObject, eventdata, handles)
     dataPath = get(handles.dataPath_text, 'String');
     dataPath = path_check(dataPath);
+    if not(exist(dataPath, 'dir'))
+    	problem(strcat("Directory ", dataPath, " not found"))
+    	return
+    end
+        
     EMflag = 0;
     cd(dataPath)
     if exist('auxiliary.txt', 'file')
@@ -106,6 +111,10 @@ function Run_Callback(hObject, eventdata, handles)
     addpath 'Graphics'
     
     sub = get(handles.subjectsFile, 'String');
+    if not(exist(sub, 'file'))
+    	problem(strcat("File ", sub, " not found"))
+    	return
+    end
     epmean_and_manage(dataPath, type, sub);
     dataPath = strcat(dataPath,'Epmean');
     dataPath = path_check(dataPath);
@@ -176,6 +185,8 @@ function meaext_Callback(hObject, eventdata, handles)
     Athena_guided(dataPath, measure, sub, loc)
 
 
-function subMaking_Callback(hObject, eventdata, handles)
-    cd(get(handles.dataPath_text, 'String'))
-    Athena_submaking
+function subMaking_Callback(~, ~, handles)
+    [dataPath, measure, ~, loc] = GUI_transition(handles, 'sub');
+    sub = string(get(handles.subjectsFile, 'String'));
+    Athena_submaking(dataPath, measure, sub, loc)
+    close(Athena_epmean)
