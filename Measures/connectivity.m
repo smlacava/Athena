@@ -91,7 +91,11 @@ function []=connectivity(fs, cf, nEpochs, dt, inDir, tStart, outTypes)
 
     for c = 1:length(outTypes)
         for i = 1:length(cases)     
-            time_series = load_data(strcat(inDir, cases(i).name));
+            [time_series, fsOld] = load_data(strcat(inDir, cases(i).name));
+            if fsOld ~= fs
+                [p, q] = rat(fs/fsOld);
+                time_series = resample(time_series', p, q)';
+            end
             time_series = time_series(:, tStart:end);
             nLoc = size(time_series, 1);
             conn = zeros(nBands, nEpochs, nLoc, nLoc);

@@ -21,8 +21,12 @@ function [epNum, epTime, totBand] = automatic_parameters(handles, ...
     dataPath = char_check(get(handles.aux_dataPath, 'String'));
     dataPath = path_check(dataPath);
     cases = define_cases(dataPath);
-    time_series = load_data(strcat(dataPath, cases(1).name));
+    [time_series, fsOld] = load_data(strcat(dataPath, cases(1).name));
     fs = str2double(get(handles.fs_text, 'String'));
+    if fsOld ~= fs
+        [p, q] = rat(fs/fsOld);
+        time_series = resample(time_series', p, q)';
+    end
     totlen = size(time_series, 2)/fs;
     tStart = str2double(get(handles.tStart_text, 'String'));
     totBand = get(handles.totBand_text, 'String');

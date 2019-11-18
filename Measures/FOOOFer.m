@@ -108,16 +108,20 @@ function [] = FOOOFer(fs, cf, nEpochs, dt, inDir, tStart, outTypes, ...
     % initial setting
     settings = struct();
     settings.max_n_peaks = maxPeaks;
-    time_series = load_data(strcat(inDir, cases(1).name));
+    [time_series, fsOld] = load_data(strcat(inDir, cases(1).name));
+    if fsOld ~= fs
+        [p, q] = rat(fs/fsOld);
+        time_series = resample(time_series', p, q)';
+    end
     time_series = time_series(:, tStart:end);
     data = squeeze(time_series(1, 1:dt));           
-    [pxx, w] = pwelch(data, [], 0, [], fs);
+    [~, w] = pwelch(data, [], 0, [], fs);
     sup = [find(w > cf(1), 1), find(w > cf(1), 1)-1];
-    [x, y] = min([w(find(w > cf(1), 1))-cf(1), ...
+    [~, y] = min([w(find(w > cf(1), 1))-cf(1), ...
         cf(1)-w(find(w > cf(1), 1)-1)]);
     inferior = sup(y);
     sup = [find(w > cf(end), 1), find(w > cf(end), 1)-1];
-    [x,y] = min([w(find(w > cf(end), 1))-cf(end), ...
+    [~,y] = min([w(find(w > cf(end), 1))-cf(end), ...
         cf(end)-w(find(w > cf(end), 1)-1)]);
     superior = sup(y);
     f_range_ind = [inferior superior];
@@ -126,7 +130,11 @@ function [] = FOOOFer(fs, cf, nEpochs, dt, inDir, tStart, outTypes, ...
 
    
     for i = 1:length(cases)
-        time_series = load_data(strcat(inDir, cases(i).name));
+        [time_series, fsOld] = load_data(strcat(inDir, cases(i).name));
+        if fsOld ~= fs
+            [p, q] = rat(fs/fsOld);
+            time_series = resample(time_series', p, q)';
+        end
         time_series = time_series(:, tStart:end);
         nLoc = size(time_series, 1);
         offset = zeros(nEpochs, nLoc);   %epochs * locations

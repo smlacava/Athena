@@ -46,11 +46,14 @@ function [] = PSDr(fs, cf, nEpochs, dt, inDir, tStart, relBand)
     tStart = tStart*fs+1;
     inDir = path_check(inDir);
     
-    bandPower = zeros(nBands, 1);
     cases = define_cases(inDir);
 
     for i = 1:length(cases)
-        time_series = load_data(strcat(inDir, cases(i).name));
+        [time_series, fsOld] = load_data(strcat(inDir, cases(i).name));
+        if fsOld ~= fs
+            [p, q] = rat(fs/fsOld);
+            time_series = resample(time_series', p, q)';
+        end
         time_series = time_series(:, tStart:end);
         psdr = zeros(nBands, nEpochs, size(time_series, 1));
         for k = 1:nEpochs
@@ -63,13 +66,13 @@ function [] = PSDr(fs, cf, nEpochs, dt, inDir, tStart, relBand)
                 for b = 1:nBands
                     fPre = [find(w > cf(b+cfstart), 1), ...
                         find(w > cf(b+cfstart), 1)-1];
-                    [x,y] = min([w(fPre(1))-cf(b+cfstart), ...
+                    [~,y] = min([w(fPre(1))-cf(b+cfstart), ...
                         cf(b+cfstart)-w(fPre(2))]);
                     infft = fPre(y);
                 
                     fPost = [find(w > cf(b+cfstart+1), 1), ...
                         find(w > cf(b+cfstart+1), 1)-1];
-                    [x,y] = min([w(fPost(1))-cf(b+cfstart+1), ...
+                    [~,y] = min([w(fPost(1))-cf(b+cfstart+1), ...
                         cf(b+cfstart+1)-w(fPost(2))]);
                     supft = fPost(y);
 
@@ -77,13 +80,13 @@ function [] = PSDr(fs, cf, nEpochs, dt, inDir, tStart, relBand)
                 end     
             
                 fPre = [find(w>relBand(1), 1), find(w > relBand(1), 1)-1];
-                [x, y] = min([w(fPre(1))-relBand(1), ...
+                [~, y] = min([w(fPre(1))-relBand(1), ...
                     relBand(1)-w(fPre(2))]);
                 infft = fPre(y);
                 
                 fPost = [find(w > relBand(end), 1), ...
                     find(w > relBand(end), 1)-1];
-                [x, y] = min([w(fPost(1))-relBand(end), ...
+                [~, y] = min([w(fPost(1))-relBand(end), ...
                     relBand(end)-w(fPost(2))]);
                 supft = fPost(y);
 

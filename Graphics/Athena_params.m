@@ -33,7 +33,7 @@ function Athena_params_OpeningFcn(hObject, eventdata, handles, ...
         dataPath = path_check(dataPath);
         set(handles.aux_dataPath, 'String', dataPath)
         cases = define_cases(dataPath);
-        [data, fs]=load_data(strcat(dataPath, cases(1).name));
+        [~, fs] = load_data(strcat(dataPath, cases(1).name));
         if not(isempty(fs))
             set(handles.fs_text, 'String', string(fs));
         end
@@ -57,12 +57,27 @@ function Athena_params_OpeningFcn(hObject, eventdata, handles, ...
     end
 
     
-function varargout = Athena_params_OutputFcn(hObject, eventdata, ...
-    handles) 
+function varargout = Athena_params_OutputFcn(~, ~, handles) 
     varargout{1} = handles.output;
 
 
 function fs_text_Callback(hObject, eventdata, handles)
+    dataPath = get(handles.aux_dataPath, 'String');
+    cases = define_cases(dataPath);
+    [~, fs_old] = load_data(strcat(dataPath, cases(1).name));
+    fs = str2double(get(handles.fs_text, 'String'));
+    if not(isempty(fs_old))
+        if fs < fs_old
+            set(handles.fs_text, 'String', string(fs));
+            set(handles.fs_res, 'String', 'resampling!');
+        elseif fs > fs_old
+            problem("The fs cannot be higher than the fs of the data");
+            set(handles.fs_text, 'String', string(fs_old));
+            return;
+        else
+            set(handles.fs_res, 'String', '');
+        end
+    end
     [epNum, epTime, ~] = automatic_parameters(handles, "fs");
     set(handles.epNum_text, 'String', epNum)
     set(handles.epTime_text, 'String', epTime)
