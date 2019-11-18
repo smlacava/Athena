@@ -79,6 +79,7 @@ The user can choose between N analysis:
 - **Measures Correlation analysis**: the user can verify the presence of a correlation in a group between the patterns of two different
        measures
 - **Epochs Analysis**: the user can study the variation of a measure through the epochs in every frequency band for a subject
+
 The user can also **merge the data of the significant results** of every previously computed statistical analysis in a csv file which
 can be used for a classification or other external analysis. 
 
