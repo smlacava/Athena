@@ -13,6 +13,10 @@ It is possible to choose between a guided or a batch mode:
 - The guide mode drive the user throw all the steps which compose the pipeline, allowing him to change parameters during the study
 - The batch mode allow the user to compute the entire study automatically, chosing all the parameters before starting it
 
+<p align="center">
+  <img src="pipeline_simple.png" width="600" title="hover text">
+</p>
+
 The *pipeline* provided by *ATHENA* can be subdivided in 3 main steps:
 1) The **measure extraction**: in this step the  user can choose the measure to extract and its parameters as sampling frequency, cut
    frequencies to define the studied frequency bands, the number of epochs and the time window of each one and the starting time and,
@@ -20,6 +24,10 @@ The *pipeline* provided by *ATHENA* can be subdivided in 3 main steps:
 2) The **epochs averaging**: in this step the user can compute the averanging of the measure values of each epoch end subdivide the studied
    subjects in their group (patients or healthy controls)
 3) The **analysis**: in this step,, the user can choose the analysis to compute and their parameters
+
+<p align="center">
+  <img src="pipeline_extended.png" width="800" title="hover text">
+</p>
 
 
 ## Measure extraction
@@ -71,6 +79,7 @@ The user can choose between N analysis:
 - **Measures Correlation analysis**: the user can verify the presence of a correlation in a group between the patterns of two different
        measures
 - **Epochs Analysis**: the user can study the variation of a measure through the epochs in every frequency band for a subject
+
 The user can also **merge the data of the significant results** of every previously computed statistical analysis in a csv file which
 can be used for a classification or other external analysis. 
 
