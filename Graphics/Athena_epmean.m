@@ -176,6 +176,11 @@ function sub_search_Callback(~, eventdata, handles)
 
 
 function meaext_Callback(hObject, eventdata, handles)
+    funDir = which('Athena.m');
+    funDir = split(funDir, 'Athena.m');
+    cd(funDir{1});
+    addpath 'Auxiliary'
+    addpath 'Graphics'
     [dataPath, measure, ~, loc] = GUI_transition(handles, 'sub');
     sub = get(handles.subjectsFile, 'String');
     if strcmp('es. C:\User\Sub.mat', sub)
@@ -186,6 +191,11 @@ function meaext_Callback(hObject, eventdata, handles)
 
 
 function subMaking_Callback(~, ~, handles)
+    funDir = which('Athena.m');
+    funDir = split(funDir, 'Athena.m');
+    cd(funDir{1});
+    addpath 'Auxiliary'
+    addpath 'Graphics'
     [dataPath, measure, ~, loc] = GUI_transition(handles, 'sub');
     sub = string(get(handles.subjectsFile, 'String'));
     Athena_submaking(dataPath, measure, sub, loc)

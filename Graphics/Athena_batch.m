@@ -385,6 +385,11 @@ function data_search_Callback(hObject, ~, handles)
 
 
 function back_Callback(hObject, eventdata, handles)
+    funDir = which('Athena.m');
+    funDir = split(funDir, 'Athena.m');
+    cd(funDir{1});
+    addpath 'Auxiliary'
+    addpath 'Graphics'
     [dataPath, measure, sub, loc] = GUI_transition(handles);
     close(Athena_batch)
     Athena(dataPath, measure, sub, loc)

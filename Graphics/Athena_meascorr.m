@@ -233,6 +233,11 @@ function data_search_Callback(hObject, eventdata, handles)
 
 
 function back_Callback(hObject, eventdata, handles)
+    funDir = which('Athena.m');
+    funDir = split(funDir, 'Athena.m');
+    cd(funDir{1});
+    addpath 'Auxiliary'
+    addpath 'Graphics'
     [dataPath, measure, sub, ~] = GUI_transition(handles, 'loc');
     loc = string(get(handles.loc_text, 'String'));
     if strcmp(loc, 'es. C:\User\Locations.mat')

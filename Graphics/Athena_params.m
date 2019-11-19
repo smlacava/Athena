@@ -33,9 +33,12 @@ function Athena_params_OpeningFcn(hObject, eventdata, handles, ...
         dataPath = path_check(dataPath);
         set(handles.aux_dataPath, 'String', dataPath)
         cases = define_cases(dataPath);
-        [~, fs] = load_data(strcat(dataPath, cases(1).name));
+        [data, fs] = load_data(strcat(dataPath, cases(1).name));
         if not(isempty(fs))
             set(handles.fs_text, 'String', string(fs));
+            TotTime = strcat("Sampling frequency detected: the signal", ...
+                " has a time window of ", string(length(data)/fs), " s ");
+            set(handles.TotTime, 'String', TotTime);
         end
     end
     if nargin >= 5
@@ -64,8 +67,9 @@ function varargout = Athena_params_OutputFcn(~, ~, handles)
 function fs_text_Callback(hObject, eventdata, handles)
     dataPath = get(handles.aux_dataPath, 'String');
     cases = define_cases(dataPath);
-    [~, fs_old] = load_data(strcat(dataPath, cases(1).name));
+    [data, fs_old] = load_data(strcat(dataPath, cases(1).name));
     fs = str2double(get(handles.fs_text, 'String'));
+    TotTime = "T";
     if not(isempty(fs_old))
         if fs < fs_old
             set(handles.fs_text, 'String', string(fs));
@@ -77,11 +81,18 @@ function fs_text_Callback(hObject, eventdata, handles)
         else
             set(handles.fs_res, 'String', '');
         end
+        TotTime = "Sampling frequency detected: t";
+        fs = fs_old;
     end
     [epNum, epTime, ~] = automatic_parameters(handles, "fs");
     set(handles.epNum_text, 'String', epNum)
     set(handles.epTime_text, 'String', epTime)
+    TotTime = strcat(TotTime, "he signal has a time window of ", ...
+        string(length(data)/fs), " s ");
+    set(handles.TotTime, 'String', TotTime);
 
+    
+    
 function fs_text_CreateFcn(hObject, eventdata, handles)
     if ispc && isequal(get(hObject, 'BackgroundColor'), ...
             get(0, 'defaultUicontrolBackgroundColor'))
@@ -199,6 +210,11 @@ function Run_Callback(hObject, eventdata, handles)
 
 
 function back_Callback(hObject, eventdata, handles)
+    funDir = which('Athena.m');
+    funDir = split(funDir, 'Athena.m');
+    cd(funDir{1});
+    addpath 'Auxiliary'
+    addpath 'Graphics'
     [dataPath, measure, sub, loc] = GUI_transition(handles);
     close(Athena_params)
     Athena_guided(dataPath, measure, sub, loc)
@@ -208,6 +224,11 @@ function axes3_CreateFcn(hObject, eventdata, handles)
 
 
 function next_Callback(~, eventdata, handles)
+    funDir = which('Athena.m');
+    funDir = split(funDir, 'Athena.m');
+    cd(funDir{1});
+    addpath 'Auxiliary'
+    addpath 'Graphics'
     [dataPath, measure, sub, loc] = GUI_transition(handles);
     close(Athena_params)
     Athena_epmean(dataPath, measure, sub, loc)

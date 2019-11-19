@@ -169,6 +169,11 @@ function meas_Callback(hObject, eventdata, handles)
 
 
 function back_Callback(hObject, eventdata, handles)
+    funDir = which('Athena.m');
+    funDir = split(funDir, 'Athena.m');
+    cd(funDir{1});
+    addpath 'Auxiliary'
+    addpath 'Graphics'
     [~, ~, sub, loc] = GUI_transition(handles, 'dataPath', 'measure');
     measures = ["PSDr", "PLV", "PLI", "AEC", "AECo", "offset", "exponent"];
     measure = measures(get(handles.meas, 'Value'));
@@ -184,6 +189,11 @@ function axes3_CreateFcn(hObject, eventdata, handles)
 
 
 function next_Callback(~, eventdata, handles)
+    funDir = which('Athena.m');
+    funDir = split(funDir, 'Athena.m');
+    cd(funDir{1});
+    addpath 'Auxiliary'
+    addpath 'Graphics'
     [~, ~, sub, loc] = GUI_transition(handles, 'dataPath', 'measure');
     measures = ["PSDr", "PLV", "PLI", "AEC", "AECo", "offset", "exponent"];
     measure = measures(get(handles.meas, 'Value'));

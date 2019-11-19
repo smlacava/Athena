@@ -1,4 +1,7 @@
 function problem(message)
+    funDir = which('Athena.m');
+    funDir = split(funDir, 'Athena.m');
+    cd(funDir{1});
     if nargin == 0
         message = 'We found some problems';
     end

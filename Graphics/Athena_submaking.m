@@ -61,6 +61,11 @@ function varargout = Athena_submaking_OutputFcn(~, ~, handles)
 
 
 function back_Callback(~, ~, handles)
+    funDir = which('Athena.m');
+    funDir = split(funDir, 'Athena.m');
+    cd(funDir{1});
+    addpath 'Auxiliary'
+    addpath 'Graphics'
     [dataPath, measure, ~, loc] = GUI_transition(handles);
     sub = string(get(handles.dataPath, 'String'));
     sub = strcat(path_check(sub), 'Subjects.mat');
