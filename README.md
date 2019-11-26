@@ -3,8 +3,8 @@
   <img src="icon.png" width="250" title="hover text">
 </p>
 
-***ATHENA*** *(Automatic Toolbox for Handling Efficient/Effortless/Experimental/Effective Neural Analysis)* is a toolbox which allow 
-to automatically extract commonly analyzed measures, used to study neural time series, such as EEG and MEG. 
+***ATHENA*** *(Automatic Toolbox for Handling Experimental Neural Analysis)* is a toolbox which allow to
+automatically extract commonly analyzed measures, used to study neural time series, such as EEG and MEG. 
 These measures, which can be connectivity, power or background measures, can be studied through this toolbox, through correlation and 
 statistical analysis.
 
