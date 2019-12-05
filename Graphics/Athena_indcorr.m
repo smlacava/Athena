@@ -58,9 +58,9 @@ function varargout = Athena_indcorr_OutputFcn(hObject, eventdata, handles)
 
 function dataPath_text_Callback(hObject, eventdata, handles)
     auxPath = pwd;
-    funDir = which('Athena.m');
-    funDir = split(funDir, 'Athena.m');
-    cd(funDir{1});
+    funDir = mfilename('fullpath');
+    funDir = split(funDir, 'Graphics');
+    cd(char(funDir{1}));
     addpath 'Auxiliary'
     addpath 'Graphics'
     addpath 'Epochs Analysis'
@@ -145,9 +145,9 @@ function Run_Callback(hObject, eventdata, handles)
         Athena_epmean
         cd(dataPath)
     else   
-        funDir = which('Athena.m');
-        funDir = split(funDir, 'Athena.m');
-        cd(funDir{1})
+        funDir = mfilename('fullpath');
+        funDir = split(funDir, 'Graphics');
+        cd(char(funDir{1}));
         addpath 'Index Correlation'
         addpath 'Auxiliary'
         addpath 'Graphics'
@@ -192,11 +192,11 @@ function Run_Callback(hObject, eventdata, handles)
         end
     
         if pat_corr_state == 1
-            sub = Subjects(Subjects(:,end) == 1, 1);
+            sub = Subjects(strcmp(string(Subjects(:,end)), "1"), 1);
             [RHO, P, RHOsig, locList] = index_correlation(PAT, Ind, ...
                 loc, connCheck, anType, cons, measure, sub);
         elseif hc_corr_state == 1
-            sub = Subjects(Subjects(:, end) == 0, 1);
+            sub = Subjects(strcmp(string(Subjects(:,end)), "1"), 1);
             [RHO, P, RHOsig, locList] = index_correlation(HC, Ind, loc, ...
                 connCheck, anType, cons, measure, sub);
         end
@@ -262,9 +262,9 @@ function meas_CreateFcn(hObject, eventdata, handles)
 
 
 function back_Callback(~, eventdata, handles)
-    funDir = which('Athena.m');
-    funDir = split(funDir, 'Athena.m');
-    cd(funDir{1});
+    funDir = mfilename('fullpath');
+    funDir = split(funDir, 'Graphics');
+    cd(char(funDir{1}));
     addpath 'Auxiliary'
     addpath 'Graphics'
     [dataPath, measure, sub, ~] = GUI_transition(handles, 'loc');

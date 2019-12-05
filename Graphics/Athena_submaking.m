@@ -30,7 +30,7 @@ function Athena_submaking_OpeningFcn(hObject, ~, handles, varargin)
     if nargin >= 4
         dataPath = varargin{1};
         set(handles.aux_dataPath, 'String', dataPath)
-        cd(dataPath)
+        cd(char(dataPath))
         cases = define_cases('');
         n = length(cases);
         subs = string(zeros(n, 1));
@@ -51,7 +51,7 @@ function Athena_submaking_OpeningFcn(hObject, ~, handles, varargin)
     if nargin == 7
         loc = varargin{4};
         if not(strcmp(loc, "Static Text"))
-            set(handles.loc_text, 'String', loc)
+            set(handles.aux_loc, 'String', loc)
         end
     end
     
@@ -61,9 +61,9 @@ function varargout = Athena_submaking_OutputFcn(~, ~, handles)
 
 
 function back_Callback(~, ~, handles)
-    funDir = which('Athena.m');
-    funDir = split(funDir, 'Athena.m');
-    cd(funDir{1});
+    funDir = mfilename('fullpath');
+    funDir = split(funDir, 'Graphics');
+    cd(char(funDir{1}));
     addpath 'Auxiliary'
     addpath 'Graphics'
     [dataPath, measure, ~, loc] = GUI_transition(handles);
@@ -87,26 +87,34 @@ function subs_CreateFcn(hObject, ~, ~)
 
 
 function save_Callback(~, ~, handles)
-    auxDir = pwd;
-    funDir = which('Athena.m');
-    funDir = split(funDir, 'Athena.m');
-    cd(funDir{1});
-    addpath 'Auxiliary'
-    addpath 'Graphics'
-    subList = get(handles.subs, 'String');
-    patList = get(handles.subs, 'Value');
-    n = length(subList);
-    subjects = [string(subList), string(zeros(n, 1))];
-    for i = 1:n
-        if sum(patList == i) > 0
-            subjects(i, 2) = 1;
-        end
-    end
     dataPath = get(handles.dataPath, 'String');
-    dataPath = path_check(char_check(dataPath));
-    save(strcat(dataPath, 'Subjects.mat'), 'subjects')
-    cd(auxDir)
-    success()
+    
+    if strcmp(dataPath, "es. C:\User\Data")
+        problem('Directory not selected');
+        
+    else
+        auxDir = pwd;
+        funDir = mfilename('fullpath');
+        funDir = split(funDir, 'Graphics');
+        cd(char(funDir{1}));
+        addpath 'Auxiliary'
+        addpath 'Graphics'
+    
+        subList = get(handles.subs, 'String');
+        patList = get(handles.subs, 'Value');
+        n = length(subList);
+        subjects = [string(subList), string(zeros(n, 1))];
+        for i = 1:n
+            if sum(patList == i) > 0
+                subjects(i, 2) = 1;
+            end
+        end
+        
+        dataPath = path_check(char_check(dataPath));
+        save(strcat(dataPath, 'Subjects.mat'), 'subjects')
+        cd(auxDir)
+        success()
+    end
 
 
 

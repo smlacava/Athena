@@ -134,9 +134,9 @@ function Run_Callback(hObject, eventdata, handles)
         Athena_epmean
         cd(dataPath)
     else    
-        funDir = which('Athena.m');
-        funDir = split(funDir, 'Athena.m');
-        cd(funDir{1});
+        funDir = mfilename('fullpath');
+        funDir = split(funDir, 'Graphics');
+        cd(char(funDir{1}));
         addpath 'Statistical Analysis'
         addpath 'Auxiliary'
         addpath 'Graphics'
@@ -253,9 +253,9 @@ function meas_CreateFcn(hObject, eventdata, handles)
 
 
 function back_Callback(hObject, eventdata, handles)
-    funDir = which('Athena.m');
-    funDir = split(funDir, 'Athena.m');
-    cd(funDir{1});
+    funDir = mfilename('fullpath');
+    funDir = split(funDir, 'Graphics');
+    cd(char(funDir{1}));
     addpath 'Auxiliary'
     addpath 'Graphics'
     [dataPath, measure, sub, ~] = GUI_transition(handles, 'loc');

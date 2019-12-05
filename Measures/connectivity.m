@@ -90,13 +90,13 @@ function []=connectivity(fs, cf, nEpochs, dt, inDir, tStart, outTypes)
 
 
     for c = 1:length(outTypes)
-        for i = 1:length(cases)     
+        for i = 1:length(cases) 
+            try
             [time_series, fsOld] = load_data(strcat(inDir, cases(i).name));
             if fsOld ~= fs
                 [p, q] = rat(fs/fsOld);
                 time_series = resample(time_series', p, q)';
             end
-            time_series = time_series(:, tStart:end);
             nLoc = size(time_series, 1);
             conn = zeros(nBands, nEpochs, nLoc, nLoc);
             for j = 1:nBands
@@ -126,6 +126,7 @@ function []=connectivity(fs, cf, nEpochs, dt, inDir, tStart, outTypes)
             end
             filename = strcat(outDir, strtok(cases(i).name, '.'), '.mat');
             save(filename, 'conn');
+            end %end try
             waitbar((i+(c-1)*length(cases))/...
                 (length(cases)*length(outTypes)), f)
         end

@@ -27,9 +27,9 @@ function Athena_OpeningFcn(hObject, ~, handles, varargin)
     axes(handles.axes3);
     imshow(myImage);
     set(handles.axes3,'Units','normalized');
-    funDir=which('Athena.m');
-    funDir=split(funDir,'Athena.m');
-    cd(funDir{1})
+    funDir = mfilename('fullpath');
+    funDir = split(funDir, 'Athena');
+    cd(char(funDir{1}));
     addpath 'Graphics'
     addpath 'Auxiliary'
     if nargin >= 4

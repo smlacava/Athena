@@ -54,9 +54,9 @@ function varargout = Athena_meascorr_OutputFcn(hObject, eventdata, handles)
 
 function dataPath_text_Callback(hObject, eventdata, handles)
     auxPath = pwd;
-    funDir = which('Athena.m');
-    funDir = split(funDir, 'Athena.m');
-    cd(funDir{1});
+    funDir = mfilename('fullpath');
+    funDir = split(funDir, 'Graphics');
+    cd(char(funDir{1}));
     addpath 'Auxiliary'
     addpath 'Graphics'
     addpath 'Epochs Analysis'
@@ -97,9 +97,9 @@ function Run_Callback(hObject, eventdata, handles)
     end
     cd(dataPath)
     
-    funDir = which('Athena.m');
-    funDir = split(funDir, 'Athena.m');
-    cd(funDir{1});
+    funDir = mfilename('fullpath');
+    funDir = split(funDir, 'Graphics');
+    cd(char(funDir{1}));
     addpath 'Measures Correlation'
     addpath 'Auxiliary'
     addpath 'Graphics'
@@ -233,9 +233,9 @@ function data_search_Callback(hObject, eventdata, handles)
 
 
 function back_Callback(hObject, eventdata, handles)
-    funDir = which('Athena.m');
-    funDir = split(funDir, 'Athena.m');
-    cd(funDir{1});
+    funDir = mfilename('fullpath');
+    funDir = split(funDir, 'Graphics');
+    cd(char(funDir{1}));
     addpath 'Auxiliary'
     addpath 'Graphics'
     [dataPath, measure, sub, ~] = GUI_transition(handles, 'loc');

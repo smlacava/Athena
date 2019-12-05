@@ -130,6 +130,7 @@ function [] = FOOOFer(fs, cf, nEpochs, dt, inDir, tStart, outTypes, ...
 
    
     for i = 1:length(cases)
+        try
         [time_series, fsOld] = load_data(strcat(inDir, cases(i).name));
         if fsOld ~= fs
             [p, q] = rat(fs/fsOld);
@@ -179,6 +180,7 @@ function [] = FOOOFer(fs, cf, nEpochs, dt, inDir, tStart, outTypes, ...
             save(filename, outTypes(s)); 
         end
         clear time_series
+        end %end try
         waitbar(i/length(cases), f)
     end
     close(f)

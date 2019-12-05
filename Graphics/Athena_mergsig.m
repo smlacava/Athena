@@ -101,9 +101,9 @@ function checkExponent_Callback(hObject, eventdata, handles)
 
 
 function Run_Callback(hObject, eventdata, handles)
-    funDir = which('Athena.m');
-    funDir = split(funDir,'Athena.m');
-    cd(funDir{1});
+    funDir = mfilename('fullpath');
+    funDir = split(funDir, 'Graphics');
+    cd(char(funDir{1}));
     addpath 'Auxiliary'
     addpath 'Graphics'
     dataPath = get(handles.dataPath_text, 'String');
@@ -230,9 +230,9 @@ function data_search_Callback(hObject, eventdata, handles)
 
 
 function back_Callback(hObject, eventdata, handles)
-    funDir = which('Athena.m');
-    funDir = split(funDir, 'Athena.m');
-    cd(funDir{1});
+    funDir = mfilename('fullpath');
+    funDir = split(funDir, 'Graphics');
+    cd(char(funDir{1}));
     addpath 'Auxiliary'
     addpath 'Graphics'
     [dataPath, measure, sub, loc] = GUI_transition(handles);

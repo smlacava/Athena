@@ -102,10 +102,9 @@ function Run_Callback(hObject, eventdata, handles)
         end
     end
     
-    funDir = which('Athena.m');
-    funDir = split(funDir, 'Athena.m');
-    funDir = funDir{1};
-    cd(funDir);
+    funDir = mfilename('fullpath');
+    funDir = split(funDir, 'Graphics');
+    cd(char(funDir{1}));
     addpath 'Epochs Management'
     addpath 'Auxiliary'
     addpath 'Graphics'
@@ -176,9 +175,9 @@ function sub_search_Callback(~, eventdata, handles)
 
 
 function meaext_Callback(hObject, eventdata, handles)
-    funDir = which('Athena.m');
-    funDir = split(funDir, 'Athena.m');
-    cd(funDir{1});
+    funDir = mfilename('fullpath');
+    funDir = split(funDir, 'Graphics');
+    cd(char(funDir{1}));
     addpath 'Auxiliary'
     addpath 'Graphics'
     [dataPath, measure, ~, loc] = GUI_transition(handles, 'sub');
@@ -191,9 +190,9 @@ function meaext_Callback(hObject, eventdata, handles)
 
 
 function subMaking_Callback(~, ~, handles)
-    funDir = which('Athena.m');
-    funDir = split(funDir, 'Athena.m');
-    cd(funDir{1});
+    funDir = mfilename('fullpath');
+    funDir = split(funDir, 'Graphics');
+    cd(char(funDir{1}));
     addpath 'Auxiliary'
     addpath 'Graphics'
     [dataPath, measure, ~, loc] = GUI_transition(handles, 'sub');

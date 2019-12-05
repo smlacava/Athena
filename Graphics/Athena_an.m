@@ -40,9 +40,9 @@ function Athena_an_OpeningFcn(hObject, eventdata, handles, varargin)
         set(handles.aux_loc, 'String', varargin{4})
     end
     auxPath = pwd;
-    funDir = which('Athena.m');
-    funDir = split(funDir, 'Athena.m');
-    cd(funDir{1});
+    funDir = mfilename('fullpath');
+    funDir = split(funDir, 'Graphics');
+    cd(char(funDir{1}));
     addpath 'Auxiliary'
     cd(auxPath)
     
@@ -59,9 +59,9 @@ function axes3_CreateFcn(hObject, eventdata, handles)
 
 
 function IndCorr_Callback(hObject, eventdata, handles)
-    funDir = which('Athena.m');
-    funDir = split(funDir, 'Athena.m');
-    cd(funDir{1});
+    funDir = mfilename('fullpath');
+    funDir = split(funDir, 'Graphics');
+    cd(char(funDir{1}));
     addpath 'Auxiliary'
     addpath 'Graphics'
     [dataPath, measure, sub, loc] = GUI_transition(handles);
@@ -70,9 +70,9 @@ function IndCorr_Callback(hObject, eventdata, handles)
 
 
 function MeasCorr_Callback(hObject, eventdata, handles)
-    funDir = which('Athena.m');
-    funDir = split(funDir, 'Athena.m');
-    cd(funDir{1});
+    funDir = mfilename('fullpath');
+    funDir = split(funDir, 'Graphics');
+    cd(char(funDir{1}));
     addpath 'Auxiliary'
     addpath 'Graphics'
     [dataPath, measure, sub, loc] = GUI_transition(handles);
@@ -81,9 +81,9 @@ function MeasCorr_Callback(hObject, eventdata, handles)
 
 
 function StatAn_Callback(hObject, eventdata, handles)
-    funDir = which('Athena.m');
-    funDir = split(funDir, 'Athena.m');
-    cd(funDir{1});
+    funDir = mfilename('fullpath');
+    funDir = split(funDir, 'Graphics');
+    cd(char(funDir{1}));
     addpath 'Auxiliary'
     addpath 'Graphics'
     [dataPath, measure, sub, loc] = GUI_transition(handles);
@@ -92,9 +92,9 @@ function StatAn_Callback(hObject, eventdata, handles)
 
 
 function clasData_Callback(hObject, eventdata, handles)
-    funDir = which('Athena.m');
-    funDir = split(funDir, 'Athena.m');
-    cd(funDir{1});
+    funDir = mfilename('fullpath');
+    funDir = split(funDir, 'Graphics');
+    cd(char(funDir{1}));
     addpath 'Auxiliary'
     addpath 'Graphics'
     [dataPath, measure, sub, loc] = GUI_transition(handles);
@@ -103,9 +103,9 @@ function clasData_Callback(hObject, eventdata, handles)
 
 
 function EpAn_Callback(hObject, eventdata, handles)
-    funDir = which('Athena.m');
-    funDir = split(funDir, 'Athena.m');
-    cd(funDir{1});
+    funDir = mfilename('fullpath');
+    funDir = split(funDir, 'Graphics');
+    cd(char(funDir{1}));
     addpath 'Auxiliary'
     addpath 'Graphics'
     [dataPath, measure, sub, loc] = GUI_transition(handles);
@@ -114,9 +114,9 @@ function EpAn_Callback(hObject, eventdata, handles)
 
     
 function meaext_Callback(hObject, eventdata, handles)
-    funDir = which('Athena.m');
-    funDir = split(funDir, 'Athena.m');
-    cd(funDir{1});
+    funDir = mfilename('fullpath');
+    funDir = split(funDir, 'Graphics');
+    cd(char(funDir{1}));
     addpath 'Auxiliary'
     addpath 'Graphics'
     [dataPath, measure, sub, loc] = GUI_transition(handles);
@@ -125,9 +125,9 @@ function meaext_Callback(hObject, eventdata, handles)
 
     
 function tempav_Callback(hObject, eventdata, handles)
-    funDir = which('Athena.m');
-    funDir = split(funDir, 'Athena.m');
-    cd(funDir{1});
+    funDir = mfilename('fullpath');
+    funDir = split(funDir, 'Graphics');
+    cd(char(funDir{1}));
     addpath 'Auxiliary'
     addpath 'Graphics'
     [dataPath, measure, sub, loc] = GUI_transition(handles);

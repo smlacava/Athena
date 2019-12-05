@@ -63,9 +63,9 @@ function varargout = Athena_epan_OutputFcn(hObject, eventdata, handles)
 
 function dataPath_text_Callback(hObject, eventdata, handles)
     auxPath = pwd;
-    funDir = which('Athena.m');
-    funDir = split(funDir, 'Athena.m');
-    cd(funDir{1});
+    funDir = mfilename('fullpath');
+    funDir = split(funDir, 'Graphics');
+    cd(char(funDir{1}));
     addpath 'Auxiliary'
     addpath 'Graphics'
     addpath 'Epochs Analysis'
@@ -110,7 +110,7 @@ function Run_Callback(hObject, eventdata, handles)
     	problem(strcat("Directory ", dataPath, " not found"))
     	return
     end
-    cd(dataPath)
+    cd(char(dataPath))
     
     if exist('auxiliary.txt', 'file')
         auxID = fopen('auxiliary.txt','r');
@@ -155,7 +155,7 @@ function Run_Callback(hObject, eventdata, handles)
         anType = 'areas';
     end
     epochs_analysis(dataPath, subName, anType, measure, epochs, bands, loc)    
-    cd(dataPath)
+    cd(char(dataPath))
        
 
 function data_search_Callback(hObject, eventdata, handles)
@@ -163,9 +163,9 @@ function data_search_Callback(hObject, eventdata, handles)
     if d ~= 0
         set(handles.dataPath_text, 'String', d)
         auxPath = pwd;
-        dataPath = get(handles.dataPath_text, 'String');
-        dataPath = path_check(dataPath);
-        cd(dataPath)
+        funDir = mfilename('fullpath');
+        funDir = split(funDir, 'Graphics');
+        cd(char(funDir{1}));
         if exist('auxiliary.txt', 'file')
             auxID = fopen('auxiliary.txt', 'r');
             fseek(auxID, 0, 'bof');
@@ -186,14 +186,14 @@ function data_search_Callback(hObject, eventdata, handles)
             end
             fclose(auxID);     
         end
-        cd(auxPath)
+        cd(char(auxPath))
     end
 
     
 function back_Callback(hObject, eventdata, handles)
-    funDir = which('Athena.m');
-    funDir = split(funDir, 'Athena.m');
-    cd(funDir{1});
+    funDir = mfilename('fullpath');
+    funDir = split(funDir, 'Graphics');
+    cd(char(funDir{1}));
     addpath 'Auxiliary'
     addpath 'Graphics'
     [dataPath, measure, sub, ~] = GUI_transition(handles, 'loc');

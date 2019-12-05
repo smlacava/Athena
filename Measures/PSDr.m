@@ -49,6 +49,7 @@ function [] = PSDr(fs, cf, nEpochs, dt, inDir, tStart, relBand)
     cases = define_cases(inDir);
 
     for i = 1:length(cases)
+        try
         [time_series, fsOld] = load_data(strcat(inDir, cases(i).name));
         if fsOld ~= fs
             [p, q] = rat(fs/fsOld);
@@ -106,6 +107,7 @@ function [] = PSDr(fs, cf, nEpochs, dt, inDir, tStart, relBand)
         filename = strcat(outDir, strtok(cases(i).name, '.'), '.mat');
     
         save(filename, 'psdr'); 
+        end %end try
         waitbar(i/length(cases), f)
     end
     close(f)
