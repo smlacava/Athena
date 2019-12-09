@@ -18,5 +18,5 @@ function cases = define_cases(dataPath)
     if isempty(cases)
         cases = dir(fullfile(dataPath, '*.edf'));
     end
-    cases = cases(not(contains({cases.name},'._')));
+    cases(strcmp(cases.name(1),'.'))=[];
 end
