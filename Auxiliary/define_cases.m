@@ -14,9 +14,15 @@
 
 function cases = define_cases(dataPath)
     dataPath = path_check(dataPath);
-    cases = dir(fullfile(char_check(dataPath), '*.mat'));
+    cases = check_cases(dir(fullfile(char_check(dataPath), '*.mat')));
     if isempty(cases)
-        cases = dir(fullfile(dataPath, '*.edf'));
+        cases = check_cases(dir(fullfile(dataPath, '*.edf')));
     end
-    cases = cases(not(contains({cases.name},'._')));
+end
+
+function cases = check_cases(cases)
+    toAvoid = {'._', 'Locations', 'Subjects', 'StatAn', 'Index'};
+    for i = 1: length(toAvoid)
+        cases = cases(not(contains({cases.name}, toAvoid{i})));
+    end
 end

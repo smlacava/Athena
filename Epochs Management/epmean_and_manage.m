@@ -64,7 +64,9 @@ function epmean_and_manage(inDir, type, subFile)
     for i = 1:length(cases)
         data = load_data(strcat(inDir, cases(i).name));
         for k = 1:nSUB
-            if strcmp(string(Subjects(k,1)), cases(i).name(1:3))
+            aux_case = split(cases(i).name, '.');
+            if contains(string(Subjects(k,1)), aux_case{1}) || ...
+                    contains(aux_case{1}, string(Subjects(k,1)))
                 if patient_check(Subjects(k, end))
                     if strcmp(type, 'CONN')
                         PAT(countPAT, :, :, :, :) = data;

@@ -70,5 +70,12 @@ function [data, fs, locs] = load_data(dataFile)
         fs = info.frequency(1);
         locs = info.label;
     end
+    
+    data(contains(locs, 'Annotations'),:)=[];
+    [r, c] = size(locs);
+    if r < c
+    	locs = locs';
+    end
+    locs(contains(locs, 'Annotations'),:)=[];
 end
     

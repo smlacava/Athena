@@ -175,8 +175,9 @@ function Run_Callback(hObject, eventdata, handles)
             break
             uiwait(msgbox('Temporal Avarage not computed', 'Error', ...
                 'custom', im));
+            [dataPath, measure, sub, loc] = GUI_transition(handles);
             close(Athena_meascorr)
-            Athena_epmean
+            Athena_epmean(dataPath, measure, sub, loc)
             cd(dataPath)
         else
             dataPathM = path_check(dataPathM);

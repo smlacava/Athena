@@ -130,8 +130,9 @@ function Run_Callback(hObject, eventdata, handles)
     if EMflag == 0
         uiwait(msgbox('Temporal Avarage not computed', 'Error', ...
             'custom', im));
+        [dataPath, measure, sub, loc] = GUI_transition(handles);
         close(Athena_statan)
-        Athena_epmean
+        Athena_epmean(dataPath, measure, sub, loc)
         cd(dataPath)
     else    
         funDir = mfilename('fullpath');

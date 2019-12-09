@@ -29,17 +29,25 @@ function Athena_params_OpeningFcn(hObject, eventdata, handles, ...
     imshow(myImage);
     set(handles.axes3, 'Units', 'normalized');
     if nargin >= 4
+        info = "";
         dataPath = varargin{1};
         dataPath = path_check(dataPath);
         set(handles.aux_dataPath, 'String', dataPath)
         cases = define_cases(dataPath);
-        [data, fs] = load_data(strcat(dataPath, cases(1).name));
+        [data, fs, locs] = load_data(strcat(dataPath, cases(1).name));
         if not(isempty(fs))
             set(handles.fs_text, 'String', string(fs));
-            TotTime = strcat("Sampling frequency detected: the signal", ...
-                " has a time window of ", string(length(data)/fs), " s ");
-            set(handles.TotTime, 'String', TotTime);
+            info = strcat("Sampling frequency detected: the signal", ...
+                " has a time window of ", string(length(data)/fs), " s \n");
         end
+        if not(isempty(locs))
+            info = strcat(info, "Locations detected: the locations", ...
+                " list will be saved in a file Locations.mat");
+            locPath = strcat(dataPath, 'Locations.mat');
+            save(locPath, 'locs');
+            set(handles.aux_loc, 'String', locPath);
+        end
+        set(handles.TotTime, 'String', info);
     end
     if nargin >= 5
         measure = varargin{2};
@@ -56,7 +64,9 @@ function Athena_params_OpeningFcn(hObject, eventdata, handles, ...
         set(handles.aux_sub, 'String', varargin{3})
     end
     if nargin == 7
-        set(handles.aux_loc, 'String', varargin{4})
+        if not(strcmp(varargin{4}, "Static Text"))
+            set(handles.aux_loc, 'String', varargin{4})
+        end
     end
 
     
