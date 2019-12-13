@@ -21,8 +21,9 @@ function cases = define_cases(dataPath)
 end
 
 function cases = check_cases(cases)
-    toAvoid = {'._', 'Locations', 'Subjects', 'StatAn', 'Index'};
-    for i = 1: length(toAvoid)
+    toAvoid = {'Locations', 'Subjects', 'StatAn', 'Index'};
+    for i = 1:length(toAvoid)
         cases = cases(not(contains({cases.name}, toAvoid{i})));
     end
+    cases = cases(not(strncmp({cases.name}, '.', 1)));   
 end

@@ -67,7 +67,7 @@ function back_Callback(~, ~, handles)
     addpath 'Auxiliary'
     addpath 'Graphics'
     [dataPath, measure, ~, loc] = GUI_transition(handles);
-    sub = string(get(handles.dataPath, 'String'));
+    sub = string(get(handles.aux_dataPath, 'String'));
     sub = strcat(path_check(sub), 'Subjects.mat');
     Athena_epmean(dataPath, measure, sub, loc)
     close(Athena_submaking)
@@ -87,7 +87,7 @@ function subs_CreateFcn(hObject, ~, ~)
 
 
 function save_Callback(~, ~, handles)
-    dataPath = get(handles.dataPath, 'String');
+    dataPath = get(handles.aux_dataPath, 'String');
     
     if strcmp(dataPath, "es. C:\User\Data")
         problem('Directory not selected');
@@ -114,22 +114,4 @@ function save_Callback(~, ~, handles)
         save(strcat(dataPath, 'Subjects.mat'), 'subjects')
         cd(auxDir)
         success()
-    end
-
-
-
-function dataPath_Callback(~, ~, ~)
-
-
-function dataPath_CreateFcn(hObject, ~, ~)
-    if ispc && isequal(get(hObject, 'BackgroundColor'), ...
-        get(0, 'defaultUicontrolBackgroundColor'))
-        set(hObject, 'BackgroundColor', 'white');
-    end
-
-
-function search_dir_Callback(~, ~, handles)
-    d = uigetdir;
-    if d ~= 0
-        set(handles.dataPath, 'String', d)
     end
