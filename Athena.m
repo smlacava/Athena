@@ -32,6 +32,15 @@ function Athena_OpeningFcn(hObject, ~, handles, varargin)
     cd(char(funDir{1}));
     addpath 'Graphics'
     addpath 'Auxiliary'
+    addpath 'Measures'
+    addpath 'Measures Correlation'
+    addpath 'Statistical Analysis'
+    addpath 'Index Correlation'
+    addpath 'Batch'
+    addpath 'Classification'
+    addpath 'Epochs Analysis'
+    addpath 'Epochs Management'
+    savepath
     if nargin >= 4
         set(handles.aux_dataPath, 'String', varargin{1})
     end
@@ -67,3 +76,8 @@ function batch_Callback(hObject, eventdata, handles)
     [dataPath, measure, sub, loc] = GUI_transition(handles);
     close(Athena)
     Athena_batch(dataPath, measure, sub, loc)
+    
+function display_Callback(hObject, eventdata, handles)
+    [dataPath, measure, sub, loc] = GUI_transition(handles);
+    close(Athena)
+    Athena_sigPath(dataPath, measure, sub, loc)

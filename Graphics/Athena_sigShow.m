@@ -34,24 +34,29 @@ function Athena_sigShow_OpeningFcn(hObject, eventdata, handles, ...
     addpath 'Auxiliary'
     addpath 'Graphics'
     if nargin >= 4
-        dataPath='D:\Ricerca\prova';
-        %dataPath = varargin{1};
+        dataPath = varargin{1};
         dataPath = path_check(dataPath);
         set(handles.aux_dataPath, 'String', dataPath)
         cases = define_cases(dataPath);
         case_name = split(cases(1).name, '.');
         case_name = case_name{1};
         set(handles.Title, 'String', strcat("    subject: ", case_name));
-        [data, fs] = load_data(strcat(dataPath, cases(1).name));
+        [data, fs, locs] = load_data(strcat(dataPath, cases(1).name));
+        if size(data, 1) > size(data, 2)
+            data = data';
+        end
+        set(handles.locs_matrix, 'Data', locs);
         set(handles.signal_matrix, 'Data', data);
         set(handles.case_number, 'String', '1');
         if not(isempty(fs))
             set(handles.fs_text, 'String', string(fs));
+            set(handles.fs_check, 'String', 'detected');
         else
-            set(handles.fs_text, 'String', '500');
-            fs = 500;
+            set(handles.fs_text, 'String', '1');
+            fs = 1;
+            set(handles.fs_check, 'String', 'not detected');
         end
-        sigPlot(handles, data, fs);
+        sigPlot(handles, data, fs, locs);
         
     end
     if nargin >= 5
@@ -69,23 +74,6 @@ function Athena_sigShow_OpeningFcn(hObject, eventdata, handles, ...
 function varargout = Athena_sigShow_OutputFcn(hObject, eventdata, ...
     handles) 
     varargout{1} = handles.output;
-
-
-function Run_Callback(hObject, eventdata, handles)
-    dataPath = char_check(get(handles.aux_dataPath, 'String'));
-    dataPath = path_check(dataPath);
-
-    funDir = mfilename('fullpath');
-    funDir = split(funDir, 'Graphics');
-    cd(char(funDir{1}));
-    addpath 'Measures'
-    addpath 'Auxiliary'
-    addpath 'Graphics'
-    
-    fs = str2double(get(handles.fs_text, 'String'));
-    data = get(handles.signal_matrix, 'Data');
-    totTime = fs*length(data);
-    
 
 
 function back_Callback(~, ~, handles)
@@ -130,18 +118,25 @@ function Previous_Callback(~, ~, handles)
     cases = define_cases(dataPath);
     case_max = length(cases);
     if case_number <= case_max && case_number > 0
-        [data, fs] = load_data(strcat(dataPath, cases(case_number).name));
+        [data, fs, locs] = load_data(strcat(dataPath, ...
+            cases(case_number).name));
+        if size(data, 1) > size(data, 2)
+            data = data';
+        end
         set(handles.signal_matrix, 'Data', data);
+        set(handles.locs_matrix, 'Data', locs);
         set(handles.case_number, 'String', case_number);
         if isempty(fs)
             fs = str2double(get(handles.fs_text, 'String'));
+            set(handles.fs_check, 'String', 'not detected');
         else
             set(handles.fs_text, 'String', string(fs));
+            set(handles.fs_check, 'String', 'detected');
         end
         case_name = split(cases(case_number).name, '.');
         case_name = case_name{1};
         set(handles.Title, 'String', strcat("    subject: ", case_name));
-        sigPlot(handles, data, fs)
+        sigPlot(handles, data, fs, locs)
     elseif case_number > length(cases)
         set(handles.case_number, 'String', string(case_max));
     else
@@ -174,32 +169,75 @@ function left_Callback(hObject, eventdata, handles)
     end
 
 
-% --------------------------------------------------------------------
 function fs_ClickedCallback(hObject, eventdata, handles)
-% hObject    handle to fs_text (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
+    try
+        fs_check = get(handles.fs_check, 'String');
+        data = get(handles.signal_matrix, 'Data');
+        locs = get(handles.locs_matrix, 'Data');
+        fs = str2double(get(handles.fs_text, 'String'));
+        if strcmp(fs, 'not detected')
+            fs = 1;
+        end
+        axis(handles.signal);
+        Lim = xlim;
+        Lim = floor(Lim/fs);
+        if strcmp(fs_check, 'not detected')
+            fs = value_asking(fs, 'Sampling frequency', ...
+                    'Insert the sampling frequency of the signal');
+            while fs <= 0
+                fs = value_asking(fs, 'Sampling frequency', ...
+                    'Insert the sampling frequency of the signal');
+            end 
+            set(handles.fs_text, 'String', string(fs));
+            sigPlot(handles, data, fs, locs, Lim(1), Lim(2))
+        else
+            problem('The sampling frequency is already setted in the file');
+        end
+    catch
+    end
 
 
-% --------------------------------------------------------------------
 function amplitude_ClickedCallback(hObject, eventdata, handles)
-% hObject    handle to amplitude (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
 
 
-% --------------------------------------------------------------------
 function time_window_ClickedCallback(hObject, eventdata, handles)
-% hObject    handle to time_window (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
+    try
+        data = get(handles.signal_matrix, 'Data');
+        fs = str2double(get(handles.fs_text, 'String'));
+        limit = size(data, 2)/fs;
+        Lim = xlim;
+        initialValue = (Lim(2)-Lim(1))/fs;
+        tw = value_asking(initialValue, 'Time window', ...
+            'Insert the wished time window', limit-floor(Lim(1)/fs));
+        while tw <= 0
+            tw = value_asking(initialValue, 'Time window', ...
+                'Insert the wished time window', limit);
+        end
+        set(handles.time_window_value, 'String', string(tw))
+        xlim([Lim(1) Lim(1)+tw*fs]);
+    catch
+    end
+    
 
-
-% --------------------------------------------------------------------
 function Go_to_ClickedCallback(hObject, eventdata, handles)
-% hObject    handle to Go_to (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
+    try
+        axes(handles.signal);
+        maxsize = max(size(get(handles.signal_matrix, 'Data')));
+        Lim = xlim;
+        fs = str2double(get(handles.fs_text, 'String'));
+        window = Lim(2)-Lim(1);
+        time = value_asking(floor(Lim(1)/fs), 'Go to...', ...
+            'Insert the time you want to inspect', ...
+            floor((maxsize-window)/fs));
+        Lim = [time*fs+1, time*fs+window];
+        if Lim(1) < 0
+            problem('The time cannot be less than 0');
+        else
+            xlim(Lim);
+        end
+    catch
+    end
+    
 
 function zoom_Callback(hObject, eventdata, handles)
     axis(handles.signal);
@@ -218,15 +256,21 @@ function zoom_Callback(hObject, eventdata, handles)
     hold off
     xlim(Lim);
     ylim([0 delta*(locations+2)]);
-    yticks([]);
+    locs = get(handles.locs_matrix, 'Data');
+    if not(isempty(locs))
+        yticks([1:locations]*delta);
+        yticklabels(locs);
+    end
     xticks(0:fs:Limit);
     xticklabels(string([0:floor(Limit/fs)]));
+    time_window(handles)
     
-function sigPlot(handles, data, fs, t_start, t_end)
+    
+function sigPlot(handles, data, fs, locs, t_start, t_end)
     switch nargin
-        case 3
+        case 4
             t_start = 0;
-            t_end = 10;
+            t_end = str2double(get(handles.time_window_value, 'String'));
     end
     mult = str2double(get(handles.mult, 'String'));
     axis(handles.signal);
@@ -243,6 +287,72 @@ function sigPlot(handles, data, fs, t_start, t_end)
     ylim([0 delta*(locations+2)]);
     xlim([t_start t_end]);
     Limit = max(size(data));
-    yticks([]);
+    if not(isempty(locs))
+        yticks([1:length(locs)]*delta);
+        yticklabels(locs);
+    end
     xticks(0:fs:Limit);
     xticklabels(string([0:floor(Limit/fs)]));
+    time_window(handles)
+
+
+function TimeToSave_ClickedCallback(hObject, eventdata, handles)
+    try
+        data = get(handles.signal_matrix, 'Data');
+        fs = str2double(get(handles.fs_text, 'String'));
+        time = str2double(get(handles.TimeToSave_text, 'String'));
+        time = value_asking(time, 'Time window', ...
+            'Insert the length of the time window to save', ...
+            max(size(data))/fs);
+        set(handles.TimeToSave_text, 'String', time);
+        time_window(handles);
+    catch
+    end
+    
+
+function tStart_text_Callback(hObject, eventdata, handles)
+    time_window(handles)
+    
+    
+function time_window(handles)
+    tStart = str2double(get(handles.tStart_text, 'String'));
+    fs = str2double(get(handles.fs_text, 'String'));
+    time = str2double(get(handles.TimeToSave_text, 'String'));
+    data = get(handles.signal_matrix, 'Data');
+    
+    axis(handles.signal);
+    hold on;
+    ymax = ylim;
+    ymax = 2*ceil(ymax(2));
+    window = xlim;
+    
+    children = get(gca, 'children');
+    if size(data, 1) < length(children)
+        delete(children(2))
+        delete(children(1))
+    end
+    
+    xStart = (fs*(tStart) + 1)*ones(1, 2);
+    xEnd = fs*(tStart+time)*ones(1, 2);
+    verticalLine = [0, ymax];
+    width = ceil((window(2)-window(1))/10000);
+    plot(xStart, verticalLine, 'k', 'LineWidth', width)
+    plot(xEnd, verticalLine, 'r', 'LineWidth', width)
+    hold off;
+    
+
+function Run_Callback(hObject, eventdata, handles)
+    dataPath = path_check(get(handles.aux_dataPath, 'String'));
+    subject = get(handles.Title, 'String');
+    data = get(handles.signal_matrix, 'Data');
+    tStart = str2double(get(handles.tStart_text, 'String'));
+    time_to_save = str2double(get(handles.TimeToSave_text, 'String'));
+    fs = str2double(get(handles.fs_text, 'String'));
+    
+    if not(exist(strcat(dataPath, 'Extracted'), 'dir'))
+        mkdir(dataPath, 'Extracted');
+    end
+    dataPath = path_check(strcat(dataPath, 'Extracted'));
+    dataPath = strcat(dataPath, subject(14:end), '.mat');
+    data = data(:, tStart*fs+1:(tStart+time_to_save)*fs);
+    save(dataPath, 'data');

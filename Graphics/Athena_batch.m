@@ -155,9 +155,9 @@ function Run_Callback(~, eventdata, handles)
     
     if sum(strcmp(EpochsAnalysis, true))
         if not(exist(locations, 'file'))
-        problem(strcat("File ", locations, " not found"))
-        return
-    end
+            problem(strcat("File ", locations, " not found"))
+            return
+        end
         for i = 1:length(Areas_EA)
             epochs_analysis(measurePath, Subject, ...
                 areas_check(Areas_EA{i,1}), measure, epNum, nBands, ...
