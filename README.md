@@ -25,6 +25,11 @@ The *pipeline* provided by *ATHENA* can be subdivided in 3 main steps:
    subjects in their group (patients or healthy controls)
 3) The **analysis**: in this step,, the user can choose the analysis to compute and their parameters
 
+<p align="center">
+  <img src="pipeline_extended.png" width="800" title="hover text">
+</p>
+
+
 It is also possible to **display the signals**, easily switching between them if they are contained in the same directory.
 The graphic interface allows:
 - To *zoom* or *dezoom* the signal for a better visualization
@@ -32,10 +37,6 @@ The graphic interface allows:
 - To select a *specific time instant* to look at
 - To *change the sampling frequency* (if it is not already present inside the signal files)
 - To *save a piece of signal*, by choosing the *starting time* and the *length of the time window* to save
-
-<p align="center">
-  <img src="pipeline_extended.png" width="800" title="hover text">
-</p>
 
 
 ## Measure extraction
