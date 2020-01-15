@@ -344,15 +344,22 @@ function time_window(handles)
 function Run_Callback(hObject, eventdata, handles)
     dataPath = path_check(get(handles.aux_dataPath, 'String'));
     subject = get(handles.Title, 'String');
-    data = get(handles.signal_matrix, 'Data');
+    locs = get(handles.locs_matrix, 'Data');
+    time_series = get(handles.signal_matrix, 'Data');
     tStart = str2double(get(handles.tStart_text, 'String'));
     time_to_save = str2double(get(handles.TimeToSave_text, 'String'));
     fs = str2double(get(handles.fs_text, 'String'));
+    
+    data = struct();
+    data.time_series = time_series(:, tStart*fs+1:(tStart+time_to_save)*fs);
+    data.fs = fs;
+    if not(isempty(locs))
+        data.locs = locs;
+    end
     
     if not(exist(strcat(dataPath, 'Extracted'), 'dir'))
         mkdir(dataPath, 'Extracted');
     end
     dataPath = path_check(strcat(dataPath, 'Extracted'));
     dataPath = strcat(dataPath, subject(14:end), '.mat');
-    data = data(:, tStart*fs+1:(tStart+time_to_save)*fs);
     save(dataPath, 'data');
