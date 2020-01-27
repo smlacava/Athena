@@ -297,6 +297,9 @@ function sigPlot(handles, data, fs, locs, t_start, t_end)
     axis(handles.signal);
     delta = max(max(abs(data)));
     locations = length(locs);
+    if locations == 0
+        locations = min(size(data));
+    end
     selected = sum(locs_ind);
     ylim([0 delta*(locations)]);
     t_end = t_end*fs;
