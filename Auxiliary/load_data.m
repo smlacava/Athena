@@ -47,6 +47,7 @@ function [data, fs, locs] = load_data(dataFile)
             end
             try
                 locs = {locs.labels};
+            catch
             end
             
             if isfield(data, 'data')

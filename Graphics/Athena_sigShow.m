@@ -45,6 +45,8 @@ function Athena_sigShow_OpeningFcn(hObject, eventdata, handles, ...
         if size(data, 1) > size(data, 2)
             data = data';
         end
+        locs_ind = location_index(locs, data);
+        set(handles.locs_ind, 'Data', locs_ind);
         set(handles.locs_matrix, 'Data', locs);
         set(handles.signal_matrix, 'Data', data);
         set(handles.case_number, 'String', '1');
@@ -123,8 +125,13 @@ function Previous_Callback(~, ~, handles)
         if size(data, 1) > size(data, 2)
             data = data';
         end
+        if isempty(locs)
+            locs = get(handles.locs_matrix, 'Data');
+        end
+        locs_ind = location_index(locs, data);
         set(handles.signal_matrix, 'Data', data);
         set(handles.locs_matrix, 'Data', locs);
+        set(handles.locs_ind, 'Data', locs_ind);
         set(handles.case_number, 'String', case_number);
         if isempty(fs)
             fs = str2double(get(handles.fs_text, 'String'));
@@ -167,6 +174,12 @@ function left_Callback(hObject, eventdata, handles)
     elseif Lim(1)+fs > 0
         xlim([1 Lim(2)-Lim(1)+1]);
     end
+    if fs == 1
+        Lim = xlim;
+        if Lim(1) > 1
+            xlim(Lim - 1);
+        end
+    end
 
 
 function fs_ClickedCallback(hObject, eventdata, handles)
@@ -177,6 +190,11 @@ function fs_ClickedCallback(hObject, eventdata, handles)
         fs = str2double(get(handles.fs_text, 'String'));
         if strcmp(fs, 'not detected')
             fs = 1;
+        end
+        if fs == 1
+            sliding_check = 1;
+        else 
+            sliding_check = 0;
         end
         axis(handles.signal);
         Lim = xlim;
@@ -189,7 +207,8 @@ function fs_ClickedCallback(hObject, eventdata, handles)
                     'Insert the sampling frequency of the signal');
             end 
             set(handles.fs_text, 'String', string(fs));
-            sigPlot(handles, data, fs, locs, Lim(1), Lim(2))
+            sigPlot(handles, data, fs, locs, Lim(1)-sliding_check, ...
+                Lim(2))
         else
             problem('The sampling frequency is already setted in the file');
         end
@@ -273,23 +292,30 @@ function sigPlot(handles, data, fs, locs, t_start, t_end)
             t_end = str2double(get(handles.time_window_value, 'String'));
     end
     mult = str2double(get(handles.mult, 'String'));
+    locs_ind = get(handles.locs_ind, 'Data');
+    locs = get(handles.locs_matrix, 'Data');
     axis(handles.signal);
     delta = max(max(abs(data)));
-    locations = size(data, 1);
+    locations = length(locs);
+    selected = sum(locs_ind);
     ylim([0 delta*(locations)]);
     t_end = t_end*fs;
     t_start = t_start*fs+1;
+    count = 1;
     for j = 1:locations
-        plot(data(j,:)*mult+delta*(j),'b');
-        hold on
+        if locs_ind(j) == 1
+            plot(data(j,:)*mult+delta*(count),'b');
+            count = count + 1;
+            hold on
+        end
     end
     hold off
-    ylim([0 delta*(locations+2)]);
+    ylim([0 delta*(selected+2)]);
     xlim([t_start t_end]);
     Limit = max(size(data));
     if not(isempty(locs))
-        yticks([1:length(locs)]*delta);
-        yticklabels(locs);
+        yticks([1:selected]*delta);
+        yticklabels(locs(locs_ind == 1));
     end
     xticks(0:fs:Limit);
     xticklabels(string([0:floor(Limit/fs)]));
@@ -349,12 +375,14 @@ function Run_Callback(hObject, eventdata, handles)
     tStart = str2double(get(handles.tStart_text, 'String'));
     time_to_save = str2double(get(handles.TimeToSave_text, 'String'));
     fs = str2double(get(handles.fs_text, 'String'));
+    locs_ind = get(handles.locs_ind, 'Data');
     
     data = struct();
-    data.time_series = time_series(:, tStart*fs+1:(tStart+time_to_save)*fs);
+    data.time_series = time_series(locs_ind == 1, ...
+        tStart*fs+1:(tStart+time_to_save)*fs);
     data.fs = fs;
     if not(isempty(locs))
-        data.locs = locs;
+        data.locs = locs(locs_ind == 1);
     end
     
     if not(exist(strcat(dataPath, 'Extracted'), 'dir'))
@@ -363,3 +391,56 @@ function Run_Callback(hObject, eventdata, handles)
     dataPath = path_check(strcat(dataPath, 'Extracted'));
     dataPath = strcat(dataPath, subject(14:end), '.mat');
     save(dataPath, 'data');
+    
+    
+function Loc_ClickedCallback(hObject, eventdata, handles)
+    try
+        msg = 'Select the file which contains the locations of the signal';
+        title = 'Locations file';
+        definput = get(handles.aux_loc, 'String');
+        if strcmp(definput, 'Static Text')
+            definput = 'es. C:\User\Locationsfile.mat';
+        end
+        filename = file_asking(definput, title, msg);
+        [data, ~, locs] = load_data(filename);
+        if isempty(locs)
+            locs = data;
+        end
+        locs(:, 2) = [];
+        set(handles.locs_matrix, 'Data', locs);
+        axis(handles.signal);
+        locs_ind = get(handles.locs_ind, 'Data');
+        delta = max(max(abs(get(handles.signal_matrix, 'Data'))));
+        yticks([1:length(locs)]*delta)
+        yticklabels(locs(locs_ind == 1))
+        set(handles.aux_loc, 'String', filename);
+    catch
+    end
+    
+    
+function LocsToShow_ClickedCallback(hObject, eventdata, handles)
+    locs = get(handles.locs_matrix, 'Data');
+    data = get(handles.signal_matrix, 'Data');
+    fs = str2double(get(handles.fs_text, 'String'));
+    current_ind = get(handles.locs_ind, 'Data');
+    locs_ind = Athena_locsSelecting(locs, current_ind);
+    waitfor(locs_ind);
+    selectedLocs = evalin('base', 'Athena_locsSelecting');
+    if isobject(selectedLocs)
+        close(selectedLocs)
+    end
+    evalin( 'base', 'clear Athena_locsSelecting' )
+    if sum(selectedLocs ~= 0) && not(isobject(selectedLocs))
+        locs_ind = zeros(length(locs), 1);
+        locs_ind(selectedLocs) = 1;
+        set(handles.locs_ind, 'Data', locs_ind);
+        sigPlot(handles, data, fs, locs)
+    end
+    
+    
+function locs_ind = location_index(locs, data)
+    locs_ind = ones(length(locs), 1);
+    if isempty(locs_ind)
+        locs_ind = ones(min(size(data)), 1);
+    end
+   

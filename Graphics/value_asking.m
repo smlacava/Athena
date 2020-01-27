@@ -21,15 +21,20 @@ function [answer] = value_asking(initialValue, title, msg, maxvalue)
         msg = strcat(msg, " (the maximum value has to be ", ...
             string(maxvalue), ")");
     end
+    answer = inputCheck(string_asking(definput, msg, title));    
     
-    answer = str2double(inputdlg(msg, title, [1 50], definput));
     while isnan(answer) || answer > maxvalue
-        if isnan(answer)
-            answer = str2double(inputdlg(...
-                ["Only integer numbers can be inserted" + newline + ...
-                msg], title, [1 50], definput));
+        if answer > maxvalue
+            answer = inputCheck(string_asking(definput, msg, title));
         else
-            answer = str2double(inputdlg(msg, title, [1 50], definput));
+            answer = inputCheck(string_asking(definput, ...
+                ["Only integer numbers can be inserted" + newline + ...
+                msg], title));
         end
     end   
+end
+
+function answer = inputCheck(value)
+    value = value{1,1};
+    answer = str2double(value);
 end
