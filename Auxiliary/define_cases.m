@@ -18,12 +18,35 @@ function cases = define_cases(dataPath)
     if isempty(cases)
         cases = check_cases(dir(fullfile(dataPath, '*.edf')));
     end
+    if isempty(cases)
+        toDelete = [];
+        cases = check_cases(dir(dataPath));
+        cases(strncmp({cases.name}, '.', 1),:) = [];
+        for i = 1:length(cases)
+            subject = check_cases(dir(fullfile(path_check(...
+                strcat(dataPath, cases(i).name)), '*.mat')));
+            if isempty(subject)
+                subject = check_cases(dir(fullfile(path_check(...
+                    strcat(dataPath, cases(i).name)), '*.edf')));
+            end
+            
+            if isempty(subject)
+                toDelete = [toDelete; i];
+            else
+                cases(i).name = strcat(path_check(cases(i).name), subject.name);
+            end
+        end
+        cases(toDelete) = [];
+    end     
 end
 
 function cases = check_cases(cases)
-    toAvoid = {'Locations', 'Subjects', 'StatAn', 'Index'};
+    toAvoid = {'Locations', 'Subjects', 'StatAn', 'Index', 'PSDr', ...
+        'AEC', 'AECc', 'AECo', 'offset', 'exponential', 'PLI', 'PLV'};
     for i = 1:length(toAvoid)
         cases = cases(not(contains({cases.name}, toAvoid{i})));
     end
     cases = cases(not(strncmp({cases.name}, '.', 1)));   
 end
+    
+    

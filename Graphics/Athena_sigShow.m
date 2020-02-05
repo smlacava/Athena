@@ -389,12 +389,22 @@ function Run_Callback(hObject, eventdata, handles)
     if not(isempty(locs))
         data.locs = locs(locs_ind == 1);
     end
-    
+
     if not(exist(strcat(dataPath, 'Extracted'), 'dir'))
         mkdir(dataPath, 'Extracted');
     end
+    sub_name = split(subject, '\');
+    if length(sub_name) == 1
+        sub_name = split(subject{1}, '/');
+    end
+    if length(sub_name) == 1
+        sub_name = subject(14:end);
+    else
+        sub_name = sub_name{2};
+    end
+    
     dataPath = path_check(strcat(dataPath, 'Extracted'));
-    dataPath = strcat(dataPath, subject(14:end), '.mat');
+    dataPath = strcat(dataPath, sub_name, '.mat');
     save(dataPath, 'data');
     
     
@@ -492,8 +502,9 @@ function reset_filtered(handles)
     set(handles.filt_check, 'String', 'Not filtered');
     set(handles.Filtered_button, 'BackgroundColor', [0.25 0.96 0.82]);
     
+    
 function [data, fmin, fmax] = get_data(handles)
-	if strcmp(get(handles.filt_button_check, 'String'), '1')
+    if strcmp(get(handles.filt_button_check, 'String'), '1')
     	data = get(handles.filt_matrix, 'Data');
         fmin = str2double(get(handles.fmin, 'String'));
         fmax = str2double(get(handles.fmax, 'String'));

@@ -176,7 +176,16 @@ function [] = FOOOFer(fs, cf, nEpochs, dt, inDir, tStart, outTypes, ...
             if not(exist(outDir, 'dir'))
                 mkdir(inDir, outTypes(s))
             end
-            filename = strcat(outDir, strtok(cases(i).name, '.'), '.mat');    
+            name = split(cases(i).name, '\');
+            if length(name) == 1
+                name = split(cases(i).name, '\');
+            end
+            if length(name) > 1
+                name = name{2};
+            else
+                name = cases(i).name;
+            end
+            filename = strcat(outDir, strtok(name, '.'), '.mat');    
             save(filename, outTypes(s)); 
         end
         clear time_series

@@ -104,7 +104,16 @@ function [] = PSDr(fs, cf, nEpochs, dt, inDir, tStart, relBand)
         if not(exist(outDir, 'dir'))
            mkdir(inDir, 'PSDr')
         end
-        filename = strcat(outDir, strtok(cases(i).name, '.'), '.mat');
+        name = split(cases(i).name, '\');
+        if length(name) == 1
+            name = split(cases(i).name, '\');
+        end
+        if length(name) > 1
+            name = name{2};
+        else
+            name = cases(i).name;
+        end
+        filename = strcat(outDir, strtok(name, '.'), '.mat');
     
         save(filename, 'psdr'); 
         end %end try
