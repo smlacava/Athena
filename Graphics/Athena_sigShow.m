@@ -143,6 +143,7 @@ function Previous_Callback(~, ~, handles)
         case_name = split(cases(case_number).name, '.');
         case_name = case_name{1};
         set(handles.Title, 'String', strcat("    subject: ", case_name));
+        reset_filtered(handles);
         sigPlot(handles, data, fs, locs)
     elseif case_number > length(cases)
         set(handles.case_number, 'String', string(case_max));
@@ -207,6 +208,7 @@ function fs_ClickedCallback(hObject, eventdata, handles)
                     'Insert the sampling frequency of the signal');
             end 
             set(handles.fs_text, 'String', string(fs));
+            reset_filtered(handles);
             sigPlot(handles, data, fs, locs, Lim(1)-sliding_check, ...
                 Lim(2))
         else
@@ -260,7 +262,7 @@ function Go_to_ClickedCallback(hObject, eventdata, handles)
 
 function zoom_Callback(hObject, eventdata, handles)
     axis(handles.signal);
-    data = get(handles.signal_matrix, 'Data');
+    data = get_data(handles);
     mult = str2double(get(handles.mult, 'String'));
     set(handles.mult_text, 'String', string(mult));
     fs = str2double(get(handles.fs_text, 'String'));
@@ -374,7 +376,7 @@ function Run_Callback(hObject, eventdata, handles)
     dataPath = path_check(get(handles.aux_dataPath, 'String'));
     subject = get(handles.Title, 'String');
     locs = get(handles.locs_matrix, 'Data');
-    time_series = get(handles.signal_matrix, 'Data');
+    [time_series, fmin, fmax] = get_data(handles);
     tStart = str2double(get(handles.tStart_text, 'String'));
     time_to_save = str2double(get(handles.TimeToSave_text, 'String'));
     fs = str2double(get(handles.fs_text, 'String'));
@@ -423,7 +425,7 @@ function Loc_ClickedCallback(hObject, eventdata, handles)
     
 function LocsToShow_ClickedCallback(hObject, eventdata, handles)
     locs = get(handles.locs_matrix, 'Data');
-    data = get(handles.signal_matrix, 'Data');
+    data = get_data(handles);
     fs = str2double(get(handles.fs_text, 'String'));
     current_ind = get(handles.locs_ind, 'Data');
     locs_ind = Athena_locsSelecting(locs, current_ind);
@@ -440,10 +442,67 @@ function LocsToShow_ClickedCallback(hObject, eventdata, handles)
         sigPlot(handles, data, fs, locs)
     end
     
+function Filter_ClickedCallback(hObject, eventdata, handles)
+    fmin = str2double(get(handles.fmin, 'String'));
+    fmax = str2double(get(handles.fmax, 'String'));
+    [fmin, fmax, check] = band_asking(fmin, fmax);
+    if check == 1
+        data = get(handles.signal_matrix, 'Data');
+        fs = str2double(get(handles.fs_text, 'String'));
+        filt_data = athena_filter(data, fs, fmin, fmax);
+        set(handles.filt_matrix, 'Data', filt_data);
+        set(handles.fmin, 'String', char(string(fmin)));
+        set(handles.fmax, 'String', char(string(fmax)));
+        set(handles.filt_check, 'String', 'filtered');
+    end
+    
+function Filtered_button_Callback(hObject, eventdata, handles)
+    locs = get(handles.locs_matrix, 'Data');
+    fs = str2double(get(handles.fs_text, 'String'));
+    filt_button_check = get(handles.filt_button_check, 'String');
+    if strcmp(get(handles.filt_check, 'String'), 'filtered')
+        if strcmp(filt_button_check, '0')
+            data = get(handles.filt_matrix, 'Data');
+            set(handles.filt_button_check, 'String', '1');
+            set(handles.Filtered_button, 'BackgroundColor', ...
+                [0.25 0.86 0.75]);
+        else
+            data = get(handles.signal_matrix, 'Data');
+            set(handles.filt_button_check, 'String', '0');
+            set(handles.Filtered_button, 'BackgroundColor', ...
+                [0.25 0.96 0.82]);
+        end
+        sigPlot(handles, data, fs, locs)
+    else
+        problem('The signal has not been filtered')
+    end
+
     
 function locs_ind = location_index(locs, data)
     locs_ind = ones(length(locs), 1);
     if isempty(locs_ind)
         locs_ind = ones(min(size(data)), 1);
     end
+    
+    
+function reset_filtered(handles)
+    set(handles.fmin, 'String', '0');
+    set(handles.fmax, 'String', 'Inf');
+    set(handles.filt_button_check, 'String', '0');
+    set(handles.filt_check, 'String', 'Not filtered');
+    set(handles.Filtered_button, 'BackgroundColor', [0.25 0.96 0.82]);
+    
+function [data, fmin, fmax] = get_data(handles)
+	if strcmp(get(handles.filt_button_check, 'String'), '1')
+    	data = get(handles.filt_matrix, 'Data');
+        fmin = str2double(get(handles.fmin, 'String'));
+        fmax = str2double(get(handles.fmax, 'String'));
+    else
+        data = get(handles.signal_matrix, 'Data');
+        fmin = 0;
+        fmax = Inf;
+    end
+        
+        
+    
    

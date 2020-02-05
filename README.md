@@ -36,7 +36,8 @@ The graphic interface allows:
 - To choose the *length of the time window* to show
 - To select a *specific time instant* to look at
 - To *change the sampling frequency* (if it is not already present inside the signal files)
-- To *save a piece of signal*, by choosing the *starting time* and the *length of the time window* to save
+- To *select the locations* to show
+- To *save a piece of signal*, by choosing the *starting time*, the *locations* and the *length of the time window* to save
 
 
 ## Measure extraction
