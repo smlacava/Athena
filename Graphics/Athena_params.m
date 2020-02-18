@@ -33,20 +33,13 @@ function Athena_params_OpeningFcn(hObject, eventdata, handles, ...
         dataPath = path_check(dataPath);
         set(handles.aux_dataPath, 'String', dataPath)
         cases = define_cases(dataPath);
-        [data, fs, locs] = load_data(strcat(dataPath, cases(1).name));
+        [data, fs] = load_data(strcat(dataPath, cases(1).name), 1);
         if not(isempty(fs))
             set(handles.fs_text, 'String', string(fs));
             info = strcat("Sampling frequency detected: the signal", ...
                 " has a time window of ", string(length(data)/fs), " s");
             set(handles.TotTime, 'String', info);
-        end
-        if not(isempty(locs))
-            info = strcat("Locations detected: the locations list ", ...
-                "will be saved in a file Locations.mat");
-            set(handles.TotLoc, 'String', info);
-            locPath = strcat(dataPath, 'Locations.mat');
-            save(locPath, 'locs');
-            set(handles.aux_loc, 'String', locPath);
+            fs_text_Callback(hObject, eventdata, handles);
         end
     end
     if nargin >= 5
@@ -58,6 +51,9 @@ function Athena_params_OpeningFcn(hObject, eventdata, handles, ...
             set(handles.totBand, 'Visible', 'on')
             set(handles.totBand_text, 'Visible', 'on')
             set(handles.totBand_Hz, 'Visible', 'on')
+        end  
+        if strcmp(measure, "offset") || strcmp(measure, "exponent")
+            set(handles.cf_text, 'String', '1 40')
         end  
     end
     if nargin >= 6
@@ -77,7 +73,7 @@ function varargout = Athena_params_OutputFcn(~, ~, handles)
 function fs_text_Callback(hObject, eventdata, handles)
     dataPath = get(handles.aux_dataPath, 'String');
     cases = define_cases(dataPath);
-    [data, fs_old] = load_data(strcat(dataPath, cases(1).name));
+    [data, fs_old] = load_data(strcat(dataPath, cases(1).name), 1);
     fs = str2double(get(handles.fs_text, 'String'));
     TotTime = "T";
     if not(isempty(fs_old))

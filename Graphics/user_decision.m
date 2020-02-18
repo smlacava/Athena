@@ -1,20 +1,35 @@
-function [answer] = user_decision(msg)
-    answer = 0;
-    if nargin == 0
-        msg = 'We found some problems, Do you want to continue?';
+function [answer] = user_decision(msg, title)
+    button_bc = [0.25 0.96 0.82];
+    button_fc = [0.05 0.02 0.8];
+    background = [0.67 0.98 0.92];
+    answer = 'no';
+    f = figure;
+    set(f, 'Position', [200 350 400 200], 'Color', background, ...
+        'MenuBar', 'none', 'Name', char(title), 'Visible', 'off', ...
+        'NumberTitle', 'off');
+    bc = [0.67 0.98 0.92];
+    ht = uicontrol('Style', 'text', 'Units', 'normalized', ...
+        'Position', [0.1 0.5 0.8 0.4], 'String', char(msg), ...
+        'FontUnits', 'normalized', 'FontSize', 0.2, ...
+        'BackgroundColor', bc, 'ForegroundColor', 'k');
+    hok = uicontrol('Style', 'pushbutton', 'String', 'yes',...
+        'Units', 'normalized', 'Position', [0.2 0.05 0.2 0.15], ...
+        'Callback', {@ok_Callback}, 'BackgroundColor', button_bc, ...
+        'ForegroundColor', button_fc); 
+    hno = uicontrol('Style', 'pushbutton', 'String', 'no',...
+        'Units', 'normalized', 'Position', [0.6 0.05 0.2 0.15], ...
+        'Callback', {@no_Callback}, 'BackgroundColor', button_bc, ...
+        'ForegroundColor', button_fc); 
+    movegui(f, 'center')
+    set(f, 'Visible', 'on')
+    waitfor(hno)
+    
+    function ok_Callback(hObject, eventdata)
+         answer = 'yes';
+         no_Callback(hObject, eventdata)
     end
-    im = imread('untitled3.png');
-    h = msgbox(msg, 'Error', 'custom', im);
-    yes = uicontrol('Parent', h, 'Style','pushbutton', 'String', 'YES', ...
-        'Callback', @pushbuttonYES_callback);
-    no = uicontrol('Parent', h, 'Style','pushbutton', 'String', 'NO', ...
-        'Callback', @pushbuttonNO_callback);
-    set(h, 'color', [0.67 0.98 0.92])
-end
 
-function [answer] = pushbuttonYES_callback(src,event)
-	answer = 1;
-end
-function [answer] = pushbuttonNO_callback(src,event)
-	answer = 0;
+    function no_Callback(hObject, eventdata)
+        close(f)
+    end
 end

@@ -395,12 +395,12 @@ function Run_Callback(hObject, eventdata, handles)
     end
     sub_name = split(subject, '\');
     if length(sub_name) == 1
-        sub_name = split(subject{1}, '/');
+        sub_name = split(subject, '/');
     end
     if length(sub_name) == 1
         sub_name = subject(14:end);
     else
-        sub_name = sub_name{2};
+        sub_name = sub_name{end};
     end
     
     dataPath = path_check(strcat(dataPath, 'Extracted'));
@@ -496,11 +496,17 @@ function locs_ind = location_index(locs, data)
     
     
 function reset_filtered(handles)
-    set(handles.fmin, 'String', '0');
-    set(handles.fmax, 'String', 'Inf');
     set(handles.filt_button_check, 'String', '0');
-    set(handles.filt_check, 'String', 'Not filtered');
     set(handles.Filtered_button, 'BackgroundColor', [0.25 0.96 0.82]);
+    try
+        fmin = str2double(get(handles.fmin, 'String'));
+        fmax = str2double(get(handles.fmax, 'String'));
+        fs = str2double(get(handles.fs_text, 'String'));
+        data = get(handles.signal_matrix, 'Data');
+        filt_data = athena_filter(data, fs, fmin, fmax);
+        set(handles.filt_matrix, 'Data', filt_data);
+    catch
+    end
     
     
 function [data, fmin, fmax] = get_data(handles)
@@ -511,7 +517,7 @@ function [data, fmin, fmax] = get_data(handles)
     else
         data = get(handles.signal_matrix, 'Data');
         fmin = 0;
-        fmax = Inf;
+        fmax = 1000;
     end
         
         

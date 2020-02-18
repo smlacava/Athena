@@ -44,11 +44,9 @@ function Athena_indcorr_OpeningFcn(hObject, eventdata, handles, varargin)
         set(handles.aux_sub, 'String', varargin{3})
     end
     if nargin == 7
-        loc = varargin{4};
-        if not(strcmp(loc, "Static Text"))
-            set(handles.loc_text, 'String', loc)
-        end
+        set(handles.aux_loc, 'String', varargin{4})
     end
+    set_handles(hObject, eventdata, handles)
 
 
     
@@ -57,34 +55,7 @@ function varargout = Athena_indcorr_OutputFcn(hObject, eventdata, handles)
 
 
 function dataPath_text_Callback(hObject, eventdata, handles)
-    auxPath = pwd;
-    funDir = mfilename('fullpath');
-    funDir = split(funDir, 'Graphics');
-    cd(char(funDir{1}));
-    addpath 'Auxiliary'
-    addpath 'Graphics'
-    addpath 'Epochs Analysis'
-    dataPath = get(handles.dataPath_text, 'String');
-    dataPath = path_check(dataPath);
-    cd(dataPath)
-    if exist('auxiliary.txt', 'file')
-        auxID = fopen('auxiliary.txt','r');
-        fseek(auxID, 0, 'bof');
-        while ~feof(auxID)
-            proper = fgetl(auxID);
-            if contains(proper, 'Locations=')
-                locations = split(proper, '=');
-                locations = locations{2};
-                set(handles.loc_text, 'String', locations)
-            elseif contains(proper, 'Index=')
-                ind = split(proper, '=');
-                ind = ind{2};
-                set(handles.ind_text, 'String', ind)
-            end
-        end
-        fclose(auxID);     
-    end
-    cd(auxPath)
+    set_handles(hObject, eventdata, handles)
 
 
 function dataPath_text_CreateFcn(hObject, eventdata, handles)
@@ -95,163 +66,35 @@ function dataPath_text_CreateFcn(hObject, eventdata, handles)
 
 
 function Run_Callback(hObject, eventdata, handles)
-    im = imread('untitled3.png');
-    dataPath = get(handles.dataPath_text, 'String');
-    if iscell(dataPath)
-        dataPath = dataPath{1};
-    end
-    dataPath = path_check(dataPath);
-    if not(exist(dataPath, 'dir'))
-        problem(strcat("Directory ", dataPath, " not found"))
+    funDir = mfilename('fullpath');
+    funDir = split(funDir, 'Graphics');
+    cd(char(funDir{1}));
+    addpath 'Auxiliary'
+    addpath 'Correlations'
+    
+    Ind = get(handles.ind_text, 'String');
+    if not(exist(Ind, 'file'))
+        problem(strcat("File ", Ind, " not found"))
         return
     end
-    cd(dataPath)
-    EMflag = 0;
-    LOCflag = 0;
-    if exist('auxiliary.txt', 'file')
-        auxID = fopen('auxiliary.txt', 'a+');
-    elseif exist(strcat(dataPath, 'auxiliary.txt'), 'file')
-        auxID = fopen(strcat(dataPath, 'auxiliary.txt'), 'a+');
+    Index = load_data(Ind);
+    if size(Index, 1) < size(Index, 2)
+        Index = Index';
     end
-    fseek(auxID, 0, 'bof');
-    while ~feof(auxID)
-        proper = fgetl(auxID);
-        if contains(proper, 'Epmean=')
-            EMflag = 1;
-        elseif contains(proper, 'Locations=')
-            LOCflag = 1;
-        elseif contains(proper, 'connCheck=')
-            connCheck = split(proper, '=');
-            connCheck = str2double(connCheck{2});
-        elseif contains(proper, 'measure=')
-            measure = split(proper, '=');
-            measure = measure{2};
-        elseif contains(proper, 'PAT=')
-            PAT = split(proper, '=');
-            PAT = PAT{2};
-        elseif contains(proper, 'HC=')
-            HC = split(proper, '=');
-            HC = HC{2};
-        elseif contains(proper, 'Subjects=')
-            sub = split(proper, '=');
-            sub = sub{2};
-        end
-    end
+    Index = Index(:, end);
     
-    if EMflag == 0
-        uiwait(msgbox('Epochs Avarage not computed', 'Error', 'custom', ...
-            im));
-        [dataPath, measure, sub, loc] = GUI_transition(handles);
-        close(Athena_indcorr)
-        Athena_epmean(dataPath, measure, sub, loc)
-        cd(dataPath)
-    else   
-        funDir = mfilename('fullpath');
-        funDir = split(funDir, 'Graphics');
-        cd(char(funDir{1}));
-        addpath 'Index Correlation'
-        addpath 'Auxiliary'
-        addpath 'Graphics'
+    measure = get(handles.aux_measure, 'String');
+    [data, sub_list, alpha, bg_color, locs, bands_names, P, RHO, nLoc, ...
+        nBands] = correlation_setting(handles);
+    index_correlation(data, sub_list, bands_names, measure, Index, ...
+        alpha, bg_color, locs, P, RHO, nLoc, nBands)
     
-        Ind = get(handles.ind_text, 'String');
-        if not(exist(Ind, 'file'))
-            problem(strcat("File ", Ind, " not found"))
-            return
-        end
-        
-        pat_corr_state = get(handles.PAT, 'Value');
-        hc_corr_state = get(handles.HC, 'Value');
-        
-        loc = get(handles.loc_text, 'String');
-        if not(exist(loc, 'file'))
-            problem(strcat("File ", loc, " not found"))
-            return
-        end
-    
-        if LOCflag == 0
-            fprintf(auxID, '\nLocations=%s', loc);
-        end
-        fclose(auxID);
-        minCons_state = get(handles.minCons, 'Value');
-        maxCons_state = get(handles.maxCons, 'Value');
-        
-        Subjects = load_data(sub);
-    
-        if get(handles.asy_button, 'Value') == 1
-            anType = 'asymmetry';
-        elseif get(handles.tot_button, 'Value') == 1
-            anType = 'total';
-        elseif get(handles.glob_button, 'Value') == 1
-            anType = 'global';
-        else
-            anType = 'areas';
-        end
-        if minCons_state == 1
-            cons = 0;
-        else
-            cons = 1;
-        end
-    
-        if pat_corr_state == 1
-            sub = Subjects(strcmp(string(Subjects(:,end)), "1"), 1);
-            [RHO, P, RHOsig, locList] = index_correlation(PAT, Ind, ...
-                loc, connCheck, anType, cons, measure, sub);
-        elseif hc_corr_state == 1
-            sub = Subjects(strcmp(string(Subjects(:,end)), "1"), 1);
-            [RHO, P, RHOsig, locList] = index_correlation(HC, Ind, loc, ...
-                connCheck, anType, cons, measure, sub);
-        end
-        
-        bands = string();
-        for i = 1:size(RHO, 1)
-            bands = [bands; strcat('Band', string(i))];
-        end
-        bands(1, :) = [];
-        bands = cellstr(bands);
-        
-        fc1 = figure('Name', 'Correlations - RHO', 'NumberTitle', 'off');
-        rho = uitable(fc1, 'Data', RHO, 'Position', [20 20 525 375], ...
-            'RowName', bands, 'ColumnName', locList);
-        fc2 = figure('Name', 'Correlations - p-value', 'NumberTitle', ...
-            'off');
-        pcorr = uitable(fc2, 'Data', P, 'Position', [20 20 525 375], ...
-            'RowName', bands, 'ColumnName', locList);
-        if size(RHOsig, 1) ~= 0 && ...
-                not(logical(sum(sum(strcmp(RHOsig,'')))))
-            fc3 = figure('Name', 'Correlations - Significant Results', ...
-                'NumberTitle', 'off');
-            rhos = uitable(fc3, 'Data', cellstr(RHOsig), 'Position', ...
-                [20 20 525 375]);
-        end
-    end
-    
-
+   
 function data_search_Callback(hObject, eventdata, handles)
     d = uigetdir;
     if d ~= 0
         set(handles.dataPath_text, 'String', d)
-        auxPath = pwd;
-        dataPath = get(handles.dataPath_text, 'String');
-        dataPath = path_check(dataPath);
-        cd(dataPath)
-        if exist('auxiliary.txt', 'file')
-            auxID = fopen('auxiliary.txt','r');
-            fseek(auxID, 0, 'bof');
-            while ~feof(auxID)
-                proper = fgetl(auxID);
-                if contains(proper, 'Locations=')
-                    locations = split(proper, '=');
-                    locations = locations{2};
-                    set(handles.loc_text, 'String', locations)
-                elseif contains(proper, 'Index=')
-                    ind = split(proper, '=');
-                    ind = ind{2};
-                    set(handles.ind_text, 'String', ind)
-                end
-            end
-            fclose(auxID);     
-        end
-        cd(auxPath)
+        set_handles(hObject, eventdata, handles)
     end
 
 
@@ -268,13 +111,9 @@ function back_Callback(~, eventdata, handles)
     cd(char(funDir{1}));
     addpath 'Auxiliary'
     addpath 'Graphics'
-    [dataPath, measure, sub, ~] = GUI_transition(handles, 'loc');
-    loc = string(get(handles.loc_text, 'String'));
-    if strcmp(loc, 'es. C:\User\Locations.mat')
-        loc="Static Text";
-    end
+    [dataPath, measure, sub, loc] = GUI_transition(handles);
     if strcmp(dataPath, 'es. C:\User\Data')
-        dataPath="Static Text";
+        dataPath = "Static Text";
     end
     close(Athena_indcorr)
     Athena_an(dataPath, measure, sub, loc)
@@ -283,20 +122,10 @@ function back_Callback(~, eventdata, handles)
 function axes3_CreateFcn(hObject, eventdata, handles)
 
 
-function loc_text_Callback(hObject, eventdata, handles)
-
-
-function loc_text_CreateFcn(hObject, eventdata, handles)
+function aux_loc_CreateFcn(hObject, eventdata, handles)
     if ispc && isequal(get(hObject,'BackgroundColor'), ...
             get(0,'defaultUicontrolBackgroundColor'))
         set(hObject,'BackgroundColor','white');
-    end
-
-
-function loc_search_Callback(hObject, eventdata, handles)
-    [i,ip] = uigetfile;
-    if i ~= 0
-        set(handles.loc_text, 'String', strcat(string(ip), string(i)))
     end
 
 
@@ -315,3 +144,39 @@ function ind_search_Callback(hObject, eventdata, handles)
     if i ~= 0
         set(handles.ind_text, 'String', strcat(string(ip), string(i)))
     end
+    
+function set_handles(hObject, eventdata, handles)
+    dataPath = get(handles.dataPath_text, 'String');
+    [imp_analysis, imp_subjects] = impossible_analysis(dataPath);
+    subjects_list = {'PAT.mat', 'HC.mat'};
+    s_hand = {handles.PAT, handles.HC};
+    analysis_list = {'Total', 'Global', 'Asymmetry', 'Areas'};
+    a_hand = {handles.tot_button, handles.glob_button, ...
+        handles.asy_button, handles.areas_button};
+    
+    imp_a = length(imp_analysis);
+    if imp_a ~= 0
+        n_an = length(a_hand);
+        for i = 1:n_an
+            for j = 1:imp_a
+                if strcmp(imp_analysis{j}, analysis_list{i})
+                    set(a_hand{i}, 'Enable', 'off')
+                end
+            end
+        end
+    end
+    
+    imp_s = length(imp_subjects);
+    if imp_s ~= 0
+        n_sub = length(s_hand);
+        for i = 1:n_sub
+            for j = 1:imp_s
+                if strcmp(imp_subjects{j}, subjects_list{i})
+                    set(s_hand{i}, 'Enable', 'off')
+                end
+            end
+        end
+    end
+    
+    
+    

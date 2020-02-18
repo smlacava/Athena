@@ -41,11 +41,9 @@ function Athena_meascorr_OpeningFcn(hObject, eventdata, handles, varargin)
         set(handles.aux_sub, 'String', varargin{3})
     end
     if nargin == 7
-        loc = varargin{4};
-        if not(strcmp(loc, 'Static Text'))
-            set(handles.loc_text, 'String', loc)
-        end
+        set(handles.aux_loc, 'String', varargin{4})
     end
+    
 
     
 function varargout = Athena_meascorr_OutputFcn(hObject, eventdata, handles) 
@@ -60,23 +58,6 @@ function dataPath_text_Callback(hObject, eventdata, handles)
     addpath 'Auxiliary'
     addpath 'Graphics'
     addpath 'Epochs Analysis'
-    dataPath = get(handles.dataPath_text, 'String');
-    dataPath = path_check(dataPath);
-    cd(dataPath)
-    if exist('auxiliary.txt', 'file')
-        auxID = fopen('auxiliary.txt', 'r');
-        fseek(auxID, 0, 'bof');
-        while ~feof(auxID)
-            proper = fgetl(auxID);
-            if contains(proper, 'Locations=')
-                locations = split(proper, '=');
-                locations = locations{2};
-                set(handles.loc_text, 'String', locations)
-            end
-        end
-        fclose(auxID);     
-    end
-    cd(auxPath)
 
 
 function dataPath_text_CreateFcn(hObject, eventdata, handles)
@@ -88,124 +69,52 @@ function dataPath_text_CreateFcn(hObject, eventdata, handles)
 
 
 function Run_Callback(hObject, eventdata, handles)
-    im = imread('untitled3.png');
-    dataPath = get(handles.dataPath_text, 'String');
-    dataPath = path_check(dataPath);
-    if not(exist(dataPath, 'dir'))
-        problem(strcat("Directory ", dataPath, " not found"))
-        return
-    end
-    cd(dataPath)
-    
     funDir = mfilename('fullpath');
     funDir = split(funDir, 'Graphics');
     cd(char(funDir{1}));
-    addpath 'Measures Correlation'
+    addpath 'Correlations'
     addpath 'Auxiliary'
     addpath 'Graphics'
     
-    pat_state = get(handles.PAT, 'Value');
-    hc_state = get(handles.HC, 'Value');
-    loc = get(handles.loc_text, 'String');
-    if not(exist(loc, 'file'))
-        problem(strcat("File ", loc, " not found"))
-        return
-    end
-    minCons_state = get(handles.minCons, 'Value');
-    maxCons_state = get(handles.maxCons, 'Value');
+    [~, sub_list, alpha, bg_color, locs, bands_names, P, RHO, nLoc, ...
+        nBands, analysis, sub_group] = correlation_setting(handles);
     
-    if get(handles.asy_button, 'Value') == 1
-        anType = 'asymmetry';
-    elseif get(handles.tot_button, 'Value') == 1
-        anType = 'total';
-    elseif get(handles.glob_button, 'Value') == 1
-        anType = 'global';
-    else
-        anType = 'areas';
-    end
+    meas_state = [get(handles.meas1,'Value') get(handles.meas2,'Value')];
+    meas_list = {'PSDr', 'PLV', 'PLI', 'AEC', 'AECo'};
+    measures = meas_list(meas_state);
     
-    if minCons_state == 1
-        cons = 0;
-    else
-        cons = 1;
+    dataPath = path_check(get(handles.aux_dataPath, 'String'));
+    data_name = strcat(dataPath, path_check(measures{1}), ...
+        path_check('Epmean'), path_check(char_check(analysis)), ...
+        char_check(sub_group));
+    try
+        xData = load_data(data_name);
+    catch
+        problem(strcat(measures{1}, " epochs averaging of not computed"));
+        return;
     end
-        
-    meas_state=[get(handles.meas1,'Value') get(handles.meas2,'Value')];     
-    type = ["" ""];
-    for i = 1:length(type)
-        connCheck = 0;
-        switch meas_state(i)
-            case 1
-                type(i) = "PSDr";
-            case 2
-                type(i) = "PLV";
-                connCheck = 1;
-            case 3
-                type(i) = "PLI";
-                connCheck = 1;
-            case 4
-                type(i) = "AEC";
-                connCheck = 1;
-            case 5
-                type(i) = "AECo";
-                connCheck = 1;
-        end
-           
-        dataPathM = strcat(dataPath, type(i));
-        dataPathM = path_check(dataPathM);
-        LOCflag = 0;
-        cd(dataPathM);
-        if exist('auxiliary.txt', 'file')
-            auxID = fopen('auxiliary.txt', 'a+');
-            fseek(auxID, 0, 'bof');
-            while ~feof(auxID)
-                proper = fgetl(auxID);
-                if contains(proper, 'Locations=')
-                    LOCflag = 1;
-                end
-            end
-        end
-        if LOCflag == 0
-            fprintf(auxID, '\nLocations=%s', loc);
-        end
-        fclose(auxID);
-        
-        dataPathM = strcat(dataPathM, 'Epmean');    
-        if not(exist(dataPathM, 'dir'))
-            break
-            uiwait(msgbox('Temporal Avarage not computed', 'Error', ...
-                'custom', im));
-            [dataPath, measure, sub, loc] = GUI_transition(handles);
-            close(Athena_meascorr)
-            Athena_epmean(dataPath, measure, sub, loc)
-            cd(dataPath)
-        else
-            dataPathM = path_check(dataPathM);
-            if pat_state == 1
-                dataPathM = strcat(dataPathM, 'PAT_em.mat');
-            elseif hc_state==1
-                dataPathM = strcat(dataPathM, 'HC_em.mat');
-            end
-            [d, locList] = measures_manager(dataPathM, loc,  connCheck, ...
-                anType);
-            if i == 1
-                data1 = d;
-            else
-                data2 = d;
-            end
-        end
+    data_name = strcat(dataPath, path_check(measures{2}), ...
+    	path_check('Epmean'), path_check(char_check(analysis)), ...
+        char_check(sub_group));
+    try
+        yData = load_data(data_name);
+    catch
+        problem(strcat(measures{2}, " epochs averaging of not computed"));
+        return;
+    end
+    if size(xData, 1) ~= size(yData, 1)
+        problem(strcat("There is a different number of subjects for ", ...
+            "the measures (perhaps, a different subjects' file has ", ...
+            "been used)"));
+        return;
     end
     
-    type1 = type(1);
-    type2 = type(2);
-    nBands = size(data1, 2);
-    for i = 1:length(locList) 
-        for j = 1:nBands
-            correlation(data1(:, j, i), data2(:, j, i), ...
-                strcat('Band', string(j), ' ', locList(i)), type1, type2)
-        end
+    if get(handles.no, 'Value') == 1
+        sub_list = [];
     end
-    cd(dataPath)
+    
+    measures_correlation(xData, yData, sub_list, bands_names, ...
+        measures, alpha, bg_color, locs, P, RHO, nLoc, nBands)    
        
 
 function data_search_Callback(hObject, eventdata, handles)
@@ -239,11 +148,7 @@ function back_Callback(hObject, eventdata, handles)
     cd(char(funDir{1}));
     addpath 'Auxiliary'
     addpath 'Graphics'
-    [dataPath, measure, sub, ~] = GUI_transition(handles, 'loc');
-    loc = string(get(handles.loc_text, 'String'));
-    if strcmp(loc, 'es. C:\User\Locations.mat')
-        loc = "Static Text";
-    end
+    [dataPath, measure, sub, loc] = GUI_transition(handles);
     if strcmp(dataPath, 'es. C:\User\Data')
         dataPath = "Static Text";
     end
@@ -252,23 +157,6 @@ function back_Callback(hObject, eventdata, handles)
 
 
 function axes3_CreateFcn(hObject, eventdata, handles)
-
-
-function loc_text_Callback(hObject, eventdata, handles)
-
-
-function loc_text_CreateFcn(hObject, eventdata, handles)
-    if ispc && isequal(get(hObject, 'BackgroundColor'), ...
-            get(0, 'defaultUicontrolBackgroundColor'))
-        set(hObject, 'BackgroundColor', 'white');
-    end
-
-
-function loc_search_Callback(hObject, eventdata, handles)
-    [i, ip] = uigetfile;
-    if i ~= 0
-        set(handles.loc_text, 'String', strcat(string(ip), string(i)))
-    end
 
 
 function meas1_Callback(hObject, eventdata, handles)

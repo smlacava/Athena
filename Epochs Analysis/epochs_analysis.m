@@ -25,8 +25,15 @@ function epochs_analysis(dataPath, name, anType, measure, epochs, ...
             break;
         end
     end
-    data = load_data(dataFile);
-    loc = load_data(loc);
+    [data, ~, locations] = load_data(dataFile);
+    if isempty(locations)
+        if strcmp(loc, 'Static Text') 
+            loc = ask_locations("Do you want to insert locations' file?");
+        end
+        loc = loc(:, 1);
+    else
+        loc = locations;
+    end
        
     if strcmp(anType, 'asymmetry')
         [RightLoc, LeftLoc] = asymmetry_manager(loc);

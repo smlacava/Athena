@@ -8,4 +8,5 @@ function problem(message)
     im = imread('untitled3.png');
     h = msgbox(message, 'Error', 'custom', im);
     set(h, 'color', [0.67 0.98 0.92])
+    waitfor(h)
 end

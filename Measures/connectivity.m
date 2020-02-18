@@ -92,50 +92,49 @@ function []=connectivity(fs, cf, nEpochs, dt, inDir, tStart, outTypes)
     for c = 1:length(outTypes)
         for i = 1:length(cases) 
             try
-            [time_series, fsOld] = load_data(strcat(inDir, cases(i).name));
-            if fsOld ~= fs
-                [p, q] = rat(fs/fsOld);
-                time_series = resample(time_series', p, q)';
-            end
-            nLoc = size(time_series, 1);
-            conn = zeros(nBands, nEpochs, nLoc, nLoc);
-            for j = 1:nBands
-                for k = 1:nEpochs
-                    ti = ((k-1)*dt)+tStart;
-                    tf = k*dt+tStart-1;
-                    data = athena_filter(time_series(:, ti:tf), fs, ...
-                        cf(j), cf(j+1));                 
-                    data = data';
-                    if strcmp(outTypes(c), "PLI")
-                        conn(j, k, :, :) = phase_lag_index(data);
-                    elseif strcmp(outTypes(c), "PLV")
-                        conn(j, k, :, :) = phase_locking_value(data);
-                    elseif strcmp(outTypes(c), "AECo")
-                        conn(j, k, :, :) = ...
-                            amplitude_envelope_correlation_orth(data);
-                    elseif strcmp(outTypes(c), "AEC")
-                        conn(j, k, :, :) = ...
-                            amplitude_envelope_correlation(data);
+                [time_series, fsOld, locations] = ...
+                    load_data(strcat(inDir, cases(i).name), 1);
+                if fsOld ~= fs
+                    [p, q] = rat(fs/fsOld);
+                    time_series = resample(time_series', p, q)';
+                end
+                nLoc = size(time_series, 1);
+                conn.data = zeros(nBands, nEpochs, nLoc, nLoc);
+                conn.locations = locations;
+                for j = 1:nBands
+                    for k = 1:nEpochs
+                        ti = ((k-1)*dt)+tStart;
+                        tf = k*dt+tStart-1;
+                        data = athena_filter(time_series(:, ti:tf), fs, ...
+                            cf(j), cf(j+1));                 
+                        data = data';
+                        if strcmp(outTypes(c), "PLI")
+                            conn.data(j, k, :, :) = phase_lag_index(data);
+                        elseif strcmp(outTypes(c), "PLV")
+                            conn.data(j, k, :, :) = ...
+                                phase_locking_value(data);
+                        elseif strcmp(outTypes(c), "AECo")
+                            conn.data(j, k, :, :) = ...
+                                amplitude_envelope_correlation_orth(data);
+                        elseif strcmp(outTypes(c), "AEC")
+                            conn.data(j, k, :, :) = ...
+                                amplitude_envelope_correlation(data);
+                        end
                     end
                 end
-            end
-            outDir = strcat(inDir, outTypes(c));
-            outDir = path_check(outDir);
-            if not(exist(outDir, 'dir'))
-                mkdir(inDir, outTypes(c))
-            end
-            
-            name = split(cases(i).name, '\');
-            if length(name) == 1
+                outDir = path_check(subdir(inDir, outTypes(c)));            
                 name = split(cases(i).name, '\');
-            end
-            if length(name) > 1
-                name = name{2};
-            else
-                name = cases(i).name;
-            end
-            filename = strcat(outDir, strtok(name, '.'), '.mat');
-            save(filename, 'conn');
+                if length(name) == 1
+                    name = split(cases(i).name, '\');
+                end
+                if length(name) > 1
+                    name = name{2};
+                else
+                    name = cases(i).name;
+                end
+                filename = strcat(outDir, strtok(name, '.'), '.mat');
+                save(filename, 'conn');
+            catch
             end %end try
             waitbar((i+(c-1)*length(cases))/...
                 (length(cases)*length(outTypes)), f)

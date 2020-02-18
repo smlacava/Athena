@@ -37,13 +37,20 @@ function [Right, Left] = asymmetry_manager(locations)
         end
     else
         for i = 1:length(locations)
-            loc = locations{i, 1};
-            if not(strcmp(loc(end), "Z"))
-                if mod(str2double(loc(end)), 2) == 0
-                    Right = [Right, i];
-                else
-                    Left = [Left, i];
-                end
+            loc = char(locations{i, 1});
+            n = length(loc);
+            aux = zeros(1, n);
+            ind = 1:n;
+            for c = 1:n
+                aux(1, c) = str2double(loc(c));
+            end
+            if sum(not(isnan(aux))) == 0
+                continue;
+            end
+            if mod(str2double(loc(max((isnan(aux)==0).*ind))), 2) == 0
+                Right = [Right, i];
+            else
+                Left = [Left, i];
             end
         end
     end

@@ -40,17 +40,22 @@ function [Central, Frontal, Temporal, Occipital, Parietal] = areas_manager(locat
     if isempty(Central) && isempty(Frontal) && isempty(Temporal) ...
                 && isempty(Occipital) && isempty(Parietal)
         for i = 1:length(locations)
-            if contains(locations(i, 1), "C")
+            loc = split(locations(i, 1), 'REF');
+            loc = loc{1};
+            if contains(loc, "LOC") || contains(loc, "ROC")
+                continue;
+            end
+            if contains(loc, "C")
                 Central = [Central, i];
-            elseif contains(locations(i, 1), "F")
+            elseif contains(loc, "F")
                 Frontal = [Frontal, i];
-            elseif contains(locations(i, 1), "A")
+            elseif contains(loc, "A")
                 Frontal = [Frontal, i];
-            elseif contains(locations(i, 1), "T")
+            elseif contains(loc, "T")
                 Temporal = [Temporal, i];
-            elseif contains(locations(i, 1), "O")
+            elseif contains(loc, "O")
                 Occipital = [Occipital, i];
-            elseif contains(locations(i, 1), "P")
+            elseif contains(loc, "P")
                 Parietal = [Parietal, i];
             end
         end

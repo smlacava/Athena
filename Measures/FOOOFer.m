@@ -108,7 +108,7 @@ function [] = FOOOFer(fs, cf, nEpochs, dt, inDir, tStart, outTypes, ...
     % initial setting
     settings = struct();
     settings.max_n_peaks = maxPeaks;
-    [time_series, fsOld] = load_data(strcat(inDir, cases(1).name));
+    [time_series, fsOld] = load_data(strcat(inDir, cases(1).name), 1);
     if fsOld ~= fs
         [p, q] = rat(fs/fsOld);
         time_series = resample(time_series', p, q)';
@@ -131,65 +131,76 @@ function [] = FOOOFer(fs, cf, nEpochs, dt, inDir, tStart, outTypes, ...
    
     for i = 1:length(cases)
         try
-        [time_series, fsOld] = load_data(strcat(inDir, cases(i).name));
-        if fsOld ~= fs
-            [p, q] = rat(fs/fsOld);
-            time_series = resample(time_series', p, q)';
-        end
-        time_series = time_series(:, tStart:end);
-        nLoc = size(time_series, 1);
-        offset = zeros(nEpochs, nLoc);   %epochs * locations
-        exponent = offset;
-        error = offset;
-        r_squared = offset;
-        peak_params = zeros(nEpochs, nLoc, maxPeaks*3);
-        gaussian_params = peak_params;
-        fooofed_spectrum = zeros(nEpochs, nLoc, ...
-            f_range_ind(2)-f_range_ind(1)+1);
-        bg_fit = fooofed_spectrum;
-        power_spectrum = bg_fit;
-        for k = 1:nEpochs
-            for j = 1:nLoc
-                data = squeeze(time_series(j, dt*(k-1)+1:k*dt));           
-                [pxx, w] = pwelch(data, [], 0, [], fs);
-                fooof_results = fooof(w', pxx, f_range, settings, 1);
-                offset(k, j) = fooof_results.background_params(1);
-                exponent(k, j) = fooof_results.background_params(2);
-                r_squared(k, j) = fooof_results.r_squared;
-                error(k, j) = fooof_results.error;
-                fooofed_spectrum(k, j, :) = fooof_results.fooofed_spectrum;
-                bg_fit(k, j, :) = fooof_results.bg_fit;
-                power_spectrum(k, j, :) = fooof_results.power_spectrum;
-                
-                sizePeaks = size(fooof_results.peak_params, 1)*3;
-                peak_params(k, j, 1:sizePeaks) = squeeze(reshape(...
-                    fooof_results.peak_params', 1, sizePeaks));
-                gaussian_params(k, j, 1:sizePeaks) = squeeze(reshape(...
-                    fooof_results.gaussian_params', 1, sizePeaks));
-                
+            [time_series, fsOld, locations] = ...
+                load_data(strcat(inDir, cases(i).name), 1);
+            if fsOld ~= fs
+                [p, q] = rat(fs/fsOld);
+                time_series = resample(time_series', p, q)';
             end
-        end
+            time_series = time_series(:, tStart:end);
+            nLoc = size(time_series, 1);
         
-        for s = 1:length(outTypes)  
-            outDir = strcat(inDir, outTypes(s));
-            outDir = path_check(outDir);
-            if not(exist(outDir, 'dir'))
-                mkdir(inDir, outTypes(s))
+            setup_data = zeros(nEpochs, nLoc);
+            offset.data = setup_data;
+            offset.locations = locations;
+            exponent = offset;
+            error = offset;
+            r_squared = offset;
+            setup_data = zeros(nEpochs, nLoc, maxPeaks*3);
+            peak_params.data = setup_data;
+            peak_params.locations = locations;
+            gaussian_params = peak_params;
+            setup_data = zeros(nEpochs, nLoc, f_range_ind(2)-f_range_ind(1)+1);
+            fooofed_spectrum.data = setup_data;
+            fooofed_spectrum.locations = locations;
+            bg_fit = fooofed_spectrum;
+            power_spectrum = bg_fit;
+        
+            for k = 1:nEpochs
+                for j = 1:nLoc
+                    data = squeeze(time_series(j, dt*(k-1)+1:k*dt));           
+                    [pxx, w] = pwelch(data, [], 0, [], fs);
+                    fooof_results = fooof(w', pxx, f_range, settings, 1);
+                    
+                    offset.data(k, j) = fooof_results.background_params(1);
+                    exponent.data(k, j) = ...
+                        fooof_results.background_params(2);
+                    r_squared.data(k, j) = fooof_results.r_squared;
+                    error.data(k, j) = fooof_results.error;
+                    fooofed_spectrum.data(k, j, :) = ...
+                        fooof_results.fooofed_spectrum;
+                    bg_fit.data(k, j, :) = fooof_results.bg_fit;
+                    power_spectrum.data(k, j, :) = ...
+                        fooof_results.power_spectrum;
+                
+                    sizePeaks = size(fooof_results.peak_params, 1)*3;
+                    peak_params.data(k, j, 1:sizePeaks) = ...
+                        squeeze(reshape(...
+                        fooof_results.peak_params', 1, sizePeaks));
+                    gaussian_params.data(k, j, 1:sizePeaks) = ...
+                        squeeze(reshape(...
+                        fooof_results.gaussian_params', 1, sizePeaks));
+                
+                end
             end
-            name = split(cases(i).name, '\');
-            if length(name) == 1
+        
+            for s = 1:length(outTypes)  
+                outDir = path_check(subdir(inDir, outTypes(s)));
                 name = split(cases(i).name, '\');
+                if length(name) == 1
+                    name = split(cases(i).name, '\');
+                end
+                if length(name) > 1
+                    name = name{2};
+                else
+                    name = cases(i).name;
+                end
+                filename = strcat(outDir, strtok(name, '.'), '.mat');    
+                save(filename, outTypes(s)); 
             end
-            if length(name) > 1
-                name = name{2};
-            else
-                name = cases(i).name;
-            end
-            filename = strcat(outDir, strtok(name, '.'), '.mat');    
-            save(filename, outTypes(s)); 
+            clear time_series
+        catch
         end
-        clear time_series
-        end %end try
         waitbar(i/length(cases), f)
     end
     close(f)

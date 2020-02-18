@@ -3,10 +3,13 @@
 % series, subjects file, locations file, etc.), in different formats (.mat,
 % .edf, .xls').
 %
-% [data, fs, locs] = load_data(dataFile)
+% [data, fs, locs] = load_data(dataFile, locFLAG)
 % 
 % input:
 %   dataFile is the data file to load (with his path)
+%   locFLAG is the flag which has to be 1 if the user wants to manipulate
+%       the names of the locations and to delete data relative to not
+%       identified locations (0 or not defined otherwise)
 %
 % output:
 %   data is the loaded data
@@ -15,9 +18,20 @@
 %   locs is a cell matrix which contains in the first column the names of
 %       every location, it is empty ({}) if it is not present in the file
 
-function [data, fs, locs] = load_data(dataFile)
+function [data, fs, locs] = load_data(dataFile, locFLAG)
     fs = [];
     locs = {};
+    if nargin == 1
+        locFLAG = 0;
+    end
+    
+    avoid_locs = {'PHOTICPH', 'IBI', 'BURSTS', 'SUPPR', 'PHOTICREF'};
+    avoid_locs_cont = {'DC', 'EKG'};
+    loc_types = {'F', 'AF', 'FT', 'FC', 'FP', 'C', 'A', 'TP', 'CP', ...
+        'PO', 'P', 'M', 'LO', 'SO', 'IO', 'CB', 'SP', 'O', 'T'};
+    loc_others = {'Chin', 'NAS', 'Neck', 'RPA', 'LPA', 'ROC', 'LOC', ...
+        'EMG'};
+    loc_list = {};
     
     if contains(dataFile, '.mat')
         data = load(dataFile);
@@ -72,11 +86,75 @@ function [data, fs, locs] = load_data(dataFile)
         locs = info.label;
     end
     
-    data(contains(locs, 'Annotations'),:)=[];
+    data(contains(locs, 'Annotations'), :) = [];
     [r, c] = size(locs);
     if r < c
     	locs = locs';
     end
-    locs(contains(locs, 'Annotations'),:)=[];
+    locs(contains(locs, 'Annotations'), :) = [];
+    
+    if locFLAG == 1 && not(isempty(locs))
+        if size(data, 1) > size(data, 2)
+            data = data';
+        end
+        aux_locs = locs;
+        aux_data = data;
+        if not(isempty(locs))
+            for i = 1:length(avoid_locs)
+                locs_check = strcmpi(locs, avoid_locs{i});
+                locs(locs_check == 1) = [];
+                data(locs_check == 1, :) = [];
+            end
+            for i = 1:length(avoid_locs_cont)
+                locs_check = contains(locs, avoid_locs_cont{i});
+                locs(locs_check == 1) = [];
+                data(locs_check == 1, :) = [];
+            end
+        
+            nLoc_types = length(loc_types);
+            nLoc = length(locs);
+            for i = 1:nLoc_types
+                for j = 1:nLoc
+                    loc_list = [loc_list ...
+                        char(strcat(loc_types{i}, string(j)))];
+                end
+                loc_list = [loc_list, char(strcat(loc_types{i}, 'Z')), ...
+                    char(strcat(loc_types{i}, 'z'))];
+            end
+            loc_list = [loc_list, loc_others];
+            nLoc_list = length(loc_list);
+            aux = nLoc;
+            for i = 1:nLoc
+                if i > aux
+                    break;
+                end
+                check = 0;
+                for j = 1:nLoc_list
+                    if contains(locs{i}, loc_list{j})
+                        locs{i} = loc_list{j};
+                        check = 1;
+                        break;
+                    end
+                end
+                if check == 0
+                    locs(i) = [];
+                    data(i, :) = [];
+                    aux = aux-1;
+                end
+            end
+        end
+    
+        if isempty(data)
+            data = aux_data;
+            locs = aux_locs;
+        end
+    
+        if nargout == 3
+            if size(data, 1) ~= size(locs)
+                data = [];
+                locs = [];
+            end
+        end   
+    end
 end
     

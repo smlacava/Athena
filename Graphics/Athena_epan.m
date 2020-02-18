@@ -49,10 +49,7 @@ function Athena_epan_OpeningFcn(hObject, eventdata, handles, varargin)
         set(handles.Subjects, 'String', sub_list);
     end
     if nargin == 7
-        loc = varargin{4};
-        if not(strcmp(loc, 'Static Text'))
-            set(handles.loc_text, 'String', loc)
-        end
+        set(handles.aux_loc, 'String', varargin{4})
     end
 
 
@@ -86,7 +83,7 @@ function dataPath_text_Callback(hObject, eventdata, handles)
             if contains(proper, 'Locations=')
                 locations = split(proper, '=');
                 locations = locations{2};
-                set(handles.loc_text, 'String', locations)
+                set(handles.aux_loc, 'String', locations)
             end
         end
         fclose(auxID);     
@@ -137,11 +134,7 @@ function Run_Callback(hObject, eventdata, handles)
     addpath 'Graphics'
     addpath 'Epochs Analysis'
 
-    loc = get(handles.loc_text, 'String');
-    if not(exist(loc, 'file'))
-        problem(strcat("File ", loc, " not found"))
-        return
-    end
+    loc = get(handles.aux_loc, 'String');
     subList = get(handles.Subjects, 'String');
     subName = subList(get(handles.Subjects, 'Value'));
     
@@ -155,7 +148,6 @@ function Run_Callback(hObject, eventdata, handles)
         anType = 'areas';
     end
     epochs_analysis(dataPath, subName, anType, measure, epochs, bands, loc)    
-    cd(char(dataPath))
        
 
 function data_search_Callback(hObject, eventdata, handles)
@@ -181,7 +173,7 @@ function data_search_Callback(hObject, eventdata, handles)
                 if contains(proper, 'Locations=')
                     locations = split(proper, '=');
                     locations = locations{2};
-                    set(handles.loc_text, 'String', locations)
+                    set(handles.aux_loc, 'String', locations)
                 end
             end
             fclose(auxID);     
@@ -197,7 +189,7 @@ function back_Callback(hObject, eventdata, handles)
     addpath 'Auxiliary'
     addpath 'Graphics'
     [dataPath, measure, sub, ~] = GUI_transition(handles, 'loc');
-    loc = string(get(handles.loc_text, 'String'));
+    loc = string(get(handles.aux_loc, 'String'));
     if strcmp(loc, 'es. C:\User\Locations.mat')
         loc="Static Text";
     end
@@ -211,20 +203,10 @@ function back_Callback(hObject, eventdata, handles)
 function axes3_CreateFcn(hObject, eventdata, handles)
 
 
-function loc_text_Callback(hObject, eventdata, handles)
-
-
-function loc_text_CreateFcn(hObject, eventdata, handles)
+function aux_loc_CreateFcn(hObject, eventdata, handles)
     if ispc && isequal(get(hObject, 'BackgroundColor'), ...
             get(0, 'defaultUicontrolBackgroundColor'))
         set(hObject, 'BackgroundColor', 'white');
-    end
-
-
-function loc_search_Callback(hObject, eventdata, handles)
-    [i, ip] = uigetfile;
-    if i ~= 0
-        set(handles.loc_text, 'String', strcat(string(ip), string(i)))
     end
 
 

@@ -20,11 +20,23 @@ function varargout = Athena(varargin)
 function Athena_OpeningFcn(hObject, ~, handles, varargin)
     handles.output = hObject;
     guidata(hObject, handles);
-    myImage = imread('untitled3.png');
+    myImage = imread('untitled3.png'); 
     set(handles.axes3,'Units','pixels');
     resizePos = get(handles.axes3,'Position');
     myImage= imresize(myImage, [resizePos(3) resizePos(3)]);
     axes(handles.axes3);
+    set(handles.guided, 'Tooltip', sprintf(strcat(...
+        'The Guided mode allows the you to interact with every \n', ...
+        'step, and to repeat every step as much times as wished')));
+    set(handles.display, 'Tooltip', sprintf(strcat(...
+        'The Batch mode allows you to automatically execute all the\n', ...
+        'previously decided steps of the study by inserting a text\n', ...
+        'file, as the one you can find in the toolbox folder or the\n', ...
+        'one generated after every study')));
+    set(handles.batch, 'Tooltip', sprintf(strcat(...
+        'The Display mode allows to show all the signals, to select\n', ...
+        'the wished locations, to filter your signals and to\n', ...
+        'extract and save a time window for each one')));
     imshow(myImage);
     set(handles.axes3,'Units','normalized');
     funDir = mfilename('fullpath');
@@ -33,9 +45,8 @@ function Athena_OpeningFcn(hObject, ~, handles, varargin)
     addpath 'Graphics'
     addpath 'Auxiliary'
     addpath 'Measures'
-    addpath 'Measures Correlation'
+    addpath 'Correlations'
     addpath 'Statistical Analysis'
-    addpath 'Index Correlation'
     addpath 'Batch'
     addpath 'Classification'
     addpath 'Epochs Analysis'
@@ -76,6 +87,7 @@ function batch_Callback(hObject, eventdata, handles)
     [dataPath, measure, sub, loc] = GUI_transition(handles);
     close(Athena)
     Athena_batch(dataPath, measure, sub, loc)
+    
     
 function display_Callback(hObject, eventdata, handles)
     [dataPath, measure, sub, loc] = GUI_transition(handles);

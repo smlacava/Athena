@@ -15,13 +15,13 @@
 
 function [areasOUT] = areas_check(areasIN)
     if sum(strcmp(areasIN, ["Tot", "TOT", "Total", "total", "TOTAL"]))
-        areasOUT='total';
+        areasOUT = 'total';
     elseif sum(strcmp(areasIN, ["Areas", "areas", "AREAS"]))
-        areasOUT='areas';
+        areasOUT = 'areas';
     elseif sum(strcmp(areasIN, ["Asymmetry", "asymmetry", "ASYMMETRY", ...
             "ASY", "Asy", "asy"]))
-        areasOUT='asymmetry';
+        areasOUT = 'asymmetry';
     else
-        areasOUT='global';
+        areasOUT = 'global';
     end
 end

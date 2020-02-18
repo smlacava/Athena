@@ -66,9 +66,7 @@ function back_Callback(~, ~, handles)
     cd(char(funDir{1}));
     addpath 'Auxiliary'
     addpath 'Graphics'
-    [dataPath, measure, ~, loc] = GUI_transition(handles);
-    sub = string(get(handles.aux_dataPath, 'String'));
-    sub = strcat(path_check(sub), 'Subjects.mat');
+    [dataPath, measure, sub, loc] = GUI_transition(handles);
     Athena_epmean(dataPath, measure, sub, loc)
     close(Athena_submaking)
     
@@ -86,7 +84,7 @@ function subs_CreateFcn(hObject, ~, ~)
     end
 
 
-function save_Callback(~, ~, handles)
+function save_Callback(hObject, eventdata, handles)
     dataPath = get(handles.aux_dataPath, 'String');
     
     if strcmp(dataPath, "es. C:\User\Data")
@@ -112,6 +110,10 @@ function save_Callback(~, ~, handles)
         
         dataPath = path_check(char_check(dataPath));
         save(strcat(dataPath, 'Subjects.mat'), 'subjects')
+        sub = string(get(handles.aux_dataPath, 'String'));
+        sub = strcat(path_check(sub), 'Subjects.mat');
+        set(handles.aux_sub, 'String', sub)
         cd(auxDir)
         success()
+        back_Callback(hObject, eventdata, handles)
     end

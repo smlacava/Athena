@@ -44,6 +44,9 @@ function Athena_epmean_OpeningFcn(hObject, eventdata, handles, varargin)
         aux_sub = varargin{3};
         if not(strcmp(aux_sub, 'Static Text'))
             set(handles.subjectsFile, 'String', aux_sub)
+        elseif exist(strcat(path_check(path), 'Subjects.mat'), 'file')
+            set(handles.subjectsFile, 'String', ...
+                strcat(path_check(path), 'Subjects.mat'))            
         end
     end
     if nargin == 7
@@ -113,24 +116,22 @@ function Run_Callback(hObject, eventdata, handles)
     if not(exist(sub, 'file'))
     	problem(strcat("File ", sub, " not found"))
     	return
+    else
+        subjects = load_data(sub);
+        save(strcat(path_check(get(handles.aux_dataPath, 'String')), ...
+            'Subjects.mat'), 'subjects')
     end
-    epmean_and_manage(dataPath, type, sub);
-    dataPath = strcat(dataPath,'Epmean');
-    dataPath = path_check(dataPath);
+    locs = epmean_and_manage(dataPath, type, sub);
 
-    PAT = strcat(dataPath, 'PAT_em.mat');
-    HC = strcat(dataPath, 'HC_em.mat');
     if EMflag == 0
         fprintf(auxID, '\nEpmean=true');
-        fprintf(auxID, '\nPAT=%s', PAT);
-        fprintf(auxID, '\nHC=%s', HC);
         fprintf(auxID, '\nSubjects=%s', sub);
+        if not(isempty(locs))
+            fprintf(auxID, '\nLocations=%s', locs);
+        end
     end
     fclose(auxID);
     success();
-    dataPath = split(dataPath, 'Epmean');
-    dataPath = dataPath{1};
-    cd(dataPath);
 
     
 function data_search_Callback(hObject, eventdata, handles)

@@ -23,31 +23,6 @@
 %   ParietalLoc is the array which contains the indices of every parietal
 %       location
 
-%% epan_areas_conn
-% This function computes the epochs analysis of a previously extracted 
-% connectivity measure of a subject in frontal, temporal, central,
-% occipital and parietal areas.
-%
-% epan_areas_conn(data, nEpochs, nBands, measure, name, CentralLoc, ...
-%       FrontalLoc, TemporalLoc, OccipitalLoc, ParietalLoc)
-%
-% input:
-%   data is the measure matrix
-%   nEpochs is the number of epochs
-%   nBands is the number of frequency bands
-%   measure is the name of the measure
-%   name is the name of the analyzed subject
-%   CentralLoc is the array which contains the indices of every central
-%       location
-%   FrontalLoc is the array which contains the indices of every frontal
-%       location
-%   TemporalLoc is the array which contains the indices of every temporal
-%       location
-%   OccipitalLoc is the array which contains the indices of every occipital
-%       location
-%   ParietalLoc is the array which contains the indices of every parietal
-%       location
-
 function epan_areas_conn(data, nEpochs, nBands, measure, name, ...
     CentralLoc, FrontalLoc, TemporalLoc, OccipitalLoc, ParietalLoc)
     
