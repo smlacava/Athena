@@ -1,4 +1,4 @@
-function statistics = classification(dataPath, split_value, n_trees, ...
+function statistics = classification(data, split_value, n_trees, ...
     bagging_value, random_subspace_value, pruning_depth, ...
     n_repetitions, min_samples)
     
@@ -45,16 +45,23 @@ function statistics = classification(dataPath, split_value, n_trees, ...
     fchild(1).JavaPeer.setForeground(fchild(1).JavaPeer.getBackground.BLUE)
     fchild(1).JavaPeer.setStringPainted(true)
     
+    statistics = struct();
+    if not(istable(data)) && (ischar(data) || isstring(data))
+        try
+            load(strcat(path_check(strcat(path_check(data), ...
+                'Classification')), 'Classification_Data.mat'))
+        catch
+            problem('Data is not in the right format (table or file path)')
+            return;
+        end
+    end
+    if not(istable(data))
+        problem('Data is not usable by classification process')
+        return;
+    end
+    
     bg_color = [0.67 0.98 0.92];
-    dataPath = path_check(dataPath);
-    load(strcat(dataPath, 'Subjects.mat'));
-    nPAT = sum(subjects(:, end));
-    nHC = length(subjects)-nPAT;
-    dataPath = path_check(strcat(dataPath, 'statAn'));
-    cases = define_cases(dataPath, 0);
-    n_cases = length(cases);
-    data = [ones(nPAT, 1); zeros(nHC, 1)];
-    features = {'group'};
+
     accuracy = 0;
     max_accuracy = 0;
     min_accuracy = 1;
@@ -62,23 +69,12 @@ function statistics = classification(dataPath, split_value, n_trees, ...
     false_HC = 0;
     true_PAT = 0;
     true_HC = 0;
-    FPR = [];
-    TPR = [];
-    for i = 1:n_cases
-        load(strcat(dataPath, cases(i).name))
-        if not(isempty(statAnResult.dataSig))
-            feature_name = char_check(strtok(cases(i).name, '_'));
-            features = feature_names(statAnResult.Psig, feature_name, ...
-                features);
-            data = [data, statAnResult.dataSig];
-        end
-    end
-    
+     
     if min(size(data)) == 1
-        tree = [];
+        problem('There are not enough parameters to evaluate')
         return;
     end
-    data = array2table(data, 'VariableNames', features);
+    
     
     if split_value > 1
         split_value = split_value/n_cases;
@@ -97,7 +93,6 @@ function statistics = classification(dataPath, split_value, n_trees, ...
         end
     
         results = cell(n_trees, 1);
-        scores = cell(1, n_trees);
         for i = 1:n_trees
             data_train = random_subspace(data_train, random_subspace_value);
             data_train = bagging(data_train, bagging_value);
@@ -105,11 +100,13 @@ function statistics = classification(dataPath, split_value, n_trees, ...
                 random_subspace_value, pruning_depth);
             results{i, 1} = predict(tree, data_test);
         end
+        
         predictions = [];
         for i = 1:length(results)
             predictions = [predictions, results{i}];
         end
         predictions = round(mean(predictions, 2));
+        
         n_test = length(predictions);
         n_HC = sum(data_test.group == 0);
         n_PAT = sum(data_test.group == 1);
@@ -142,7 +139,6 @@ function statistics = classification(dataPath, split_value, n_trees, ...
     true_HC = true_HC/n_repetitions;
     false_HC = false_HC/n_repetitions;    
     
-    statistics = struct();
     statistics.parameters = struct();
     statistics.parameters.split_value = split_value;
     statistics.parameters.trees_number = n_trees;
@@ -161,11 +157,7 @@ function statistics = classification(dataPath, split_value, n_trees, ...
     statistics.confusion_matrix.columns = ...
         {'PAT_predicted', 'HC_predicted'};
     
-    fig = figure('Color', bg_color, 'NumberTitle', 'off', ...
-    	'Name', 'Statistics');
-    cm = uitable(fig, 'Data', [true_PAT, false_HC; false_PAT, true_HC], ...
-        'Position', [20 20 525 375], 'ColumnName', ...
-        {'PAT_predicted', 'HC_predicted'}, 'RowName', {'PAT', 'HC'});
-    
+    cm = [true_PAT, false_HC; false_PAT, true_HC];
+    confusion_matrix(cm, accuracy, bg_color);
     close(f)
 end

@@ -150,49 +150,7 @@ function Run_Callback(hObject, eventdata, handles)
         measType = [measType "Exponent"];
     end
 
-    dataSig = [];
-    Psig = [string() string() string() string()];
-    SApath = strcat(dataPath, 'statAn');
-    SApath = path_check(SApath);
-    for i = 1:length(anType)
-        for j = 1:length(measType)
-            SAfile = strcat(SApath, measType(j), '_', anType(i), '.mat');
-            if exist(SAfile, 'file')
-                load(SAfile)
-                dataSig = [dataSig, statAnResult.dataSig];
-                col = size(statAnResult.Psig, 2);
-                if not(isempty(col))
-                    if col == 2
-                        for r = 1:size(statAnResult.Psig, 1)
-                            Psig = [Psig; [measType(j), anType(i), ...
-                                statAnResult.Psig(r, :)]];
-                        end
-                    else
-                        for r = 1:size(statAnResult.Psig, 1)
-                            Psig = [Psig; [measType(j), ...
-                                statAnResult.Psig(r, :)]];
-                        end
-                    end
-                end
-            end
-        end
-    end
-    Psig(1, :) = [];
-    
-    SDfile = strcat(dataPath, 'Significant_Data.csv');
-    SRfile = strcat(dataPath, "Significant_Results.txt");
-    if exist(SDfile, 'file')
-        delete(SDfile);
-    end
-    csvwrite(SDfile, dataSig);
-    srID = fopen(SRfile, 'w');
-    for s = 1:size(Psig, 1)
-        fprintf(srID, '%s %s %s %s\n', Psig(s, :));
-    end
-    fclose(srID);
-    
-    dataPath = char_check(dataPath);
-    cd(dataPath)
+    classification_data_settings(dataPath, anType, measType);
     
     success();
 
