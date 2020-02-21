@@ -122,7 +122,9 @@ function Run_Callback(hObject, eventdata, handles)
             'Subjects.mat'), 'subjects')
     end
     locs = epmean_and_manage(dataPath, type, sub);
-
+    if not(isempty(locs))
+        set(handles.aux_loc, 'String', locs)
+    end
     if EMflag == 0
         fprintf(auxID, '\nEpmean=true');
         fprintf(auxID, '\nSubjects=%s', sub);

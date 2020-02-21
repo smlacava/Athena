@@ -44,6 +44,10 @@ function [locations_file] = epmean_and_manage(inDir, type, subFile)
     
     % setup
     [measure, ~, locations] = load_data(strcat(inDir, cases(1).name));
+    aux_loc_file = strcat(path_check(inDir), 'Locations.mat');
+    if isempty(locations) && exist(aux_loc_file, 'file')
+        load(aux_loc_file);
+    end
     if isempty(locations)
         aux_locs = ask_locations();
         if not(isempty(aux_locs))

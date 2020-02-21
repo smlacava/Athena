@@ -252,8 +252,12 @@ function checkbox5_Callback(hObject, eventdata, handles)
 function checkbox7_Callback(hObject, eventdata, handles)
 
 
-% --- Executes on button press in Classification.
 function Classification_Callback(hObject, eventdata, handles)
-% hObject    handle to Classification (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
+    funDir = mfilename('fullpath');
+    funDir = split(funDir, 'Graphics');
+    cd(char(funDir{1}));
+    addpath 'Auxiliary'
+    addpath 'Graphics'
+    [dataPath, measure, sub, loc] = GUI_transition(handles);
+    close(Athena_mergsig)
+    Athena_classification(dataPath, measure, sub, loc)
