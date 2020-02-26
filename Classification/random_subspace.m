@@ -10,6 +10,6 @@ function data_train = random_subspace(data_train, random_subspace_value)
     if random_subspace_value < n_features
         index_features = randperm(n_features);
         index_features(1:random_subspace_value) = [];
-        data_train(index_features+1, :) = [];
+        data_train(:, index_features+1) = [];
     end
 end

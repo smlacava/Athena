@@ -3,34 +3,44 @@
 % a single data matrix for the patients (PAT) and another one for the 
 % healthy controls (HC)
 % 
-% epmean_and_manage(inDir, type, subFile)
+% epmean_and_manage(inDir, type, subFile, locations_file)
 %
 % input:
 %   inDir is the data directory 
 %   type is the measure type (offset, plv, aec, etc.)
 %   subFile is the file which contains the subjects list with their class
+%   locations_file is the name (with its path) of the file which contains
+%       the name of each locations (optional)
 %
 % output:
-%   locations_file is the file of the locations, if they are not contained
-%       inside each time series
+%   locations_file is the file of the locations
 
-function [locations_file] = epmean_and_manage(inDir, type, subFile)
+
+function locations_file = epmean_and_manage(inDir, type, subFile, ...
+    locations_file)
     
+    if nargin == 3
+        locations_file = [];
+    end
     f = waitbar(0,'Initial setup process', ...
         'Color', '[0.67 0.98 0.92]');
     fchild = allchild(f);
     fchild(1).JavaPeer.setForeground(fchild(1).JavaPeer.getBackground.BLUE)
     fchild(1).JavaPeer.setStringPainted(true)
+    
 
-    type = string(type);
+    type = char_check(string(type));
+    len_type = length(type);
     inDir = path_check(inDir);
+    if not(strcmp(inDir(end-len_type-1:end-1), type))
+        inDir = path_check(strcat(inDir, type));
+    end
     epDir = subdir(inDir, 'Epmean');
     epDir = path_check(epDir);
     areasDir = path_check(subdir(epDir, 'Areas'));
     totDir = path_check(subdir(epDir, 'Total'));
     asyDir = path_check(subdir(epDir, 'Asymmetry'));
     globDir = path_check(subdir(epDir, 'Global'));
-    locations_file = [];
 
     cases = define_cases(inDir);
     Subjects = load_data(subFile);
@@ -40,13 +50,19 @@ function [locations_file] = epmean_and_manage(inDir, type, subFile)
     av_functions = {@asymmetry_av, @total_av, @global_av, @areas_av};
     av_paths = {asyDir, totDir, globDir, areasDir};
     ntypes = length(av_paths);
+    locFLAG = 0;
     
     
     % setup
     [measure, ~, locations] = load_data(strcat(inDir, cases(1).name));
     aux_loc_file = strcat(path_check(inDir), 'Locations.mat');
-    if isempty(locations) && exist(aux_loc_file, 'file')
-        load(aux_loc_file);
+    if isempty(locations) 
+        if not(isempty(locations_file))
+            locations = load_data(locations_file);
+            locations = locations(:, 1);
+        elseif exist(aux_loc_file, 'file')
+            load(aux_loc_file);
+        end
     end
     if isempty(locations)
         aux_locs = ask_locations();
@@ -65,7 +81,6 @@ function [locations_file] = epmean_and_manage(inDir, type, subFile)
                 auxID = fopen(char_check(strcat(inDir, ...
                     'auxiliary.txt')), 'r');
                 fseek(auxID, 0, 'bof');
-                locFLAG = 0;
                 while ~feof(auxID)
                     proper = fgetl(auxID);
                     if contains(proper, 'Locations=')
@@ -83,12 +98,9 @@ function [locations_file] = epmean_and_manage(inDir, type, subFile)
         end
     end
     
-    if sum(strcmp(type, ["offset"; "OFF"; "off"; "OFFSET"]))
+    if sum(strcmp(type, ["offset"; "OFF"; "off"; "OFFSET"; "exponent"; ...
+            "EXP"; "exp"; "EXPONENT"]))
         nLoc = size(measure, 2);
-        nBands = 1;
-        ind_ep = 2;
-    elseif sum(strcmp(type, ["exponent"; "EXP"; "exp"; "EXPONENT"]))
-        nLoc = size(measure,2);
         nBands = 1;
         ind_ep = 1;
     elseif sum(strcmp(type,["psd"; "PSD"; "psdr"; "PSDr"]))
@@ -109,6 +121,12 @@ function [locations_file] = epmean_and_manage(inDir, type, subFile)
     data.measure = squeeze(mean(measure, ind_ep));
     data.locations = locations;
     setup_data = {};
+    directories = {epDir, asyDir, globDir, areasDir, totDir};
+    for d = 1:length(directories)
+        if not(exist(directories{d}, 'dir'))
+            mkdir(directories{d})
+        end
+    end
     for j = 1:ntypes
         f_av = av_functions{j};
         setup_data{j} = f_av(data);
@@ -213,6 +231,10 @@ function [locations_file] = epmean_and_manage(inDir, type, subFile)
         HC.data = loc_av(j).HC;
         PAT.locations = setup_data{j}.locations;
         HC.locations = setup_data{j}.locations;
+        if j == 2
+            locations = PAT.locations;
+            save(strcat(path_check(inDir), 'Locations.mat'), 'locations')
+        end
         save(strcat(av_paths{j}, 'PAT.mat'), 'PAT')
         save(strcat(av_paths{j}, 'HC.mat'), 'HC')
     end

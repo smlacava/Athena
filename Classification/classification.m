@@ -1,5 +1,36 @@
+%% classification
+% This function fits a random forest classifier and tests a data set on it
+% a selected number of times, and computes the averaged accuracy, the
+% minimum accuracy, the maximum accuracy and shows the averaged confusion
+% matrix
+%
+% statistics = classification(data, split_value, n_trees, ...
+%       bagging_value, random_subspace_value, pruning, ...
+%       n_repetitions, min_samples)
+%
+% input:
+%   data is the data set table
+%   split_value is the fraction of training data set (a number comprised
+%       between 0 and 1, 0.8 as default)
+%   n_trees is the number of trees for each random forest classifier (1 as
+%       default)
+%   bagging_value is the fraction of training data set to use in training
+%       each tree (1 as default)
+%   random_subspace is the fraction of feature to use in training each tree
+%       (1 as default)
+%   pruning is 1 if each tree has to be pruned (0 as default)
+%   n_repetitions is the number of repetition of the
+%       training/testing process (1 as default)
+%   min_samples is the minimum number of examples of each class in the
+%       training data set
+%
+% output:
+%   statistic is the resulting structure which contains the used parameters
+%       and the resulting performance
+
+
 function statistics = classification(data, split_value, n_trees, ...
-    bagging_value, random_subspace_value, pruning_depth, ...
+    bagging_value, random_subspace_value, pruning, ...
     n_repetitions, min_samples)
     
     switch nargin
@@ -8,29 +39,29 @@ function statistics = classification(data, split_value, n_trees, ...
             n_trees = 1;
             bagging_value = [];
             random_subspace_value = [];
-            pruning_depth = [];
+            pruning = [];
             n_repetitions = 1;
             min_samples = 1;
         case 2
             n_trees = 1;
             bagging_value = [];
             random_subspace_value = [];
-            pruning_depth = [];
+            pruning = [];
             n_repetitions = 1;
             min_samples = 1;
         case 3
             bagging_value = [];
             random_subspace_value = [];
-            pruning_depth = [];
+            pruning = [];
             n_repetitions = 1;
             min_samples = 1;
         case 4
             random_subspace_value = [];
-            pruning_depth = [];
+            pruning = [];
             n_repetitions = 1;
             min_samples = 1;
         case 5
-            pruning_depth = [];
+            pruning = [];
             n_repetitions = 1;
             min_samples = 1;
         case 6
@@ -69,6 +100,8 @@ function statistics = classification(data, split_value, n_trees, ...
     false_HC = 0;
     true_PAT = 0;
     true_HC = 0;
+    aux_n_HC = 0;
+    aux_n_PAT = 0;
      
     if min(size(data)) == 1
         problem('There are not enough parameters to evaluate')
@@ -94,10 +127,10 @@ function statistics = classification(data, split_value, n_trees, ...
     
         results = cell(n_trees, 1);
         for i = 1:n_trees
-            data_train = random_subspace(data_train, random_subspace_value);
+            data_train = random_subspace(data_train, ...
+                random_subspace_value);
             data_train = bagging(data_train, bagging_value);
-            tree = decision_tree(data_train, bagging_value, ...
-                random_subspace_value, pruning_depth);
+            tree = decision_tree(data_train, pruning);
             results{i, 1} = predict(tree, data_test);
         end
         
@@ -108,14 +141,14 @@ function statistics = classification(data, split_value, n_trees, ...
         predictions = round(mean(predictions, 2));
         
         n_test = length(predictions);
-        n_HC = sum(data_test.group == 0);
-        n_PAT = sum(data_test.group == 1);
-        aux_FPAT =  sum(predictions > data_test.group)/n_HC;
+        aux_n_PAT = aux_n_PAT+sum(data_test.group == 1);
+        aux_n_HC = aux_n_HC+sum(data_test.group == 0);
+        aux_FPAT =  sum(predictions > data_test.group);
         aux_TPAT = sum((predictions == data_test.group) & ...
-            (predictions == 1))/n_PAT;
-        aux_FHC = sum(predictions < data_test.group)/n_PAT;
+            (predictions == 1));
+        aux_FHC = sum(predictions < data_test.group);
         aux_THC = sum((predictions == data_test.group) & ...
-            (predictions == 0))/n_HC;
+            (predictions == 0));
         
         aux_accuracy = sum(data_test.group == predictions)/n_test;
         false_PAT = false_PAT + aux_FPAT;
@@ -134,17 +167,17 @@ function statistics = classification(data, split_value, n_trees, ...
     
     waitbar(1, f ,'Exporting data')    
     accuracy = accuracy/n_repetitions;
-    true_PAT = true_PAT/n_repetitions;
-    false_PAT = false_PAT/n_repetitions;
-    true_HC = true_HC/n_repetitions;
-    false_HC = false_HC/n_repetitions;    
+    true_PAT = true_PAT/(aux_n_PAT);
+    false_PAT = false_PAT/(aux_n_HC);
+    true_HC = true_HC/(aux_n_HC);
+    false_HC = false_HC/(aux_n_PAT);    
     
     statistics.parameters = struct();
     statistics.parameters.split_value = split_value;
     statistics.parameters.trees_number = n_trees;
     statistics.parameters.bagging_value = bagging_value;
     statistics.parameters.random_subspace = random_subspace_value;
-    statistics.parameters.pruning_depth = pruning_depth;
+    statistics.parameters.pruning_depth = pruning;
     statistics.parameters.repetitions = n_repetitions;
     statistics.parameters.min_samples = min_samples;
     statistics.accuracy = accuracy;

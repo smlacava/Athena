@@ -1,3 +1,18 @@
+%% feature_names
+% This function appends the feature name to the features cell array
+%
+% features = feature_names(labels, feature_name, features)
+% 
+% input:
+%   labels is the segmented name of the feature
+%   feature_name is the name of the type of feature (measure and type of
+%       spatial analysis)
+%   features is the list of the current features
+%
+% output:
+%   fratures is the returned list of features names
+
+
 function features = feature_names(labels, feature_name, features)
     [n_features, n_fragments] = size(labels);
     if n_fragments > 1

@@ -64,8 +64,8 @@ function [P, Psig, data, data_sig] = statistical_analysis(HC, PAT, ...
                 data_sig = [data_sig, aux_data];
             end
         else
-            [P(i), aux_Psig, data_sig, aux_data] = t_test(PAT(:, i), ...
-                HC(:, i), char_check(locs{i}), 'PAT', 'HC', alpha);
+            [P(i), aux_Psig, aux_data] = t_test(PAT(:, i), HC(:, i), ...
+                char_check(locs{i}), 'PAT', 'HC', alpha);
             data(1:nPAT, i) = PAT(:, i);
             data(nPAT+1:end, i) = HC(:, i);
             Psig = [Psig, aux_Psig];

@@ -33,7 +33,7 @@ function classification_data_settings(dataPath, analysis_types, measures)
     end
     
     for i = 1:n_cases
-        if logical(sum(strcmp(cases(i).name, types)))
+        if logical(sum(strcmpi(cases(i).name, types)))
             load(strcat(dataPath, cases(i).name))
             if not(isempty(statAnResult.dataSig))
                 feature_name = char_check(strtok(cases(i).name, '_'));

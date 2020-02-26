@@ -17,7 +17,7 @@
 %   outTypes is the list of variables to save (PLI, PLV, AEC, AECo)
 
 
-function []=connectivity(fs, cf, nEpochs, dt, inDir, tStart, outTypes)
+function connectivity(fs, cf, nEpochs, dt, inDir, tStart, outTypes)
     switch nargin
         case 5
             tStart=0;

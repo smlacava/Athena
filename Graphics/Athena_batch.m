@@ -27,13 +27,6 @@ function Athena_batch_OpeningFcn(hObject, eventdata, handles, varargin)
     axes(handles.axes3);
     imshow(myImage);
     set(handles.axes3, 'Units', 'normalized');
-    if exist('auxiliary.txt', 'file')
-        auxID = fopen('auxiliary.txt','r');
-        fseek(auxID, 0, 'bof');
-        dataPath_line = split(fgetl(auxID), '=');
-        set(handles.dataPath_text, 'String', dataPath_line(2))
-        fclose(auxID);
-    end
     addpath 'Auxiliary'
     if nargin >= 4
         set(handles.aux_dataPath, 'String', varargin{1})
@@ -63,10 +56,10 @@ function sub_text_CreateFcn(hObject, eventdata, handles)
     end
 
 
-function dataPath_text_Callback(hObject, eventdata, handles)
+function dataFile_text_Callback(hObject, eventdata, handles)
 
 
-function dataPath_text_CreateFcn(hObject, eventdata, handles)
+function dataFile_text_CreateFcn(hObject, eventdata, handles)
     if ispc && isequal(get(hObject, 'BackgroundColor'), ...
             get(0, 'defaultUicontrolBackgroundColor'))
         set(hObject, 'BackgroundColor', 'white');
@@ -81,8 +74,7 @@ function Run_Callback(~, eventdata, handles)
     addpath 'Graphics'
     addpath 'Epochs Analysis'
     addpath 'Batch'
-    addpath 'Index Correlation'
-    addpath 'Measures Correlation'
+    addpath 'Correlations'
     addpath 'Epochs Management'
     addpath 'Epochs Analysis'
     addpath 'Classification'
@@ -90,297 +82,256 @@ function Run_Callback(~, eventdata, handles)
     addpath 'Statistical Analysis'
     
     MEASURES = ["PLV", "PLI", "AEC", "AECo", "offset", "exponent", "PSDr"];
-    MEASURESconn = ["PLV", "PLI", "AEC", "AECo"];
     MEASURESbg = ["offset", "exponent"];
     true = ["True", "true", "TRUE", "t", "1", "OK", "ok"];
-	dataFile = char_check(get(handles.dataPath_text, 'String'));
-    
+	dataFile = char_check(get(handles.dataFile_text, 'String'));
+    bg_color = [0.67 0.98 0.92];
     if not(exist(dataFile, 'file'))
         problem(strcat("File ", dataFile, " not found"))
         return
     end
     
-    [dataPath, fs, cf, epNum, epTime, tStart, totBand, measure, ...
-    Subjects, locations, Index, MeasureExtraction, EpochsAverage, ...
-    EpochsAnalysis, IndexCorrelation, StatisticalAnalysis, ...
-    MeasuresCorrelation, ClassificationData, Group_IC, Areas_IC, ...
-    Conservativeness_IC, Areas_EA, Areas_SA, Conservativeness_SA, ...
-    Measure1, Measure2, Areas_MC, Group_MC, MergingMeasures, ...
-    MergingAreas, Subject] = read_file(dataFile);
+    %dataPath, fs, cf, epNum, epTime, 
+    %tStart, totBand, measure, Subjects, locations, 
+    %Index, MeasureExtraction, EpochsAverage, EpochsAnalysis, IndexCorrelation, 
+    %StatisticalAnalysis, MeasuresCorrelation, ClassificationData, Group_IC, Areas_IC,
+    %Conservativeness_IC, Areas_EA, Areas_SA, Conservativeness_SA, Measure1, 
+    %Measure2, Areas_MC, Group_MC, MergingData, MergingMeasures, MergingAreas, 
+    %Subject, Classification, DefaultClassification, TrainPercentage, TreesNumber, 
+    %BaggingValue, RandomSubspace, PruningDepth, Repetitions, MinimumClassExamples
+    parameters = read_file(dataFile);
     
-    dataPath = path_check(dataPath);
-    cd(dataPath)
+    dataPath = path_check(parameters{1});
+    cf = parameters{3};
     nBands = length(cf)-1;
-    measurePath = strcat(dataPath,measure);
-    measurePath = path_check(measurePath);
-    addpath(measurePath)
+    measure = parameters{8};
+    n_measures = length(measure);
+    measurePath = cell(n_measures, 1);
     
     if not(exist(dataPath, 'dir'))
         problem(strcat('Directory ', dataPath, ' not found'))
         return
     end
-    if not(sum(strcmp(measure, MEASURES)))
-        problem(strcat(measure, ' is an invalid measure'))
-        return
-    end
-    connCheck = 0;
-    type = measure;
-    if sum(strcmp(measure, MEASURESconn))
-        connCheck = 1;
-        type = 'CONN';
-    elseif sum(strcmp(measure, MEASURESbg))
-        cf = [cf(1), cf(end)];
-        nBands = 1;
+    for m = 1:n_measures
+        if strcmp(measure{m}, 'AECc')
+            measure{m} = 'AECo';
+        end
+        if not(sum(strcmp(measure{m}, MEASURES)))
+            problem(strcat(measure{m}, ' is an invalid measure'))
+            return
+        end
+        measurePath{m} = path_check(strcat(dataPath, measure{m}));
+        if not(exist(measurePath{m}, 'dir'))
+            mkdir(measurePath{m});
+        end
     end
  
     
-    if sum(strcmp(MeasureExtraction, true))
-        if strcmp(measure, 'PSDr') && length(totBand) ~= 2
-            problem('Invalid total band')
-            return
-        end
-        batch_measureExtraction(measure, fs, cf, epNum, epTime, ...
-            dataPath, tStart, totBand);
-        pause(1)
-    end
-    
-    
-    if sum(strcmp(EpochsAverage, true))
-        if not(exist(Subjects, 'file'))
-            problem(strcat(Subjects, ' file not found'))
-            return
-        end
-        batch_epochsAverage(measurePath, type, Subjects)
-    end
-    
-    if sum(strcmp(EpochsAnalysis, true))
-        if not(exist(locations, 'file'))
-            problem(strcat("File ", locations, " not found"))
-            return
-        end
-        for i = 1:length(Areas_EA)
-            epochs_analysis(measurePath, Subject, ...
-                areas_check(Areas_EA{i,1}), measure, epNum, nBands, ...
-                locations)
-        end
-    end
-    
-    managedPath = strcat(measurePath, 'Epmean');
-    managedPath = path_check(managedPath);
-
-    if not(exist(managedPath, 'dir')) && ...
-            sum([sum(strcmp(MeasuresCorrelation, true)), ...
-            sum(strcmp(IndexCorrelation, true)), ...
-            sum(strcmp(StatisticalAnalysis, true))]) > 0
-        uiwait(msgbox('Epochs Avarage not computed', 'Error', 'custom', ...
-            im));
-    else
-        cd(dataPath)
-        
-        Subjects = load_data(Subjects);
-        if sum(strcmp(IndexCorrelation, true))
-            if not(exist(Index, 'file'))
-                problem(strcat("File ", Index, " not found"))
+    if sum(strcmp(parameters{12}, 'true'))
+        for m = 1:n_measures
+            if strcmp(measure{m}, 'PSDr') && length(parameters{7}) ~= 2
+                problem('Invalid total band')
                 return
             end
-            for i = 1:length(Areas_IC)
-                if strcmp(Group_IC, 'PAT')
-                    sub = Subjects(Subjects(:, end) == 1, 1);
-                else
-                    sub = Subjects(Subjects(:, end) == 1, 0);
-                end
-                groupFile = char_check(strcat(managedPath, Group_IC, ...
-                    '_em.mat'));
-                [RHO, P, RHOsig, locList]=index_correlation(groupFile, ...
-                    Index, locations, connCheck, ...
-                    areas_check(Areas_IC{i,1}), Conservativeness_IC, ...
-                    measure, sub);
-                bands = string();
-                for i = 1:size(RHO,1)
-                    bands = [bands; strcat('Band', string(i))];
-                end
-                bands(1, :) = [];
-                bands = cellstr(bands);
-        
-                fc1 = figure('Name', 'Correlations - RHO', ...
-                    'NumberTitle', 'off');
-                rho = uitable(fc1, 'Data', RHO, 'Position', ...
-                    [20 20 525 375], 'RowName', bands, 'ColumnName', ...
-                    locList);
-                fc2 = figure('Name', 'Correlations - p-value', ...
-                    'NumberTitle', 'off');
-                pcorr = uitable(fc2, 'Data', P, 'Position', ...
-                    [20 20 525 375], 'RowName', bands, 'ColumnName', ...
-                    locList);
-                if size(RHOsig, 1) ~= 0 && ...
-                        not(logical(sum(sum(strcmp(RHOsig, '')))))
-                    fc3 = figure('Name', ...
-                        'Correlations - Significative Results', ...
-                        'NumberTitle', 'off');
-                    rhos = uitable(fc3, 'Data', cellstr(RHOsig), ...
-                        'Position', [20 20 525 375]);
-                end
+            [type, ~] = type_check(measure{m});
+            if strcmp(measure{m}, 'PSDr') 
+                PSDr(parameters{2}, cf, parameters{4}, parameters{5}, ...
+                    dataPath, parameters{6}, parameters{7})
+            elseif strcmp(measure{m}, 'offset') || ...
+                    strcmp(measure{m}, 'exponent')
+                    cf_bg = [cf(1), cf(end)];
+                FOOOFer(parameters{2}, cf_bg, parameters{4}, ...
+                    parameters{5}, dataPath, parameters{6}, type)
+            else
+                connectivity(parameters{2}, cf, parameters{4}, ...
+                    parameters{5}, dataPath, parameters{6}, measure{m})
             end
-            pause(2)
+            pause(1)
         end
+    end
     
     
-        if sum(strcmp(StatisticalAnalysis, true))
-            for i = 1:length(Areas_SA)
-                PAT = strcat(managedPath, 'PAT_em.mat');
-                HC = strcat(managedPath, 'HC_em.mat');
-                anType = areas_check(Areas_SA{i,1});
-                [P, Psig, locList, data, dataSig] = mult_t_test(PAT, ...
-                    HC, locations, connCheck, anType, ...
-                    Conservativeness_SA);
-                bands = string();
-                for i = 1:size(P,1)
-                    bands = [bands; strcat('Band', string(i))];
-                end
-                bands(1, :) = [];
-                bands = cellstr(bands);
-                if length(size(data)) == 3
-                    auxData = [];
-                    for i = 1:size(data, 3)
-                        auxData = [auxData data(:, :, i)];
-                    end
-                    data = auxData;
-                    clear auxData;
-                end
-        
-                fs1 = figure('Name', 'Data', 'NumberTitle', 'off');
-                d = uitable(fs1, 'Data', data, 'Position', ...
-                    [20 20 525 375]);
-                fs2 = figure('Name', 'Statistical Analysis - p-value', ...
-                    'NumberTitle', 'off');
-                p = uitable(fs2, 'Data', P, 'Position', ...
-                    [20 20 525 375], 'RowName', bands, 'ColumnName', ...
-                    locList);
-        
-                if size(Psig,1) ~= 0 && ...
-                        not(logical(sum(sum(strcmp(Psig,'')))))
-                    fs3 = figure('Name', ...
-                        'Statistical Analysis - Significant Results', ...
-                        'NumberTitle', 'off');
-                    ps = uitable(fs3, 'Data', cellstr(Psig), ...
-                        'Position', [20 20 525 375]);
-                end
-        
-                statanDir = limit_path(char(dataPath), measure);
-                statanType = strcat(measure, '_', anType, '.mat');
-                if not(exist(strcat(statanDir, 'StatAn'), 'dir'))
-                    mkdir(statanDir, 'statAn')
-                end
-                statAnResult = struct();
-                statAnResult.Psig = Psig;
-                statAnResult.dataSig = dataSig;
-                statanDir = strcat(statanDir, 'StatAn');
-                statanDir = path_check(statanDir);
-                save(strcat(statanDir,statanType), 'statAnResult')
+    if sum(strcmp(parameters{13}, 'true'))
+        if not(exist(parameters{9}, 'file'))
+            problem(strcat(parameters{9}, ' file not found'))
+            return
+        end
+        for m = 1:n_measures
+            if not(exist(path_check(strcat(path_check(strcat(dataPath, ...
+                    measure{m})), 'Epmean')), 'dir'))
+                mkdir(path_check(strcat(path_check(strcat(dataPath, ...
+                    measure{m})), 'Epmean')))
+            end
+            locations_file = epmean_and_manage(dataPath, measure{m}, ...
+                parameters{9}, parameters{10});
+            if exist('auxiliary.txt', 'file')
+                auxID = fopen('auxiliary.txt', 'a+');
+            elseif exist(strcat(dataPath, 'auxiliary.txt'), 'file')
+                auxID = fopen(strcat(dataPath, 'auxiliary.txt'), 'a+');
+            end
+            fseek(auxID, 0, 'eof');
+            fprintf(auxID, '\nEpmean=true');
+            fprintf(auxID, '\nSubjects=%s', parameters{9});
+            if not(isempty(locations_file))
+                fprintf(auxID, '\nLocations=%s', locations_file);
+            else
+                fprintf(auxID, '\nLocations=%s', ...
+                    strcat(dataPath, 'Locations.mat'));
+            end
+            fclose(auxID);
+        end
+    end
+    
+    if sum(strcmp(parameters{14}, 'true'))
+        if not(exist(parameters{10}, 'file'))
+            problem(strcat("File ", parameters{10}, " not found"))
+            return
+        end
+        Areas_EA = parameters{22};
+        for m = 1:n_measures
+            for i = 1:length(Areas_EA)
+                epochs_analysis(dataPath, parameters{32}, ...
+                    areas_check(Areas_EA{i,1}), measure{m}, ...
+                    parameters{4}, nBands, parameters{10})
             end
         end
+    end
     
-        if sum(strcmp(MeasuresCorrelation, true))
-            type = [string(Measure1) string(Measure2)];
-            if strcmp(Group_MC, 'PAT')
-                dataPathG = 'PAT_em.mat';
-            elseif strcmp(Group_MC, 'HC')
-                dataPathG = 'HC_em.mat';
-            end
-            for a = 1:length(Areas_MC)
-                for m = 1:2
-                    if sum(strcmp(type(m), ...
-                            ["PLV", "PLI", "AEC", "AECo"])) == 0
-                        connCheckM = 0;
+    managedPath = cell(n_measures, 1);
+    for m = 1:n_measures
+        managedPath{m} = path_check(strcat(measurePath{m}, 'Epmean'));
+    end
+    if exist('locations_file', 'var') && ischar(locations_file)
+        locations = load_data(locations_file);
+    else
+        locations = load_data(parameters{10});
+        locations = locations(:, 1);
+    end
+    alpha = alpha_levelling(parameters{21}, nBands, length(locations));
+    
+    for m = 1:n_measures
+        if not(exist(managedPath{m}, 'dir')) && ...
+                sum([sum(strcmp(parameters{17}, true)), ...
+                sum(strcmp(parameters{15}, true)), ...
+                sum(strcmp(parameters{16}, true))]) > 0
+            problem('Epochs Avarage not computed')
+            return
+        else
+            cd(dataPath)
+        
+            Subjects = load_data(parameters{9});
+            if sum(strcmp(parameters{15}, 'true'))
+                if not(exist(parameters{11}, 'file'))
+                    problem(strcat("File ", parameters{11}, " not found"))
+                    return
+                end
+                Areas_IC = parameters{20};
+                for i = 1:length(Areas_IC)
+                    [data, ~, locs] = load_data(strcat(path_check(...
+                        strcat(managedPath{m}, Areas_IC{i})), 'PAT.mat'));
+                    if length(size(data)) == 3
+                        nBands = size(data, 2);
                     else
-                        connCheckM = 1;
+                        nBands = 1;
                     end
-                    dataPathM = path_check(strcat(dataPath, type(m)));
-                    dataPathM = path_check(strcat(dataPathM, 'Epmean'));
-                    dataPathM = strcat(dataPathM, dataPathG);
-                    anType = areas_check(Areas_MC{a, 1});
-                    [d, locList] = measures_manager(dataPathM, ...
-                        locations, connCheckM, anType);
-                    if m == 1
-                        data1 = d;
-                    else
-                        data2 = d;
-                    end
-                end   
-                type1 = type(1);
-                type2 = type(2);
-                nBands = size(data1, 2);
-                for i = 1:length(locList) 
+                    RHO = zeros(length(locs), nBands);
+                    P = RHO;
+                    bands = string();
                     for j = 1:nBands
-                        correlation(data1(:, j, i), data2(:, j, i), ...
-                            strcat('Band', string(j), ' ', locList(i)), ...
-                            type1, type2)
+                        bands = [bands; strcat('Band', string(j))];
                     end
-                end
-            end
-        end
-    
-        if sum(strcmp(ClassificationData, true))
-            dataSig = [];
-            Psig = [];
-            SApath = strcat(dataPath, 'statAn');
-            SApath = path_check(SApath);
-            for i = 1:length(MergingAreas)
-                for j = 1:length(MergingMeasures)
-                    SAfile = strcat(SApath, MergingMeasures{j}, ...
-                        '_', MergingAreas{i}, '.mat');
-                    if exist(SAfile, 'file')
-                        load(SAfile)
-                        dataSig = [dataSig, statAnResult.dataSig];
-                        col = size(statAnResult.Psig, 2);
-                        if not(isempty(col))
-                            if col == 2
-                                for r = 1:size(statAnResult.Psig, 1)
-                                    Psig = [Psig; ...
-                                        [string(MergingMeasures{j}), ...
-                                        MergingAreas(i), ...
-                                        statAnResult.Psig(r, :)]];
-                                end
-                            elseif col == 3
-                                for r = 1:size(statAnResult.Psig, 1)
-                                    Psig = [Psig; ...
-                                        [string(MergingMeasures{j}), ...
-                                        statAnResult.Psig(r, :)]];
-                                end
-                            else 
-                                for r = 1:size(statAnResult.Psig, 1)
-                                    Psig = [Psig; ...
-                                        [string(MergingMeasures{j}), ...
-                                        MergingAreas(i), "Band 1", ...
-                                        statAnResult.Psig(r, :)]];
-                                end
+                    bands(1, :) = [];
+                    bands = cellstr(bands);
+                    [data, ~, locations] = load_data(char_check(strcat(...
+                        path_check(strcat(managedPath{m}, ...
+                        Areas_IC{i})), parameters{19}, '.mat')));
+                    subs = {};
+                    if strcmp(char_check(parameters{19}), 'PAT')
+                        for s = 1:length(Subjects)
+                            if patient_check(char_check(Subjects(s, end)))
+                                subs = [subs, char_check(Subjects(s, 1))];
+                            end
+                        end
+                    else
+                        for s = 1:length(Subjects)
+                            if not(patient_check(char_check(...
+                                    Subjects(s, end))))
+                                subs = [subs, char_check(Subjects(s, 1))];
                             end
                         end
                     end
+                    index_correlation(data, subs, bands, measure{m}, ...
+                    parameters{11}, alpha, bg_color, locations, P, RHO, ...
+                        length(locations), nBands);
                 end
+                pause(2)
             end
-            Psig(1,:) = [];
-            
-            SDfile = strcat(dataPath, 'Significant_Data.csv');
-            SRfile = strcat(dataPath, 'Significant_Results.txt');
-            if exist(SDfile, 'file')
-                delete(SDfile);
-            end
-            csvwrite(SDfile, dataSig);
-            srID = fopen(SRfile, 'w');
-            for s = 1:size(Psig,1)
-                fprintf(srID, '%s %s %s %s\n', Psig(s, :));
-            end
-            fclose(srID);            
         end
+        
+        if sum(strcmp(parameters{16}, 'true'))
+            Areas_SA = parameters{23};
+            for i = 1:length(Areas_SA)
+                saPath = path_check(strcat(managedPath{m}, Areas_SA{i}));
+                PAT = strcat(saPath, 'PAT.mat');
+                HC = strcat(saPath, 'HC.mat');
+                [PAT, ~, locs] = load_data(PAT);
+                HC = load_data(HC);
+                anType = areas_check(Areas_SA{i,1});
+                statistical_analysis(HC, PAT, locs, ....
+                    cons_check(parameters{24}), ...
+                    dataPath, measure{m}, anType)
+            end
+        end
+        
+        if sum(strcmp(parameters{17}, 'true'))
+            Areas_MC = parameters{27};
+            for i = 1:length(Areas_MC)
+                [xData, yData, nLoc, nBands, locs] = ...
+                    batch_measures_correlation_settings(parameters{25}, ...
+                    parameters{26}, dataPath, Areas_MC{i}, parameters{28});
+                if isempty(nBands)
+                    return;
+                end
+                bands = cell(1, nBands);
+                for b = 1:nBands
+                	bands{1, b} = char_check(strcat("Band ", string(b)));
+                end
+                measures_correlation(xData, yData, parameters{28}, ...
+                    bands, {parameters{25}, parameters{26}}, alpha, ...
+                    bg_color, locs, [], [], nLoc, nBands)   
+            end
+        end
+    end
+    
+    if sum(strcmp(parameters{29}, 'true'))
+    	MergingAreas = parameters{31};
+        MergingMeasures = parameters{30};
+        classification_data_settings(dataPath, MergingAreas, ...
+            MergingMeasures);
+    end
+    
+    if sum(strcmp(parameters{33}, 'true'))
+        for i = 35:40
+            if isnan(parameters{i})
+                parameters{i} = [];
+            end
+        end
+        statistics = classification(dataPath, parameters{35}, ...
+            parameters{36}, parameters{37}, parameters{38}, ...
+            parameters{39}, parameters{40}, parameters{41});
+        resultDir = strcat(path_check(dataPath), 'Classification');
+        if not(exist(resultDir, 'dir'))
+            mkdir(resultDir);
+        end
+        save(strcat(path_check(resultDir), 'Statistics.mat'), 'statistics')
     end
     success()
     
     
 function data_search_Callback(hObject, ~, handles)
-    [i, ip] = uigetfile;
+    [i, ip] = uigetfile({'*.*'});
     if i ~= 0
-        set(handles.dataPath_text, 'String', strcat(string(ip), string(i)))
+        set(handles.dataFile_text, 'String', strcat(string(ip), string(i)))
     end
 
 

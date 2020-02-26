@@ -13,6 +13,7 @@
 %       frequency band
 %   measure is the name of the considered measure
 %   Index is the array which contains the index for each subject, in order
+%       (or the name of the file which contains it)
 %   alpha is the alpha level value
 %   bg_color is the rgb code of the background color
 %   locs is the cell array which contains the name of each location, in
@@ -30,6 +31,15 @@ function index_correlation(data, sub_list, bands_names, measure, Index, ...
     cd(char(funDir{1}));
     addpath 'Auxiliary'
     addpath 'Graphics'
+    if isempty(P)
+        P = zeros(nLoc, nBands);
+    end
+    if isempty(RHO)
+        RHO = zeros(nLoc, nBands);
+    end
+    if ischar(Index)
+        Index = load_data(Index);
+    end
     
     for i = 1:nLoc
         if nBands > 1

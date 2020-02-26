@@ -1,4 +1,4 @@
-function [] = batch_epochsAverage(dataPath, type, subjects)
+function batch_epochsAverage(dataPath, type, subjects)
     if exist('auxiliary.txt', 'file')
         auxID = fopen('auxiliary.txt', 'a+');
     elseif exist(strcat(dataPath, 'auxiliary.txt'), 'file')

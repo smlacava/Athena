@@ -23,8 +23,7 @@
 %     numbers are relative to one peak (CF, Amp, BW) and the others zeros 
 %     are utilized to export only one matrix for each subject
 
-function [] = FOOOFer(fs, cf, nEpochs, dt, inDir, tStart, outTypes, ...
-    maxPeaks)
+function FOOOFer(fs, cf, nEpochs, dt, inDir, tStart, outTypes, maxPeaks)
 
     switch nargin
         case 5

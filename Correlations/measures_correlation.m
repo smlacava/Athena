@@ -31,6 +31,18 @@ function measures_correlation(xData, yData, sub_list, bands_names, ...
     cd(char(funDir{1}));
     addpath 'Auxiliary'
     addpath 'Graphics'
+    if isempty(P)
+        P = zeros(nLoc, nBands);
+    end
+    if isempty(RHO)
+        RHO = zeros(nLoc, nBands);
+    end
+    if ischar(sub_list)
+        sub_list = load_data(sub_list);
+    end
+    if ischar(locs)
+        locs = load_data(locs);
+    end
     
     for i = 1:nLoc
         if nBands > 1

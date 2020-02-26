@@ -2,215 +2,93 @@
 % This function is used in the batch mode to read the file containing the
 % instruction to execute.
 %
-% [dataPath, fs, cf, epNum, epTime, tStart, totBand, measure, Subjects, ...
-%     locations, Index, MeasureExtraction, EpochsAverage, ...
-%     EpochsAnalysis, IndexCorrelation, StatisticalAnalysis, ...
-%     MeasuresCorrelation, ClassificationData, Group_IC, Areas_IC, ...
-%     Conservativeness_IC, Areas_EA, Areas_SA, Conservativeness_SA, ...
-%     Measure1, Measure2, Areas_MC, Group_MC, MergingMeasures, ...
-%     MergingAreas, Subject] = read_file(dataFile)
+% parameters = read_file(dataFile)
 %
 % input:
 %   dataFile is the name of the file (with its path) which contains all the
 %       instructions to execute
 %
 % output:
-%   dataPath is the directory which contains the time series
-%   fs is the sampling frequency
-%   cf is an array which contains the cut frequencies
-%   epNum is the number of epochs
-%   epTime is the time window of each epoch
-%   tStart is the initial time of the first epoch
-%   totBand is an array which contains the minumum and the maximum cut 
-%       frequencies (this variable is used to extracting the relative PSD)
-%   measure is the measure to extract
-%   Subjects is the name of the file (with its path) which contains the
-%       table with the subjects information
-%   locations is the name of the file (with its path) which contains the 
-%       table with the location of every detection in time series
-%   Index is the name of the file (with its path) which contains an index
-%       for every considered subject
-%   MeasureExtraction is a variable which declare if the measure extraction
-%       has to be computed or not
-%   EpochsAverage is a variable which declare if the average between epochs
-%       has to be computed or not
-%   EpochsAnalysis is a variable which declare if the epochs analysis
-%       has to be computed or not
-%   IndexCorrelation is a variable which declare if the correlation between
-%       a selected measure and an index for every subject has to be 
-%       computed or not
-%   StatisticalAnalysis is a variable which declare if the statistical
-%       analysis between patients and healthy controls has to be computed 
-%       or not
-%   MeasuresCorrelation is a variable which declare if the correlation
-%       between two measures has to be computed or not
-%   ClassificationData is a variable which declare if the merging of
-%       significant restults of previously executed statistical analysis
-%       has to be computed or not
-%   Group_IC is the selected group to compute the index correlation
-%   Areas_IC is the areas of study of the index correlation (total, global,
-%       areas or asymmetry)
-%   Conservativeness_IC is the conservativeness level to evaluate in the
-%       index correlation
-%   Areas_EA is the areas of study of the epochs analysis (total, global,
-%       areas or asymmetry)
-%   Areas_SA is the areas of study of the statistical analysis (total,
-%       global, areas or asymmetry)
-%   Conservativeness_SA is the conservativeness level to evaluate in the
-%       statistical analysis
-%   Measure1 is the first measure to evaluate in the measures correlation
-%       analysis
-%   Measure2 is the second measure to evaluate in the measures correlation
-%       analysis
-%   Areas_MC is the areas of study of the measures correlation analysis
-%       (total, global, areas or asymmetry)
-%   Group_MC is the selected group to compute the measures correlation
-%   MergingMeasures is an array which contains the names of the measures to
-%       merge during the classification data step
-%   MergingAreas is an array which contains the names of the areas (total,
-%       global, areas and/or asymmetry) to merge during the classification 
-%       data step
-%   Subject is the name of the subject which has to be analyzed in the
-%       epochs analysis step
+%   parameters is a cell array which contains all the parameters which have
+%       to be used in batch analysis (in order, dataPath, fs, cf, epNum, 
+%       epTime, tStart, totBand, measure, Subjects, locations, Index, 
+%       MeasureExtraction, EpochsAverage, EpochsAnalysis, IndexCorrelation,
+%       StatisticalAnalysis, MeasuresCorrelation, ClassificationData, 
+%       Group_IC, Areas_IC, Conservativeness_IC, Areas_EA, Areas_SA, 
+%       Conservativeness_SA, Measure1, Measure2, Areas_MC, Group_MC,
+%       MergingData, MergingMeasures, MergingAreas, Subject, 
+%       Classification, DefaultClassification, TrainPercentage, 
+%       TreesNumber, BaggingValue, RandomSubspace, PruningDepth, 
+%       Repetitions, MinimumClassExamples)
 
-function [dataPath, fs, cf, epNum, epTime, tStart, totBand, measure, ...
-    Subjects, locations, Index, MeasureExtraction, EpochsAverage, ...
-    EpochsAnalysis, IndexCorrelation, StatisticalAnalysis, ...
-    MeasuresCorrelation, ClassificationData, Group_IC, Areas_IC, ...
-    Conservativeness_IC, Areas_EA, Areas_SA, Conservativeness_SA, ...
-    Measure1, Measure2, Areas_MC, Group_MC, MergingMeasures, ...
-    MergingAreas, Subject] = read_file(dataFile)
 
-    dataPath = [];
-    fs = [];
-    cf = [];
-    epNum = []; 
-    epTime = [];
-    tStart = [];
-    totBand = [];
-    measure = [];
-    Subjects = [];
-    locations = [];
-    Index = [];
-    MeasureExtraction = [];
-    EpochsAverage = [];
-    EpochsAnalysis = [];
-    IndexCorrelation = [];
-    StatisticalAnalysis = [];
-    MeasuresCorrelation = [];
-    ClassificationData = [];
-    Group_IC = [];
-    Areas_IC = [];
-    Conservativeness_IC = [];
-    Areas_EA = [];
-    Areas_SA = [];
-    Conservativeness_SA = [];
-    Measure1 = [];
-    Measure2 = [];
-    Areas_MC = [];
-    Group_MC = [];
-    MergingMeasures = [];
-    MergingAreas = [];
-    Subject = [];
-
+function parameters = read_file(dataFile)
+    
+    params_names = {'dataPath=', 'fs=', 'cf=', 'epNum=', 'epTime=', ...
+        'tStart=', 'totBand=', 'measures=', 'Subjects=', 'Locations=', ...
+        'Index=', 'MeasureExtraction=', 'EpochsAverage=', ...
+        'EpochsAnalysis=', 'IndexCorrelation=', 'StatisticalAnalysis=', ...
+        'MeasuresCorrelation=', 'ClassificationData=', 'Group_IC=', ...
+        'Areas_IC=', 'Conservativeness_IC=', 'Areas_EA=', 'Areas_SA=', ...
+        'Conservativeness_SA=', 'Measure1=', 'Measure2=', 'Areas_MC=', ...
+        'Group_MC=', 'ClassificationData=', 'MergingMeasures=', ...
+        'MergingAreas=', 'Subject=', 'Classification=', ...
+        'DefaultClassificationParameters=', 'TrainPercentage=', ...
+        'TreesNumber=', 'BaggingValue=', 'RandomSubspace=', ...
+        'PruningDepth=', 'Repetitions=', 'MinimumClassExamples='};
+    n_params = length(params_names);
+    parameters = cell(n_params, 1);
+    
+    aux_cases = 1:n_params;
+    par_cases = {aux_cases(contains(params_names, 'Conservativeness'))};
+    par_cases = [par_cases, [aux_cases(contains(params_names, 'fs')), ...
+        aux_cases(contains(params_names, 'epNum')), ...
+        aux_cases(contains(params_names, 'epTime')), ...
+        aux_cases(contains(params_names, 'tStart')), ...
+        aux_cases(contains(params_names, 'Repetitions')), ...
+        aux_cases(contains(params_names, 'MinimumClassExamples')), ...
+        aux_cases(contains(params_names, 'TrainPercentage')), ...
+        aux_cases(contains(params_names, 'TreesNumber')), ...
+        aux_cases(contains(params_names, 'MergingAreas')), ...
+        aux_cases(contains(params_names, 'PruningDepth')), ...
+        aux_cases(contains(params_names, 'RandomSubspace')), ...
+        aux_cases(contains(params_names, 'BaggingValue'))]];
+    par_cases = [par_cases, ...
+        [aux_cases(contains(params_names, 'measures')), ...
+        aux_cases(contains(params_names, 'Areas_')), ...
+        aux_cases(contains(params_names, 'Group_')), ...
+        aux_cases(contains(params_names, 'MergingMeasures')), ...
+        aux_cases(contains(params_names, 'MergingAreas')), ...
+        aux_cases(contains(params_names, 'totBand'))]];
+    cf = 3;
+    par_functions = {@cons_check, @str2double, @split};
+    
+    
     auxID = fopen(dataFile, 'r');
     fseek(auxID, 0, 'bof');
     while ~feof(auxID)
-        proper = fgetl(auxID);
-        if contains(proper, 'dataPath=')
-            dataPath = split(proper, '=');
-            dataPath = dataPath{2};
-        elseif contains(proper, 'fs=')
-            fs = split(proper, '=');
-            fs = str2double(fs{2});
-        elseif contains(proper,'cf=')
-            cf = split(proper, '=');
-            cf = str2double(split(cf{2}));
-            cf = cf(1:end-1);
-        elseif contains(proper,'epNum=')
-            epNum = split(proper, '=');
-            epNum = str2double(epNum{2});
-        elseif contains(proper, 'epTime=')
-            epTime = split(proper, '=');
-            epTime = str2double(epTime{2});
-        elseif contains(proper, 'tStart=')
-            tStart = split(proper, '=');
-            tStart = str2double(tStart{2});    
-        elseif contains(proper, 'totBand=')
-            totBand = split(proper, '=');
-            totBand = str2double(split(totBand{2}));
-        elseif contains(proper, 'measure=')
-            measure = split(proper,'=');
-            measure = measure{2}; 
-        elseif contains(proper, 'Subjects=')
-            Subjects = split(proper, '=');
-            Subjects = Subjects{2};
-        elseif contains(proper, 'Locations=')
-            locations = split(proper, '=');
-            locations = locations{2};
-        elseif contains(proper, 'Index=')
-            Index = split(proper, '=');
-            Index = Index{2};
-        elseif contains(proper, 'MeasureExtraction=')
-            MeasureExtraction = split(proper, '=');
-            MeasureExtraction = MeasureExtraction{2};
-        elseif contains(proper, 'EpochsAverage=')
-            EpochsAverage = split(proper, '=');
-            EpochsAverage = EpochsAverage{2};
-        elseif contains(proper, 'IndexCorrelation=')
-            IndexCorrelation = split(proper, '=');
-            IndexCorrelation = IndexCorrelation{2};
-        elseif contains(proper, 'EpochsAnalysis=')
-            EpochsAnalysis = split(proper, '=');
-            EpochsAnalysis = EpochsAnalysis{2};
-        elseif contains(proper, 'StatisticalAnalysis=')
-            StatisticalAnalysis = split(proper, '=');
-            StatisticalAnalysis = StatisticalAnalysis{2};
-        elseif contains(proper, 'MeasuresCorrelation=')
-            MeasuresCorrelation = split(proper, '=');
-            MeasuresCorrelation = MeasuresCorrelation{2};
-        elseif contains(proper, 'ClassificationData=')
-            ClassificationData = split(proper, '=');
-            ClassificationData = ClassificationData{2};
-        elseif contains(proper, 'Group_IC=')
-            Group_IC = split(proper, '=');
-            Group_IC = split(Group_IC{2});
-        elseif contains(proper, 'Areas_IC=')
-            Areas_IC = split(proper, '=');
-            Areas_IC = split(Areas_IC{2}); 
-        elseif contains(proper, 'Conservativeness_IC=')
-            Conservativeness_IC = split(proper, '=');
-            Conservativeness_IC = cons_check(Conservativeness_IC{2});   
-        elseif contains(proper, 'Areas_EA=')
-            Areas_EA = split(proper, '=');
-            Areas_EA = split(Areas_EA{2}); 
-        elseif contains(proper, 'Areas_SA=')
-            Areas_SA = split(proper, '=');
-            Areas_SA = split(Areas_SA{2}); 
-        elseif contains(proper, 'Conservativeness_SA=')
-            Conservativeness_SA = split(proper, '=');
-            Conservativeness_SA = cons_check(Conservativeness_SA{2});   
-        elseif contains(proper, 'Measure1=')
-            Measure1 = split(proper, '=');
-            Measure1 = Measure1{2}; 
-        elseif contains(proper, 'Measure2=')
-            Measure2 = split(proper, '=');
-            Measure2 = Measure2{2};
-        elseif contains(proper, 'Areas_MC=')
-            Areas_MC = split(proper, '=');
-            Areas_MC = split(Areas_MC{2});
-        elseif contains(proper, 'Group_MC=')
-            Group_MC = split(proper, '=');
-            Group_MC = split(Group_MC{2}); 
-        elseif contains(proper, 'MergingMeasures=')
-            MergingMeasures = split(proper, '=');
-            MergingMeasures = split(MergingMeasures{2});
-        elseif contains(proper, 'MergingAreas=')
-            MergingAreas = split(proper, '=');
-            MergingAreas = split(MergingAreas{2}); 
-        elseif contains(proper, 'Subject=')
-            Subject = split(proper, '=');
-            Subject = Subject{2};
+        prop = fgetl(auxID);
+        for i = 1:n_params
+            if contains(prop, params_names{i})
+                aux_par = split(prop, '=');
+                aux_par = aux_par{2};
+                if contains(prop, 'cf=')
+                    aux_par = str2double(split(aux_par))';
+                    parameters{cf} = aux_par(1:end-1);
+                else
+                    check = 0;
+                    for j = 1:length(par_functions)
+                        if not(isempty(find(par_cases{j} == i)))
+                            p_f = par_functions{j};
+                            parameters{i} = p_f(aux_par);
+                            check = 1;
+                        end
+                    end
+                    if check == 0
+                        parameters{i} = aux_par;
+                    end
+                end
+            end
         end
     end
     fclose(auxID);

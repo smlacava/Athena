@@ -15,24 +15,34 @@
 %   loc is the name of the file (with its path) which contains information
 %       about the locations
 
+
 function epochs_analysis(dataPath, name, anType, measure, epochs, ...
     bands, loc)
     dataPath = char_check(dataPath);
+    measure = char_check(measure);
+    if not(strcmp(dataPath(end-length(measure)-1:end-1), measure))
+        dataPath = path_check(strcat(dataPath, measure));
+    end
+    if strcmp(measure, 'offset') || strcmp(measure, 'exponent')
+        bands = 1;
+    end
     cases = define_cases(dataPath);
+    locations = [];
     for i = 1:length(cases)
         if contains(cases(i).name, name)
             dataFile = strcat(dataPath, cases(i).name);
+            [data, ~, locations] = load_data(dataFile);
             break;
         end
     end
-    [data, ~, locations] = load_data(dataFile);
     if isempty(locations)
         if strcmp(loc, 'Static Text') 
             loc = ask_locations("Do you want to insert locations' file?");
         end
+        loc = load_data(loc);
         loc = loc(:, 1);
     else
-        loc = locations;
+        loc = locations(:, 1);
     end
        
     if strcmp(anType, 'asymmetry')

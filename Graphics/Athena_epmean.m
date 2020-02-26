@@ -100,8 +100,13 @@ function Run_Callback(hObject, eventdata, handles)
             type = split(proper, '=');
             type = type{2};
         end
+        if contains(proper, 'Measure') || contains(proper, 'measure')
+            measure = split(proper, '=');
+            measure = measure{2};
+        end
         if contains(proper, 'Epmean')
             EMflag = 1;
+            position = ftell(auxID);
         end
     end
     
@@ -130,6 +135,9 @@ function Run_Callback(hObject, eventdata, handles)
         fprintf(auxID, '\nSubjects=%s', sub);
         if not(isempty(locs))
             fprintf(auxID, '\nLocations=%s', locs);
+        else
+            fprintf(auxID, '\nLocations=%s', ...
+                strcat(dataPath, 'Locations.mat'));
         end
     end
     fclose(auxID);

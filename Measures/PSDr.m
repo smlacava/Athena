@@ -22,7 +22,7 @@
 %       value is the maximum between 40 and the last cut frequency)
 
 
-function [] = PSDr(fs, cf, nEpochs, dt, inDir, tStart, relBand)
+function PSDr(fs, cf, nEpochs, dt, inDir, tStart, relBand)
     switch nargin
         case 5
             tStart = 0;
@@ -42,6 +42,11 @@ function [] = PSDr(fs, cf, nEpochs, dt, inDir, tStart, relBand)
     dt = fs*dt;
     tStart = tStart*fs+1;
     inDir = path_check(inDir);
+    if iscell(relBand)
+        aux_relBand = [str2double(string(relBand{1})), ...
+            str2double(string(relBand{2}))];
+        relBand = aux_relBand;
+    end
     
     cases = define_cases(inDir);
 
