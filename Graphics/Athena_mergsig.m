@@ -138,7 +138,7 @@ function Run_Callback(hObject, eventdata, handles)
         measType = [measType "AEC"];
     end
     if get(handles.checkAECc, 'Value') == 1
-        measType = [measType "AECc"];
+        measType = [measType "AECo"];
     end
     if get(handles.checkPSDr, 'Value') == 1
         measType = [measType "PSDr"];

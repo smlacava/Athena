@@ -86,10 +86,10 @@ function bagging_text_CreateFcn(hObject, eventdata, handles)
     end
 
 
-function subspace_text_Callback(hObject, eventdata, handles)
+function pca_value_Callback(hObject, eventdata, handles)
 
 
-function subspace_text_CreateFcn(hObject, eventdata, handles)
+function pca_value_CreateFcn(hObject, eventdata, handles)
     if ispc && isequal(get(hObject, 'BackgroundColor'), ...
             get(0, 'defaultUicontrolBackgroundColor'))
         set(hObject, 'BackgroundColor', 'white');
@@ -118,23 +118,21 @@ function Run_Callback(hObject, eventdata, handles)
     addpath 'Graphics'
     
     if get(handles.default_parameters, 'Value') == 1
-        statistics = classification(dataPath, 0.8, 3, [], [], [], 1000);
+        statistics = random_forest(dataPath, 0.8, 3, 0.75, 'on', 1000, ...
+            1, 100);
     else
         repetitions = str2double(get(handles.repetitions_text, 'String'));
         n_train = str2double(get(handles.train_text, 'String'));
         trees = str2double(get(handles.trees_text, 'String'));
         bagging = str2double(get(handles.bagging_text, 'String'));
-        random_subspace = str2double(get(handles.subspace_text, 'String'));
         pruning = get(handles.yes_button, 'Value');
+        pca_value = str2double(get(handles.pca_value, 'String'));
     
         if pruning == 0
             pruning = [];
         end
         if bagging == 0
             bagging = [];
-        end
-        if random_subspace == 0
-            random_subspace = [];
         end
         if trees == 0
             trees = [];
@@ -145,15 +143,20 @@ function Run_Callback(hObject, eventdata, handles)
         if repetitions == 0
             repetitions = 1;
         end
+        if pca_value < 1 && pca_value > 0
+            pca_value = pca_value*100;
+        end
     
-        statistics = classification(dataPath, n_train, trees, bagging, ...
-            random_subspace, pruning, repetitions);
+        statistics = random_forest(dataPath, n_train, trees, bagging, ...
+            pruning, repetitions, 1, pca_value);
     end
     resultDir = strcat(path_check(dataPath), 'Classification');
     if not(exist(resultDir, 'dir'))
         mkdir(resultDir);
     end
+    warning('off','all')
     save(strcat(path_check(resultDir), 'Statistics.mat'), 'statistics')
+    warning('on','all')
     success();
 
 
@@ -188,4 +191,4 @@ function default_parameters_Callback(hObject, eventdata, handles)
     set(handles.train_text, 'Enable', value)
     set(handles.trees_text, 'Enable', value)
     set(handles.bagging_text, 'Enable', value)
-    set(handles.subspace_text, 'Enable', value)
+    set(handles.pca_value, 'Enable', value)

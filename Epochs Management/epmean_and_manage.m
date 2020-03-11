@@ -30,9 +30,9 @@ function locations_file = epmean_and_manage(inDir, type, subFile, ...
     
 
     type = char_check(string(type));
-    len_type = length(type);
     inDir = path_check(inDir);
-    if not(strcmp(inDir(end-len_type-1:end-1), type))
+    if sum(contains(inDir, {'AECo', 'AEC', 'PLI', 'PLV', 'PSDr', ...
+            'offset', 'exponent'})) == 0
         inDir = path_check(strcat(inDir, type));
     end
     epDir = subdir(inDir, 'Epmean');
@@ -98,18 +98,15 @@ function locations_file = epmean_and_manage(inDir, type, subFile, ...
         end
     end
     
-    if sum(strcmp(type, ["offset"; "OFF"; "off"; "OFFSET"; "exponent"; ...
-            "EXP"; "exp"; "EXPONENT"]))
+    if sum(strcmpi(type, ["offset"; "off"; "exponent"; "exp"]))
         nLoc = size(measure, 2);
         nBands = 1;
         ind_ep = 1;
-    elseif sum(strcmp(type,["psd"; "PSD"; "psdr"; "PSDr"]))
+    elseif sum(strcmpi(type,["psd"; "psdr"]))
         nLoc = size(measure, 3);
         nBands = size(measure, 1);
         ind_ep = 2;
-    elseif sum(strcmp(type, ["pli"; "PLI"; "Pli"; "PLV"; "plv"; "Plv"; ...
-            "AEC"; "AECo"; "AECc"; "aec"; "aecc"; "aeco"; "Aec"; ...
-            "Aecc"; "Aeco"; "Conn"; "CONN"; "conn"]))
+    elseif sum(strcmpi(type, ["pli"; "plv"; "aec"; "aecc"; "aeco"; "conn"]))
         nLoc = size(measure, 3);
         nBands = size(measure, 1);
         ind_ep = 2;

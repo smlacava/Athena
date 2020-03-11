@@ -193,24 +193,26 @@ function Run_Callback(hObject, eventdata, handles)
         char_check(get(handles.aux_measure, 'String'))));
     dataPathM = path_check(dataPathM);   
     cd(dataPathM);
-            
-    auxID = fopen('auxiliary.txt', 'w');
-    fprintf(auxID, 'dataPath=%s', dataPath);
-    fprintf(auxID, '\nfs=%d', fs);
-    fprintf(auxID, '\ncf=');
+    
+    cf_string = '';
     for i = 1:length(cf)
-        fprintf(auxID, '%d ',cf(i));
+        cf_string = strcat(cf_string, " ", string(cf(i)));
     end
-    fprintf(auxID, '\nepNum=%d', epNum);
-    fprintf(auxID, '\nepTime=%d', epTime);
-    fprintf(auxID, '\ntStart=%d', tStart);
-    if strcmp(measure, "PSDr")
-        fprintf(auxID, '\ntotBand=%d %d', totBand(1), totBand(2));
+    cf_string = char_check(cf_string);
+    cf_string = cf_string(2:end);
+    if not(strcmp(measure, "PSDr"))
+        totBand = [cf(1) cf(end)];
     end
-    fprintf(auxID, '\ntype=%s', type);
-    fprintf(auxID, '\nmeasure=%s', measure);
-    fprintf(auxID, '\nconnCheck=%d', connCheck);
-    fclose(auxID);
+    update_file('auxiliary.txt', {...
+        strcat('dataPath=', char_check(dataPath)), ...
+        strcat('fs=', char_check(fs)), ...
+        strcat('cf=', char_check(cf_string)), ...
+        strcat('epNum=', char_check(epNum)), ...
+        strcat('epTime=', char_check(epTime)), ...
+        strcat('tStart=', char_check(tStart)), ...
+        strcat('totBand=', char_check(strcat(string(totBand(1)), " ", ...
+        string(totBand(2))))), ...
+        strcat('measures=', char_check(measure))});
     addpath(dataPathM);
     success();
 

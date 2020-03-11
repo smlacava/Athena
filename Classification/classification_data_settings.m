@@ -12,7 +12,10 @@
 
 function classification_data_settings(dataPath, analysis_types, measures)
     dataPath = path_check(dataPath);
-    load(strcat(dataPath, 'Subjects.mat'));
+    subjects = load_data(strcat(dataPath, 'Subjects.mat'));
+    if isstring(subjects(:, end))
+        subjects = str2double(subjects(:, end));
+    end
     nPAT = sum(subjects(:, end));
     nHC = length(subjects)-nPAT;
     outPath = path_check(strcat(dataPath, 'Classification'));
@@ -36,9 +39,17 @@ function classification_data_settings(dataPath, analysis_types, measures)
         if logical(sum(strcmpi(cases(i).name, types)))
             load(strcat(dataPath, cases(i).name))
             if not(isempty(statAnResult.dataSig))
-                feature_name = char_check(strtok(cases(i).name, '_'));
-                features = feature_names(statAnResult.Psig, ...
-                    feature_name, features);
+                if size(statAnResult.Psig, 2) > size(statAnResult.Psig, 1)
+                    statAnResult.Psig = statAnResult.Psig';
+                end
+                for f = 1:size(statAnResult.Psig, 1)
+                    feature_name = char_check(strtok(cases(i).name, '_'));
+                    aux_f = split(statAnResult.Psig(f, :));
+                    for ind = 1:length(aux_f)
+                        feature_name = strcat(feature_name, aux_f(ind));
+                    end
+                    features = [features, feature_name];
+                end
                 data = [data, statAnResult.dataSig];
             end
         end

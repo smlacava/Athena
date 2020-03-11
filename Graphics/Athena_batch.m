@@ -91,14 +91,14 @@ function Run_Callback(~, eventdata, handles)
         return
     end
     
-    %dataPath, fs, cf, epNum, epTime, 
-    %tStart, totBand, measure, Subjects, locations, 
-    %Index, MeasureExtraction, EpochsAverage, EpochsAnalysis, IndexCorrelation, 
-    %StatisticalAnalysis, MeasuresCorrelation, ClassificationData, Group_IC, Areas_IC,
-    %Conservativeness_IC, Areas_EA, Areas_SA, Conservativeness_SA, Measure1, 
-    %Measure2, Areas_MC, Group_MC, MergingData, MergingMeasures, MergingAreas, 
-    %Subject, Classification, DefaultClassification, TrainPercentage, TreesNumber, 
-    %BaggingValue, RandomSubspace, PruningDepth, Repetitions, MinimumClassExamples
+    %dataPath, fs, cf, epNum, epTime, tStart, totBand, measure, Subjects, 
+    %locations, Index, MeasureExtraction, EpochsAverage, EpochsAnalysis, 
+    %IndexCorrelation, StatisticalAnalysis, MeasuresCorrelation, 
+    %ClassificationData, Group_IC, Areas_IC, Conservativeness_IC, Areas_EA, 
+    %Areas_SA, Conservativeness_SA, Measure1, Measure2, Areas_MC, Group_MC, 
+    %MergingData, MergingMeasures, MergingAreas, Subject, Classification, 
+    %DefaultClassification, TrainPercentage, TreesNumber, BaggingValue, 
+    %PruningDepth, Repetitions, MinimumClassExamples, PCAValue
     parameters = read_file(dataFile);
     
     dataPath = path_check(parameters{1});
@@ -316,7 +316,10 @@ function Run_Callback(~, eventdata, handles)
                 parameters{i} = [];
             end
         end
-        statistics = classification(dataPath, parameters{35}, ...
+        if sum(strcmpi(parameters{38}, {'nan', 'null', 'off'}))
+            parameters{38} = 'off';
+        end
+        statistics = random_forest(dataPath, parameters{35}, ...
             parameters{36}, parameters{37}, parameters{38}, ...
             parameters{39}, parameters{40}, parameters{41});
         resultDir = strcat(path_check(dataPath), 'Classification');

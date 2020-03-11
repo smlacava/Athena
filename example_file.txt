@@ -1,53 +1,85 @@
 You can jump to fill al the fields relative to unwanted steps.
 
-DATA PATH AND MEASURE
-dataPath=D:\Ricerca\prova\
-measure=PSDr
+DATA PATH AND MEASURES
+The datapath is the directory which contains all the time series.
+dataPath=D:\study\name\
+measures=PLI PLV offset
 
 LOCATIONS AND SUBJECTS FILES
 The locations file is needed in analysis.
 The subjects file is needed in Epochs Average step and Epochs Analysis.
-Locations=D:\Ricerca\Ricerca3_Comparison\ROI_pre.mat
-Subjects=D:\Ricerca\Ricerca3_Comparison\Subjects.mat
+Locations=D:\study\locations\ROI.mat
+Subjects=D:\study\subjects_folder\Subjects.mat
 
 MEASURE PARAMETERS
-MeasureExtraction=true
+These parameters are needed to compute the measure extraction.
+The total band is needed only for the PSDr extraction.
+For the background measures (exponent and offset) will be considered 
+the band from the lower and the higher cut frequencies.
+MeasureExtraction=false
 fs=500
 cf=1 4 8 13 30 40 
-epNum=3
-epTime=16
-tStart=6
+epNum=4
+epTime=15
+tStart=0
 totBand=1 40
 
 EPOCHS AVERAGE
-EpochsAverage=true
+The epochs average computes the average of the measure in every band
+and every locations and join the subjects of the same group (patients
+and healthy controls)
+EpochsAverage=false
 
 INDEX CORRELATION
-IndexCorrelation=true
+The index correlation computes the correlation between an index and 
+the corresponding value of the measure.
+IndexCorrelation=false
 Index=D:\Ricerca\Ricerca3_Comparison\Ind.mat
 Group_IC=PAT
 Areas_IC=Areas Global Asymmetry
 Conservativeness_IC=min
 
 EPOCHS ANALYSIS
-EpochsAnalysis=true
+The epochs analysis show the values of the measure of the selected
+subject in every epoch.
+EpochsAnalysis=false
 Subject=509
 Areas_EA=Areas Global Asymmetry
 
 STATISTICAL ANALYSIS
-StatisticalAnalysis=true
+The statistical analysis verifies if there are differences between 
+patients and healthy controls in every band end in every location.
+StatisticalAnalysis=false
 Areas_SA=Total Areas Global Asymmetry
 Conservativeness_SA=max
 
 MEASURES CORRELATION
-MeasuresCorrelation=true
+The measures correlation show if there is a correlation between two
+measures in every band and in every location.
+MeasuresCorrelation=false
 Measure1=PSDr
 Measure2=PLI
-Areas_MC=Total Areas Global Asymmetry
+Areas_MC=Asymmetry
 Conservativeness_MC=max
 Group_MC=PAT
 
-CLASSIFICATION DATA
+CLASSIFICATION DATA SETTINGS
+This step merges the significant data, previously computed in
+statistical analysis, to use them for the classification or other
+external analysis.
 ClassificationData=true
-MergingMeasures=PLI PLV AEC AECc PSDr offset exponent
+MergingMeasures=PSDr offset PLI PLV
 MergingAreas=Total Areas Global Asymmetry
+
+CLASSIFICATION
+Classification=true
+DefaultClassificationParameters=false
+TrainPercentage=0.8
+TreesNumber=3
+BaggingValue=nan
+Pruning=on
+Repetitions=1000
+MinimumClassExamples=1
+PCAValue=80
+
+

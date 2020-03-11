@@ -1,15 +1,19 @@
 %% confusion_matrix
 % This function shows the confusion matrix and the accuracy
 %
-% confusion_matrix(data, accuracy, bg_color)
+% fig = confusion_matrix(data, accuracy, bg_color)
 %
 % input:
 %   data is the confusion matrix data ([truePAT falseHC; falsePAT trueHC])
 %   accuracy is the accuracy value (optional)
 %   bg_color is the background color in RGB 0-1 (optional)
+%
+% output:
+%   fig is the figure which shows the confusion matrix and the accuracy
+%       value
 
 
-function confusion_matrix(data, accuracy, bg_color)
+function fig = confusion_matrix(data, accuracy, bg_color)
     if nargin == 1
         bg_color = [0.67 0.98 0.92];
     end

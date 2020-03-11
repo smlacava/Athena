@@ -96,13 +96,10 @@ function Run_Callback(hObject, eventdata, handles)
     fseek(auxID, 0, 'bof');
     while ~feof(auxID)
         proper = fgetl(auxID);
-        if contains(proper, 'type')
-            type = split(proper, '=');
-            type = type{2};
-        end
-        if contains(proper, 'Measure') || contains(proper, 'measure')
+        if contains(proper, 'Measures') || contains(proper, 'measures')
             measure = split(proper, '=');
             measure = measure{2};
+            type = measure;
         end
         if contains(proper, 'Epmean')
             EMflag = 1;
@@ -130,17 +127,13 @@ function Run_Callback(hObject, eventdata, handles)
     if not(isempty(locs))
         set(handles.aux_loc, 'String', locs)
     end
-    if EMflag == 0
-        fprintf(auxID, '\nEpmean=true');
-        fprintf(auxID, '\nSubjects=%s', sub);
-        if not(isempty(locs))
-            fprintf(auxID, '\nLocations=%s', locs);
-        else
-            fprintf(auxID, '\nLocations=%s', ...
-                strcat(dataPath, 'Locations.mat'));
-        end
+    
+    if isempty(locs)
+        locs = strcat(dataPath, 'Locations.mat');
     end
-    fclose(auxID);
+    update_file(strcat(path_check(dataPath), 'auxiliary.txt'), ...
+        {'EpochsAverage=true', strcat('Subjects=', char_check(sub)), ...
+        strcat('Locations=', char_check(locs))});
     success();
 
     
