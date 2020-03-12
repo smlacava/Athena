@@ -1,5 +1,6 @@
 %% update_file
-% This function update the text file which contains the study parameters
+% This function update the text file which contains the parameters of the
+% study 
 %
 % update_file(dataFile, updates)
 %

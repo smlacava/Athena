@@ -128,12 +128,7 @@ function Run_Callback(hObject, eventdata, handles)
         set(handles.aux_loc, 'String', locs)
     end
     
-    if isempty(locs)
-        locs = strcat(dataPath, 'Locations.mat');
-    end
-    update_file(strcat(path_check(dataPath), 'auxiliary.txt'), ...
-        {'EpochsAverage=true', strcat('Subjects=', char_check(sub)), ...
-        strcat('Locations=', char_check(locs))});
+    management_update_file(dataPath, locs, sub);
     success();
 
     
