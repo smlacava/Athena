@@ -57,7 +57,7 @@ function [data, pc] = reduce_predictors(data, pca_value, bg_color)
         'Principal Component Analysis');
     hold on
     pareto(pctExp)
-    xlim([0 n_predictors])
+    xlim([0 n_predictors+1])
     xticklabels(predictors)
     xticks(1:n_predictors)
     xtickangle(45)

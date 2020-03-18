@@ -68,32 +68,34 @@ function epan_areas_conn(data, nEpochs, nBands, measure, name, ...
         data = aux;
     end
     
-    idx = conn_index(data);
-    
     loc = 1;
     if Front ~= 0
-        data_areas(:, :, loc) = sum(squeeze(sum(...
-            data(:, :, FrontalLoc, FrontalLoc), 3)), idx)/Front;
+        front_data = sum(squeeze(sum(...
+            data(:, :, FrontalLoc, FrontalLoc), 3)), 3)/Front;
+        if length(size(front_data)) == 3
+            data_areas(:, :, loc) = front_data;
+        else
+            data_a
         loc = loc+1;
     end
     if Temp ~= 0
         data_areas(:, :, loc) = sum(squeeze(sum(...
-            data(:, :, TemporalLoc, TemporalLoc), 3)), idx)/Temp;
+            data(:, :, TemporalLoc, TemporalLoc), 3)), 3)/Temp;
         loc = loc+1;
     end
     if Occ ~= 0
         data_areas(:, :, loc) = sum(squeeze(sum(...
-            data(:, :, OccipitalLoc, OccipitalLoc), 3)), idx)/Occ;
+            data(:, :, OccipitalLoc, OccipitalLoc), 3)), 3)/Occ;
         loc = loc+1;
     end
     if Par ~= 0
         data_areas(:, :, loc) = sum(squeeze(sum(...
-            data(:, :, ParietalLoc, ParietalLoc), 3)), idx)/Par;
+            data(:, :, ParietalLoc, ParietalLoc), 3)), 3)/Par;
         loc = loc+1;
     end
     if Cent ~= 0
         data_areas(:, :, loc) = sum(squeeze(sum(...
-            data(:, :, CentralLoc, CentralLoc), 3)), idx)/Cent;
+            data(:, :, CentralLoc, CentralLoc), 3)), 3)/Cent;
     end
     
     for i = 1:length(areas)

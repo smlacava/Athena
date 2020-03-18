@@ -120,9 +120,7 @@ function Run_Callback(hObject, eventdata, handles)
             epochs = str2double(epochs{2});
         end
         if contains(proper, 'cf=')
-            bands = split(proper, '=');
-            bands = split(bands{2}, ' ');
-            bands = length(bands)-2;
+            bands = frequency_bands_number(proper);
         end
     end
     fclose(auxID);

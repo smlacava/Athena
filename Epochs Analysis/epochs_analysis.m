@@ -18,9 +18,9 @@
 
 function epochs_analysis(dataPath, name, anType, measure, epochs, ...
     bands, loc)
-    dataPath = char_check(dataPath);
+    dataPath = char_check(path_check(dataPath));
     measure = char_check(measure);
-    if not(strcmp(dataPath(end-length(measure)-1:end-1), measure))
+    if not(strcmp(dataPath(end-length(measure):end-1), measure))
         dataPath = path_check(strcat(dataPath, measure));
     end
     if strcmp(measure, 'offset') || strcmp(measure, 'exponent')

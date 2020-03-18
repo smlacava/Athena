@@ -108,15 +108,15 @@ function connectivity(fs, cf, nEpochs, dt, inDir, tStart, outTypes)
                         data = athena_filter(time_series(:, ti:tf), fs, ...
                             cf(j), cf(j+1));                 
                         data = data';
-                        if strcmp(outTypes(c), "PLI")
+                        if strcmpi(outTypes(c), "PLI")
                             conn.data(j, k, :, :) = phase_lag_index(data);
-                        elseif strcmp(outTypes(c), "PLV")
+                        elseif strcmpi(outTypes(c), "PLV")
                             conn.data(j, k, :, :) = ...
                                 phase_locking_value(data);
-                        elseif strcmp(outTypes(c), "AECo")
+                        elseif strcmpi(outTypes(c), "AECo")
                             conn.data(j, k, :, :) = ...
                                 amplitude_envelope_correlation_orth(data);
-                        elseif strcmp(outTypes(c), "AEC")
+                        elseif strcmpi(outTypes(c), "AEC")
                             conn.data(j, k, :, :) = ...
                                 amplitude_envelope_correlation(data);
                         end

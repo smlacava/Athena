@@ -33,6 +33,9 @@ function [testing_fraction, params_dim, scores, labels, pruning, ...
     if split_value >= 1
         split_value = split_value/n_examples;
     end
+    if isempty(pruning)
+        pruning = 'off';
+    end
     testing_fraction = 1-split_value;
     params_dim = floor(n_examples*testing_fraction);
     labels = zeros(params_dim*n_repetitions, 1);

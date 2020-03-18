@@ -73,6 +73,7 @@ function statistics = random_forest(data, split_value, n_trees, ...
         rf_initial_settings(data, split_value, n_repetitions, pruning);
      
     if min(size(data)) == 1
+        close(f)
         problem('There are not enough parameters to evaluate')
         return;
     end
