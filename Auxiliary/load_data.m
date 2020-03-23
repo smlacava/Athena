@@ -27,8 +27,8 @@ function [data, fs, locs] = load_data(dataFile, locFLAG)
     
     avoid_locs = {'PHOTICPH', 'IBI', 'BURSTS', 'SUPPR', 'PHOTICREF'};
     avoid_locs_cont = {'DC', 'EKG'};
-    loc_types = {'F', 'AF', 'FT', 'FC', 'FP', 'C', 'A', 'TP', 'CP', ...
-        'PO', 'P', 'M', 'LO', 'SO', 'IO', 'CB', 'SP', 'O', 'T'};
+    loc_types = {'AF', 'FT', 'FC', 'FP', 'TP', 'CP', 'LO', 'SO', 'IO', ...
+        'PO', 'CB', 'SP', 'O', 'T', 'F', 'C', 'A', 'P', 'M'};
     loc_others = {'Chin', 'NAS', 'Neck', 'RPA', 'LPA', 'ROC', 'LOC', ...
         'EMG'};
     loc_list = {};

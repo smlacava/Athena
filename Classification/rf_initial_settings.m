@@ -3,13 +3,15 @@
 %
 % [testing_fraction, params_dim, scores, pruning, accuracy, labels, ...
 %       max_accuracy, min_accuracy, cm, n_HC, n_PAT] = ...
-%       rf_initial_settings(data, split_value, n_repetitions, pruning)
+%       rf_initial_settings(data, n_repetitions, pruning, eval_method, ...
+%       split_value)
 %
 % input:
 %   data is the data table
-%   split_value is the training fraction (or training examples number)
 %   n_repetitions is the number of classification repetitions
 %   pruning is the pruning parameter
+%   eval_method is the selected evaluation method
+%   split_value is the training fraction (or training examples number)
 %
 % output:
 %   testing_fraction is the testing fraction
@@ -23,11 +25,13 @@
 %   cm is the initial confusion matrix
 %   n_HC is the initial number of healthy controls
 %   n_PAT is the initial number of patients
+%   eval_func is the evaluation function
 
 
 function [testing_fraction, params_dim, scores, labels, pruning, ...
-    accuracy, min_accuracy, max_accuracy, cm, n_HC, n_PAT] = ...
-    rf_initial_settings(data, split_value, n_repetitions, pruning)
+    accuracy, min_accuracy, max_accuracy, cm, n_HC, n_PAT, eval_func] = ...
+    rf_initial_settings(data, n_repetitions, pruning, eval_method, ...
+    split_value)
     
     n_examples = size(data, 1);
     if split_value >= 1
@@ -45,6 +49,7 @@ function [testing_fraction, params_dim, scores, labels, pruning, ...
     elseif sum(strcmpi(string(pruning), {'false', '0'}))
         pruning = 'off';
     end
+    eval_func = rf_evaluation_method(eval_method);
     accuracy = 0;
     max_accuracy = 0;
     min_accuracy = 1;

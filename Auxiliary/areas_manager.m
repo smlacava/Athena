@@ -15,6 +15,7 @@
 %   Occipital is the row vector of the occipital area indices
 %   Parietal is the row vector of the parietal area indices
 
+
 function [Central, Frontal, Temporal, Occipital, Parietal] = areas_manager(locations)
     Central=[];
     Frontal=[];

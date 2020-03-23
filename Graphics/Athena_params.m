@@ -180,6 +180,7 @@ function Run_Callback(hObject, eventdata, handles)
     measure = string(get(handles.aux_measure, 'String'));
     
     [type, connCheck] = type_check(measure);
+    create_directory(dataPath, measure);
     
     if strcmp(measure, "PSDr")
         PSDr(fs, cf, epNum, epTime, dataPath, tStart, totBand)

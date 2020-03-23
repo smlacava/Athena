@@ -121,7 +121,7 @@ function Run_Callback(hObject, eventdata, handles)
     addpath 'Graphics'
     
     if get(handles.default_parameters, 'Value') == 1
-        statistics = random_forest(dataPath, 7, 0.5, 'on', 1000, 1, ...
+        statistics = random_forest(dataPath, 3, 0.75, 'on', 1000, 1, ...
             100, 'split', 0.8);
     else
         repetitions = str2double(get(handles.repetitions_text, 'String'));
@@ -130,11 +130,7 @@ function Run_Callback(hObject, eventdata, handles)
         bagging = str2double(get(handles.bagging_text, 'String'));
         pruning = get(handles.yes_button, 'Value');
         pca_value = str2double(get(handles.pca_value, 'String'));
-        if get(handles.TTS_button, 'Value') == 1
-            eval_method = 'split';
-        else
-            eval_method = 'leaveoneout';
-        end
+        if get(
     
         if pruning == 0
             pruning = [];
@@ -159,7 +155,7 @@ function Run_Callback(hObject, eventdata, handles)
         end
     
         statistics = random_forest(dataPath, trees, bagging, ...
-            pruning, repetitions, 1, pca_value, eval_method, n_train);
+            pruning, repetitions, 1, pca_value, 'split', n_train);
     end
     resultDir = strcat(path_check(dataPath), 'Classification');
     if not(exist(resultDir, 'dir'))

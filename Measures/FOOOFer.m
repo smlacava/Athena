@@ -23,8 +23,8 @@
 %     numbers are relative to one peak (CF, Amp, BW) and the others zeros 
 %     are utilized to export only one matrix for each subject
 
-function FOOOFer(fs, cf, nEpochs, dt, inDir, tStart, outTypes, maxPeaks)
 
+function FOOOFer(fs, cf, nEpochs, dt, inDir, tStart, outTypes, maxPeaks)
     switch nargin
         case 5
             tStart = 0;
@@ -179,10 +179,9 @@ function FOOOFer(fs, cf, nEpochs, dt, inDir, tStart, outTypes, maxPeaks)
                     gaussian_params.data(k, j, 1:sizePeaks) = ...
                         squeeze(reshape(...
                         fooof_results.gaussian_params', 1, sizePeaks));
-                
                 end
             end
-        
+            
             for s = 1:length(outTypes)  
                 outDir = path_check(subdir(inDir, outTypes(s)));
                 name = split(cases(i).name, '\');

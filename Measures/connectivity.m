@@ -87,8 +87,18 @@ function connectivity(fs, cf, nEpochs, dt, inDir, tStart, outTypes)
         	outTypes(i) = "AEC";
         end
     end
-
-
+    
+    [time_series, fsOld] = load_data(strcat(inDir, cases(i).name), 1);
+    if fsOld ~= fs
+    	[p, q] = rat(fs/fsOld);
+        time_series = resample(time_series', p, q)';
+    end
+    check = check_filtering(time_series, dt, tStart, fs, cf);
+    if check
+        close(f)
+        return;
+    end
+    
     for c = 1:length(outTypes)
         for i = 1:length(cases) 
             try

@@ -159,6 +159,7 @@ function data_search_Callback(hObject, eventdata, handles)
     d = uigetdir;
     if d ~= 0
         set(handles.dataPath_text, 'String', d)
+        set(handles.aux_dataPath, 'String', d)
         auxPath = pwd;
         dataPath = get(handles.dataPath_text, 'String');
         dataPath = path_check(dataPath);
@@ -171,14 +172,12 @@ function data_search_Callback(hObject, eventdata, handles)
                 if contains(proper, 'Subjects=')
                     subsFile = split(proper, '=');
                     subsFile = subsFile{2};
-                    subs = load_data(subsFile);
-                    subs = string(subs(:, 1))';
-                    set(handles.Subjects, 'String', subs);
+                    set(handles.aux_sub, 'String', subsFile);
                 end
                 if contains(proper, 'Locations=')
                     locations = split(proper, '=');
                     locations = locations{2};
-                    set(handles.loc_text, 'String', locations)
+                    set(handles.aux_loc, 'String', locations)
                 end
             end
             fclose(auxID);     

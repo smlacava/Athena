@@ -61,10 +61,13 @@ function [data, pc] = reduce_predictors(data, pca_value, bg_color)
     xticklabels(predictors)
     xticks(1:n_predictors)
     xtickangle(45)
+    plot([n_predictors n_predictors+1], [100 100], 'Color', ...
+        [0.00, 0.45, 0.74]);
     if pca_value < 100
         real_value = sum(pctExp(1:i));
         plot([i i], [-1 101], '--r')
         plot(i, real_value, 'ro')
     end
     hold off
+    
 end

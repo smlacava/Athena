@@ -23,16 +23,32 @@ function [ind, del_ind] = match_locations(setup_loc, loc)
     del_ind = 1:nsetup;
     aux_ind = [];
     ind = [];
+    
     for i = 1:nsetup
         for j = 1:nloc
             if contains(setup_loc{i}, loc{j}) || ...
                     contains(loc{j}, setup_loc{i})
-                aux_ind = [aux_ind, i];
-                ind = [ind, j];
-                break;
+                check = check_match(setup_loc{i}, loc{j});
+                if check == 0
+                    aux_ind = [aux_ind, i];
+                    ind = [ind, j];
+                    break;
+                end
             end
         end
     end
     del_ind(aux_ind) = [];   
 end
 
+
+function check = check_match(setup_loc, loc)
+    to_check = {'AF', 'FT', 'FC', 'FP', 'TP', 'CP', 'LO', 'SO', 'IO', ...
+        'PO', 'CB', 'SP'};
+    check = 0;
+    for c = 1:length(to_check)
+        if contains(setup_loc, to_check{c}) ~= contains(loc, to_check{c})
+        	check = 1;
+            break;
+        end
+    end
+end
