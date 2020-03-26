@@ -488,10 +488,7 @@ function Filter_ClickedCallback(hObject, eventdata, handles)
         elseif fmin >= fmax
             problem(strcat("The maximum cut frequency has to be ", ...
                 "higher than the lower cut frequency"))
-        elseif fmax >= ceil(fs/2)
-            problem(strcat("The maximum cut frequency cannot be ", ...
-                "higher than the Nyquist frequency (it has to be ", ...
-                "less than half the sample rate)"))
+        elseif fmax >= ceil(f
         else
             f = waitbar(0, 'Initialization', 'Color', '[0.67 0.98 0.92]');
             fchild = allchild(f);

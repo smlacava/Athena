@@ -48,7 +48,8 @@ function classification_data_settings(dataPath, analysis_types, measures)
                     for ind = 1:length(aux_f)
                         feature_name = strcat(feature_name, aux_f(ind));
                     end
-                    features = [features, feature_name];
+                    feature_name = split(feature_name, 'major');
+                    features = [features, feature_name{1}];
                 end
                 data = [data, statAnResult.dataSig];
             end
