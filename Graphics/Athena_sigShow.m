@@ -250,6 +250,8 @@ function time_window_ClickedCallback(hObject, eventdata, handles)
                 'Insert the wished time window', limit);
         end
         set(handles.time_window_value, 'String', string(tw))
+        xticks(0:fs*max(1, floor(tw/10)):limit*fs);
+        xticklabels(string([0:max(1, floor(tw/10)):limit]));
         xlim([Lim(1) Lim(1)+tw*fs]);
     catch
     end
@@ -277,35 +279,11 @@ function Go_to_ClickedCallback(hObject, eventdata, handles)
 
 function zoom_Callback(hObject, eventdata, handles)
     axis(handles.signal);
-    ax = gca;
-    data = get_data(handles);
-    mult = str2double(get(handles.mult, 'String'));
-    set(handles.mult_text, 'String', string(mult));
-    fs = str2double(get(handles.fs_text, 'String'));
-    Limit = max(size(data));
-    locations = size(data, 1);
-    delta = max(max(abs(data)));
-    Lim = xlim;
-    locs = get(handles.locs_matrix, 'Data');
-    for j = 1:locations
-        plot(data(j,:)*mult+delta*(j), 'b');
-        try
-            chan_name = locs{j};
-            ax.Children(1).ButtonDownFcn = strcat('disp(', ...
-                eval('strcat("''", chan_name, "''")'),')');
-        end
-        hold on
-    end
-    hold off
-    xlim(Lim);
-    if not(isempty(locs))
-        yticks([1:locations]*delta);
-        yticklabels(locs);
-    end
-    ylim([0 delta*(locations+2)]);
-    xticks(0:fs:Limit);
-    xticklabels(string([0:floor(Limit/fs)]));
-    time_window(handles)
+    Lim = floor(xlim/str2double(get(handles.fs_text, 'String')));
+    sigPlot(handles, get_data(handles), ...
+        str2double(get(handles.fs_text, 'String')), ...
+        get(handles.locs_matrix, 'Data'), Lim(1), Lim(end));
+    
     
     
 function sigPlot(handles, data, fs, locs, t_start, t_end)
@@ -490,8 +468,10 @@ function Filter_ClickedCallback(hObject, eventdata, handles)
                 "higher than the lower cut frequency"))
         elseif fmax >= ceil(fs/2)
             problem(strcat("The maximum cut frequency cannot be ", ...
-                "higher than the Nyquist frequency (it has to be ", ...
-                "less than half the sample rate)"))
+                "higher than the Nyquist frequency, so it has to be ", ...
+                "less than half the sample rate, which is equal to ", ...
+                string(fs), " Hz (the maximum value is ", ...
+                string(ceil(fs/2)), ")"))
         else
             f = waitbar(0, 'Initialization', 'Color', '[0.67 0.98 0.92]');
             fchild = allchild(f);
