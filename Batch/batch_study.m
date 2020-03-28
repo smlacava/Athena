@@ -20,8 +20,9 @@ function batch_study(dataFile)
     %ClassificationData, Group_IC, Areas_IC, Conservativeness_IC, Areas_EA, 
     %Areas_SA, Conservativeness_SA, Measure1, Measure2, Areas_MC, Group_MC, 
     %MergingData, MergingMeasures, MergingAreas, Subject, Classification, 
-    %DefaultClassification, TrainPercentage, TreesNumber, BaggingValue, 
-    %PruningDepth, Repetitions, MinimumClassExamples, PCAValue
+    %DataType, DefaultClassification, TrainPercentage, 
+    %TreesNumber, FResampleValue, Pruning, Repetitions, 
+    %MinimumClassExamples, PCAValue, Evaluation
     parameters = read_file(dataFile);
     
     dataPath = path_check(parameters{1});
@@ -225,21 +226,22 @@ function batch_study(dataFile)
     	MergingAreas = parameters{31};
         MergingMeasures = parameters{30};
         classification_data_settings(dataPath, MergingAreas, ...
-            MergingMeasures);
+            MergingMeasures, parameters{34});
     end
     
     if sum(strcmp(parameters{33}, 'true'))
-        for i = 35:40
+        for i = 36:41
             if isnan(parameters{i})
                 parameters{i} = [];
             end
         end
-        if sum(strcmpi(parameters{38}, {'nan', 'null', 'off'}))
-            parameters{38} = 'off';
+        if sum(strcmpi(parameters{39}, {'nan', 'null', 'off'}))
+            parameters{39} = 'off';
         end
-        statistics = random_forest(dataPath, parameters{35}, ...
-            parameters{36}, parameters{37}, parameters{38}, ...
-            parameters{39}, parameters{40}, parameters{41});
+        statistics = random_forest(dataPath, parameters{37}, ...
+            parameters{38}, parameters{39}, parameters{40}, ...
+            parameters{41}, parameters{42}, parameters{43}, ...
+            parameters{36});
         resultDir = strcat(path_check(dataPath), 'Classification');
         if not(exist(resultDir, 'dir'))
             mkdir(resultDir);

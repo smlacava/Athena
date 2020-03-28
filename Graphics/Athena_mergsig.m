@@ -112,8 +112,13 @@ function Run_Callback(hObject, eventdata, handles)
         problem(strcat("Directory ", dataPath, " not found"))
         return
     end
+    
+    dataType = 'Significant';
+    if get(handles.allData, 'Value') == 1
+        dataType = 'All';
+    end
 
-    anType=[];
+    anType = [];
     if get(handles.checkAsymmetry, 'Value') == 1
         anType = [anType "asymmetry"];
     end
@@ -150,7 +155,7 @@ function Run_Callback(hObject, eventdata, handles)
         measType = [measType "Exponent"];
     end
 
-    classification_data_settings(dataPath, anType, measType);
+    classification_data_settings(dataPath, anType, measType, dataType);
     
     success();
 
@@ -218,3 +223,12 @@ function Classification_Callback(hObject, eventdata, handles)
     [dataPath, measure, sub, loc] = GUI_transition(handles);
     close(Athena_mergsig)
     Athena_classification(dataPath, measure, sub, loc)
+
+
+function allData_Callback(hObject, eventdata, handles)
+
+
+function sigData_Callback(hObject, eventdata, handles)
+
+
+function checkbox26_Callback(hObject, eventdata, handles)

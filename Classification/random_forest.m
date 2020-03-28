@@ -4,8 +4,8 @@
 % minimum accuracy, the maximum accuracy and shows the averaged confusion
 % matrix, and the overall ROC curve and AUC value
 %
-% statistics = random_forest(data, split_value, n_trees, ...
-%       bagging_value, pruning, n_repetitions, min_samples, pca_value)
+% statistics = random_forest(data, n_trees, resample_value, pruning, ...
+%       n_repetitions, min_samples, pca_value, eval_method, split_value)
 %
 % input:
 %   data is the data set table

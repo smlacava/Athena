@@ -34,7 +34,7 @@ INDEX CORRELATION
 The index correlation computes the correlation between an index and 
 the corresponding value of the measure.
 IndexCorrelation=false
-Index=D:\Ricerca\Ricerca3_Comparison\Ind.mat
+Index=D:\study\Ind.mat
 Group_IC=PAT
 Areas_IC=Areas Global Asymmetry
 Conservativeness_IC=min
@@ -66,8 +66,9 @@ Group_MC=PAT
 CLASSIFICATION DATA SETTINGS
 This step merges the significant data, previously computed in
 statistical analysis, to use them for the classification or other
-external analysis.
-ClassificationData=true
+external analysis (data type can be set as All or as Significant).
+MergingData=true
+DataType=Significant
 MergingMeasures=PSDr offset PLI PLV
 MergingAreas=Total Areas Global Asymmetry
 
@@ -76,10 +77,11 @@ Classification=true
 DefaultClassificationParameters=false
 TrainPercentage=0.8
 TreesNumber=3
-BaggingValue=nan
+FResampleValue=nan
 Pruning=on
 Repetitions=1000
 MinimumClassExamples=1
 PCAValue=80
+Evaluation=leaveoneout
 
 

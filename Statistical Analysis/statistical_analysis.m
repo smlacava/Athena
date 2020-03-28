@@ -29,7 +29,7 @@
 
 function [P, Psig, data, data_sig] = statistical_analysis(HC, PAT, ...
     locs, cons, dataPath, measure, analysis)
-    bg_color = [0.67 0.98 0.92];
+    
     nHC = size(HC, 1);
     nPAT = size(PAT, 1);
     nLocs = length(locs);
@@ -72,7 +72,48 @@ function [P, Psig, data, data_sig] = statistical_analysis(HC, PAT, ...
             data_sig = [data_sig, aux_data];
         end
     end
-        
+    
+    show_figures(data, data_names, P, bands_names, locs, Psig)
+    
+    save_data(dataPath, measure, analysis, locs, nBands, data, Psig, ...
+        data_sig)
+end
+
+
+function feature_names = compute_feature_names(locs, nBands)
+    nLocs = length(locs);
+    feature_names = cell(nLocs*nBands, 1);
+    for i = 1:nLocs
+        for j = 1:nBands
+            feature_names{(i-1)*nBands+j, 1} = ...
+                char_check(strcat("Band ", string(j), " ", locs{i}));
+        end
+    end
+end
+
+
+function save_data(dataPath, measure, analysis, locs, nBands, data, ...
+    Psig, data_sig)
+
+    statanType = strcat(measure, '_', analysis, '.mat');
+    statanDir = path_check(create_directory(path_check(...
+        limit_path(dataPath, measure)), path_check('StatAn')));
+    subDir = path_check(create_directory(statanDir, 'Data'));
+    
+    statAnResult = struct();
+    statAnResult.Psig = Psig;
+    statAnResult.dataSig = data_sig;
+    save(char_check(strcat(statanDir, statanType)), 'statAnResult')
+    
+    statAnData = struct();
+    statAnData.feature_names = compute_feature_names(locs, nBands);
+    statAnData.data = data;
+    save(char_check(strcat(subDir, statanType)), 'statAnData')
+end
+
+
+function show_figures(data, data_names, P, bands_names, locs, Psig)
+    bg_color = [0.67 0.98 0.92];
     fs1 = figure('Name', 'Data', 'NumberTitle', 'off', 'Color', bg_color);
     d = uitable(fs1, 'Data', data, 'Position', [20 20 525 375], ...
         'ColumnName', data_names);
@@ -87,15 +128,4 @@ function [P, Psig, data, data_sig] = statistical_analysis(HC, PAT, ...
         ps = uitable(fs3, 'Data', cellstr(Psig), 'Position', ...
             [20 20 525 375], 'ColumnName', {'Significant comparisons'});
     end
-        
-    statanDir = strcat(path_check(limit_path(dataPath, measure)), ...
-        path_check('StatAn'));
-    statanType = strcat(measure, '_', analysis, '.mat');
-    if not(exist(statanDir, 'dir'))
-        mkdir(statanDir, 'statAn')
-    end
-    statAnResult = struct();
-    statAnResult.Psig = Psig;
-    statAnResult.dataSig = data_sig;
-    save(char_check(strcat(statanDir, statanType)), 'statAnResult')
 end
