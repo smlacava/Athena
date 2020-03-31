@@ -58,7 +58,9 @@ function varargout = Athena_mergsig_OutputFcn(hObject, ~, handles)
 
 
 function dataPath_text_Callback(hObject, eventdata, handles)
-
+        set(handles.aux_dataPath, 'String', ...
+            get(handles.dataPath_text, 'String'))
+        
 
 function dataPath_text_CreateFcn(hObject, eventdata, handles)
     if ispc && isequal(get(hObject, 'BackgroundColor'), ...

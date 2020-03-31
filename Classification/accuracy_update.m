@@ -21,6 +21,7 @@
 
 function [accuracy, min_accuracy, max_accuracy] = accuracy_update(...
     predictions, real_classes, accuracy, max_accuracy, min_accuracy)
+
     aux_accuracy = sum(real_classes == predictions)/length(predictions);
     accuracy = accuracy + aux_accuracy;
     if aux_accuracy > max_accuracy

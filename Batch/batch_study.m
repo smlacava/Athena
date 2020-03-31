@@ -22,7 +22,7 @@ function batch_study(dataFile)
     %MergingData, MergingMeasures, MergingAreas, Subject, Classification, 
     %DataType, DefaultClassification, TrainPercentage, 
     %TreesNumber, FResampleValue, Pruning, Repetitions, 
-    %MinimumClassExamples, PCAValue, Evaluation
+    %MinimumClassExamples, PCAValue, Evaluation, Rejection
     parameters = read_file(dataFile);
     
     dataPath = path_check(parameters{1});
@@ -37,10 +37,10 @@ function batch_study(dataFile)
         return
     end
     for m = 1:n_measures
-        if strcmp(measure{m}, 'AECc')
+        if strcmpi(measure{m}, 'AECc')
             measure{m} = 'AECo';
         end
-        if not(sum(strcmp(measure{m}, MEASURES)))
+        if not(sum(strcmpi(measure{m}, MEASURES)))
             problem(strcat(measure{m}, ' is an invalid measure'))
             return
         end
@@ -58,11 +58,11 @@ function batch_study(dataFile)
                 return
             end
             [type, ~] = type_check(measure{m});
-            if strcmp(measure{m}, 'PSDr') 
+            if strcmpi(measure{m}, 'PSDr') 
                 PSDr(parameters{2}, cf, parameters{4}, parameters{5}, ...
                     dataPath, parameters{6}, parameters{7})
-            elseif strcmp(measure{m}, 'offset') || ...
-                    strcmp(measure{m}, 'exponent')
+            elseif strcmpi(measure{m}, 'offset') || ...
+                    strcmpi(measure{m}, 'exponent')
                     cf_bg = [cf(1), cf(end)];
                 FOOOFer(parameters{2}, cf_bg, parameters{4}, ...
                     parameters{5}, dataPath, parameters{6}, type)
@@ -123,8 +123,14 @@ function batch_study(dataFile)
     if exist('locations_file', 'var') && ischar(locations_file)
         locations = load_data(locations_file);
     else
-        locations = load_data(parameters{10});
-        locations = locations(:, 1);
+        if exist(parameters{10}, 'file')
+            locations = load_data(parameters{10});
+            locations = locations(:, 1);
+        else
+            try
+                locations = strcat(dataPath, 'Locations.mat');
+            end
+        end
     end
     alpha = alpha_levelling(parameters{21}, nBands, length(locations));
     
@@ -241,7 +247,7 @@ function batch_study(dataFile)
         statistics = random_forest(dataPath, parameters{37}, ...
             parameters{38}, parameters{39}, parameters{40}, ...
             parameters{41}, parameters{42}, parameters{43}, ...
-            parameters{36});
+            parameters{36}, parameters{44});
         resultDir = strcat(path_check(dataPath), 'Classification');
         if not(exist(resultDir, 'dir'))
             mkdir(resultDir);

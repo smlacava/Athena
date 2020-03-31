@@ -23,6 +23,10 @@
 %       class label 1) which has to be updated
 %   n_HC is the number of healthy controls (group of subjects identified by
 %       the class label 0) which has to be updated
+%   rejected is the list of rejected samples
+%   reject_value is the percentage is the minimum probability of 
+%       classification relative to the assigned class, under which the 
+%       sample is rejected
 %
 % output:
 %   scores is the updated scores array
@@ -33,13 +37,16 @@
 %   cm is the updated confusion matrix
 %   n_PAT is the updated number of patients
 %   n_HC is the updated number of healthy controls
+%   rejected is the updated list of rejected samples
 
 
 function [scores, labels, accuracy, min_accuracy, max_accuracy, cm, ...
-    n_PAT, n_HC] = ...
+    n_PAT, n_HC, rejected] = ...
     rf_leave_one_out(data, bagging_value, t, n_trees, scores, labels, ...
     r, params_dim, accuracy, max_accuracy, min_accuracy, cm, n_PAT, ...
-    n_HC, varargin)
+    n_HC, testing_fraction, min_samples, rejected, reject_value)
+    
+    nonrejected = [];
     aux_accuracy = 0;
     if r == 1
         scores = [];
@@ -53,15 +60,18 @@ function [scores, labels, accuracy, min_accuracy, max_accuracy, cm, ...
             'Learners', t, 'FResample', bagging_value, ...
             'NumLearningCycles', n_trees);
         [predictions, scrs] = predict(mdl, dataTest);
-        [aux_scores, ~] = roc_update(scores, labels, scrs, ...
-            dataTest.group, 1, 1);  
+        if scrs(end) < reject_value && scrs(end) > 1-reject_value
+            rejected = [rejected; dataTest.group];
+            continue
+        end
+        nonrejected = [nonrejected; dataTest.group];
+        labels = [labels; dataTest.group];
+        scores = [scores; scrs(end)];
         [cm, n_PAT, n_HC] = confusion_matrix_update(predictions, ...
             dataTest.group, cm, n_PAT, n_HC);
-        aux_accuracy = aux_accuracy+(predictions == dataTest.group(1));
-        scores = [scores; aux_scores(1, 1)];
+        aux_accuracy = aux_accuracy+(predictions == dataTest.group);
     end
-    labels = [labels; data.group];
-    aux_accuracy = aux_accuracy/size(data.group, 1);
+    aux_accuracy = aux_accuracy/length(nonrejected);
     accuracy = accuracy+aux_accuracy;
     if aux_accuracy < min_accuracy
         min_accuracy = aux_accuracy;

@@ -22,9 +22,7 @@
 
 
 function [scores, labels] = roc_update(scores, labels, new_scores, ...
-    new_labels, repetition_number, dimension)
-    initial_index = (repetition_number-1)*dimension+1;
-    final_index = repetition_number*dimension;
-    scores(initial_index:final_index) = new_scores(:, 2);
-    labels(initial_index:final_index) = new_labels;
+    new_labels)
+    scores = [scores; new_scores(:, 2)];
+    labels = [labels; new_labels];
 end

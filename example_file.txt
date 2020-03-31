@@ -83,5 +83,6 @@ Repetitions=1000
 MinimumClassExamples=1
 PCAValue=80
 Evaluation=leaveoneout
+Rejection=0.75
 
 

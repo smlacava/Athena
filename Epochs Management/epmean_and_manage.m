@@ -57,7 +57,7 @@ function locations_file = epmean_and_manage(inDir, type, subFile, ...
     [measure, ~, locations] = load_data(strcat(inDir, cases(1).name));
     aux_loc_file = strcat(path_check(inDir), 'Locations.mat');
     if isempty(locations) 
-        if not(isempty(locations_file))
+        if not(isempty(locations_file)) && check_loc_file(locations_file)
             locations = load_data(locations_file);
             locations = locations(:, 1);
         elseif exist(aux_loc_file, 'file')
@@ -235,5 +235,21 @@ function locations_file = epmean_and_manage(inDir, type, subFile, ...
         save(strcat(av_paths{j}, 'PAT.mat'), 'PAT')
         save(strcat(av_paths{j}, 'HC.mat'), 'HC')
     end
+    locations_file = strcat(path_check(limit_path(inDir, type)), ...
+        'Locations.mat');
+    save(locations_file, 'locations')
     close(f)
+end
+
+
+function check = check_loc_file(locations_file)
+    check = 0;
+    null_list = {'[]', '0', 'nan', 'NaN', 'Nan', 'NAN', 'null', ...
+        'NULL', 'Null', 'None', 'NONE', 'none', 'false', 'False'};
+    for i = 1:length(null_list)
+        if strcmp(null_list{i}, char_check(locations_file))
+            check = 1;
+        end
+    end
+    check = (check == 0);
 end

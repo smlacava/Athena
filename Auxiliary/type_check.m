@@ -15,12 +15,12 @@
 function [type, connCheck] = type_check(measure)
     type = string(measure);
     connCheck = 0;
-    if sum(strcmp(measure, ["PLI", "PLV", "AEC", "AECo"]))
+    if sum(strcmpi(measure, ["PLI", "PLV", "AEC", "AECo"]))
         type = "CONN";
         connCheck = 1;
-    elseif strcmp(measure, "exponent")
+    elseif strcmpi(measure, "exponent")
         type = "EXP";
-    elseif strcmp(measure, "offset")
+    elseif strcmpi(measure, "offset")
         type = "OFF";
     end
 end

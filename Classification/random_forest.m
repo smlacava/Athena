@@ -5,7 +5,8 @@
 % matrix, and the overall ROC curve and AUC value
 %
 % statistics = random_forest(data, n_trees, resample_value, pruning, ...
-%       n_repetitions, min_samples, pca_value, eval_method, split_value)
+%       n_repetitions, min_samples, pca_value, eval_method, ...
+%       split_value, reject_option)
 %
 % input:
 %   data is the data set table
@@ -26,6 +27,9 @@
 %       iterating for all the samples ('split' by default)
 %   split_value is the fraction of training data set (a number comprised
 %       between 0 and 1, 0.8 as default)
+%   reject_value is the percentage is the minimum probability of 
+%       classification relative to the assigned class, under which the 
+%       sample is rejected
 %
 % output:
 %   statistic is the resulting structure which contains the used parameters
@@ -33,7 +37,8 @@
 
 
 function statistics = random_forest(data, n_trees, resample_value, ...
-    pruning, repetitions, min_samples, pca_value, eval_method, split_value)
+    pruning, repetitions, min_samples, pca_value, eval_method, ...
+    split_value, reject_value)
     
     if nargin < 2 || isempty(n_trees)
         n_trees = 1;
@@ -59,6 +64,10 @@ function statistics = random_forest(data, n_trees, resample_value, ...
     if nargin < 9 || isempty(split_value)
         split_value = 0.8;
     end
+    if nargin < 10 || isempty(reject_value) || reject_value < 0.5
+        reject_value = 0.5;
+    end
+    rejected = [];
     
     f = waitbar(0,'Processing your data', 'Color', '[0.67 0.98 0.92]');
     fchild = allchild(f);
@@ -94,10 +103,10 @@ function statistics = random_forest(data, n_trees, resample_value, ...
     end
     for r = 1:repetitions
         [scores, labels, accuracy, min_accuracy, max_accuracy, cm, ...
-            n_PAT, n_HC] = eval_function(data, resample_value, t, ...
-            n_trees, scores, labels, r, params_dim, accuracy, ...
-            max_accuracy, min_accuracy, cm, n_PAT, n_HC, ...
-            testing_fraction, min_samples);
+            n_PAT, n_HC, rejected] = eval_function(data, ...
+            resample_value, t, n_trees, scores, labels, r, params_dim, ...
+            accuracy, max_accuracy, min_accuracy, cm, n_PAT, n_HC, ...
+            testing_fraction, min_samples, rejected, reject_value);
         waitbar(r/repetitions, f)
     end
     
@@ -109,8 +118,9 @@ function statistics = random_forest(data, n_trees, resample_value, ...
     [AUC, roc] = ROC_curve(labels, scores, bg_color);
     conf_mat = confusion_matrix(cm, accuracy, bg_color);
     
-    statistics = rf_statistics(split_value, n_trees, resample_value, ...
-        pruning, repetitions, min_samples, accuracy, min_accuracy, ...
-        max_accuracy, cm, conf_mat, AUC, roc, pca_value, pc);
+    statistics = rf_statistics(data, eval_method, split_value, ...
+        n_trees, resample_value, pruning, repetitions, min_samples, ...
+        accuracy, min_accuracy, max_accuracy, cm, conf_mat, AUC, roc, ...
+        pca_value, pc, reject_value, rejected);
     close(f)
 end
