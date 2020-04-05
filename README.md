@@ -89,9 +89,9 @@ The user can choose between N analysis:
 - **Measures Correlation analysis**: the user can verify the presence of a correlation in a group between the patterns of two different
        measures
 - **Epochs Analysis**: the user can study the variation of a measure through the epochs in every frequency band for a subject
-- **Classification**: the user can train and test a Decision Tree classifier or a Random Forest classifier in order to verify the
-	discriminant capability of the extracted features and to check if it is possible to distinguish between the two groups of 
-	subjects
+- **Classification**: the user can train and test a Decision Tree classifier, a Random Forest classifier or a Neural Network classifier in
+        order to verify the discriminant capability of the extracted features and to check if it is possible to distinguish between the two 
+        groups of subjects
 
 The user can also **merge the data of the significant results** of every previously computed statistical analysis in a csv file which
 can be used for a classification or other external analysis. 
