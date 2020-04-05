@@ -224,7 +224,7 @@ function Classification_Callback(hObject, eventdata, handles)
     addpath 'Graphics'
     [dataPath, measure, sub, loc] = GUI_transition(handles);
     close(Athena_mergsig)
-    Athena_classification(dataPath, measure, sub, loc)
+    Athena_selectClass(dataPath, measure, sub, loc)
 
 
 function allData_Callback(hObject, eventdata, handles)

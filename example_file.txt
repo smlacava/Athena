@@ -72,17 +72,29 @@ DataType=Significant
 MergingMeasures=PSDr offset PLI PLV
 MergingAreas=Total Areas Global Asymmetry
 
-CLASSIFICATION
-Classification=true
-DefaultClassificationParameters=false
-TrainPercentage=0.8
-TreesNumber=3
-FResampleValue=nan
-Pruning=on
-Repetitions=1000
-MinimumClassExamples=1
-PCAValue=80
-Evaluation=leaveoneout
-Rejection=0.75
+RANDOM FOREST CLASSIFICATION
+RF_Classification=true
+RF_DefaultClassificationParameters=false
+RF_TrainPercentage=0.8
+RF_TreesNumber=3
+RF_FResampleValue=nan
+RF_Pruning=nan
+RF_Repetitions=1000
+RF_MinimumClassExamples=1
+RF_PCAValue=80
+RF_Evaluation=split
+RF_Rejection=none
+
+NEURAL NETWORK CLASSIFICATION
+NN_Classification=true
+NN_DefaultClassificationParameters=false
+NN_TrainPercentage=0.8
+NN_HiddenLayersNumber=3
+NN_ValidationValue=0.1
+NN_Repetitions=1000
+NN_MinimumClassExamples=1
+NN_PCAValue=80
+NN_Evaluation=split
+NN_Rejection=none
 
 

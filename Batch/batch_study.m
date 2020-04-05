@@ -14,15 +14,23 @@ function batch_study(dataFile)
     true = ["True", "true", "TRUE", "t", "1", "OK", "ok"];
     bg_color = [0.67 0.98 0.92];
     
-    %dataPath, fs, cf, epNum, epTime, tStart, totBand, measure, Subjects, 
-    %locations, Index, MeasureExtraction, EpochsAverage, EpochsAnalysis, 
-    %IndexCorrelation, StatisticalAnalysis, MeasuresCorrelation, 
-    %ClassificationData, Group_IC, Areas_IC, Conservativeness_IC, Areas_EA, 
-    %Areas_SA, Conservativeness_SA, Measure1, Measure2, Areas_MC, Group_MC, 
-    %MergingData, MergingMeasures, MergingAreas, Subject, Classification, 
-    %DataType, DefaultClassification, TrainPercentage, 
-    %TreesNumber, FResampleValue, Pruning, Repetitions, 
-    %MinimumClassExamples, PCAValue, Evaluation, Rejection
+    % dataPath 1, fs 2, cf 3, epNum 4, epTime 5, tStart 6, totBand 7, 
+    % measure 8, Subjects 9, locations 10, Index 11, MeasureExtraction 12, 
+    % EpochsAverage 13, EpochsAnalysis 14, IndexCorrelation 15, 
+    % StatisticalAnalysis 16, MeasuresCorrelation 17, 
+    % ClassificationData 18, Group_IC 19, Areas_IC 20, 
+    % Conservativeness_IC 21, Areas_EA 22, Areas_SA 23, 
+    % Conservativeness_SA 24, Measure1 25, Measure2 26, Areas_MC 27, 
+    % Group_MC 28, MergingData 29, MergingMeasures 30, MergingAreas 31, 
+    % Subject 32, RF_Classification 33, DataType 34, 
+    % RF_DefaultClassification 35, RF_TrainPercentage 36, 
+    % RF_TreesNumber 37, RF_FResampleValue 38, RF_Pruning 39, 
+    % RF_Repetitions 40, RF_MinimumClassExamples 41, RF_PCAValue 42, 
+    % RF_Evaluation 43, RF_Rejection 44, NN_Classification 45, 
+    % NN_DefaultClassificationParameters 46, NN_TrainPercentage 47, 
+    % NN_HiddenLayersNumber 48, NN_ValidationValue 49, NN_Repetitions 50, 
+    % NN_MinimumClassExamples 51, NN_PCAValue 52, NN_Evaluation 53,
+    % NN_Rejection 54
     parameters = read_file(dataFile);
     
     dataPath = path_check(parameters{1});
@@ -235,23 +243,76 @@ function batch_study(dataFile)
             MergingMeasures, parameters{34});
     end
     
+    % RF_Classification 33, RF_DefaultClassification 35, 
+    % RF_TrainPercentage 36, RF_TreesNumber 37, RF_FResampleValue 38, 
+    % RF_Pruning 39, RF_Repetitions 40, RF_MinimumClassExamples 41, 
+    % RF_PCAValue 42, RF_Evaluation 43, RF_Rejection 44
     if sum(strcmp(parameters{33}, 'true'))
         for i = 36:41
             if isnan(parameters{i})
                 parameters{i} = [];
             end
         end
-        if sum(strcmpi(parameters{39}, {'nan', 'null', 'off'}))
-            parameters{39} = 'off';
+        %random_forest(data, n_trees, resample_value, pruning, ...
+        %       n_repetitions, min_samples, pca_value, eval_method, ...
+        %       split_value, reject_option)
+        if strcmpi(parameters{35}, 'true')
+            statistics = random_forest(dataPath, 31, 0.5, 'on', ...
+                100, 1, 100, 'split', 0.8, 0.5);
+        else
+            if sum(strcmpi(parameters{39}, {'nan', 'null', 'off'}))
+                parameters{39} = 'off';
+            end
+            statistics = random_forest(dataPath, parameters{37}, ...
+                parameters{38}, parameters{39}, parameters{40}, ...
+                parameters{41}, parameters{42}, parameters{43}, ...
+                parameters{36}, parameters{44});
         end
-        statistics = random_forest(dataPath, parameters{37}, ...
-            parameters{38}, parameters{39}, parameters{40}, ...
-            parameters{41}, parameters{42}, parameters{43}, ...
-            parameters{36}, parameters{44});
         resultDir = strcat(path_check(dataPath), 'Classification');
         if not(exist(resultDir, 'dir'))
             mkdir(resultDir);
         end
-        save(strcat(path_check(resultDir), 'Statistics.mat'), 'statistics')
+        if sum(strcmp(parameters{45}, 'true'))
+            save(strcat(path_check(resultDir), 'StatisticsRF.mat'), ...
+                'statistics')
+        else
+           save(strcat(path_check(resultDir), 'Statistics.mat'), ...
+                'statistics')
+        end
+    end
+    
+    % NN_Classification 45, NN_DefaultClassificationParameters 46, 
+    % NN_TrainPercentage 47, NN_HiddenLayersNumber 48, 
+    % NN_ValidationValue 49, NN_Repetitions 50, NN_MinimumClassExamples 51, 
+    % NN_PCAValue 52, NN_Evaluation 53, NN_Rejection 54
+    if sum(strcmp(parameters{45}, 'true'))
+        for i = 49:54
+            if isnan(parameters{i})
+                parameters{i} = [];
+            end
+        end
+        %neural_network(data, n_layers, validation_value, ...
+        %    ~, repetitions, min_samples, pca_value, eval_method, ...
+        %    training_value, reject_value)
+        if strcmpi(parameters{46}, 'true')
+            neural_network(dataPath, 10, 0.1, 1, 100, 1, 100, 'split', ...
+               0.8, 0.5)
+        else
+            statistics = neural_network(dataPath, parameters{48}, ...
+                parameters{49}, 1, parameters{50}, parameters{51}, ...
+                parameters{52}, parameters{53}, parameters{47}, ...
+                parameters{54});
+        end
+        resultDir = strcat(path_check(dataPath), 'Classification');
+        if not(exist(resultDir, 'dir'))
+            mkdir(resultDir);
+        end
+        if sum(strcmp(parameters{45}, 'true'))
+            save(strcat(path_check(resultDir), 'StatisticsNN.mat'), ...
+                'statistics')
+        else
+            save(strcat(path_check(resultDir), 'Statistics.mat'), ...
+                'statistics')
+        end
     end
 end

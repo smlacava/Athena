@@ -37,8 +37,24 @@ function Athena_classification_OpeningFcn(hObject, eventdata, handles, ...
     if nargin >= 6
         set(handles.aux_sub, 'String', varargin{3})
     end
-    if nargin == 7
+    if nargin >= 7
         set(handles.aux_loc, 'String', varargin{4})
+    end
+    if nargin == 8
+        if strcmp(varargin{5}, 'nn')
+            set(handles.DTclassifier, 'Visible', 'off')
+            set(handles.pruning, 'Visible', 'off')
+            set(handles.FResample, 'String', 'Validation fraction')
+            set(handles.fraction_text, 'String', '0.1')
+            set(handles.FResample, 'Tooltip', ...
+                'This is the fraction of dataset used for the validation')
+            set(handles.nTrees, 'String', 'Hidden layers')
+            set(handles.nTrees, 'Tooltip', ...
+                'This is the number of hidden layers')
+            set(handles.yes_button, 'Visible', 'off')
+            set(handles.no_button, 'Visible', 'off')
+            set(handles.Title, 'String', ' Neural Network Classification')
+        end
     end
 
     
@@ -66,23 +82,23 @@ function train_text_CreateFcn(hObject, eventdata, handles)
     end
 
 
-function trees_text_Callback(hObject, eventdata, handles)
-    set(handles.aux_trees, 'String', get(handles.trees_text, 'String'))
+function nodes_text_Callback(hObject, eventdata, handles)
+    set(handles.aux_trees, 'String', get(handles.nodes_text, 'String'))
 
     
-function trees_text_CreateFcn(hObject, eventdata, handles)
+function nodes_text_CreateFcn(hObject, eventdata, handles)
     if ispc && isequal(get(hObject, 'BackgroundColor'), ...
             get(0, 'defaultUicontrolBackgroundColor'))
         set(hObject, 'BackgroundColor', 'white');
     end
 
 
-function bagging_text_Callback(hObject, eventdata, handles)
-    set(handles.aux_resample, 'String', get(handles.bagging_text, ...
+function fraction_text_Callback(hObject, eventdata, handles)
+    set(handles.aux_resample, 'String', get(handles.fraction_text, ...
         'String'))
 
     
-function bagging_text_CreateFcn(hObject, eventdata, handles)
+function fraction_text_CreateFcn(hObject, eventdata, handles)
     if ispc && isequal(get(hObject, 'BackgroundColor'), ...
             get(0, 'defaultUicontrolBackgroundColor'))
         set(hObject, 'BackgroundColor', 'white');
@@ -121,13 +137,18 @@ function Run_Callback(hObject, eventdata, handles)
     addpath 'Graphics'
     
     if get(handles.default_parameters, 'Value') == 1
-        statistics = random_forest(dataPath, 7, 0.5, 'on', 1000, 1, ...
-            100, 'split', 0.8);
+        if strcmpi(get(handles.DTclassifier, 'Visible'), 'on')
+            statistics = random_forest(dataPath, 7, 0.5, 'on', 1000, 1, ...
+                100, 'split', 0.8);
+        else
+            statistics = neural_network(data, 10, 0.2, 1, 10, 1, 100, ...
+                'split', 0.5, 0.7);
+        end
     else
         repetitions = str2double(get(handles.repetitions_text, 'String'));
         n_train = str2double(get(handles.train_text, 'String'));
-        trees = str2double(get(handles.trees_text, 'String'));
-        bagging = str2double(get(handles.bagging_text, 'String'));
+        nodes = str2double(get(handles.nodes_text, 'String'));
+        fraction = str2double(get(handles.fraction_text, 'String'));
         pruning = get(handles.yes_button, 'Value');
         pca_value = str2double(get(handles.pca_value, 'String'));
         if get(handles.TTS_button, 'Value') == 1
@@ -139,11 +160,11 @@ function Run_Callback(hObject, eventdata, handles)
         if pruning == 0
             pruning = [];
         end
-        if bagging == 0
-            bagging = [];
+        if fraction == 0
+            fraction = [];
         end
-        if trees == 0
-            trees = [];
+        if nodes == 0
+            nodes = [];
         end
         if n_train == 0
             n_train = 0.8;
@@ -157,9 +178,20 @@ function Run_Callback(hObject, eventdata, handles)
             problem('The PCA value must be a value between 0 and 100');
             return
         end
-    
-        statistics = random_forest(dataPath, trees, bagging, ...
-            pruning, repetitions, 1, pca_value, eval_method, n_train);
+        
+        if strcmpi(get(handles.DTclassifier, 'Visible'), 'on')
+            statistics = random_forest(dataPath, nodes, fraction, ...
+                pruning, repetitions, 1, pca_value, eval_method, n_train);
+        else
+            if fraction+n_train >= 1
+                problem(char_check(strcat("The sum between validation", ...
+                    " fraction and testing fraction cannot be higher ", ...
+                    "than 1")))
+                return
+            end                
+            statistics = neural_network(dataPath, nodes, fraction, 1, ...
+                repetitions, 1, pca_value, eval_method, n_train);
+        end
     end
     resultDir = strcat(path_check(dataPath), 'Classification');
     if not(exist(resultDir, 'dir'))
@@ -179,7 +211,7 @@ function back_Callback(hObject, eventdata, handles)
     addpath 'Graphics'
     [dataPath, measure, sub, loc] = GUI_transition(handles);
     close(Athena_classification)
-    Athena_mergsig(dataPath, measure, sub, loc)
+    Athena_selectClass(dataPath, measure, sub, loc)
 
 
 function axes3_CreateFcn(hObject, eventdata, handles)
@@ -202,8 +234,8 @@ function default_parameters_Callback(hObject, eventdata, handles)
     set(handles.train_text, 'Enable', value)
     set(handles.LOO_button, 'Enable', value)
     set(handles.TTS_button, 'Enable', value)
-    set(handles.trees_text, 'Enable', value)
-    set(handles.bagging_text, 'Enable', value)
+    set(handles.nodes_text, 'Enable', value)
+    set(handles.fraction_text, 'Enable', value)
     set(handles.pca_value, 'Enable', value)
 
 
@@ -214,7 +246,7 @@ function DTclassifier_Callback(hObject, eventdata, handles)
     t_num = {get(handles.aux_trees, 'String'), "1"};
     r_num = {get(handles.aux_resample, 'String'), "1"};
     
-    set(handles.trees_text, 'String', t_num{dt_par})
-    set(handles.bagging_text, 'String', r_num{dt_par})
-    set(handles.trees_text, 'Enable', value)
-    set(handles.bagging_text, 'Enable', value)
+    set(handles.nodes_text, 'String', t_num{dt_par})
+    set(handles.fraction_text, 'String', r_num{dt_par})
+    set(handles.nodes_text, 'Enable', value)
+    set(handles.fraction_text, 'Enable', value)
