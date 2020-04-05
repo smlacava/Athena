@@ -26,8 +26,8 @@ end
 
 function [functions, func] = check_classifier(classifier)
     nn = {'nn', 'neural', 'neuralnetwork', 'neural_network'};
-    rf = {'rf', 'random_forest', 'randomforest', 'dt', 'decision_tree', ...
-        'decisiontree'};
+    rf = {'rf', 'random_forest', 'randomforest', 'dt', ...
+        'decision_tree', 'decisiontree'};
     if sum(strcmpi(classifier, nn))
         functions = {@nn_train_test_split, @nn_leave_one_out};
         func = @nn_train_test_split;

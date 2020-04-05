@@ -102,7 +102,12 @@ function statistics = random_forest(data, n_trees, resample_value, ...
     
     [data, pc] = reduce_predictors(data, pca_value, bg_color);
     
-    t = templateTree('Prune', pruning);
+    if strcmp(pruning, 'on')
+        t = templateTree('Prune', pruning, 'MaxNumSplits', ...
+            max(2, ceil(size(data, 1)*0.05)));
+    else
+        t = templateTree('Prune', pruning);
+    end
     
     if split_value > 1
         split_value = split_value/n_cases;

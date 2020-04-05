@@ -1,3 +1,36 @@
+%% neural_network
+% This function fits a neural network classifier and tests a data set on it
+% for a selected number of times, and computes the averaged accuracy, the
+% minimum accuracy, the maximum accuracy and shows the averaged confusion
+% matrix, and the overall ROC curve and AUC value
+%
+% statistics = neural_network(data, n_layers, validation_value, ~, ...
+%    repetitions, min_samples, pca_value, eval_method, training_value, ...
+%    reject_value)
+%
+% input:
+%   data is the data set table
+%   n_layers is the number of hidden layers
+%   validation_value is the fraction of dataset to use as validation set
+%   ~ can take every value (it is not used)
+%   min_samples is the minimum number of examples of each class in the
+%       training data set (1 as default)
+%   pca_value is the variance percentage threshold to reduce the number of
+%       predictors through the principal component analysis
+%   eval_method is the evaluation method, which can be 'split' to randomly
+%       split the dataset in training set and test set or 'leaveoneout' to
+%       train the classifier on all the samples except one used to test
+%       iterating for all the samples ('split' by default)
+%   trsining_value is the fraction of training data set (a number comprised
+%       between 0 and 1, 0.8 as default)
+%   reject_value is the percentage is the minimum probability of 
+%       classification relative to the assigned class, under which the 
+%       sample is rejected
+%
+% output:
+%   statistic is the resulting structure which contains the used parameters
+%       and the resulting performance
+
 
 function statistics = neural_network(data, n_layers, validation_value, ...
     ~, repetitions, min_samples, pca_value, eval_method, ...
