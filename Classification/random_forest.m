@@ -103,8 +103,13 @@ function statistics = random_forest(data, n_trees, resample_value, ...
     [data, pc] = reduce_predictors(data, pca_value, bg_color);
     
     if strcmp(pruning, 'on')
-        t = templateTree('Prune', pruning, 'MaxNumSplits', ...
-            max(2, ceil(size(data, 1)*0.05)));
+        if strcmpi(eval_method, 'split')
+            t = templateTree('Prune', pruning, 'MaxNumSplits', ...
+                max(2, ceil(size(data, 1)*0.05)));
+        elseif strcmpi(eval_method, 'leaveoneout')
+            t = templateTree('Prune', pruning, 'MaxNumSplits', ...
+                max(2, ceil((size(data, 1)-1)*0.05/split_value)));
+        end
     else
         t = templateTree('Prune', pruning);
     end
