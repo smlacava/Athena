@@ -38,6 +38,11 @@ function Athena_mergsig_OpeningFcn(hObject, eventdata, handles, varargin)
         if not(strcmp(path, 'Static Text'))
             set(handles.dataPath_text, 'String', path)
         end
+        if not(exist(strcat(path_check(path), 'StatAn'), 'dir'))
+            set(handles.sigData, 'Enable', 'off');
+            set(handles.sigData, 'Value', 0)
+            set(handles.allData, 'Value', 1)
+        end
     end
     if nargin >= 5
         set(handles.aux_measure, 'String', varargin{2})

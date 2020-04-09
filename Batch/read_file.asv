@@ -42,9 +42,7 @@ function parameters = read_file(dataFile)
         'NN_TrainPercentage=', 'NN_HiddenLayersNumber=', ...
         'NN_ValidationValue=', 'NN_Repetitions=', ...
         'NN_MinimumClassExamples=', 'NN_PCAValue=', 'NN_Evaluation=', ...
-        'NN_Rejection=' , 'ScatterAnalysis=', 'Scatter_Measure1=', ...
-        'Scatter_Measure2=', 'Scatter_Band1=', 'Scatter_Band2=', ...
-        'Scatter_Location1=', 'Scatter_Location2='};
+        'NN_Rejection=' };
     n_params = length(params_names);
     pre_parameters = cell(n_params, 1);
     
@@ -68,9 +66,7 @@ function parameters = read_file(dataFile)
         aux_cases(contains(params_names, 'NN_HiddenLayersNumber')), ...
         aux_cases(contains(params_names, 'NN_ValidationValue')), ...
         aux_cases(contains(params_names, 'NN_PCAValue')), ...
-        aux_cases(contains(params_names, 'NN_Rejection')), ...
-        aux_cases(contains(params_names, 'Scatter_Band1')), ...
-        aux_cases(contains(params_names, 'Scatter_Band2'))]];
+        aux_cases(contains(params_names, 'NN_Rejection'))]];
     par_cases = [par_cases, ...
         [aux_cases(contains(params_names, 'measures')), ...
         aux_cases(contains(params_names, 'Areas_')), ...
@@ -110,6 +106,24 @@ function parameters = read_file(dataFile)
         end
     end
     fclose(auxID);
+    
+    % dataPath 1, fs 2, cf 3, epNum 4, epTime 5, tStart 6, totBand 7, 
+    % measure 8, Subjects 9, locations 10, Index 11, MeasureExtraction 12, 
+    % EpochsAverage 13, EpochsAnalysis 14, IndexCorrelation 15, 
+    % StatisticalAnalysis 16, MeasuresCorrelation 17, 
+    % ClassificationData 18, Group_IC 19, Areas_IC 20, 
+    % Conservativeness_IC 21, Areas_EA 22, Areas_SA 23, 
+    % Conservativeness_SA 24, Measure1 25, Measure2 26, Areas_MC 27, 
+    % Group_MC 28, MergingData 29, MergingMeasures 30, MergingAreas 31, 
+    % Subject 32, RF_Classification 33, DataType 34, 
+    % RF_DefaultClassification 35, RF_TrainPercentage 36, 
+    % RF_TreesNumber 37, RF_FResampleValue 38, RF_Pruning 39, 
+    % RF_Repetitions 40, RF_MinimumClassExamples 41, RF_PCAValue 42, 
+    % RF_Evaluation 43, RF_Rejection 44, NN_Classification 45, 
+    % NN_DefaultClassificationParameters 46, NN_TrainPercentage 47, 
+    % NN_HiddenLayersNumber 48, NN_ValidationValue 49, NN_Repetitions 50, 
+    % NN_MinimumClassExamples 51, NN_PCAValue 52, NN_Evaluation 53,
+    % NN_Rejection 54
     
     n = length(pre_parameters)*2;
     parameters = cell(1, n);

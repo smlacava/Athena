@@ -63,6 +63,19 @@ Areas_MC=Asymmetry
 Conservativeness_MC=max
 Group_MC=PAT
 
+SCATTER ANALYSIS
+The scatter analysis show a scatter plot related to two measures, 
+also with different frequency and spatial parameters, or related to
+different parameters of a single measure, which allows a visual 
+analysis between them
+ScatterAnalysis=true
+Scatter_Measure1=PSDr
+Scatter_Measure2=AECo
+Scatter_Band1=2
+Scatter_Band2=1
+Scatter_Location1=Frontal
+Scatter_Location2=AF3
+
 CLASSIFICATION DATA SETTINGS
 This step merges the significant data, previously computed in
 statistical analysis, to use them for the classification or other

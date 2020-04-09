@@ -88,6 +88,8 @@ The user can choose between N analysis:
        subject, an external file containing the index for each subject is required
 - **Measures Correlation analysis**: the user can verify the presence of a correlation in a group between the patterns of two different
        measures
+- **Scatter Plot analysis**: the user can visually analyze the scatter plot related to two measures, also with different spatial and 
+       frequency parameters, or to different parameters of the same measure
 - **Epochs Analysis**: the user can study the variation of a measure through the epochs in every frequency band for a subject
 - **Classification**: the user can train and test a Decision Tree classifier, a Random Forest classifier or a Neural Network classifier in
         order to verify the discriminant capability of the extracted features and to check if it is possible to distinguish between the two 

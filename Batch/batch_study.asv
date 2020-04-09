@@ -14,26 +14,30 @@ function batch_study(dataFile)
     true = ["True", "true", "TRUE", "t", "1", "OK", "ok"];
     bg_color = [0.67 0.98 0.92];
     
-    % dataPath, fs, cf, epNum, epTime, tStart, totBand, measure, Subjects, 
-    % locations, Index, MeasureExtraction, EpochsAverage, EpochsAnalysis, 
-    % IndexCorrelation, StatisticalAnalysis, MeasuresCorrelation, 
-    % ClassificationData, Group_IC, Areas_IC, Conservativeness_IC, 
-    % Areas_EA, Areas_SA, Conservativeness_SA, Measure1, Measure2, 
-    % Areas_MC, Group_MC, MergingData, MergingMeasures, MergingAreas, 
-    % Subject, RF_Classification, DataType, RF_DefaultClassification, 
-    % RF_TrainPercentage, RF_TreesNumber, RF_FResampleValue, RF_Pruning, 
-    % RF_Repetitions, RF_MinimumClassExamples, RF_PCAValue, RF_Evaluation, 
-    % RF_Rejection, NN_Classification, NN_DefaultClassificationParameters, 
-    % NN_TrainPercentage, NN_HiddenLayersNumber, NN_ValidationValue, 
-    % NN_Repetitions, NN_MinimumClassExamples, NN_PCAValue, NN_Evaluation,
-    % NN_Rejection
+    % dataPath 1, fs 2, cf 3, epNum 4, epTime 5, tStart 6, totBand 7, 
+    % measure 8, Subjects 9, locations 10, Index 11, MeasureExtraction 12, 
+    % EpochsAverage 13, EpochsAnalysis 14, IndexCorrelation 15, 
+    % StatisticalAnalysis 16, MeasuresCorrelation 17, 
+    % ClassificationData 18, Group_IC 19, Areas_IC 20, 
+    % Conservativeness_IC 21, Areas_EA 22, Areas_SA 23, 
+    % Conservativeness_SA 24, Measure1 25, Measure2 26, Areas_MC 27, 
+    % Group_MC 28, MergingData 29, MergingMeasures 30, MergingAreas 31, 
+    % Subject 32, RF_Classification 33, DataType 34, 
+    % RF_DefaultClassification 35, RF_TrainPercentage 36, 
+    % RF_TreesNumber 37, RF_FResampleValue 38, RF_Pruning 39, 
+    % RF_Repetitions 40, RF_MinimumClassExamples 41, RF_PCAValue 42, 
+    % RF_Evaluation 43, RF_Rejection 44, NN_Classification 45, 
+    % NN_DefaultClassificationParameters 46, NN_TrainPercentage 47, 
+    % NN_HiddenLayersNumber 48, NN_ValidationValue 49, NN_Repetitions 50, 
+    % NN_MinimumClassExamples 51, NN_PCAValue 52, NN_Evaluation 53,
+    % NN_Rejection 54
     parameters = read_file(dataFile);
     
     %% Preprocessing and Extraction
     dataPath = path_check(search_parameter(parameters, 'dataPath'));
     cf = search_parameter(parameters, 'cf');
     nBands = length(cf)-1;
-    measure = search_parameter(parameters, 'measures');
+    measure = search_parameter(parameters, 'measure');
     n_measures = length(measure);
     measurePath = cell(n_measures, 1);
     
@@ -56,8 +60,7 @@ function batch_study(dataFile)
     end
  
     
-    if sum(strcmp(search_parameter(parameters, 'MeasureExtraction'), ...
-        'true'))
+    if sum(strcmp(parameters{12}, 'true'))
         for m = 1:n_measures
             if strcmp(measure{m}, 'PSDr') && ...
                     length(search_parameter(parameters, 'totBand')) ~= 2
@@ -153,7 +156,6 @@ function batch_study(dataFile)
         else
             try
                 locations = strcat(dataPath, 'Locations.mat');
-            catch
             end
         end
     end
@@ -234,7 +236,7 @@ function batch_study(dataFile)
         
         if sum(strcmp(search_parameter(parameters, ...
                 'StatisticalAnalysis'), 'true'))
-            Areas_SA = search_parameter(parameters, 'Areas_SA');
+            Areas_SA = search_parameter(parameters, 'AreasSA');
             for i = 1:length(Areas_SA)
                 saPath = path_check(strcat(managedPath{m}, Areas_SA{i}));
                 PAT = strcat(saPath, 'PAT.mat');
@@ -271,10 +273,6 @@ function batch_study(dataFile)
                     search_parameter(parameters, 'Measure2')}, alpha, ...
                     bg_color, locs, [], [], nLoc, nBands)   
             end
-        end
-        
-        if strcmpi(search_parameter(parameters, 'ScatterAnalysis'), 'true')
-            batch_scatter(parameters);
         end
     end
     
@@ -320,8 +318,7 @@ function batch_study(dataFile)
         end
     end
     
-    if sum(strcmp(search_parameter(parameters, 'NN_Classification'), ...
-        'true'))
+    if sum(strcmp(parameters{45}, 'true'))
         %neural_network(data, n_layers, validation_value, ...
         %    ~, repetitions, min_samples, pca_value, eval_method, ...
         %    training_value, reject_value)

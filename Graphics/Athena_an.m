@@ -133,3 +133,14 @@ function tempav_Callback(hObject, eventdata, handles)
     [dataPath, measure, sub, loc] = GUI_transition(handles);
     close(Athena_an)
     Athena_epmean(dataPath, measure, sub, loc)
+
+
+function scatterAn_Callback(hObject, eventdata, handles)
+    funDir = mfilename('fullpath');
+    funDir = split(funDir, 'Graphics');
+    cd(char(funDir{1}));
+    addpath 'Auxiliary'
+    addpath 'Graphics'
+    [dataPath, measure, sub, loc] = GUI_transition(handles);
+    close(Athena_an)
+    Athena_scatter(dataPath, measure, sub, loc)
