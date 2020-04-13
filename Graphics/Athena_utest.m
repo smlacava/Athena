@@ -1,9 +1,9 @@
-function varargout = Athena_statan(varargin)
+function varargout = Athena_utest(varargin)
     gui_Singleton = 1;
     gui_State = struct('gui_Name',       mfilename, ...
                    'gui_Singleton',  gui_Singleton, ...
-                   'gui_OpeningFcn', @Athena_statan_OpeningFcn, ...
-                   'gui_OutputFcn',  @Athena_statan_OutputFcn, ...
+                   'gui_OpeningFcn', @Athena_utest_OpeningFcn, ...
+                   'gui_OutputFcn',  @Athena_utest_OutputFcn, ...
                    'gui_LayoutFcn',  [] , ...
                    'gui_Callback',   []);
     if nargin && ischar(varargin{1})
@@ -17,7 +17,7 @@ function varargout = Athena_statan(varargin)
     end
 
     
-function Athena_statan_OpeningFcn(hObject, eventdata, handles, varargin)
+function Athena_utest_OpeningFcn(hObject, eventdata, handles, varargin)
     handles.output = hObject;
     guidata(hObject, handles);
     myImage = imread('untitled3.png');
@@ -73,7 +73,7 @@ function Athena_statan_OpeningFcn(hObject, eventdata, handles, varargin)
                 
 
     
-function varargout = Athena_statan_OutputFcn(hObject, ~, handles) 
+function varargout = Athena_utest_OutputFcn(hObject, ~, handles) 
     varargout{1} = handles.output;
 
 
@@ -177,7 +177,7 @@ function back_Callback(hObject, eventdata, handles)
     if strcmp(dataPath, 'es. C:\User\Data')
         dataPath = "Static Text";
     end
-    close(Athena_statan)
+    close(Athena_utest)
     Athena_statistics(dataPath, measure, sub, loc)
 
 

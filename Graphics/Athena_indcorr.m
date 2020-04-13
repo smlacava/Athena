@@ -116,7 +116,7 @@ function back_Callback(~, eventdata, handles)
         dataPath = "Static Text";
     end
     close(Athena_indcorr)
-    Athena_an(dataPath, measure, sub, loc)
+    Athena_statistics(dataPath, measure, sub, loc)
 
     
 function axes3_CreateFcn(hObject, eventdata, handles)

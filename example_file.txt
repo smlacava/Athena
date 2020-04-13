@@ -39,6 +39,15 @@ Group_IC=PAT
 Areas_IC=Areas Global Asymmetry
 Conservativeness_IC=min
 
+DISTRIBUTIONS ANALYSIS
+The distributions analysis shows the distributions and the differences
+between the two studied groups 
+DistributionsAnalysis=true
+Distributions_Measure=PLV
+Distributions_Band=2
+Distributions_Location=Global
+Distributions_Parameter=median
+
 EPOCHS ANALYSIS
 The epochs analysis show the values of the measure of the selected
 subject in every epoch.
@@ -46,12 +55,12 @@ EpochsAnalysis=false
 Subject=509
 Areas_EA=Areas Global Asymmetry
 
-STATISTICAL ANALYSIS
-The statistical analysis verifies if there are differences between 
-patients and healthy controls in every band end in every location.
-StatisticalAnalysis=false
-Areas_SA=Total Areas Global Asymmetry
-Conservativeness_SA=max
+U-Test
+The U test verifies if there are differences between patients and 
+healthy controls in every band end in every location.
+UTest=false
+Areas_UT=Total Areas Global Asymmetry
+Conservativeness_UT=max
 
 MEASURES CORRELATION
 The measures correlation show if there is a correlation between two

@@ -1,3 +1,13 @@
+%% batch_scatter
+% This function is used in the batch study to show the scatter plot of two
+% measures with different parameters
+%
+% batch_scatter(parameters)
+%
+% input:
+%   parameters is the cell array which contains the pairs name-value for
+%       each parameter used in the batch study
+
 
 function batch_scatter(parameters)
     dataPath = search_parameter(parameters, 'dataPath');
@@ -10,8 +20,8 @@ function batch_scatter(parameters)
     location1 = search_parameter(parameters, 'Scatter_Location1');
     location2 = search_parameter(parameters, 'Scatter_Location2');
     
-    [area1, check1] = scatter_area(location1);
-    [area2, check2] = scatter_area(location2);
+    [area1, check1] = batch_check_area(location1);
+    [area2, check2] = batch_check_area(location2);
     
     measure1_path = path_check(strcat(path_check(dataPath), ...
         path_check(measure1), path_check('Epmean'), area1));
@@ -59,22 +69,4 @@ function batch_scatter(parameters)
     legend('group 0', 'group 1')
     xlabel(strcat(measure1, " ", location1, " Band ", string(band1)))
     ylabel(strcat(measure2, " ", location2, " Band ", string(band2)))
-end
-
-
-function [area, check] = scatter_area(location)
-    if sum(strcmpi(location, {'Frontal', 'Temporal', 'Parietal', ...
-        'Occipital', 'Central'}))
-        check = 0;
-        area = 'Areas';
-    elseif strcmpi(location, 'global')
-        check = 1;
-        area = 'Global';
-    elseif strcmpi(location, 'asymmetry')
-        check = 1;
-        area = 'Asymmetry';
-    else
-        check = 0;
-        area = 'Total';
-    end
 end

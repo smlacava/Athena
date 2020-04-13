@@ -168,9 +168,11 @@ function batch_study(dataFile)
                 sum(strcmp(search_parameter(parameters, ...
                 'IndexCorrelation'), true)), ...
                 sum(strcmp(search_parameter(parameters, ...
-                'StatisticalAnalysis'), true)), ...
+                'UTest'), true)), ...
                 sum(strcmp(search_parameter(parameters, ...
-                'ScatterAnalysis'), true))]) > 0
+                'ScatterAnalysis'), true)), ...
+                sum(strcmp(search_parameter(parameters, ...
+                'DistributionsAnalysis'), true))]) > 0
             problem('Epochs Avarage not computed')
             return
         else
@@ -233,18 +235,18 @@ function batch_study(dataFile)
         end
         
         if sum(strcmp(search_parameter(parameters, ...
-                'StatisticalAnalysis'), 'true'))
-            Areas_SA = search_parameter(parameters, 'Areas_SA');
-            for i = 1:length(Areas_SA)
-                saPath = path_check(strcat(managedPath{m}, Areas_SA{i}));
+                'UTest'), 'true'))
+            Areas_UT = search_parameter(parameters, 'Areas_UT');
+            for i = 1:length(Areas_UT)
+                saPath = path_check(strcat(managedPath{m}, Areas_UT{i}));
                 PAT = strcat(saPath, 'PAT.mat');
                 HC = strcat(saPath, 'HC.mat');
                 [PAT, ~, locs] = load_data(PAT);
                 HC = load_data(HC);
-                anType = areas_check(Areas_SA{i,1});
+                anType = areas_check(Areas_UT{i,1});
                 statistical_analysis(HC, PAT, locs, ....
                     cons_check(search_parameter(parameters, ...
-                    'Conservativeness_SA')), dataPath, measure{m}, anType)
+                    'Conservativeness_UT')), dataPath, measure{m}, anType)
             end
         end
         
@@ -275,6 +277,11 @@ function batch_study(dataFile)
         
         if strcmpi(search_parameter(parameters, 'ScatterAnalysis'), 'true')
             batch_scatter(parameters);
+        end
+        
+        if strcmpi(search_parameter(parameters, ...
+                'DistributionsAnalysis'), 'true')
+            batch_distributions(parameters);
         end
     end
     

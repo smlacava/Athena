@@ -17,8 +17,7 @@ function varargout = Athena_sigShow(varargin)
     end
 
     
-function Athena_sigShow_OpeningFcn(hObject, eventdata, handles, ...
-    varargin)
+function Athena_sigShow_OpeningFcn(hObject, ~, handles, varargin)
     handles.output = hObject;
     guidata(hObject, handles);
     myImage = imread('untitled3.png');
@@ -80,8 +79,7 @@ function Athena_sigShow_OpeningFcn(hObject, eventdata, handles, ...
     end
 
     
-function varargout = Athena_sigShow_OutputFcn(hObject, eventdata, ...
-    handles) 
+function varargout = Athena_sigShow_OutputFcn(~, ~, handles) 
     varargout{1} = handles.output;
 
 
@@ -91,7 +89,7 @@ function back_Callback(~, ~, handles)
     Athena(dataPath, measure, sub, loc)
 
 
-function signal_CreateFcn(hObject, eventdata, handles)
+function signal_CreateFcn(~, ~, ~)
 
 
 function next_Callback(hObject, eventdata, handles)
@@ -100,20 +98,20 @@ function next_Callback(hObject, eventdata, handles)
     Previous_Callback(hObject, eventdata, handles)
     
 
-function Ampliude_text_Callback(hObject, eventdata, handles)
+function Ampliude_text_Callback(~, ~, ~)
 
 
-function Ampliude_text_CreateFcn(hObject, eventdata, handles)
+function Ampliude_text_CreateFcn(hObject, ~, ~)
     if ispc && isequal(get(hObject,'BackgroundColor'), ....
             get(0,'defaultUicontrolBackgroundColor'))
         set(hObject,'BackgroundColor','white');
     end
 
 
-function time_text_Callback(hObject, eventdata, handles)
+function time_text_Callback(~, ~, ~)
 
 
-function time_text_CreateFcn(hObject, eventdata, handles)
+function time_text_CreateFcn(hObject, ~, ~)
     if ispc && isequal(get(hObject,'BackgroundColor'), ...
             get(0,'defaultUicontrolBackgroundColor'))
         set(hObject,'BackgroundColor','white');
@@ -167,7 +165,7 @@ function Previous_Callback(~, ~, handles)
     end
     
     
-function right_Callback(hObject, eventdata, handles)
+function right_Callback(~, ~, handles)
     axes(handles.signal);
     Lim = xlim;
     fs = str2double(get(handles.fs_text, 'String'));
@@ -180,7 +178,7 @@ function right_Callback(hObject, eventdata, handles)
         xlim([Limit-Lim(2)+Lim(1)-1 Limit]);
     end
     
-function left_Callback(hObject, eventdata, handles)
+function left_Callback(~, ~, handles)
     axes(handles.signal);
     Lim = xlim;
     fs = str2double(get(handles.fs_text, 'String'));
@@ -196,9 +194,35 @@ function left_Callback(hObject, eventdata, handles)
             xlim(Lim - 1);
         end
     end
+    
+    
+function big_right_Callback(~, ~, handles)
+    axes(handles.signal);
+    Lim = xlim;
+    dt = Lim(2)-Lim(1);
+    Lim = Lim+dt+1;
+    data = get(handles.signal_matrix, 'Data');
+    Limit = max(size(data));
+    if Lim(2) <= Limit
+        xlim(Lim);
+    else
+        xlim([Limit-dt Limit]);
+    end
+    
+    
+function big_left_Callback(~, ~, handles)
+    axes(handles.signal);
+    Lim = xlim;
+    dt = Lim(2)-Lim(1);
+    Lim = Lim-dt-1;
+    if Lim(1) > 0
+        xlim(Lim);
+    else
+        xlim([1 dt+1])
+    end
 
-
-function fs_ClickedCallback(hObject, eventdata, handles)
+    
+function fs_ClickedCallback(~, ~, handles)
     try
         fs_check = get(handles.fs_check, 'String');
         data = get(handles.signal_matrix, 'Data');
@@ -233,10 +257,10 @@ function fs_ClickedCallback(hObject, eventdata, handles)
     end
 
 
-function amplitude_ClickedCallback(hObject, eventdata, handles)
+function amplitude_ClickedCallback(~, ~, ~)
 
 
-function time_window_ClickedCallback(hObject, eventdata, handles)
+function time_window_ClickedCallback(~, ~, handles)
     try
         data = get(handles.signal_matrix, 'Data');
         fs = str2double(get(handles.fs_text, 'String'));
@@ -257,7 +281,7 @@ function time_window_ClickedCallback(hObject, eventdata, handles)
     end
     
 
-function Go_to_ClickedCallback(hObject, eventdata, handles)
+function Go_to_ClickedCallback(~, ~, handles)
     try
         axes(handles.signal);
         maxsize = max(size(get(handles.signal_matrix, 'Data')));
@@ -277,7 +301,7 @@ function Go_to_ClickedCallback(hObject, eventdata, handles)
     end
     
 
-function zoom_Callback(hObject, eventdata, handles)
+function zoom_Callback(~, ~, handles)
     axis(handles.signal);
     Lim = floor(xlim/str2double(get(handles.fs_text, 'String')));
     sigPlot(handles, get_data(handles), ...
@@ -286,7 +310,7 @@ function zoom_Callback(hObject, eventdata, handles)
     
     
     
-function sigPlot(handles, data, fs, locs, t_start, t_end)
+function sigPlot(handles, data, fs, ~, t_start, t_end)
     switch nargin
         case 4
             t_start = 0;
@@ -310,7 +334,11 @@ function sigPlot(handles, data, fs, locs, t_start, t_end)
     for j = 1:locations
         if locs_ind(j) == 1
             plot(data(j,:)*mult+delta*(count),'b');
-            chan_name = locs{j};
+            try
+                chan_name = locs{j};
+            catch
+                chan_name = string(j);
+            end
             ax.Children(1).ButtonDownFcn = strcat('disp(', ...
                 eval('strcat("''", chan_name, "''")'),')');
             count = count + 1;
@@ -330,7 +358,7 @@ function sigPlot(handles, data, fs, locs, t_start, t_end)
     time_window(handles)
 
 
-function TimeToSave_ClickedCallback(hObject, eventdata, handles)
+function TimeToSave_ClickedCallback(~, ~, handles)
     try
         data = get(handles.signal_matrix, 'Data');
         fs = str2double(get(handles.fs_text, 'String'));
@@ -344,7 +372,7 @@ function TimeToSave_ClickedCallback(hObject, eventdata, handles)
     end
     
 
-function tStart_text_Callback(hObject, eventdata, handles)
+function tStart_text_Callback(~, ~, handles)
     time_window(handles)
     
     
@@ -375,11 +403,11 @@ function time_window(handles)
     hold off;
     
 
-function Run_Callback(hObject, eventdata, handles)
+function Run_Callback(~, ~, handles)
     dataPath = path_check(get(handles.aux_dataPath, 'String'));
     subject = get(handles.Title, 'String');
     locs = get(handles.locs_matrix, 'Data');
-    [time_series, fmin, fmax] = get_data(handles);
+    [time_series, ~, ~] = get_data(handles);
     tStart = str2double(get(handles.tStart_text, 'String'));
     time_to_save = str2double(get(handles.TimeToSave_text, 'String'));
     fs = str2double(get(handles.fs_text, 'String'));
@@ -411,7 +439,7 @@ function Run_Callback(hObject, eventdata, handles)
     save(dataPath, 'data');
     
     
-function Loc_ClickedCallback(hObject, eventdata, handles)
+function Loc_ClickedCallback(~, ~, handles)
     try
         msg = 'Select the file which contains the locations of the signal';
         title = 'Locations file';
@@ -436,7 +464,7 @@ function Loc_ClickedCallback(hObject, eventdata, handles)
     end
     
     
-function LocsToShow_ClickedCallback(hObject, eventdata, handles)
+function LocsToShow_ClickedCallback(~, ~, handles)
     locs = get(handles.locs_matrix, 'Data');
     data = get_data(handles);
     fs = str2double(get(handles.fs_text, 'String'));
@@ -455,7 +483,8 @@ function LocsToShow_ClickedCallback(hObject, eventdata, handles)
         sigPlot(handles, data, fs, locs)
     end
     
-function Filter_ClickedCallback(hObject, eventdata, handles)
+    
+function Filter_ClickedCallback(~, ~, handles)
     fmin = str2double(get(handles.fmin, 'String'));
     fmax = str2double(get(handles.fmax, 'String'));
     [fmin, fmax, check] = band_asking(fmin, fmax);
@@ -490,8 +519,112 @@ function Filter_ClickedCallback(hObject, eventdata, handles)
             close(f)
         end
     end
+
     
-function Filtered_button_Callback(hObject, eventdata, handles)
+function forward_show_ClickedCallback(hObject, eventdata, handles)
+    set_off(handles, 'forward')
+    while 1
+        if check_off(handles, 'forward')
+            set(handles.stop_show, 'State', 'off')
+            set(handles.forward_show, 'State', 'off')
+            break
+        end
+        right_Callback(hObject, eventdata, handles)
+        pause(1)
+    end
+
+    
+function backwards_show_ClickedCallback(hObject, eventdata, handles)
+    set_off(handles, 'backwards')
+    while 1
+        if check_off(handles, 'backwards')
+            set(handles.stop_show, 'State', 'off')
+            set(handles.back_show, 'State', 'off')
+            break
+        end
+        left_Callback(hObject, eventdata, handles)
+        pause(1)
+    end
+
+function big_forward_show_ClickedCallback(hObject, eventdata, handles)
+    set_off(handles, 'big_forward')
+    while 1
+        if check_off(handles, 'big_forward')
+            set(handles.stop_show, 'State', 'off')
+            set(handles.big_forward_show, 'State', 'off')
+            break
+        end
+        big_right_Callback(hObject, eventdata, handles)
+        pause(1)
+    end
+    
+function big_backwards_show_ClickedCallback(hObject, eventdata, handles)
+    set_off(handles, 'big_backwards')
+    while 1
+        if check_off(handles, 'big_backwards')
+            set(handles.stop_show, 'State', 'off')
+            set(handles.big_back_show, 'State', 'off')
+            break
+        end
+        big_left_Callback(hObject, eventdata, handles)
+        pause(1)
+    end
+
+function set_off(handles, hand_name_not)
+    hands = {handles.back_show, handles.forward_show, ...
+        handles.stop_show, handles.big_back_show, ...
+        handles.big_forward_show};
+    names = {'backwards', 'forward', 'stop', 'big_backwards', ...
+        'big_forward'};
+    searchname = cellfun(@(x)isequal(x, hand_name_not), names);
+        [~, c] = find(searchname);
+        values = {'off', 'off', 'off', 'off', 'off'};
+        values{c} = 'on';
+    for i = 1:length(values)
+        set(hands{i}, 'State', values{i})
+    end
+    
+function check = check_off(handles, hand_name)
+    check = 0;
+    if strcmpi(get(handles.stop_show, 'State'), 'on')
+        check = 1;
+    else
+        names = {'backwards', 'forward', 'big_backwards', 'big_forward'};
+        hands = {handles.back_show, handles.forward_show, ...
+            handles.big_back_show, handles.big_forward_show};
+        searchname = cellfun(@(x)isequal(x, hand_name), names);
+        [~, c] = find(searchname);
+        values = {'on', 'on', 'on', 'on'};
+        values{c} = 'off';
+        for i = 1:length(values)
+            if strcmpi(get(hands{i}, 'State'), values{i})
+                check = 1;
+            end
+        end
+    end
+        
+
+function end_show_ClickedCallback(~, ~, handles)
+    axes(handles.signal);
+    final = length(get(handles.signal_matrix, 'Data'));
+    Lim = xlim;
+    dt = Lim(2)-Lim(1);
+    xlim([final-dt final]);
+    
+function start_show_ClickedCallback(~, ~, handles)
+    axes(handles.signal);
+    Lim = xlim;
+    dt = Lim(2)-Lim(1);
+    xlim([1 dt+1]);
+      
+function stop_show_ClickedCallback(~, ~, handles)
+    set(handles.big_forward_show, 'State', 'off')
+    set(handles.big_back_show, 'State', 'off')
+    set(handles.forward_show, 'State', 'off')
+    set(handles.back_show, 'State', 'off')
+    
+    
+function Filtered_button_Callback(~, ~, handles)
     locs = get(handles.locs_matrix, 'Data');
     fs = str2double(get(handles.fs_text, 'String'));
     filt_button_check = get(handles.filt_button_check, 'String');
@@ -544,7 +677,3 @@ function [data, fmin, fmax] = get_data(handles)
         fmin = 0;
         fmax = 1000;
     end
-        
-        
-    
-   
