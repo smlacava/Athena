@@ -1,6 +1,6 @@
 # <span style="color:blue">ATHENA</span>
 <p align="center">
-  <img src="icon.png" width="250" title="hover text">
+  <img src="logo.png" width="250" title="hover text">
 </p>
 
 ***ATHENA*** *(Automatic Toolbox for Handling Experimental Neural Analysis)* is a toolbox which allow to
