@@ -20,7 +20,7 @@ function varargout = Athena_sigShow(varargin)
 function Athena_sigShow_OpeningFcn(hObject, ~, handles, varargin)
     handles.output = hObject;
     guidata(hObject, handles);
-    myImage = imread('untitled3.png');
+    myImage = imread('logo.png');
     set(handles.signal, 'Units', 'pixels');
     resizePos = get(handles.signal, 'Position');
     myImage= imresize(myImage, [resizePos(3) resizePos(3)]);
@@ -640,7 +640,10 @@ function Filtered_button_Callback(~, ~, handles)
             set(handles.Filtered_button, 'BackgroundColor', ...
                 [0.25 0.96 0.82]);
         end
-        sigPlot(handles, data, fs, locs)
+        axis(handles.signal);
+        t = xlim;
+        sigPlot(handles, data, fs, locs, floor((t(1)-1)/fs), ...
+            floor(t(2)/fs))
     else
         problem('The signal has not been filtered')
     end

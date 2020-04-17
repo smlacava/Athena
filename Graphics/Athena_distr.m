@@ -20,12 +20,11 @@ function varargout = Athena_distr(varargin)
 function Athena_distr_OpeningFcn(hObject, eventdata, handles, varargin)
     handles.output = hObject;
     guidata(hObject, handles);
-    myImage = imread('untitled3.png');
-    set(handles.scatter,'Units','pixels');
-    resizePos = get(handles.scatter,'Position');
-    myImage = imresize(myImage, [resizePos(3) resizePos(3)]);
-    axes(handles.scatter);
-    imshow(myImage);
+    handles.output = hObject;
+    guidata(hObject, handles);
+    [x, ~] = imread('logo.png');
+    Im = imresize(x, [250 250]);
+    set(handles.help_button, 'CData', Im)
     set(handles.scatter, 'Units', 'normalized');
     if nargin >= 4
         path = varargin{1};
@@ -88,6 +87,9 @@ function dataPath_text_CreateFcn(hObject, eventdata, handles)
 
 
 function Run_Callback(hObject, eventdata, handles)
+    if strcmp(get(handles.loc, 'Visible'), 'off')
+        return;
+    end
     funDir = mfilename('fullpath');
     funDir = split(funDir, 'Graphics');
     cd(char(funDir{1}));
@@ -115,6 +117,7 @@ function Run_Callback(hObject, eventdata, handles)
         xlim([0, 2]);
         legend({'group 0', 'group 1'})
         hold off
+        set(handles.help_button, 'Visible', 'off')
     end
     
     
@@ -193,6 +196,9 @@ function back_Callback(hObject, eventdata, handles)
 
 
 function export_Callback(hObject, eventdata, handles)
+    if strcmp(get(handles.loc, 'Visible'), 'off')
+        return;
+    end
     if strcmp(get(handles.loc, 'Enable'), 'on') && ...
             strcmp(get(handles.loc, 'Enable'), 'on')
         [PAT, HC, parameter, measure, band, location] = ...

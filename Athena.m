@@ -20,11 +20,9 @@ function varargout = Athena(varargin)
 function Athena_OpeningFcn(hObject, ~, handles, varargin)
     handles.output = hObject;
     guidata(hObject, handles);
-    myImage = imread('untitled3.png'); 
-    set(handles.axes3,'Units','pixels');
-    resizePos = get(handles.axes3,'Position');
-    myImage= imresize(myImage, [resizePos(3) resizePos(3)]);
-    axes(handles.axes3);
+    [x, ~] = imread('logo.png');
+    Im = imresize(x, [250 250]);
+    set(handles.help_button, 'CData', Im)
     set(handles.guided, 'Tooltip', sprintf(strcat(...
         'The Guided mode allows the you to interact with every \n', ...
         'step, and to repeat every step as much times as wished')));
@@ -37,11 +35,10 @@ function Athena_OpeningFcn(hObject, ~, handles, varargin)
         'The Display mode allows to show all the signals, to select\n', ...
         'the wished locations, to filter your signals and to\n', ...
         'extract and save a time window for each one')));
-    imshow(myImage);
-    set(handles.axes3,'Units','normalized');
     funDir = mfilename('fullpath');
     funDir = split(funDir, 'Athena');
-    cd(char(funDir{1}));
+    funDir = strcat(funDir{1}, filesep, 'Athena');
+    cd(char(funDir));
     addpath 'Graphics'
     addpath 'Auxiliary'
     addpath 'Measures'

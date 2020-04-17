@@ -8,9 +8,9 @@ function [fmin, fmax, check] = band_asking(fmin, fmax)
     end
 
     f = figure;
-    bgc = [0.67 0.98 0.92];
-    fgc = [0.047 0.02 0.8];
-    btn = [0.25 0.96 0.82];
+    bgc = [1 1 1];
+    fgc = [0.067 0.118 0.424];
+    btn = [0.427 0.804 0.722];
     check = 0;
     msg = {'Choose the frequency band you want to show, ',
         'and eventually to save (lower cut frequency and ',
@@ -32,9 +32,13 @@ function [fmin, fmax, check] = band_asking(fmin, fmax)
         'FontSize', 0.3, 'ForegroundColor', 'k', ...
         'String', {fmax}, 'Callback', {@fmax_Callback});
     hok = uicontrol('Style', 'pushbutton', 'String', 'OK', ...
-        'Units', 'normalized', 'Position', [0.4 0.05 0.2 0.15], ...
-        'Callback', {@ok_Callback}, 'ForegroundColor', fgc, ...
-        'BackgroundColor', btn); 
+        'FontWeight', 'bold', 'Units', 'normalized', ...
+        'Position', [0.4 0.05 0.2 0.15], 'Callback', {@ok_Callback}, ...
+        'ForegroundColor', fgc, 'BackgroundColor', btn); 
+    hbar = uicontrol('Style', 'text', 'Units', 'normalized', ...
+        'Position', [0 0.99 0.2 0.01], 'String', '', ...
+        'FontUnits', 'normalized', ...
+        'BackgroundColor', fgc, 'ForegroundColor', 'k');
     movegui(f, 'center')
     set(f, 'Visible', 'on')
     waitfor(hok);

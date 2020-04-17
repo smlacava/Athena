@@ -20,7 +20,7 @@ function varargout = Athena_freqShow(varargin)
 function Athena_freqShow_OpeningFcn(hObject, ~, handles, varargin)
     handles.output = hObject;
     guidata(hObject, handles);
-    myImage = imread('untitled3.png');
+    myImage = imread('logo.png');
     set(handles.signal, 'Units', 'pixels');
     resizePos = get(handles.signal, 'Position');
     myImage= imresize(myImage, [resizePos(3) resizePos(3)]);
@@ -41,36 +41,40 @@ function Athena_freqShow_OpeningFcn(hObject, ~, handles, varargin)
         dataPath = varargin{1};
         dataPath = path_check(dataPath);
         set(handles.aux_dataPath, 'String', dataPath)
-        cases = define_cases(dataPath);
-        case_name = split(cases(1).name, '.');
-        case_name = case_name{1};
-        set(handles.Title, 'String', strcat("    subject: ", case_name));
-        [data, fs, locs] = load_data(strcat(dataPath, cases(1).name));
-        if size(data, 1) > size(data, 2)
-            data = data';
-        end
-        if isempty(locs)
-            NLOC = min(size(data));
-            locs = cell(NLOC, 1);
-            for i = 1:NLOC
-                locs{i} = char_check(string(i));
+        if exist(dataPath, 'dir')
+            cases = define_cases(dataPath);
+            case_name = split(cases(1).name, '.');
+            case_name = case_name{1};
+            set(handles.Title, 'String', ...
+                strcat("    subject: ", case_name));
+            [data, fs, locs] = load_data(strcat(dataPath, cases(1).name));
+            if size(data, 1) > size(data, 2)
+                data = data';
             end
-        end
-        set(handles.locs_ind, 'Data', [1; zeros(length(locs)-1, 1)]);
-        set(handles.locs_matrix, 'Data', locs);
-        set(handles.signal_matrix, 'Data', data);
-        set(handles.case_number, 'String', '1');
-        set(handles.time_shown_value, 'Data', [0, 10])
-        if not(isempty(fs))
-            set(handles.fs_text, 'String', string(fs));
-            set(handles.fs_check, 'String', 'detected');
+            if isempty(locs)
+                NLOC = min(size(data));
+                locs = cell(NLOC, 1);
+                for i = 1:NLOC
+                    locs{i} = char_check(string(i));
+                end
+            end
+            set(handles.locs_ind, 'Data', [1; zeros(length(locs)-1, 1)]);
+            set(handles.locs_matrix, 'Data', locs);
+            set(handles.signal_matrix, 'Data', data);
+            set(handles.case_number, 'String', '1');
+            set(handles.time_shown_value, 'Data', [0, 10])
+            if not(isempty(fs))
+                set(handles.fs_text, 'String', string(fs));
+                set(handles.fs_check, 'String', 'detected');
+            else
+                fs_ClickedCallback(1, 1, handles)
+            end
+            waitbar(0.5, f)
+            close(f)
+            freqPlot(handles);
         else
-            fs_ClickedCallback(1, 1, handles)
+            set(handles.Title, 'String', "    Data directory not found");
         end
-        waitbar(0.5, f)
-        close(f)
-        freqPlot(handles);
-        
     end
     if nargin >= 5
         measure = varargin{2};

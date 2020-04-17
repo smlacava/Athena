@@ -18,12 +18,12 @@ It is possible to choose between a guided or a batch mode:
 </p>
 
 The *pipeline* provided by *ATHENA* can be subdivided in 3 main steps:
-1) The **measure extraction**: in this step the  user can choose the measure to extract and its parameters as sampling frequency, cut
-   frequencies to define the studied frequency bands, the number of epochs and the time window of each one and the starting time and,
-   finally, extract it
-2) The **epochs averaging**: in this step the user can compute the averanging of the measure values of each epoch end subdivide the studied
-   subjects in their group (patients or healthy controls)
-3) The **analysis**: in this step,, the user can choose the analysis to compute and their parameters
+1) **Feature Engineering**: in this step the  user can choose the measure to extract and its parameters as sampling frequency, cut
+   frequencies to define the studied frequency bands, the number of epochs and the time window of each one and the starting time, extract 
+   it, and finally compute the temporal and spatial average of the measure values and subdivide the studied subjects in their group
+2) **Analysis**: in this step the user can choose the analysis to compute, between statistical and visual analysis, and their parameters
+3) **Classification**: in this step the user can build a random forest, a decision tree or a multi-layer neural network classifier and its
+   performance, allowing to change parameters and to study the discriminant capability of the extracted measures
 
 <p align="center">
   <img src="pipeline_extended.png" width="800" title="hover text">
@@ -65,7 +65,7 @@ The *parameters* to choose to extract the measures are:
 - **relative band**: it is used to extract the relative PSD as relative band
 
 
-## Epochs averaging
+## Averaging and Grouping
 In this step a table which contains the subjects names and their group (patients group or healthy controls group) is required.
 If it is not present, the user can select the patients between the subject list in a graphic interface that will be create by *ATHENA*
 if the button **␚** is pressed and save the resulting table to use it to compute the step.
@@ -79,21 +79,30 @@ Furthermore, the user can select the conservativeness level which will define th
 analysis.
 In these analysis, the results will be showed to the user through a p-values table and the significant results will be showed through a
 table and in a graphical way.
+It also possible to investigate the differences intra-subject of the values of a measure in the epochs, or to compute other visual analysis
 
 
-The user can choose between N analysis:
-- **Statistical analysis**: the user can verify the presence of statistical differences between the patterns of the patients and the
-       patterns of the healthy controls
+The user can choose between various statistical analysis:
+- **U Test**: the user can verify the presence of statistical differences between the patterns of the patients and the patterns of the
+       healthy controls
 - **Index Correlation analysis**: the user can verify the correlation between a group pattern and an index corresponding to each
        subject, an external file containing the index for each subject is required
 - **Measures Correlation analysis**: the user can verify the presence of a correlation in a group between the patterns of two different
        measures
+- **Distribution analysis**: the user can compare the distribution of a measure of the group of patients with the one of the group of healty 
+  controls
+
+
+Furthermore, the user can execute some visual analysis:
 - **Scatter Plot analysis**: the user can visually analyze the scatter plot related to two measures, also with different spatial and 
        frequency parameters, or to different parameters of the same measure
 - **Epochs Analysis**: the user can study the variation of a measure through the epochs in every frequency band for a subject
-- **Classification**: the user can train and test a Decision Tree classifier, a Random Forest classifier or a Neural Network classifier in
-        order to verify the discriminant capability of the extracted features and to check if it is possible to distinguish between the two 
-        groups of subjects
+
+
+## Classification
+Finally, the user can train and test a **Decision Tree** classifier, a **Random Forest** classifier or a Multi-Layer **Neural Network** classifier in order 
+to verify the discriminant capability of the extracted features and to check if it is possible to distinguish between the two groups of subjects.
+
 
 The user can also **merge the data of the significant results** of every previously computed statistical analysis in a csv file which
 can be used for a classification or other external analysis. 

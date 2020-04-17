@@ -20,13 +20,9 @@ function varargout = Athena_statistics(varargin)
 function Athena_statistics_OpeningFcn(hObject, eventdata, handles, varargin)
     handles.output = hObject;
     guidata(hObject, handles);
-    myImage = imread('untitled3.png');
-    set(handles.axes3,'Units', 'pixels');
-    resizePos = get(handles.axes3, 'Position');
-    myImage= imresize(myImage, [resizePos(3) resizePos(3)]);
-    axes(handles.axes3);
-    imshow(myImage);
-    set(handles.axes3,'Units', 'normalized');
+    [x, ~] = imread('logo.png');
+    Im = imresize(x, [250 250]);
+    set(handles.help_button, 'CData', Im)
     if nargin >= 4
         set(handles.aux_dataPath, 'String', varargin{1})
     end

@@ -20,13 +20,9 @@ function varargout = Athena_scatter(varargin)
 function Athena_scatter_OpeningFcn(hObject, eventdata, handles, varargin)
     handles.output = hObject;
     guidata(hObject, handles);
-    myImage = imread('untitled3.png');
-    set(handles.scatter,'Units','pixels');
-    resizePos = get(handles.scatter,'Position');
-    myImage = imresize(myImage, [resizePos(3) resizePos(3)]);
-    axes(handles.scatter);
-    imshow(myImage);
-    set(handles.scatter, 'Units', 'normalized');
+    [x, ~] = imread('logo.png');
+    Im = imresize(x, [250 250]);
+    set(handles.help_button, 'CData', Im)
     if nargin >= 4
         path = varargin{1};
         set(handles.aux_dataPath, 'String', path)
@@ -110,6 +106,7 @@ function Run_Callback(hObject, eventdata, handles)
         scatter(PAT1, PAT2, 'r')
         legend('group 0', 'group 1')
         hold off
+        set(handles.help_button, 'Visible', 'off')
     end
     
     

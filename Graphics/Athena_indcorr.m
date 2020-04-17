@@ -20,13 +20,9 @@ function varargout = Athena_indcorr(varargin)
 function Athena_indcorr_OpeningFcn(hObject, eventdata, handles, varargin)
     handles.output = hObject;
     guidata(hObject, handles);
-    myImage = imread('untitled3.png');
-    set(handles.axes3, 'Units', 'pixels');
-    resizePos = get(handles.axes3, 'Position');
-    myImage = imresize(myImage, [resizePos(3) resizePos(3)]);
-    axes(handles.axes3);
-    imshow(myImage);
-    set(handles.axes3, 'Units', 'normalized');
+    [x, ~] = imread('logo.png');
+    Im = imresize(x, [250 250]);
+    set(handles.help_button, 'CData', Im)
     if nargin >= 4
         path = varargin{1};
         set(handles.aux_dataPath, 'String', path)
@@ -147,36 +143,37 @@ function ind_search_Callback(hObject, eventdata, handles)
     
 function set_handles(hObject, eventdata, handles)
     dataPath = get(handles.dataPath_text, 'String');
-    [imp_analysis, imp_subjects] = impossible_analysis(dataPath);
-    subjects_list = {'PAT.mat', 'HC.mat'};
-    s_hand = {handles.PAT, handles.HC};
-    analysis_list = {'Total', 'Global', 'Asymmetry', 'Areas'};
-    a_hand = {handles.tot_button, handles.glob_button, ...
-        handles.asy_button, handles.areas_button};
+    if exist(dataPath, 'dir')
+        [imp_analysis, imp_subjects] = impossible_analysis(dataPath);
+        subjects_list = {'PAT.mat', 'HC.mat'};
+        s_hand = {handles.PAT, handles.HC};
+        analysis_list = {'Total', 'Global', 'Asymmetry', 'Areas'};
+        a_hand = {handles.tot_button, handles.glob_button, ...
+            handles.asy_button, handles.areas_button};
     
-    imp_a = length(imp_analysis);
-    if imp_a ~= 0
-        n_an = length(a_hand);
-        for i = 1:n_an
-            for j = 1:imp_a
-                if strcmp(imp_analysis{j}, analysis_list{i})
-                    set(a_hand{i}, 'Enable', 'off')
+        imp_a = length(imp_analysis);
+        if imp_a ~= 0
+            n_an = length(a_hand);
+            for i = 1:n_an
+                for j = 1:imp_a
+                    if strcmp(imp_analysis{j}, analysis_list{i})
+                        set(a_hand{i}, 'Enable', 'off')
+                    end
                 end
             end
         end
-    end
     
-    imp_s = length(imp_subjects);
-    if imp_s ~= 0
-        n_sub = length(s_hand);
-        for i = 1:n_sub
-            for j = 1:imp_s
-                if strcmp(imp_subjects{j}, subjects_list{i})
-                    set(s_hand{i}, 'Enable', 'off')
+        imp_s = length(imp_subjects);
+        if imp_s ~= 0
+            n_sub = length(s_hand);
+            for i = 1:n_sub
+                for j = 1:imp_s
+                    if strcmp(imp_subjects{j}, subjects_list{i})
+                        set(s_hand{i}, 'Enable', 'off')
+                    end
                 end
             end
         end
-    end
-    
+    end 
     
     
