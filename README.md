@@ -10,8 +10,8 @@ statistical analysis.
 
 The *pipeline* followed by this toolbox is easy and repetible.
 It is possible to choose between a guided or a batch mode:
-- The guide mode drive the user throw all the steps which compose the pipeline, allowing him to change parameters during the study
-- The batch mode allow the user to compute the entire study automatically, chosing all the parameters before starting it
+- The guided mode drives the user throw all the steps which compose the pipeline, allowing him to change parameters during the study
+- The batch mode allows the user to compute the entire study automatically, chosing all the parameters before starting it
 
 <p align="center">
   <img src="pipeline_simple.png" width="600" title="hover text">
