@@ -388,11 +388,10 @@ function time_window(handles)
     children = get(gca, 'children');
     d = [];
     for i = 1:length(children)
-        if children(i).XData(1) == children(i).XData(2)
-            d = [d; i];
+        if children(i).xData
+            delete(children(2))
+            delete(children(1))
         end
-    end
-    delete(children(d));
     
     xStart = (fs*(tStart) + 1)*ones(1, 2);
     xEnd = fs*(tStart+time)*ones(1, 2);
