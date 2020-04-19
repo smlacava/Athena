@@ -37,6 +37,9 @@ function Athena_submaking_OpeningFcn(hObject, ~, handles, varargin)
         end
         set(handles.subs, 'String', subs);
         set(handles.subs, 'Max', n, 'Min', 0);
+        funDir = mfilename('fullpath');
+        funDir = split(funDir, 'Graphics');
+        cd(char(funDir{1}));
     end
     if nargin >= 5
         set(handles.aux_measure, 'String', varargin{2})
