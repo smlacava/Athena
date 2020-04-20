@@ -105,6 +105,10 @@ to verify the discriminant capability of the extracted features and to check if 
 
 
 The user can also **merge the data of the significant results** of every previously computed statistical analysis in a csv file which
-can be used for a classification or other external analysis. 
+can be used for a classification or other external analysis.
+
+
+## The wiki
+For any doubt, you can consult the [toolbox **wiki**](https://github.com/smlacava/Athena/wiki/Home). 
 
 > The toolbox is still under construction

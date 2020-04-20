@@ -217,7 +217,7 @@ function export_Callback(hObject, eventdata, handles)
         figure('Name', strcat(measure1, " ", location1, " Band ", ...
             string(band1), " - ", measure2, " ", location2, " Band ", ...
             string(band2)), 'NumberTitle', 'off', 'ToolBar', 'none');
-        set(gcf, 'color', [0.67 0.98 0.92])
+        set(gcf, 'color', [1 1 1])
         scatter(HC1, HC2, 'b')
         hold on
         scatter(PAT1, PAT2, 'r')

@@ -121,8 +121,8 @@ function Run_Callback(hObject, eventdata, handles)
     end
     fclose(auxID);
     
-    funDir = which('Athena.m');
-    funDir = split(funDir, 'Athena.m');
+    funDir = mfilename('fullpath');
+    funDir = split(funDir, 'Graphics');
     cd(funDir{1});
     addpath 'Auxiliary'
     addpath 'Graphics'

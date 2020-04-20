@@ -4,7 +4,7 @@ function ep_scatter(data, nEpochs, nBands, name, yname)
         yname = '';
     end
     figure('Name', name, 'NumberTitle', 'off', 'ToolBar', 'none')
-    set(gcf, 'color', [0.67 0.98 0.92])
+    set(gcf, 'color', [1 1 1])
     xlabel('Bands')
     ylabel(yname)
     xticks(1:nBands)
@@ -13,9 +13,9 @@ function ep_scatter(data, nEpochs, nBands, name, yname)
     labels = [];
     for i = 1:nBands
         scatter(i*ones(1, nEpochs), data(i, :, :), 'MarkerEdgeColor', ...
-            [0.05 0.02 0.8])
-        labels=[labels, 1:nEpochs];
+            [0.067 0.118 0.424])
+        labels = [labels, 1:nEpochs];
     end
-    gname(labels)
     hold off
+    gname(labels)
 end
