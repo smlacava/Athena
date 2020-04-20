@@ -113,7 +113,7 @@ end
 
 
 function show_figures(data, data_names, P, bands_names, locs, Psig)
-    bg_color = [0.67 0.98 0.92];
+    bg_color = [1 1 1];
     fs1 = figure('Name', 'Data', 'NumberTitle', 'off', 'Color', bg_color);
     d = uitable(fs1, 'Data', data, 'Position', [20 20 525 375], ...
         'ColumnName', data_names);

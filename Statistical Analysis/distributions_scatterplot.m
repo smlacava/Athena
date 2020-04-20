@@ -56,7 +56,7 @@ function distributions_scatterplot(first_group, second_group, measure, ...
     end
     
     figure('Name', title, 'NumberTitle', 'off', 'ToolBar', 'none');
-    set(gcf, 'color', [0.67 0.98 0.92])
+    set(gcf, 'color', [1 1 1])
     scatter(linspace(0.4, 0.6, length(first_group)), first_group, 'b')
     hold on
     plot([0.3, 0.7], [m1, m1], 'k')

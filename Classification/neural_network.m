@@ -68,7 +68,7 @@ function statistics = neural_network(data, n_layers, validation_value, ...
     end
     rejected = [];
     
-    f = waitbar(0,'Processing your data', 'Color', '[0.67 0.98 0.92]');
+    f = waitbar(0,'Processing your data', 'Color', '[1 1 1]');
     fchild = allchild(f);
     fchild(1).JavaPeer.setForeground(fchild(1).JavaPeer.getBackground.BLUE)
     fchild(1).JavaPeer.setStringPainted(true)
@@ -81,7 +81,7 @@ function statistics = neural_network(data, n_layers, validation_value, ...
     end
     
     rng('default');
-    bg_color = [0.67 0.98 0.92];
+    bg_color = [1 1 1];
     nnet = patternnet(n_layers);
     
     [params_dim, scores, labels, accuracy, min_accuracy, max_accuracy, ...

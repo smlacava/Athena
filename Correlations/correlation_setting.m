@@ -5,7 +5,7 @@ function [data, sub_list, alpha, bg_color, locs, bands_names, P, RHO, ...
     cd(char(funDir{1}));
     addpath 'Auxiliary'
 
-    bg_color = [0.67 0.98 0.92];
+    bg_color = [1 1 1];
     im = imread('untitled3.png');
     dataPath = strcat(path_check(get(handles.aux_dataPath, 'String')), ...
         path_check(get(handles.aux_measure, 'String')));

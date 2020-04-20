@@ -4,7 +4,7 @@
 % output a matrix which can be used for other statistical analysis or 
 % classification analysis with other software applications
 % 
-% [P, Psig, data_sig] = t_test(first_group, second_group, label, ...
+% [P, Psig, data_sig] = u_test(first_group, second_group, label, ...
 %       first_name, second_name, alpha)
 %
 % input:

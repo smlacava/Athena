@@ -75,7 +75,7 @@ function statistics = random_forest(data, n_trees, resample_value, ...
     end
     rejected = [];
     
-    f = waitbar(0,'Processing your data', 'Color', '[0.67 0.98 0.92]');
+    f = waitbar(0,'Processing your data', 'Color', '[1 1 1]');
     fchild = allchild(f);
     fchild(1).JavaPeer.setForeground(fchild(1).JavaPeer.getBackground.BLUE)
     fchild(1).JavaPeer.setStringPainted(true)
@@ -88,7 +88,7 @@ function statistics = random_forest(data, n_trees, resample_value, ...
     end
     
     rng('default');
-    bg_color = [0.67 0.98 0.92];
+    bg_color = [1 1 1];
     [params_dim, scores, labels, accuracy, min_accuracy, max_accuracy, ...
         cm, n_HC, n_PAT, eval_function, testing_fraction, pruning] = ...
         initial_settings('rf', data, repetitions, eval_method, ...

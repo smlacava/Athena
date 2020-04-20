@@ -51,7 +51,7 @@ function [PVAL, RHO] = correlation(data1, data2, loc, type1, type2, ...
     end
     
     figure('Name', loc, 'NumberTitle', 'off', 'ToolBar', 'none')
-    set(gcf, 'color', [0.67 0.98 0.92])
+    set(gcf, 'color', [1 1 1])
     scatter(data1, data2, 'MarkerEdgeColor', [0.05 0.02 0.8])
     title(strcat('p-value=', char_check(PVAL), ', rho=', string(RHO), ...
         sig_check))

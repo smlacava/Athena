@@ -23,7 +23,7 @@ function locations_file = epmean_and_manage(inDir, type, subFile, ...
         locations_file = [];
     end
     f = waitbar(0,'Initial setup process', ...
-        'Color', '[0.67 0.98 0.92]');
+        'Color', '[1 1 1]');
     fchild = allchild(f);
     fchild(1).JavaPeer.setForeground(fchild(1).JavaPeer.getBackground.BLUE)
     fchild(1).JavaPeer.setStringPainted(true)
