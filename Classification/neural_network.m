@@ -21,7 +21,7 @@
 %       split the dataset in training set and test set or 'leaveoneout' to
 %       train the classifier on all the samples except one used to test
 %       iterating for all the samples ('split' by default)
-%   trsining_value is the fraction of training data set (a number comprised
+%   training_value is the fraction of training data set (a number comprised
 %       between 0 and 1, 0.8 as default)
 %   reject_value is the percentage is the minimum probability of 
 %       classification relative to the assigned class, under which the 

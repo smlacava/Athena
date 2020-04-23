@@ -20,6 +20,10 @@ function varargout = Athena_freqShow(varargin)
 function Athena_freqShow_OpeningFcn(hObject, ~, handles, varargin)
     handles.output = hObject;
     guidata(hObject, handles);
+    try
+        handles.signal.Children.CData = [];
+    catch
+    end
     myImage = imread('logo.png');
     set(handles.signal, 'Units', 'pixels');
     resizePos = get(handles.signal, 'Position');
@@ -33,7 +37,7 @@ function Athena_freqShow_OpeningFcn(hObject, ~, handles, varargin)
     addpath 'Auxiliary'
     addpath 'Graphics'
     if nargin >= 4
-        f = waitbar(0, 'Initialization', 'Color', '[0.67 0.98 0.92]');
+        f = waitbar(0, 'Initialization', 'Color', '[1 1 1]');
         fchild = allchild(f);
         fchild(1).JavaPeer.setForeground(...
             fchild(1).JavaPeer.getBackground.BLUE)
@@ -134,7 +138,7 @@ function Previous_Callback(~, ~, handles)
     cases = define_cases(dataPath);
     case_max = length(cases);
     if case_number <= case_max && case_number > 0
-        f = waitbar(0, 'Data loading', 'Color', '[0.67 0.98 0.92]');
+        f = waitbar(0, 'Data loading', 'Color', '[1 1 1]');
         fchild = allchild(f);
         fchild(1).JavaPeer.setForeground(...
             fchild(1).JavaPeer.getBackground.BLUE)
@@ -329,9 +333,14 @@ function freqPlot(handles, varargin)
         end
         data = data(1, time_shown(1)*fs+1:time_shown(2)*fs);
         [pxx, w] = pwelch(data, [], 0, [], fs);
+        pxx = 10*log(pxx);
+        idx_min = max(1, find(w > fmin, 1)-1);
+        maximum = length(w);
+        idx_max = min(maximum, maximum - find(flipud(w) < fmax, 1) + 2);
         plot(w, pxx)
         xlim([fmin, fmax])
-        ylim([0, max(max(pxx))])
+        aux_pxx = pxx(idx_min:idx_max);
+        ylim([min(min(aux_pxx))-5, max(max(aux_pxx))+5])
         set(handles.time_text, 'String', time_string)
         set(handles.loc_shown, 'String', location_string)
     catch

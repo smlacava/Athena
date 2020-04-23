@@ -138,7 +138,7 @@ function Run_Callback(hObject, eventdata, handles)
                 100, 'split', 0.8);
         else
             statistics = neural_network(data, 10, 0.2, 1, 10, 1, 100, ...
-                'split', 0.5, 0.7);
+                'split', 0.5, 0.4);
         end
     else
         repetitions = str2double(get(handles.repetitions_text, 'String'));
