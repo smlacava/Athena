@@ -95,8 +95,12 @@ function next_Callback(~, eventdata, handles)
     addpath 'Graphics'
     [~, measure, sub, loc] = GUI_transition(handles, 'dataPath', 'measure');
     dataPath = string(get(handles.dataPath_text, 'String'));
-    close(Athena_freqPath)
-    if strcmp('es. C:\User\Data', dataPath)
-        dataPath = "Static Text";
+    if exist(dataPath, 'dir')
+        close(Athena_freqPath)
+        if strcmp('es. C:\User\Data', dataPath)
+            dataPath = "Static Text";
+        end
+        Athena_freqShow(dataPath, measure, sub, loc)
+    else
+        problem('Data directory not found.')
     end
-    Athena_freqShow(dataPath, measure, sub, loc)

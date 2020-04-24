@@ -38,6 +38,8 @@ function Athena_classification_OpeningFcn(hObject, eventdata, handles, ...
     end
     if nargin == 8
         if strcmp(varargin{5}, 'nn')
+            set(handles.help_button, 'Callback', ...
+                "web('https://github.com/smlacava/Athena/wiki/Neural-Network-classifier')")
             set(handles.DTclassifier, 'Visible', 'off')
             set(handles.pruning, 'Visible', 'off')
             set(handles.FResample, 'String', 'Validation fraction')
