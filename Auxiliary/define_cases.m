@@ -6,7 +6,7 @@
 %
 % input:
 %   dataPath is the directory which contains the time series to extract or
-%       to analyse
+%       to analyze
 %   check is the variable which has to be 1 if the check on the cases names
 %       has to be computed (1 by default)
 %   exstension is the extension of the files which have to be searched
@@ -45,7 +45,7 @@ function cases = define_cases(dataPath, check, extension)
             end
         end
         cases(toDelete) = [];
-    end     
+    end  
 end
 
 
@@ -68,6 +68,8 @@ function cases = search_cases(dataPath, check, extensions)
         if isempty(cases)
             cases = check_cases(dir(fullfile(char_check(dataPath), ...
                 extensions{e})), check);
+        else
+            break;
         end
     end
 end

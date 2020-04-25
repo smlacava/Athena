@@ -237,6 +237,9 @@ function locations_file = epmean_and_manage(inDir, type, subFile, ...
     end
     locations_file = strcat(path_check(limit_path(inDir, type)), ...
         'Locations.mat');
+    if isempty(locations)
+        locations = [];
+    end
     save(locations_file, 'locations')
     close(f)
 end

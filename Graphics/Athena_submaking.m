@@ -28,6 +28,12 @@ function Athena_submaking_OpeningFcn(hObject, ~, handles, varargin)
         set(handles.aux_dataPath, 'String', dataPath)
         cd(char(dataPath))
         cases = define_cases('');
+        if isempty(cases)
+            try
+                cases = define_cases(strcat(path_check(''), varargin{2}));
+            catch
+            end
+        end
         n = length(cases);
         subs = string(zeros(n, 1));
         for i = 1:n

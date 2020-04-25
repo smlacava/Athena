@@ -86,14 +86,14 @@ function [data, fs, locs] = load_data(dataFile, locFLAG)
         locs = info.label;
     end
     
-    [r, c] = size(locs);
-    if r < c
-    	locs = locs';
-    end
-    data(contains(locs, 'Annotations'), :) = [];
-    locs(contains(locs, 'Annotations'), :) = [];
     
     if locFLAG == 1 && not(isempty(locs))
+        [r, c] = size(locs);
+        if r < c
+            locs = locs';
+        end
+        data(contains(locs, 'Annotations'), :) = [];
+        locs(contains(locs, 'Annotations'), :) = [];
         if size(data, 1) > size(data, 2)
             data = data';
         end
