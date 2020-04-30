@@ -709,31 +709,20 @@ function reref_ClickedCallback(~, ~, handles)
     selectedLocs = evalin('base', 'Athena_reref');
     if isobject(selectedLocs)
         close(selectedLocs)
-        return
     end
-    evalin( 'base', 'clear Athena_reref' );
+    evalin( 'base', 'clear Athena_reref' )
     NLocs = length(selectedLocs);
-    baseline = zeros(1, length(data));
-    f = waitbar(0, 'Rereferencing', 'Color', '[1 1 1]');
-            fchild = allchild(f);
-            fchild(1).JavaPeer.setForeground(...
-                fchild(1).JavaPeer.getBackground.BLUE)
-            fchild(1).JavaPeer.setStringPainted(true)
     for i = 1:NLocs
         if selectedLocs(i) > length(locs)
-            baseline = baseline + mean(data);
+            baseline = baseline + mean(data)/;
         else
-            baseline = baseline + data(selectedLocs(i), :);
+            baseline = baseline + data(ref, :);
         end
-    end
-    baseline = baseline/NLocs;
-    for i = 1:length(locs)
+    for i = 1:length(data)
         data(i, :) = data(i, :)-baseline;
     end
-    waitbar(0.5, f)
-    set(handles.signal_matrix, 'Data', data);
+    set(handles.signal_matrix, 'Data');
     reset_filtered(handles)
-    close(f)
     axis(handles.signal);
     t = xlim;
     sigPlot(handles, data, fs, locs, floor((t(1)-1)/fs), floor(t(2)/fs))

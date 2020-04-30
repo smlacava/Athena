@@ -66,7 +66,8 @@ function Athena_freqShow_OpeningFcn(hObject, ~, handles, varargin)
             set(handles.locs_matrix, 'Data', locs);
             set(handles.signal_matrix, 'Data', data);
             set(handles.case_number, 'String', '1');
-            set(handles.time_shown_value, 'Data', [0, 10])
+            set(handles.time_shown_value, 'Data', ...
+                [0, min(10, length(data)/fs)])
             if not(isempty(fs))
                 set(handles.fs_text, 'String', string(fs));
                 set(handles.fs_check, 'String', 'detected');
@@ -172,7 +173,8 @@ function Previous_Callback(~, ~, handles)
         set(handles.locs_matrix, 'Data', locs);
         set(handles.locs_ind, 'Data', [1; zeros(length(locs)-1, 1)]);
         time = get(handles.time_shown_value, 'Data');
-        set(handles.time_shown_value, 'Data', [0, time(2)-time(1)])
+        set(handles.time_shown_value, 'Data', [0, ...
+            min(time(2)-time(1), length(data)/fs)])
         set(handles.case_number, 'String', case_number);
         if isempty(fs)
             fs = str2double(get(handles.fs_text, 'String'));
