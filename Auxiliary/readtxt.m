@@ -31,8 +31,11 @@ function data = readtxt(dataFile)
             break;
         end
     end
-    fclose(auxID)
+    fclose(auxID);
     if size(data, 1) > size(data, 2)
         data = data';
+    end
+    if sum(data(:, 1) == [1:size(data, 1)]') == size(data, 1)
+        data(:, 1) = [];
     end
 end
