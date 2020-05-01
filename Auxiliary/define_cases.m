@@ -76,7 +76,7 @@ end
 
 
 function extensions = define_extensions(extension)
-    extensions = {'*.mat', '*.edf'};
+    extensions = {'*.mat', '*.edf', '*csv', '*txt'};
     if not(isempty(extension))
         if not(contains(extension, '.'))
             extension = char_check(strcat('.', extension));
