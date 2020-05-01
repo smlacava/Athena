@@ -18,6 +18,7 @@
 
 function [epNum, epTime, totBand] = automatic_parameters(handles, ...
     modified_param)
+    w_ep = 20; % whished minimum epoch length
     dataPath = char_check(get(handles.aux_dataPath, 'String'));
     dataPath = path_check(dataPath);
     cases = define_cases(dataPath);
@@ -34,11 +35,11 @@ function [epNum, epTime, totBand] = automatic_parameters(handles, ...
     epNum = get(handles.epNum_text, 'String');
     
     if sum(strcmp(modified_param, ["fs", "tStart"]))
-        if totlen > (12+tStart)
+        if totlen > (w_ep+tStart)
             epTry = [5 4 3 2 1];
             for i = 1:length(epTry)
                 ep = epTry(i);
-                if (totlen > (12*ep+tStart))
+                if (totlen > (w_ep*ep+tStart))
                     epTime = string(floor((totlen-tStart)/ep));
                     epNum = string(ep);
                     break;

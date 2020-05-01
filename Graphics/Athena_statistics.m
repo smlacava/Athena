@@ -103,3 +103,15 @@ function IndCorr_Callback(hObject, eventdata, handles)
     [dataPath, measure, sub, loc] = GUI_transition(handles);
     close(Athena_statistics)
     Athena_indcorr(dataPath, measure, sub, loc)
+
+
+
+function Hist_Callback(hObject, eventdata, handles)
+    funDir = mfilename('fullpath');
+    funDir = split(funDir, 'Graphics');
+    cd(char(funDir{1}));
+    addpath 'Auxiliary'
+    addpath 'Graphics'
+    [dataPath, measure, sub, loc] = GUI_transition(handles);
+    close(Athena_statistics)
+    Athena_hist(dataPath, measure, sub, loc)

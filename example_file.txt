@@ -48,6 +48,15 @@ Distributions_Band=2
 Distributions_Location=Global
 Distributions_Parameter=median
 
+HISTOGRAM ANALYSIS
+The histogram analysis shows the histogram of the distributions of
+the two studied groups 
+HistogramAnalysis=true
+Histogram_Measure=PLV
+Histogram_Band=2
+Histogram_Location=Global
+Histogram_bins=10
+
 EPOCHS ANALYSIS
 The epochs analysis show the values of the measure of the selected
 subject in every epoch.
