@@ -62,23 +62,26 @@ function axes3_CreateFcn(hObject, eventdata, handles)
 
 
 function NeuralNetwork_Callback(hObject, eventdata, handles)
-    funDir = mfilename('fullpath');
-    funDir = split(funDir, 'Graphics');
-    cd(char(funDir{1}));
-    addpath 'Auxiliary'
-    addpath 'Graphics'
-    [dataPath, measure, sub, loc] = GUI_transition(handles);
-    close(Athena_selectClass)
-    Athena_classification(dataPath, measure, sub, loc, 'nn')
+    if search_ext_toolbox('Deep Learning Toolbox') == 1
+        funDir = mfilename('fullpath');
+        funDir = split(funDir, 'Graphics');
+        cd(char(funDir{1}));
+        addpath 'Auxiliary'
+        addpath 'Graphics'
+        [dataPath, measure, sub, loc] = GUI_transition(handles);
+        close(Athena_selectClass)
+        Athena_classification(dataPath, measure, sub, loc, 'nn')
+    end
 
 
 function RandomForest_Callback(hObject, eventdata, handles)
-    funDir = mfilename('fullpath');
-    funDir = split(funDir, 'Graphics');
-    cd(char(funDir{1}));
-    addpath 'Auxiliary'
-    addpath 'Graphics'
-    [dataPath, measure, sub, loc] = GUI_transition(handles);
-    close(Athena_selectClass)
-    Athena_classification(dataPath, measure, sub, loc, 'rf')
-
+    if search_ext_toolbox('Statistics and Machine Learning Toolbox') == 1
+        funDir = mfilename('fullpath');
+        funDir = split(funDir, 'Graphics');
+        cd(char(funDir{1}));
+        addpath 'Auxiliary'
+        addpath 'Graphics'
+        [dataPath, measure, sub, loc] = GUI_transition(handles);
+        close(Athena_selectClass)
+        Athena_classification(dataPath, measure, sub, loc, 'rf')
+    end

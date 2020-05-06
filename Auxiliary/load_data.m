@@ -76,9 +76,12 @@ function [data, fs, locs] = load_data(dataFile, locFLAG)
             
         end
         
-    elseif contains(dataFile, '.xlsx')
-        data = readtable(dataFile, 'ReadVariableNames', false);
-        data = table2cell(data);
+    elseif contains(dataFile, '.xls')
+        data = readxls(dataFile);
+    elseif contains(dataFile, '.txt')
+        data = readtxt(dataFile);
+    elseif contains(dataFile, '.csv')
+        data = readcsv(dataFile);
         
     elseif contains(dataFile, '.edf')
         [info, data] = edfread(dataFile);
