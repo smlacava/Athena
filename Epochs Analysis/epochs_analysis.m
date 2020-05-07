@@ -39,12 +39,17 @@ function epochs_analysis(dataPath, name, anType, measure, epochs, ...
         if strcmp(loc, 'Static Text') 
             loc = ask_locations("Do you want to insert locations' file?");
         end
+        if ischar(loc) && size(loc, 1) == 1
+            loc = load_data(loc);
+        end
         if isempty(loc)
             problem(strcat("You cannot compute the epochs analysis ", ...
                 "without the list of the locations"))
             return;
         end
-        loc = loc(:, 1);
+        if size(loc, 1) > 1
+            loc = loc(:, 1);
+        end
     else
         loc = locations(:, 1);
     end

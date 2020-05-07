@@ -12,7 +12,7 @@
 function batch_study(dataFile)
     MEASURES = ["PLV", "PLI", "AEC", "AECo", "offset", "exponent", "PSDr"];
     true = ["True", "true", "TRUE", "t", "1", "OK", "ok"];
-    bg_color = [0.67 0.98 0.92];
+    bg_color = [1 1 1];
     
     % dataPath, fs, cf, epNum, epTime, tStart, totBand, measure, Subjects, 
     % locations, Index, MeasureExtraction, EpochsAverage, EpochsAnalysis, 
@@ -36,6 +36,8 @@ function batch_study(dataFile)
     measure = search_parameter(parameters, 'measures');
     n_measures = length(measure);
     measurePath = cell(n_measures, 1);
+    statTool = 'Statistics and Machine Learning Toolbox';
+    deepTool = 'Deep Learning Toolbox';
     
     if not(exist(dataPath, 'dir'))
         problem(strcat('Directory ', dataPath, ' not found'))
@@ -122,33 +124,21 @@ function batch_study(dataFile)
   
     %% Analysis    
     if sum(strcmp(search_parameter(parameters, 'EpochsAnalysis'), 'true'))
-        if not(exist(search_parameter(parameters, 'locations'), 'file'))
-            problem(strcat("File ", ...
-                search_parameter(parameters, 'locations'), " not found"))
-            return
-        end
-        Areas_EA = search_parameter(parameters, 'Areas_EA');
-        for m = 1:n_measures
-            for i = 1:length(Areas_EA)
-                epochs_analysis(dataPath, ...
-                    search_parameter(parameters, 'Subject'), ...
-                    areas_check(Areas_EA{i,1}), measure{m}, ...
-                    search_parameter(parameters, 'epNum'), nBands, ...
-                    search_parameter(parameters, 'locations'))
-            end
-        end
+        batch_epochs_analysis(parameters, dataPath, measure{m}, nBands, ...
+            n_measures);
     end
     
     managedPath = cell(n_measures, 1);
     for m = 1:n_measures
         managedPath{m} = path_check(strcat(measurePath{m}, 'Epmean'));
     end
+    
     if exist('locations_file', 'var') && ischar(locations_file)
         locations = load_data(locations_file);
     else
-        if exist(search_parameter(parameters, 'locations'), 'file')
+        if exist(search_parameter(parameters, 'Locations'), 'file')
             locations = load_data(search_parameter(parameters, ...
-                'locations'));
+                'Locations'));
             locations = locations(:, 1);
         else
             try
@@ -157,8 +147,6 @@ function batch_study(dataFile)
             end
         end
     end
-    alpha = alpha_levelling(search_parameter(parameters, ...
-        'Conservativeness_IC'), nBands, length(locations));
 
     
     for m = 1:n_measures
@@ -183,56 +171,10 @@ function batch_study(dataFile)
             Subjects = load_data(search_parameter(parameters, 'Subjects'));
             if sum(strcmp(search_parameter(parameters, ...
                     'IndexCorrelation'), 'true'))
-                if not(exist(search_parameter(parameters, 'Index'), ...
-                        'file'))
-                    problem(strcat("File ", ...
-                        search_parameter(parameters, 'Index'), ...
-                        " not found"))
-                    return
+                if search_ext_toolbox(statTool)
+                    batch_index_correlation(parameters, managedPath{m}, ...
+                        measure{m}, Subjects, nBands, locations, bg_color);
                 end
-                Areas_IC = search_parameter(parameters, 'Areas_IC');
-                for i = 1:length(Areas_IC)
-                    [data, ~, locs] = load_data(strcat(path_check(...
-                        strcat(managedPath{m}, Areas_IC{i})), 'PAT.mat'));
-                    if length(size(data)) == 3
-                        nBands = size(data, 2);
-                    else
-                        nBands = 1;
-                    end
-                    RHO = zeros(length(locs), nBands);
-                    P = RHO;
-                    bands = string();
-                    for j = 1:nBands
-                        bands = [bands; strcat('Band', string(j))];
-                    end
-                    bands(1, :) = [];
-                    bands = cellstr(bands);
-                    [data, ~, locations] = load_data(char_check(strcat(...
-                        path_check(strcat(managedPath{m}, ...
-                        Areas_IC{i})), search_parameter(parameters, ...
-                        'Group_IC'), '.mat')));
-                    subs = {};
-                    if strcmp(char_check(search_parameter(parameters, ...
-                        'Group_IC')), 'PAT')
-                        for s = 1:length(Subjects)
-                            if patient_check(char_check(Subjects(s, end)))
-                                subs = [subs, char_check(Subjects(s, 1))];
-                            end
-                        end
-                    else
-                        for s = 1:length(Subjects)
-                            if not(patient_check(char_check(...
-                                    Subjects(s, end))))
-                                subs = [subs, char_check(Subjects(s, 1))];
-                            end
-                        end
-                    end
-                    index_correlation(data, subs, bands, measure{m}, ...
-                        search_parameter(parameters, 'Index'), alpha, ...
-                        bg_color, locations, P, RHO, length(locations), ...
-                        nBands);
-                end
-                pause(2)
             end
         end
         
@@ -254,27 +196,8 @@ function batch_study(dataFile)
         
         if sum(strcmp(search_parameter(parameters, ...
                 'MeasuresCorrelation'), 'true'))
-            Areas_MC = search_parameter(parameters, 'Areas_MC');
-            for i = 1:length(Areas_MC)
-                [xData, yData, nLoc, nBands, locs] = ...
-                    batch_measures_correlation_settings(...
-                        search_parameter(parameters, 'Measure1'), ...
-                        search_parameter(parameters, 'Measure2'), ...
-                        dataPath, Areas_MC{i}, ...
-                        search_parameter(parameters, 'Group_MC'));
-                if isempty(nBands)
-                    return;
-                end
-                bands = cell(1, nBands);
-                for b = 1:nBands
-                	bands{1, b} = char_check(strcat("Band ", string(b)));
-                end
-                measures_correlation(xData, yData, ...
-                    search_parameter(parameters, 'Group_MC'), bands, ...
-                    {search_parameter(parameters, 'Measure1'), ...
-                    search_parameter(parameters, 'Measure2')}, alpha, ...
-                    bg_color, locs, [], [], nLoc, nBands)   
-            end
+            batch_measures_correlation(parameters, dataPath, locations, ...
+                bg_color)
         end
         
         if strcmpi(search_parameter(parameters, 'ScatterAnalysis'), 'true')
@@ -302,69 +225,11 @@ function batch_study(dataFile)
     if sum(strcmp(search_parameter(parameters, 'RF_Classification'), ...
             'true')) && search_ext_toolbox(....
             'Statistics and Machine Learning Toolbox') == 1
-        %random_forest(data, n_trees, resample_value, pruning, ...
-        %       n_repetitions, min_samples, pca_value, eval_method, ...
-        %       split_value, reject_option)
-        if strcmpi(search_parameter(parameters, ...
-                'RF_DefaultClassification'), 'true')
-            statistics = random_forest(dataPath, 31, 0.5, [], ...
-                100, 1, 100, 'split', 0.8, 0.5);
-        else
-            statistics = random_forest(dataPath, ...
-                search_parameter(parameters, 'RF_TreesNumber'), ...
-                search_parameter(parameters, 'RF_FResampleValue'), ...
-                [], search_parameter(parameters, 'RF_Repetitions'), ...
-                search_parameter(parameters, ...
-                'RF_MinimumClassExamples'), ...
-                search_parameter(parameters, 'RF_PCAValue'), ...
-                search_parameter(parameters, 'RF_Evaluation'), ...
-                search_parameter(parameters, 'RF_TrainPercentage'), ...
-                search_parameter(parameters, 'RF_Rejection'));
-        end
-        resultDir = strcat(path_check(dataPath), 'Classification');
-        if not(exist(resultDir, 'dir'))
-            mkdir(resultDir);
-        end
-        if sum(strcmp(parameters{45}, 'true'))
-            save(strcat(path_check(resultDir), 'StatisticsRF.mat'), ...
-                'statistics')
-        else
-           save(strcat(path_check(resultDir), 'Statistics.mat'), ...
-                'statistics')
-        end
+        batch_random_forest(parameters);
     end
     
     if sum(strcmp(search_parameter(parameters, 'NN_Classification'), ...
-        'true')) && search_ext_toolbox('Deep Learning Toolbox') == 1
-        %neural_network(data, n_layers, validation_value, ...
-        %    ~, repetitions, min_samples, pca_value, eval_method, ...
-        %    training_value, reject_value)
-        if strcmpi(search_parameter(parameters, ...
-                'NN_DefaultClassificationParameters'), 'true')
-            neural_network(dataPath, 10, 0.1, 1, 100, 1, 100, 'split', ...
-               0.8, 0.5)
-        else
-            statistics = neural_network(dataPath, ...
-                search_parameter(parameters, 'NN_HiddenLayersNumber'), ...
-                search_parameter(parameters, 'NN_ValidationValue'), 1, ...
-                search_parameter(parameters, 'NN_Repetitions'), ...
-                search_parameter(parameters, ...
-                'NN_MinimumClassExamples'), ...
-                search_parameter(parameters, 'NN_PCAValue'), ...
-                search_parameter(parameters, 'NN_Evaluation'), ...
-                search_parameter(parameters, 'NN_TrainPercentage'), ...
-                search_parameter(parameters, 'NN_Rejection'));
-        end
-        resultDir = strcat(path_check(dataPath), 'Classification');
-        if not(exist(resultDir, 'dir'))
-            mkdir(resultDir);
-        end
-        if sum(strcmp(parameters{45}, 'true'))
-            save(strcat(path_check(resultDir), 'StatisticsNN.mat'), ...
-                'statistics')
-        else
-            save(strcat(path_check(resultDir), 'Statistics.mat'), ...
-                'statistics')
-        end
+            'true')) && search_ext_toolbox('Deep Learning Toolbox') == 1
+        batch_neural_network(parameters);
     end
 end

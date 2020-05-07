@@ -48,65 +48,45 @@ function varargout = Athena_statistics_OutputFcn(hObject, eventdata, handles)
 
 
 function back_Callback(hObject, eventdata, handles)
-    funDir = mfilename('fullpath');
-    funDir = split(funDir, 'Graphics');
-    cd(char(funDir{1}));
-    addpath 'Auxiliary'
-    addpath 'Graphics'
-    [dataPath, measure, sub, loc] = GUI_transition(handles);
-    close(Athena_statistics)
-    Athena_an(dataPath, measure, sub, loc)
+	openAnalysis('back', handles)
     
     
 function axes3_CreateFcn(hObject, eventdata, handles)
 
 
 function Distr_Callback(hObject, eventdata, handles)
-    funDir = mfilename('fullpath');
-    funDir = split(funDir, 'Graphics');
-    cd(char(funDir{1}));
-    addpath 'Auxiliary'
-    addpath 'Graphics'
-    [dataPath, measure, sub, loc] = GUI_transition(handles);
-    close(Athena_statistics)
-    Athena_distr(dataPath, measure, sub, loc)
+	openAnalysis('distributions', handles)
 
 
 function MeasCorr_Callback(hObject, eventdata, handles)
-    funDir = mfilename('fullpath');
-    funDir = split(funDir, 'Graphics');
-    cd(char(funDir{1}));
-    addpath 'Auxiliary'
-    addpath 'Graphics'
-    [dataPath, measure, sub, loc] = GUI_transition(handles);
-    close(Athena_statistics)
-    Athena_meascorr(dataPath, measure, sub, loc)
+   openAnalysis('measures_correlation', handles)
 
 
 function utest_Callback(hObject, eventdata, handles)
-    funDir = mfilename('fullpath');
-    funDir = split(funDir, 'Graphics');
-    cd(char(funDir{1}));
-    addpath 'Auxiliary'
-    addpath 'Graphics'
-    [dataPath, measure, sub, loc] = GUI_transition(handles);
-    close(Athena_statistics)
-    Athena_utest(dataPath, measure, sub, loc)
+	openAnalysis('utest', handles)
 
 
 function IndCorr_Callback(hObject, eventdata, handles)
-    funDir = mfilename('fullpath');
-    funDir = split(funDir, 'Graphics');
-    cd(char(funDir{1}));
-    addpath 'Auxiliary'
-    addpath 'Graphics'
-    [dataPath, measure, sub, loc] = GUI_transition(handles);
-    close(Athena_statistics)
-    Athena_indcorr(dataPath, measure, sub, loc)
+    openAnalysis('index_correlation', handles)
 
 
 
 function Hist_Callback(hObject, eventdata, handles)
+    openAnalysis('histogram', handles)
+
+
+function openAnalysis(analysis, handles)
+    analysis_list = {'histogram', 'utest', 'index_correlation', ...
+        'measures_correlation', 'distributions', 'back'};
+    analysis_interfaces = {@Athena_hist, @Athena_utest, ...
+        @Athena_indcorr, @Athena_meascorr, @Athena_distr, @Athena_an};
+    to_check = {'utest', 'index_correlation', 'measures_correlation'};
+    if sum(strcmp(to_check, analysis))
+        if not(search_ext_toolbox(...
+                'Statistics and Machine Learning Toolbox'))
+            return
+        end
+    end
     funDir = mfilename('fullpath');
     funDir = split(funDir, 'Graphics');
     cd(char(funDir{1}));
@@ -114,4 +94,5 @@ function Hist_Callback(hObject, eventdata, handles)
     addpath 'Graphics'
     [dataPath, measure, sub, loc] = GUI_transition(handles);
     close(Athena_statistics)
-    Athena_hist(dataPath, measure, sub, loc)
+    an_handle = analysis_interfaces{strcmp(analysis_list, analysis)};
+    an_handle(dataPath, measure, sub, loc)
