@@ -152,8 +152,7 @@ function [PAT, HC, bins, measure, band, location] = ...
     histogram_initialization(handles)
 
     dataPath = get(handles.dataPath_text, 'String');
-    measures_list = get(handles.meas, 'String');
-    measure = measures_list(get(handles.meas, 'Value'));
+    measure = define_measure(handles);
     
     bands_list = get(handles.band, 'String');
     band = str2double(bands_list(get(handles.band, 'Value')));
@@ -239,8 +238,7 @@ function export_Callback(hObject, eventdata, handles)
 
 function meas_Callback(hObject, eventdata, handles)
     dataPath = get(handles.dataPath_text, 'String');
-    measures_list = get(handles.meas, 'String');
-    measure = measures_list(get(handles.meas, 'Value'));
+    measure = define_measure(handles);
     dataPath = strcat(path_check(dataPath), path_check(measure), ...
             path_check('Epmean'));
     if exist(dataPath, 'dir')
@@ -284,8 +282,7 @@ function band_CreateFcn(hObject, eventdata, handles)
 
 function area_Callback(hObject, eventdata, handles)
     dataPath = get(handles.dataPath_text, 'String');
-    measures_list = get(handles.meas, 'String');
-    measure = measures_list(get(handles.meas, 'Value'));
+    measure = define_measure(handles);
     areas_list = get(handles.area, 'String');
     area = areas_list(get(handles.area, 'Value'));
     [~, ~, locations] = load_data(strcat(path_check(dataPath), ...
@@ -317,3 +314,12 @@ function medium_Callback(hObject, eventdata, handles)
 
 
 function low_Callback(hObject, eventdata, handles)
+
+
+function measure = define_measure(handles)
+    measures_list = get(handles.meas, 'String');
+    if ischar(measures_list)
+        measure = measures_list;
+    else
+        measure = measures_list(get(handles.meas, 'Value'));
+    end

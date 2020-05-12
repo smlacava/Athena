@@ -45,6 +45,7 @@ function classification_data_settings(dataPath, analysis_types, ...
     end
     
     [data, features] = create_data(cases, types, dataPath, features, data);
+    features = check_features(features);
     data = array2table(data, 'VariableNames', features);
     save(strcat(outPath, 'Classification_Data.mat'), 'data')
 end
@@ -100,5 +101,12 @@ function [data, features] = all_data(cases, types, dataPath, features, ...
                 data = [data, statAnData.data];
             end
         end
+    end
+end
+
+function features = check_features(features)
+	for i = 1:length(features)
+        aux_feature = split(features{i}, '-');
+        features{i} = aux_feature{1};
     end
 end

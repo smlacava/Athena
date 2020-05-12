@@ -28,6 +28,8 @@ function epochs_analysis(dataPath, name, anType, measure, epochs, ...
     end
     cases = define_cases(dataPath);
     locations = [];
+    name = split(name, '.');
+    name = name{1};
     for i = 1:length(cases)
         if contains(cases(i).name, name)
             dataFile = strcat(dataPath, cases(i).name);
