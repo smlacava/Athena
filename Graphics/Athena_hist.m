@@ -108,6 +108,10 @@ function Run_Callback(hObject, eventdata, handles)
             if length(bins) == 1
                 bins = linspace(0, xmax, bins+1);
             end
+            set(handles.aux_bar, 'Visible', 'on')
+            set(handles.histogram2, 'Visible', 'on')
+            set(handles.histogram, 'Position', [0.4825 0.1875 0.498 0.31])
+            set(handles.histogram2, 'Position', [0.4825 0.5622 0.498 0.31])
             histogram(HC, bins, 'FaceColor', [0.43, 0.8, 0.72], ...
                 'FaceAlpha', 1)
             legend({'group 0'})
@@ -121,6 +125,10 @@ function Run_Callback(hObject, eventdata, handles)
             L = ylim;
             ylim([L(1) L(2)*1.1])
         elseif not(isempty(PAT))
+            set(handles.histogram2, 'Visible', 'off')
+            set(handles.aux_bar, 'Visible', 'off')
+            set(handles.histogram, 'Position', ...
+                [0.4825 0.1875 0.498 0.6847])
             xmax = max(max(PAT))*1.1;
             if length(bins) == 1
                 bins = linspace(0, xmax, bins+1);
@@ -131,6 +139,10 @@ function Run_Callback(hObject, eventdata, handles)
             L = ylim;
             ylim([L(1) L(2)*1.1])
         elseif not(isempty(HC))
+            set(handles.histogram2, 'Visible', 'off')
+            set(handles.aux_bar, 'Visible', 'off')
+            set(handles.histogram, 'Position', ...
+                [0.4825 0.1875 0.498 0.6847])
             xmax = max(max(HC))*1.1;
             if length(bins) == 1
                 bins = linspace(0, xmax, bins+1);
