@@ -30,10 +30,10 @@ function distributions_scatterplot(first_group, second_group, measure, ...
         title = strcat(measure, " ", location);
     end
     if nargin > 5
-        title = strcat(measure, " Band ", string(band));
+        title = strcat(title, " Band ", string(band));
     end
-    if nargin < 6
-        title = strcat(measure, " ", location);
+    if nargin > 6
+        title = strcat(title, " - ", parameter);
     end
     if nargin < 7
         parameter = 'median';
@@ -57,13 +57,34 @@ function distributions_scatterplot(first_group, second_group, measure, ...
     
     figure('Name', title, 'NumberTitle', 'off', 'ToolBar', 'none');
     set(gcf, 'color', [1 1 1])
-    scatter(linspace(0.4, 0.6, length(first_group)), first_group, 'b')
-    hold on
-    plot([0.3, 0.7], [m1, m1], 'k')
-    scatter(linspace(1.4, 1.6, length(second_group)), second_group, 'r')
-    plot([1.3, 1.7], [m2, m2], 'k')
-    xlim([0, 2])
-    xticks([0.5, 1.5])
+    min_lim = 1;
+    max_lim = 1;
+    list = {};
+    ticks = [];
+    if not(isempty(first_group))
+        scatter(linspace(0.4, 0.6, length(first_group)), first_group, ...
+            36, [0.43, 0.8, 0.72])
+        hold on
+        min_lim = 0;
+        list = [list, labels{1}];
+        ticks = [ticks, 0.5];
+    end
+    if not(isempty(second_group))
+        scatter(linspace(1.4, 1.6, length(second_group)), second_group, ...
+            36, [0.07, 0.12, 0.42])
+        hold on;
+        max_lim = 2;
+        list = [list, labels{2}];
+        ticks = [ticks, 1.5];
+    end
+    if not(isempty(first_group))
+        plot([0.3, 0.7], [m1, m1], 'k')
+    end
+    if not(isempty(second_group))
+        plot([1.3, 1.7], [m2, m2], 'k')
+    end
+    xlim([min_lim, max_lim])
+    xticks(ticks)
     xticklabels(labels)
     ylabel(measure)
 end

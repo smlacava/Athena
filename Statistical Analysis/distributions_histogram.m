@@ -20,19 +20,15 @@
 function distributions_histogram(first_group, second_group, measure, ...
     labels, location, band, bins)
 
-    title = '';
     if nargin < 3
         measure = '';
-        title = measure;
     end
+    title = measure;
     if nargin > 4
-        title = strcat(measure, " ", location);
+        title = strcat(title, " ", location);
     end
     if nargin > 5
-        title = strcat(measure, " Band ", string(band));
-    end
-    if nargin < 6
-        title = strcat(measure, " ", location);
+        title = strcat(title, " Band ", string(band));
     end
     if nargin < 7
         bins = 10;

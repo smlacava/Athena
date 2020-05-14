@@ -109,14 +109,33 @@ function Run_Callback(hObject, eventdata, handles)
             m1 = median(HC);
             m2 = median(PAT);
         end
-        scatter(linspace(0.4, 0.6, length(HC)), HC, 'b')
-        hold on
-        scatter(linspace(1.4, 1.6, length(PAT)), PAT, 'r')
-        plot([0.3, 0.7], [m1, m1], 'k')
-        plot([1.3, 1.7], [m2, m2], 'k')
-        xlim([0, 2]);
-        legend({'group 0', 'group 1'})
+        max_lim = 1;
+        min_lim = 1;
+        list = {};
+        if not(isempty(HC))
+            scatter(linspace(0.4, 0.6, length(HC)), HC, 36, ...
+                [0.43, 0.8, 0.72])
+            hold on
+            min_lim = 0;
+            list = [list, 'group 0'];
+        end
+        if not(isempty(PAT))
+            scatter(linspace(1.4, 1.6, length(PAT)), PAT, 36, ...
+                [0.07, 0.12, 0.42])
+            hold on
+            max_lim = 2;
+            list = [list, 'group 1'];
+        end
+        if not(isempty(HC))
+            plot([0.3, 0.7], [m1, m1], 'k')
+        end
+        if not(isempty(PAT))
+            plot([1.3, 1.7], [m2, m2], 'k')
+        end
+        xlim([min_lim, max_lim]);
+        legend(list)
         hold off
+        set(handles.scatter, 'XTick', [])
         set(handles.help_button, 'Visible', 'off')
     end
     
