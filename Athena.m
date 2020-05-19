@@ -23,6 +23,9 @@ function Athena_OpeningFcn(hObject, ~, handles, varargin)
     [x, ~] = imread('logo.png');
     Im = imresize(x, [250 250]);
     set(handles.help_button, 'CData', Im)
+    [y, ~] = imread(strcat('docs', filesep, 'utility.png'));
+    Im2 = imresize(y, [35 35]);
+    set(handles.Utility, 'CData', Im2)
     set(handles.guided, 'Tooltip', sprintf(strcat(...
         'The Guided mode allows the you to interact with every \n', ...
         'step, and to repeat every step as much times as wished')));
@@ -69,7 +72,12 @@ function varargout = Athena_OutputFcn(~, ~, handles)
 
 function back_Callback(~, ~, ~)
     close(Athena)
-
+    
+    
+function utility_Callback(~, ~, handles)
+    [dataPath, measure, sub, loc] = GUI_transition(handles);
+    close(Athena)
+    Athena_utility(dataPath, measure, sub, loc)
     
 function axes3_CreateFcn(~, ~, ~)
 

@@ -18,7 +18,8 @@
 %   locs is a cell matrix which contains in the first column the names of
 %       every location, it is empty ({}) if it is not present in the file
 
-function [data, fs, locs] = load_data(dataFile, locFLAG)
+function [data, fs, locs] = load_data(dataFile, locFLAG, varargin)
+    [data_name, fs_name, loc_name] = check_parameters(varargin);
     fs = [];
     locs = {};
     if nargin == 1
@@ -38,7 +39,9 @@ function [data, fs, locs] = load_data(dataFile, locFLAG)
         data = struct2cell(data);
         data = data{1};
         if isstruct(data)
-            if isfield(data, 'fs')
+            if not(strcmp(fs_name, '')) && isfield(data, fs_name)
+                fs = eval(strcat('data.', fs_name));
+            elseif isfield(data, 'fs')
                 fs = data.fs;
             elseif isfield(data, 'frequency')
                 fs = data.frequency;
@@ -46,7 +49,9 @@ function [data, fs, locs] = load_data(dataFile, locFLAG)
                 fs = data.srate;
             end
             
-            if isfield(data, 'chanlocs')
+            if not(strcmp(loc_name, '')) && isfield(data, loc_name)
+                locs = eval(strcat('data.', loc_name));
+            elseif isfield(data, 'chanlocs')
                 locs = data.chanlocs;
             elseif isfield(data, 'locs')
                 locs = data.locs;
@@ -64,7 +69,9 @@ function [data, fs, locs] = load_data(dataFile, locFLAG)
             catch
             end
             
-            if isfield(data, 'data')
+            if not(strcmp(data_name, '')) && isfield(data, data_name)
+                data = eval(strcat('data.', data_name));
+            elseif isfield(data, 'data')
                 data = data.data;
             elseif isfield(data, 'EEG')
                 data = data.EEG;
@@ -72,6 +79,8 @@ function [data, fs, locs] = load_data(dataFile, locFLAG)
                 data = data.EEG;
             elseif isfield(data, 'time_series')
                 data = data.time_series;
+            else
+                data = [];
             end
             
         end
@@ -87,6 +96,8 @@ function [data, fs, locs] = load_data(dataFile, locFLAG)
         [info, data] = edfread(dataFile);
         fs = info.frequency(1);
         locs = info.label;
+    elseif contains(dataFile, '.eeg') || contains(dataFile, '.vhdr')
+        [data, locs, fs] = readeeg(dataFile);
     end
     
     
@@ -164,3 +175,21 @@ function [data, fs, locs] = load_data(dataFile, locFLAG)
     end
 end
     
+function [data_name, fs_name, loc_name] = check_parameters(parameters)
+    data_name = '';
+    fs_name = '';
+    loc_name = '';
+    try
+        parameters = parameters{:};
+        for i = 1:length(parameters)
+            if strcmpi(parameters{i}, 'data')
+                data_name = parameters{i+1};
+            elseif strcmpi(parameters{i}, 'fs')
+                fs_name = parameters{i+1};
+            elseif strcmpi(parameters{i}, 'locations')
+                loc_name = parameters{i+1};
+            end
+        end
+    catch
+    end
+end

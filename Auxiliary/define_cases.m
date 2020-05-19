@@ -10,8 +10,8 @@
 %   check is the variable which has to be 1 if the check on the cases names
 %       has to be computed (1 by default)
 %   exstension is the extension of the files which have to be searched
-%       (optional, if it is not selected, the function will search .mat and
-%       .edf files)
+%       (optional, if it is not selected, the function will search .mat, 
+%       .edf, .eeg, .csv, .txt, .xls and .xlsx files)
 %
 % output:
 %   cases is a structure which contains a time series name as the first
@@ -41,7 +41,7 @@ function cases = define_cases(dataPath, check, extension)
                 toDelete = [toDelete; i];
             else
                 cases(i).name = strcat(path_check(cases(i).name), ...
-                    subject.name);
+                    subject(1).name);
             end
         end
         cases(toDelete) = [];
@@ -76,7 +76,8 @@ end
 
 
 function extensions = define_extensions(extension)
-    extensions = {'*.mat', '*.edf', '*csv', '*txt'};
+    extensions = {'*.mat', '*.edf', '*.eeg', '*.csv', '*.txt', '*.xls', ...
+        '*.xlsx'};
     if not(isempty(extension))
         if not(contains(extension, '.'))
             extension = char_check(strcat('.', extension));

@@ -1,6 +1,6 @@
 %% athena_filter
-% This function is used to filter an epoch of the input time series with an
-% IIR filter
+% This function is used to filter an epoch of the input time series through
+% a FIR bandpass filter
 %
 % [smoothdata] = athena_filter(data, fs, fmin, fmax)
 %

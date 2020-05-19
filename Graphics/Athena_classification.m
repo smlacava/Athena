@@ -134,13 +134,21 @@ function Run_Callback(hObject, eventdata, handles)
     addpath 'Auxiliary'
     addpath 'Graphics'
     
+    try
+        load(strcat(dataPath, path_check('Classification'), ...
+            'Classification_data.mat'));
+    catch
+        problem('Bad or missing data file')
+        return
+    end
+    
     if get(handles.default_parameters, 'Value') == 1
         if strcmpi(get(handles.DTclassifier, 'Visible'), 'on')
-            statistics = random_forest(dataPath, 7, 0.5, 'on', 1000, 1, ...
+            statistics = random_forest(data, 7, 0.5, 'on', 1000, 1, ...
                 100, 'split', 0.8);
         else
-            statistics = neural_network(data, 10, 0.2, 1, 10, 1, 100, ...
-                'split', 0.5, 0.4);
+            statistics = neural_network(data, 10, 0.2, 1, 10, 1, ...
+                100, 'split', 0.5, 0.4);
         end
     else
         repetitions = str2double(get(handles.repetitions_text, 'String'));
@@ -178,7 +186,7 @@ function Run_Callback(hObject, eventdata, handles)
         end
         
         if strcmpi(get(handles.DTclassifier, 'Visible'), 'on')
-            statistics = random_forest(dataPath, nodes, fraction, ...
+            statistics = random_forest(data, nodes, fraction, ...
                 pruning, repetitions, 1, pca_value, eval_method, n_train);
         else
             if fraction+n_train >= 1
@@ -187,7 +195,7 @@ function Run_Callback(hObject, eventdata, handles)
                     "than 1")))
                 return
             end                
-            statistics = neural_network(dataPath, nodes, fraction, 1, ...
+            statistics = neural_network(data, nodes, fraction, 1, ...
                 repetitions, 1, pca_value, eval_method, n_train);
         end
     end

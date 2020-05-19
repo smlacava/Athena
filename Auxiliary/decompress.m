@@ -17,15 +17,15 @@ function decompress(file, directory_check, outDir)
         directory_check = 0;
     end
     
-    names = {'.tar', '.zip', '.gz'};
-    functions = {@untar, @unzip, @gunzip};
+    names = {'.tar.gz', '.tar', '.tgz', '.zip', '.gz'};
+    functions = {@untar, @untar, @untar, @unzip, @gunzip};
     
     for i = 1:length(names)
         if contains(file, names{i})
             f = functions{i};
             if directory_check == 1
                 if nargin < 3
-                    outDir = strtok(file, names{i});
+                    outDir = strtok(file, '.');
                 end
                 f(file, outDir)
             else
