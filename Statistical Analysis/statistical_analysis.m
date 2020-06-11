@@ -3,7 +3,7 @@
 % subjects and saves data relative to significant comparisons
 %
 % [P, Psig, data, data_sig] = statistical_analysis(HC, PAT, locs, cons, ...
-%     dataPath, measure, analysis)
+%     dataPath, measure, analysis, save_check)
 %
 % input:
 %   HC is the data matrix relative to the first group of subjects (healty
@@ -17,6 +17,8 @@
 %   measure is the name of the analyzed measure
 %   analysis is the name of the location-related analysis to compute
 %       (Areas, Global, Total or Asymmetry)
+%   save_check has to be 1 if the user want to save also the resulting 
+%       tables (0 by default)
 %
 % output:
 %   P is the matrix of p-values for each comparison
@@ -28,8 +30,10 @@
 %       significant
 
 function [P, Psig, data, data_sig] = statistical_analysis(HC, PAT, ...
-    locs, cons, dataPath, measure, analysis)
-    
+    locs, cons, dataPath, measure, analysis, save_check)
+    if nargin < 8
+        save_check = 0;
+    end
     nHC = size(HC, 1);
     nPAT = size(PAT, 1);
     nLocs = length(locs);
@@ -73,10 +77,11 @@ function [P, Psig, data, data_sig] = statistical_analysis(HC, PAT, ...
         end
     end
     
-    show_figures(data, data_names, P, bands_names, locs, Psig)
+    [statanType, statanDir] = save_data(dataPath, measure, analysis, ...
+        locs, nBands, data, Psig, data_sig);
     
-    save_data(dataPath, measure, analysis, locs, nBands, data, Psig, ...
-        data_sig)
+    show_figures(data, data_names, P, bands_names, locs, Psig, ...
+        statanType, statanDir, save_check)
 end
 
 
@@ -92,9 +97,9 @@ function feature_names = compute_feature_names(locs, nBands)
 end
 
 
-function save_data(dataPath, measure, analysis, locs, nBands, data, ...
-    Psig, data_sig)
-
+function [statanType, statanDir] = save_data(dataPath, measure, ...
+    analysis, locs, nBands, data, Psig, data_sig)
+    
     statanType = strcat(measure, '_', analysis, '.mat');
     statanDir = path_check(create_directory(path_check(...
         limit_path(dataPath, measure)), path_check('StatAn')));
@@ -112,8 +117,28 @@ function save_data(dataPath, measure, analysis, locs, nBands, data, ...
 end
 
 
-function show_figures(data, data_names, P, bands_names, locs, Psig)
+function show_figures(data, data_names, P, bands_names, locs, Psig, ...
+    statanType, statanDir, save_check)
     bg_color = [1 1 1];
+    sig = (size(Psig, 1) ~= 0 && not(logical(sum(sum(strcmp(Psig, ''))))));
+    if save_check == 1
+        data_table = array2table(data);
+        data_table.Properties.VariableNames = replace(replace(...
+            data_names, '-', ''), ' ', '');
+        p_table = array2table(P);
+        p_table.Properties.VariableNames = replace(replace(locs, '-', ...
+            ''), ' ', '');
+        p_table.Properties.RowNames = replace(replace(bands_names, '-', ...
+            ''), ' ', '');
+        save(char_check(strcat(statanDir, 'Data', filesep, ...
+            strtok(statanType, '.'), '_pvalues.mat')), 'p_table' )
+        save(char_check(strcat(statanDir, 'Data', filesep, ...
+            strtok(statanType, '.'), '_data.mat')), 'data_table' )
+        if sig
+            save(char_check(strcat(statanDir, 'Data', filesep, ...
+                strtok(statanType, '.'), '_Psig.mat')), 'Psig' )
+        end
+    end
     fs1 = figure('Name', 'Data', 'NumberTitle', 'off', 'Color', bg_color);
     d = uitable(fs1, 'Data', data, 'Position', [20 20 525 375], ...
         'ColumnName', data_names);
@@ -121,8 +146,7 @@ function show_figures(data, data_names, P, bands_names, locs, Psig)
         'NumberTitle', 'off', 'Color', bg_color);
     p = uitable(fs2, 'Data', P, 'Position', [20 20 525 375], ...
         'RowName', bands_names, 'ColumnName', locs);
-        
-    if size(Psig, 1) ~= 0 && not(logical(sum(sum(strcmp(Psig, '')))))
+    if sig
         fs3 = figure('Color', bg_color, 'NumberTitle', 'off', ...
             'Name', 'Statistical Analysis - Significant Results');
         ps = uitable(fs3, 'Data', cellstr(Psig), 'Position', ...

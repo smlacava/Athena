@@ -289,16 +289,20 @@ function Go_to_ClickedCallback(~, ~, handles)
         axes(handles.signal);
         maxsize = max(size(get(handles.signal_matrix, 'Data')));
         Lim = xlim;
-        fs = str2double(get(handles.fs_text, 'String'));
-        window = Lim(2)-Lim(1);
-        time = value_asking(floor(Lim(1)/fs), 'Go to...', ...
-            'Insert the time you want to inspect', ...
-            floor((maxsize-window)/fs));
-        Lim = [time*fs+1, time*fs+window];
-        if Lim(1) < 0
-            problem('The time cannot be less than 0');
+        if Lim(2) < maxsize
+            fs = str2double(get(handles.fs_text, 'String'));
+            window = Lim(2)-Lim(1)+1;
+            time = value_asking(floor(Lim(1)/fs), 'Go to...', ...
+                'Insert the time you want to inspect', ...
+                floor((maxsize-window)/fs));
+            Lim = [time*fs+1, time*fs+window];
+            if Lim(1) < 0
+                problem('The time cannot be less than 0');
+            else
+                xlim(Lim);
+            end
         else
-            xlim(Lim);
+            problem('The total time series is already showed')
         end
     catch
     end
@@ -443,6 +447,7 @@ function Run_Callback(~, ~, handles)
     dataPath = path_check(strcat(dataPath, 'Extracted'));
     dataPath = strcat(dataPath, sub_name, '.mat');
     save(dataPath, 'data');
+    success()
     
     
 function Loc_ClickedCallback(~, ~, handles)

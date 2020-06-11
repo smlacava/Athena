@@ -11,7 +11,7 @@
 
 
 function [data, locations, fs] = readeeg(dataFile)  
-    LASTN = maxNumCompThreads(max(floor(maxNumCompThreads*0.5), 1));
+    LASTN = maxNumCompThreads(max(floor(maxNumCompThreads*0.25), 1));
 	[inDir, fileName] = fileparts(dataFile);
 	[fs, locations, info] = readheader(strcat(path_check(inDir), ...
         fileName, '.vhdr'));

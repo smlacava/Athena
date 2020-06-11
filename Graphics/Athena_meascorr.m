@@ -72,6 +72,12 @@ function Run_Callback(hObject, eventdata, handles)
     addpath 'Auxiliary'
     addpath 'Graphics'
     
+    save_check = 0;
+    if strcmpi(user_decision(...
+            'Do you want to save the resulting tables?', 'U Test'), 'yes')
+        save_check = 1;
+    end
+    
     [~, sub_list, alpha, bg_color, locs, bands_names, P, RHO, nLoc, ...
         nBands, analysis, sub_group] = correlation_setting(handles);
     
@@ -108,9 +114,11 @@ function Run_Callback(hObject, eventdata, handles)
     if get(handles.no, 'Value') == 1
         sub_list = [];
     end
-    
+    corrPath = create_directory(dataPath, 'StatAn');
+    corrPath = create_directory(corrPath, 'Data');
     measures_correlation(xData, yData, sub_list, bands_names, ...
-        measures, alpha, bg_color, locs, P, RHO, nLoc, nBands)    
+        measures, alpha, bg_color, locs, P, RHO, nLoc, nBands, ...
+        save_check, corrPath)
        
 
 function data_search_Callback(hObject, eventdata, handles)

@@ -68,6 +68,12 @@ function Run_Callback(hObject, eventdata, handles)
     addpath 'Auxiliary'
     addpath 'Correlations'
     
+    save_check = 0;
+    if strcmpi(user_decision(...
+            'Do you want to save the resulting tables?', 'U Test'), 'yes')
+        save_check = 1;
+    end
+    
     Ind = get(handles.ind_text, 'String');
     if not(exist(Ind, 'file'))
         problem(strcat("File ", Ind, " not found"))
@@ -82,8 +88,11 @@ function Run_Callback(hObject, eventdata, handles)
     measure = get(handles.aux_measure, 'String');
     [data, sub_list, alpha, bg_color, locs, bands_names, P, RHO, nLoc, ...
         nBands] = correlation_setting(handles);
+    dataPath = path_check(get(handles.aux_dataPath, 'String'));
+    corrPath = create_directory(dataPath, 'StatAn');
+    corrPath = create_directory(corrPath, 'Data');
     index_correlation(data, sub_list, bands_names, measure, Index, ...
-        alpha, bg_color, locs, P, RHO, nLoc, nBands)
+        alpha, bg_color, locs, P, RHO, nLoc, nBands, save_check, corrPath)
     
    
 function data_search_Callback(hObject, eventdata, handles)

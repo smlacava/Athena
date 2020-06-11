@@ -91,7 +91,11 @@ function dataPath_text_CreateFcn(hObject, eventdata, handles)
 
 
 function Run_Callback(hObject, eventdata, handles)
-    im = imread('untitled3.png');
+    save_check = 0;
+    if strcmpi(user_decision(...
+            'Do you want to save the resulting tables?', 'U Test'), 'yes')
+        save_check = 1;
+    end
     dataPath = get(handles.dataPath_text, 'String');
     dataPath = path_check(dataPath);
     measure = get(handles.aux_measure, 'String');
@@ -128,7 +132,8 @@ function Run_Callback(hObject, eventdata, handles)
         return;
     end
     
-    statistical_analysis(HC, PAT, locs, cons, dataPath, measure, analysis);
+    statistical_analysis(HC, PAT, locs, cons, dataPath, measure, ...
+        analysis, save_check);
 
     
 function data_search_Callback(hObject, eventdata, handles)

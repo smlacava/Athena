@@ -3,7 +3,7 @@
 % index array relative to each analyzed subject.
 % 
 % index_correlation(data, sub_list, bands_names, measure, Index, alpha, ...
-%       bg_color, locs, P, RHO, nLoc, nBands)    
+%       bg_color, locs, P, RHO, nLoc, nBands, save_check, dataPath)    
 %
 % input:
 %   data is the data matrix to correlate
@@ -22,10 +22,13 @@
 %   RHO is the rho matrix which has to be computed
 %   nLoc is the number of considered locations
 %   nBands is the number of considered frequency bands
+%   save_check has to be 1 if the user wants to save the resulting graphs
+%       (0 by default)
+%   dataPath is the directory where to save the data (optional)
 
 
 function index_correlation(data, sub_list, bands_names, measure, Index, ...
-    alpha, bg_color, locs, P, RHO, nLoc, nBands)    
+    alpha, bg_color, locs, P, RHO, nLoc, nBands, save_check, dataPath)    
     funDir = mfilename('fullpath');
     funDir = split(funDir, 'Correlations');
     cd(char(funDir{1}));
@@ -55,6 +58,54 @@ function index_correlation(data, sub_list, bands_names, measure, Index, ...
                 sub_list, alpha);
         end
     end
+    
+    if save_check == 1
+        aux_locs = locs;
+        if sum(contains(locs, {'Frontal', 'Parietal', 'Occipital', ...
+                'Central', 'Temporal'})) > 1
+            locs = 'Areas';
+        elseif not(contains(locs, 'Asymmetry')) && ...
+                not(contains(locs, 'Global'))
+            locs = total;
+        end
+            
+        save_name = strcat(dataPath, filesep, 'correlation_', ...
+            measure, '_Index_', locs);
+        p_table = array2table(P');
+        rho_table = array2table(RHO');
+        try
+            p_table.Properties.VariableNames = replace(replace(aux_locs, '-', ...
+                ''), ' ', '');
+            rho_table.Properties.VariableNames = replace(replace(aux_locs, '-', ...
+                ''), ' ', '');
+        catch
+            if contains(char(locs), 'global')
+                locs = 'globality';
+            end
+            p_table.Properties.VariableNames = {char(replace(replace(aux_locs, '-', ...
+                ''), ' ', ''))};
+            rho_table.Properties.VariableNames = {char(replace(replace(locs, '-', ...
+                ''), ' ', ''))};
+        end
+        try
+            p_table.Properties.RowNames = replace(replace(bands_names, '-', ...
+                ''), ' ', '');
+            rho_table.Properties.RowNames = replace(replace(bands_names, '-', ...
+                ''), ' ', '');
+        catch
+            if contains(char(locs), 'global')
+                locs = 'globality';
+            end
+            p_table.Properties.RowNames = {char(replace(replace(bands_names, '-', ...
+                ''), ' ', ''))};
+            rho_table.Properties.RowNames = {char(replace(replace(bands_names, '-', ...
+                ''), ' ', ''))};
+        end
+        save(strcat(save_name, '_pvalues.mat'), 'p_table' )
+        save(strcat(save_name, '_rho.mat'), 'rho_table' )
+        locs = aux_locs;
+    end
+    
     fs1 = figure('Name', char_check(strcat("Index Correlation - ", ...
         "p-value (alpha level ", string(alpha), ")")), ...
         'NumberTitle', 'off', 'Color', [1 1 1]);

@@ -25,11 +25,17 @@ function Athena_divider_OpeningFcn(hObject, eventdata, handles, ...
     Im = imresize(x, [250 250]);
     set(handles.help_button, 'CData', Im)
     if nargin >= 4
+        f = waitbar(0,'Initial setup process', 'Color', '[1 1 1]');
+        fchild = allchild(f);
+        fchild(1).JavaPeer.setForeground(fchild(1).JavaPeer.getBackground.BLUE)
+        fchild(1).JavaPeer.setStringPainted(true)
         dataPath = varargin{1};
         dataPath = path_check(dataPath);
         set(handles.aux_dataPath, 'String', dataPath)
         cases = define_cases(dataPath);
+        waitbar(0, f, 'Loading of the first signal');
         [data, fs] = load_data(strcat(dataPath, cases(1).name), 1);
+        waitbar(1, f, 'Extracting available information');
         if not(isempty(fs))
             set(handles.fs_text, 'String', string(fs));
             info = strcat("Sampling frequency detected: the signal", ...
@@ -37,6 +43,7 @@ function Athena_divider_OpeningFcn(hObject, eventdata, handles, ...
             set(handles.TotTime, 'String', info);
             fs_text_Callback(hObject, eventdata, handles);
         end
+        close(f)
     end
     if nargin >= 5
         measure = varargin{2};

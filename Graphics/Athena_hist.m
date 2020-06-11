@@ -87,8 +87,12 @@ function dataPath_text_CreateFcn(hObject, eventdata, handles)
 
 
 function Run_Callback(hObject, eventdata, handles)
-    if strcmp(get(handles.loc, 'Visible'), 'off')
-        return;
+    if strcmp(get(handles.loc, 'Visible'), 'off') 
+        areas_list = get(handles.area, 'String');
+        area = areas_list(get(handles.area, 'Value'));
+        if strcmpi(area, 'Channels') || strcmp(area, 'Areas')
+            return;
+        end
     end
     funDir = mfilename('fullpath');
     funDir = split(funDir, 'Graphics');
@@ -171,6 +175,9 @@ function [PAT, HC, bins, measure, band, location] = ...
     
     areas_list = get(handles.area, 'String');
     area = areas_list(get(handles.area, 'Value'));
+    if strcmpi(area, 'Channels')
+        area = "Total";
+    end
     
     measure_path = path_check(strcat(path_check(dataPath), ...
         path_check(measure), path_check('Epmean'), area));
@@ -235,8 +242,12 @@ function back_Callback(hObject, eventdata, handles)
 
 
 function export_Callback(hObject, eventdata, handles)
-    if strcmp(get(handles.loc, 'Visible'), 'off')
-        return;
+    if strcmp(get(handles.loc, 'Visible'), 'off') 
+        areas_list = get(handles.area, 'String');
+        area = areas_list(get(handles.area, 'Value'));
+        if strcmpi(area, 'Channels') || strcmp(area, 'Areas')
+            return;
+        end
     end
     if strcmp(get(handles.loc, 'Enable'), 'on') && ...
             strcmp(get(handles.loc, 'Enable'), 'on')
@@ -255,7 +266,7 @@ function meas_Callback(hObject, eventdata, handles)
             path_check('Epmean'));
     if exist(dataPath, 'dir')
         set(handles.area, 'String', ["Areas", "Asymmetry", "Global", ...
-            "Total"])
+            "Channels"])
         cases = define_cases(dataPath);
         load(strcat(dataPath, cases(1).name));
         set(handles.band, 'String', string(1:size(data.measure, 1)))
@@ -264,7 +275,10 @@ function meas_Callback(hObject, eventdata, handles)
         set(handles.loc, 'Value', 1)
         set(handles.area, 'Visible', 'on')
         set(handles.band, 'Visible', 'on')
+        set(handles.band_text, 'Visible', 'on')
+        set(handles.area_text, 'Visible', 'on')
         set(handles.loc, 'Visible', 'off')
+        set(handles.location_text, 'Visible', 'off')
         set(handles.area, 'Enable', 'on')
         set(handles.band, 'Enable', 'on')
         
@@ -272,6 +286,8 @@ function meas_Callback(hObject, eventdata, handles)
         set(handles.area, 'String', 'Average not found')
         set(handles.area, 'Enable', 'off')
         set(handles.band, 'Enable', 'off')
+        set(handles.area_text, 'Enable', 'off')
+        set(handles.band_text, 'Enable', 'off')
     end
 
 
@@ -297,12 +313,21 @@ function area_Callback(hObject, eventdata, handles)
     measure = define_measure(handles);
     areas_list = get(handles.area, 'String');
     area = areas_list(get(handles.area, 'Value'));
+    if strcmpi(area, 'Channels')
+        area = "Total";
+    end
     [~, ~, locations] = load_data(strcat(path_check(dataPath), ...
         path_check(measure), path_check('Epmean'), path_check(area), ...
         'PAT.mat'));
     set(handles.loc, 'Value', 1)
     set(handles.loc, 'String', locations)
-    set(handles.loc, 'Visible', 'on')
+    if not(strcmpi(locations, 'asymmetry') | strcmpi(locations, 'global'))
+        set(handles.loc, 'Visible', 'on')
+        set(handles.location_text, 'Visible', 'on')
+    else
+        set(handles.loc, 'Visible', 'off')
+        set(handles.location_text, 'Visible', 'off')
+    end
 
 
 function area_CreateFcn(hObject, eventdata, handles)

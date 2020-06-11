@@ -17,6 +17,7 @@ function signals_extractor(dataPath, fs)
         fs = [];
     end
     cases = define_cases(dataPath);
+    cases(contains({cases.name}, 'Converted')) = [];
     dataPath = path_check(dataPath);
     n_cases = length(cases);
     
@@ -31,7 +32,8 @@ function signals_extractor(dataPath, fs)
     for i = 1:n_cases
         data = struct();
         name = split(cases(i).name, '.');
-        name = name{1};
+        name = split(name{1}, filesep);
+        name = name{end};
         [time_series, fsOld, locs] = load_data(strcat(dataPath, ...
             cases(i).name));
         if not(isempty(fs)) && not(isempty(fsOld))
@@ -47,7 +49,15 @@ function signals_extractor(dataPath, fs)
         if not(isempty(locs))
             data.locations = locs;
         end
-        save(strcat(outDir, name, '.mat'), 'data')
+        info_data = whos('data');
+        if info_data.bytes > 2e+09
+            save(strcat(outDir, name, '.mat'), 'data', '-v7.3')
+        else
+            save(strcat(outDir, name, '.mat'), 'data')
+        end
+        clear data
+        clear time_series
+        clear locs
         waitbar(i/n_cases, f);
     end
     close(f)
