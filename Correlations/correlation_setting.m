@@ -27,7 +27,7 @@ function [data, sub_list, alpha, bg_color, locs, bands_names, P, RHO, ...
     analysis = an_paths(an_selected == 1);
     
     sub_selected = [get(handles.HC, 'Value'), get(handles.PAT, 'Value')];
-    sub_types = {'HC.mat', 'PAT.mat'};
+    sub_types = {'First.mat', 'Second.mat'};
     sub_group = sub_types(sub_selected == 1);
     Subjects = load_data(get(handles.aux_sub, 'String'));
     sub_list = {};

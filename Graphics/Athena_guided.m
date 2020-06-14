@@ -39,8 +39,11 @@ function Athena_guided_OpeningFcn(hObject, eventdata, handles, varargin)
     if nargin >= 6
         set(handles.aux_sub, 'String', varargin{3})
     end
-    if nargin == 7
+    if nargin >= 7
         set(handles.aux_loc, 'String', varargin{4})
+    end
+    if nargin >= 8
+        set(handles.sub_types, 'Data', varargin{5})
     end
     
     if exist('fooof', 'file')
@@ -127,7 +130,8 @@ function totBand_text_CreateFcn(hObject, eventdata, handles)
 
 
 function Run_Callback(hObject, eventdata, handles)  
-    [~, ~, sub, loc] = GUI_transition(handles, 'dataPath', 'measure');
+    [~, ~, sub, loc, sub_types] = GUI_transition(handles, 'dataPath', ...
+        'measure');
     measures = ["PSDr", "PLV", "PLI", "AEC", "AECo", "offset", "exponent"];
     dataPath = string(get(handles.dataPath_text, 'String'));
     
@@ -144,7 +148,7 @@ function Run_Callback(hObject, eventdata, handles)
     meas_state = get(handles.meas, 'Value');
     measure = measures(meas_state);
     close(Athena_guided)
-    Athena_params(dataPath, measure, sub, loc)
+    Athena_params(dataPath, measure, sub, loc, sub_types)
     
     
 function data_search_Callback(hObject, eventdata, handles)
@@ -170,7 +174,8 @@ function back_Callback(hObject, eventdata, handles)
     cd(char(funDir{1}));
     addpath 'Auxiliary'
     addpath 'Graphics'
-    [~, ~, sub, loc] = GUI_transition(handles, 'dataPath', 'measure');
+    [~, ~, sub, loc, sub_types] = GUI_transition(handles, 'dataPath', ...
+        'measure');
     measures = ["PSDr", "PLV", "PLI", "AEC", "AECo", "offset", "exponent"];
     measure = measures(get(handles.meas, 'Value'));
     dataPath = string(get(handles.dataPath_text, 'String'));
@@ -178,7 +183,7 @@ function back_Callback(hObject, eventdata, handles)
     if strcmp('es. C:\User\Data', dataPath)
         dataPath = "Static Text";
     end
-    Athena(dataPath, measure, sub, loc)
+    Athena(dataPath, measure, sub, loc, sub_types)
 
     
 function axes3_CreateFcn(hObject, eventdata, handles)
@@ -190,7 +195,8 @@ function next_Callback(~, eventdata, handles)
     cd(char(funDir{1}));
     addpath 'Auxiliary'
     addpath 'Graphics'
-    [~, ~, sub, loc] = GUI_transition(handles, 'dataPath', 'measure');
+    [~, ~, sub, loc, sub_types] = GUI_transition(handles, 'dataPath', ...
+        'measure');
     measures = ["PSDr", "PLV", "PLI", "AEC", "AECo", "offset", "exponent"];
     measure = measures(get(handles.meas, 'Value'));
     dataPath = string(get(handles.dataPath_text, 'String'));
@@ -198,4 +204,4 @@ function next_Callback(~, eventdata, handles)
     if strcmp('es. C:\User\Data', dataPath)
         dataPath = "Static Text";
     end
-    Athena_epmean(dataPath, measure, sub, loc)
+    Athena_epmean(dataPath, measure, sub, loc, sub_types)

@@ -2,21 +2,23 @@
 % This function computes the statistical analysis between two groups of
 % subjects and saves data relative to significant comparisons
 %
-% [P, Psig, data, data_sig] = statistical_analysis(HC, PAT, locs, cons, ...
-%     dataPath, measure, analysis, save_check)
+% [P, Psig, data, data_sig] = statistical_analysis(First, Second, locs, cons, ...
+%     dataPath, measure, analysis, group_types, save_check)
 %
 % input:
-%   HC is the data matrix relative to the first group of subjects (healty
-%       controls)
-%   PAT is the data matrix relative to the second group of subjects
-%       (patients)
+%   First is the data matrix relative to the first group of subjects 
+%       (such as healthy controls)
+%   Second is the data matrix relative to the second group of subjects
+%       (such as patients)
 %   locs is the ordered list of locations
 %   cons is the conservativiteness value (0 for minimum conservativeness, 1
 %       for maximum conservativeness)
-%   dataPath is the path relative to the main study's folder (or directory)
+%   dataPath is the Path relative to the main study's folder (or directory)
 %   measure is the name of the analyzed measure
 %   analysis is the name of the location-related analysis to compute
 %       (Areas, Global, Total or Asymmetry)
+%   group_types is the cell array which contains the name of the analyzed
+%       groups of subjects
 %   save_check has to be 1 if the user want to save also the resulting 
 %       tables (0 by default)
 %
@@ -29,23 +31,27 @@
 %   data_sig is the matrix of values statistically compared and resulted as
 %       significant
 
-function [P, Psig, data, data_sig] = statistical_analysis(HC, PAT, ...
-    locs, cons, dataPath, measure, analysis, save_check)
-    if nargin < 8
+function [P, Psig, data, data_sig] = statistical_analysis(First, ...
+    Second, locs, cons, dataPath, measure, analysis, group_types, ...
+    save_check)
+    if nargin <= 7
+        group_types = {'Group 0', 'Group 1'};
+    end
+    if nargin <= 8
         save_check = 0;
     end
-    nHC = size(HC, 1);
-    nPAT = size(PAT, 1);
+    nFirst = size(First, 1);
+    nSecond = size(Second, 1);
     nLocs = length(locs);
     nBands = 1;
-    if nLocs*nHC < numel(HC)
-        nBands = size(HC, 2);
+    if nLocs*nFirst < numel(First)
+        nBands = size(First, 2);
     end
     alpha = alpha_levelling(cons, nLocs, nBands);
     P = zeros(nBands, nLocs);
     Psig = {};
     data_sig = [];
-    data = zeros(nPAT+nHC, nBands*nLocs);
+    data = zeros(nSecond+nFirst, nBands*nLocs);
     bands_names = cell(nBands, 1);
     for i = 1:nBands
         bands_names{i, 1} = char_check(strcat("Band ", string(i)));
@@ -59,19 +65,21 @@ function [P, Psig, data, data_sig] = statistical_analysis(HC, PAT, ...
                 index = j+nBands*(i-1);
                 data_names{index} = char_check(strcat(aux_loc, ...
                     " - Band ", string(j)));
-                [P(j, i), aux_Psig, aux_data] = u_test(PAT(:, j, i), ...
-                    HC(:, j, i), char_check(strcat("Band ", string(j), ...
-                    " ", locs{i})), 'PAT', 'HC', alpha);
-                data(1:nPAT, index) = PAT(:, j, i);
-                data(nPAT+1:end, index) = HC(:, j, i);
+                [P(j, i), aux_Psig, aux_data] = u_test(Second(:, j, i), ...
+                    First(:, j, i), char_check(strcat("Band ", ...
+                    string(j), " ", locs{i})), group_types{1}, ...
+                    group_types{2}, alpha);
+                data(1:nSecond, index) = Second(:, j, i);
+                data(nSecond+1:end, index) = First(:, j, i);
                 Psig = [Psig; aux_Psig];
                 data_sig = [data_sig, aux_data];
             end
         else
-            [P(i), aux_Psig, aux_data] = u_test(PAT(:, i), HC(:, i), ...
-                char_check(locs{i}), 'PAT', 'HC', alpha);
-            data(1:nPAT, i) = PAT(:, i);
-            data(nPAT+1:end, i) = HC(:, i);
+            [P(i), aux_Psig, aux_data] = u_test(Second(:, i), ...
+                First(:, i), char_check(locs{i}), group_types{1}, ...
+                group_types{2}, alpha);
+            data(1:nSecond, i) = Second(:, i);
+            data(nSecond+1:end, i) = First(:, i);
             Psig = [Psig, aux_Psig];
             data_sig = [data_sig, aux_data];
         end

@@ -35,6 +35,9 @@ function Athena_selectClass_OpeningFcn(hObject, eventdata, handles, varargin)
     if nargin == 7
         set(handles.aux_loc, 'String', varargin{4})
     end
+    if nargin >= 8
+        set(handles.sub_types, 'Data', varargin{5})
+    end
     auxPath = pwd;
     funDir = mfilename('fullpath');
     funDir = split(funDir, 'Graphics');
@@ -68,9 +71,9 @@ function NeuralNetwork_Callback(hObject, eventdata, handles)
         cd(char(funDir{1}));
         addpath 'Auxiliary'
         addpath 'Graphics'
-        [dataPath, measure, sub, loc] = GUI_transition(handles);
+        [dataPath, measure, sub, loc, sub_types] = GUI_transition(handles);
         close(Athena_selectClass)
-        Athena_classification(dataPath, measure, sub, loc, 'nn')
+        Athena_classification(dataPath, measure, sub, loc, sub_types, 'nn')
     end
 
 
@@ -81,7 +84,7 @@ function RandomForest_Callback(hObject, eventdata, handles)
         cd(char(funDir{1}));
         addpath 'Auxiliary'
         addpath 'Graphics'
-        [dataPath, measure, sub, loc] = GUI_transition(handles);
+        [dataPath, measure, sub, loc, sub_types] = GUI_transition(handles);
         close(Athena_selectClass)
-        Athena_classification(dataPath, measure, sub, loc, 'rf')
+        Athena_classification(dataPath, measure, sub, loc, sub_types, 'rf')
     end

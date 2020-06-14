@@ -36,7 +36,10 @@ function Athena_classification_OpeningFcn(hObject, eventdata, handles, ...
     if nargin >= 7
         set(handles.aux_loc, 'String', varargin{4})
     end
-    if nargin == 8
+    if nargin >= 8
+        set(handles.sub_types, 'Data', varargin{5})
+    end
+    if nargin >= 9
         if strcmp(varargin{5}, 'nn')
             set(handles.help_button, 'Callback', ...
                 "web('https://github.com/smlacava/Athena/wiki/Neural-Network-classifier')")
@@ -215,9 +218,9 @@ function back_Callback(hObject, eventdata, handles)
     cd(char(funDir{1}));
     addpath 'Auxiliary'
     addpath 'Graphics'
-    [dataPath, measure, sub, loc] = GUI_transition(handles);
+    [dataPath, measure, sub, loc, sub_types] = GUI_transition(handles);
     close(Athena_classification)
-    Athena_selectClass(dataPath, measure, sub, loc)
+    Athena_selectClass(dataPath, measure, sub, loc, sub_types)
 
 
 function axes3_CreateFcn(hObject, eventdata, handles)

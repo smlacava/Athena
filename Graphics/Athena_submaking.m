@@ -53,13 +53,15 @@ function Athena_submaking_OpeningFcn(hObject, ~, handles, varargin)
     if nargin >= 6
         set(handles.aux_sub, 'String', varargin{3})
     end
-    if nargin == 7
+    if nargin >= 7
         loc = varargin{4};
         if not(strcmp(loc, "Static Text"))
             set(handles.aux_loc, 'String', loc)
         end
     end
-    
+    if nargin >= 8
+        set(handles.sub_types, 'Data', varargin{5})
+    end
 
 function varargout = Athena_submaking_OutputFcn(~, ~, handles) 
     varargout{1} = handles.output;
@@ -71,8 +73,8 @@ function back_Callback(~, ~, handles)
     cd(char(funDir{1}));
     addpath 'Auxiliary'
     addpath 'Graphics'
-    [dataPath, measure, sub, loc] = GUI_transition(handles);
-    Athena_epmean(dataPath, measure, sub, loc)
+    [dataPath, measure, sub, loc, sub_types] = GUI_transition(handles);
+    Athena_epmean(dataPath, measure, sub, loc, sub_types)
     close(Athena_submaking)
     
 

@@ -43,7 +43,10 @@ function Athena_decompressor_OpeningFcn(hObject, eventdata, handles, varargin)
     if nargin >= 7
         set(handles.aux_loc, 'String', varargin{4})
     end
-    if nargin == 8
+    if nargin >= 8
+        set(handles.sub_types, 'Data', varargin{5})
+    end
+    if nargin == 9
         set(handles.check_dec, 'String', varargin{5})
         if strcmp(varargin{5}, 'folder')
             set(handles.title, 'String', "     Folder decompressor")
@@ -85,9 +88,9 @@ function back_Callback(hObject, eventdata, handles)
     cd(char(funDir{1}));
     addpath 'Auxiliary'
     addpath 'Graphics'
-    [dataPath, measure, sub, loc] = GUI_transition(handles);
+    [dataPath, measure, sub, loc, sub_types] = GUI_transition(handles);
     close(Athena_decompressor)
-    Athena_utility(dataPath, measure, sub, loc)
+    Athena_utility(dataPath, measure, sub, loc, sub_types)
 
     
 function axes3_CreateFcn(hObject, eventdata, handles)

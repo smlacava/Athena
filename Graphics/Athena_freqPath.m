@@ -42,8 +42,11 @@ function Athena_freqPath_OpeningFcn(hObject, eventdata, handles, varargin)
     if nargin >= 6
         set(handles.aux_sub, 'String', varargin{3})
     end
-    if nargin == 7
+    if nargin >= 7
         set(handles.aux_loc, 'String', varargin{4})
+    end
+    if nargin >= 8
+        set(handles.sub_types, 'Data', varargin{5})
     end
 
     
@@ -75,13 +78,14 @@ function back_Callback(hObject, eventdata, handles)
     cd(char(funDir{1}));
     addpath 'Auxiliary'
     addpath 'Graphics'
-    [~, measure, sub, loc] = GUI_transition(handles, 'dataPath', 'measure');
+    [~, measure, sub, loc, sub_types] = GUI_transition(handles, ...
+        'dataPath', 'measure');
     dataPath = string(get(handles.dataPath_text, 'String'));
     close(Athena_freqPath)
     if strcmp('es. C:\User\Data', dataPath)
         dataPath = "Static Text";
     end
-    Athena(dataPath, measure, sub, loc)
+    Athena(dataPath, measure, sub, loc, sub_types)
 
     
 function axes3_CreateFcn(hObject, eventdata, handles)
@@ -93,14 +97,15 @@ function next_Callback(~, eventdata, handles)
     cd(char(funDir{1}));
     addpath 'Auxiliary'
     addpath 'Graphics'
-    [~, measure, sub, loc] = GUI_transition(handles, 'dataPath', 'measure');
+    [~, measure, sub, loc, sub_types] = GUI_transition(handles, ...
+        'dataPath', 'measure');
     dataPath = string(get(handles.dataPath_text, 'String'));
     if exist(dataPath, 'dir')
         close(Athena_freqPath)
         if strcmp('es. C:\User\Data', dataPath)
             dataPath = "Static Text";
         end
-        Athena_freqShow(dataPath, measure, sub, loc)
+        Athena_freqShow(dataPath, measure, sub, loc, sub_types)
     else
         problem('Data directory not found.')
     end

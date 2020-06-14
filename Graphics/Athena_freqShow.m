@@ -88,8 +88,11 @@ function Athena_freqShow_OpeningFcn(hObject, ~, handles, varargin)
     if nargin >= 6
         set(handles.aux_sub, 'String', varargin{3})
     end
-    if nargin == 7
+    if nargin >= 7
         set(handles.aux_loc, 'String', varargin{4})
+    end
+    if nargin >= 8
+        set(handles.sub_types, 'Data', varargin{5})
     end
 
     
@@ -98,9 +101,9 @@ function varargout = Athena_freqShow_OutputFcn(~, ~, handles)
 
 
 function back_Callback(~, ~, handles)
-    [dataPath, measure, sub, loc] = GUI_transition(handles);
+    [dataPath, measure, sub, loc, sub_types] = GUI_transition(handles);
     close(Athena_freqShow)
-    Athena(dataPath, measure, sub, loc)
+    Athena(dataPath, measure, sub, loc, sub_types)
 
 
 function signal_CreateFcn(~, ~, ~)

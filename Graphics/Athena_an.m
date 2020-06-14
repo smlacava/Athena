@@ -32,8 +32,11 @@ function Athena_an_OpeningFcn(hObject, eventdata, handles, varargin)
     if nargin >= 6
         set(handles.aux_sub, 'String', varargin{3})
     end
-    if nargin == 7
+    if nargin >= 7
         set(handles.aux_loc, 'String', varargin{4})
+    end
+    if nargin >= 8
+        set(handles.sub_types, 'Data', varargin{5})
     end
     auxPath = pwd;
     funDir = mfilename('fullpath');
@@ -60,9 +63,9 @@ function StatAn_Callback(hObject, eventdata, handles)
     cd(char(funDir{1}));
     addpath 'Auxiliary'
     addpath 'Graphics'
-    [dataPath, measure, sub, loc] = GUI_transition(handles);
+    [dataPath, measure, sub, loc, sub_types] = GUI_transition(handles);
     close(Athena_an)
-    Athena_statistics(dataPath, measure, sub, loc)
+    Athena_statistics(dataPath, measure, sub, loc, sub_types)
 
 
 function clasData_Callback(hObject, eventdata, handles)
@@ -71,9 +74,9 @@ function clasData_Callback(hObject, eventdata, handles)
     cd(char(funDir{1}));
     addpath 'Auxiliary'
     addpath 'Graphics'
-    [dataPath, measure, sub, loc] = GUI_transition(handles);
+    [dataPath, measure, sub, loc, sub_types] = GUI_transition(handles);
     close(Athena_an)
-    Athena_mergsig(dataPath, measure, sub, loc)
+    Athena_mergsig(dataPath, measure, sub, loc, sub_types)
 
 
 function EpAn_Callback(hObject, eventdata, handles)
@@ -82,9 +85,9 @@ function EpAn_Callback(hObject, eventdata, handles)
     cd(char(funDir{1}));
     addpath 'Auxiliary'
     addpath 'Graphics'
-    [dataPath, measure, sub, loc] = GUI_transition(handles);
+    [dataPath, measure, sub, loc, sub_types] = GUI_transition(handles);
     close(Athena_an)
-    Athena_epan(dataPath, measure, sub, loc)
+    Athena_epan(dataPath, measure, sub, loc, sub_types)
 
     
 function meaext_Callback(hObject, eventdata, handles)
@@ -93,9 +96,9 @@ function meaext_Callback(hObject, eventdata, handles)
     cd(char(funDir{1}));
     addpath 'Auxiliary'
     addpath 'Graphics'
-    [dataPath, measure, sub, loc] = GUI_transition(handles);
+    [dataPath, measure, sub, loc, sub_types] = GUI_transition(handles);
     close(Athena_an)
-    Athena_guided(dataPath, measure, sub, loc)
+    Athena_guided(dataPath, measure, sub, loc, sub_types)
 
     
 function tempav_Callback(hObject, eventdata, handles)
@@ -104,9 +107,9 @@ function tempav_Callback(hObject, eventdata, handles)
     cd(char(funDir{1}));
     addpath 'Auxiliary'
     addpath 'Graphics'
-    [dataPath, measure, sub, loc] = GUI_transition(handles);
+    [dataPath, measure, sub, loc, sub_types] = GUI_transition(handles);
     close(Athena_an)
-    Athena_epmean(dataPath, measure, sub, loc)
+    Athena_epmean(dataPath, measure, sub, loc, sub_types)
 
 
 function scatterAn_Callback(hObject, eventdata, handles)
@@ -115,6 +118,6 @@ function scatterAn_Callback(hObject, eventdata, handles)
     cd(char(funDir{1}));
     addpath 'Auxiliary'
     addpath 'Graphics'
-    [dataPath, measure, sub, loc] = GUI_transition(handles);
+    [dataPath, measure, sub, loc, sub_types] = GUI_transition(handles);
     close(Athena_an)
-    Athena_scatter(dataPath, measure, sub, loc)
+    Athena_scatter(dataPath, measure, sub, loc, sub_types)

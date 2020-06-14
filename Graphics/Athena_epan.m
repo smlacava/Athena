@@ -44,8 +44,11 @@ function Athena_epan_OpeningFcn(hObject, eventdata, handles, varargin)
         sub_list = string(sub_list(:, 1))';
         set(handles.Subjects, 'String', sub_list);
     end
-    if nargin == 7
+    if nargin >= 7
         set(handles.aux_loc, 'String', varargin{4})
+    end
+    if nargin >= 8
+        set(handles.sub_types, 'Data', varargin{5})
     end
 
 
@@ -64,6 +67,21 @@ function dataPath_text_Callback(hObject, eventdata, handles)
     addpath 'Epochs Analysis'
     dataPath = get(handles.dataPath_text, 'String');
     dataPath = path_check(dataPath);
+    subjectsFile = strcat(path_check(limit_path(dataPath, ...
+        get(handles.aux_measure, 'String'))), 'Subjects.mat');
+    if exist(subjectsFile, 'file')
+        set(handles.aux_sub, 'String', subjectsFile)
+        try
+            sub_info = load(subjectsFile);
+            aux_sub_info = fields(sub_info);
+            eval(strcat("sub_info = sub_info.", aux_sub_info{1}, ";"));
+            sub_types = categories(categorical(sub_info(:, end)));
+            if length(sub_types) == 2
+                set(handles.sub_types, 'Data', sub_types)
+            end
+        catch
+        end
+    end
     cd(dataPath)
     if exist('auxiliary.txt', 'file')
         auxID = fopen('auxiliary.txt', 'r');
@@ -182,7 +200,8 @@ function back_Callback(hObject, eventdata, handles)
     cd(char(funDir{1}));
     addpath 'Auxiliary'
     addpath 'Graphics'
-    [dataPath, measure, sub, ~] = GUI_transition(handles, 'loc');
+    [dataPath, measure, sub, ~, sub_types] = GUI_transition(handles, ...
+        'loc');
     loc = string(get(handles.aux_loc, 'String'));
     if strcmp(loc, 'es. C:\User\Locations.mat')
         loc="Static Text";
@@ -191,7 +210,7 @@ function back_Callback(hObject, eventdata, handles)
         dataPath="Static Text";
     end
     close(Athena_epan)
-    Athena_an(dataPath, measure, sub, loc)
+    Athena_an(dataPath, measure, sub, loc, sub_types)
 
     
 function axes3_CreateFcn(hObject, eventdata, handles)

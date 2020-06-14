@@ -36,10 +36,15 @@ function Athena_meascorr_OpeningFcn(hObject, eventdata, handles, varargin)
     if nargin >= 6
         set(handles.aux_sub, 'String', varargin{3})
     end
-    if nargin == 7
+    if nargin >= 7
         set(handles.aux_loc, 'String', varargin{4})
     end
-    
+    if nargin >= 8
+        sub_types = varargin{5};
+        set(handles.sub_types, 'Data', sub_types)
+        set(handles.PAT, 'String', sub_types{2})
+        set(handles.HC, 'String', sub_types{1})
+    end
 
     
 function varargout = Athena_meascorr_OutputFcn(hObject, eventdata, handles) 
@@ -47,13 +52,21 @@ function varargout = Athena_meascorr_OutputFcn(hObject, eventdata, handles)
 
 
 function dataPath_text_Callback(hObject, eventdata, handles)
-    auxPath = pwd;
-    funDir = mfilename('fullpath');
-    funDir = split(funDir, 'Graphics');
-    cd(char(funDir{1}));
-    addpath 'Auxiliary'
-    addpath 'Graphics'
-    addpath 'Epochs Analysis'
+    dataPath = get(handles.dataPath_text, 'String');
+    subjectsFile = strcat(path_check(dataPath), 'Subjects.mat');
+    if exist(subjectsFile, 'file')
+        set(handles.aux_sub, 'String', subjectsFile)
+        try
+            sub_info = load(subjectsFile);
+            aux_sub_info = fields(sub_info);
+            eval(strcat("sub_info = sub_info.", aux_sub_info{1}, ";"));
+            sub_types = categories(categorical(sub_info(:, end)));
+            if length(sub_types) == 2
+                set(handles.sub_types, 'Data', sub_types)
+            end
+        catch
+        end
+    end
 
 
 function dataPath_text_CreateFcn(hObject, eventdata, handles)
@@ -152,12 +165,12 @@ function back_Callback(hObject, eventdata, handles)
     cd(char(funDir{1}));
     addpath 'Auxiliary'
     addpath 'Graphics'
-    [dataPath, measure, sub, loc] = GUI_transition(handles);
+    [dataPath, measure, sub, loc, sub_types] = GUI_transition(handles);
     if strcmp(dataPath, 'es. C:\User\Data')
         dataPath = "Static Text";
     end
     close(Athena_meascorr)
-    Athena_statistics(dataPath, measure, sub, loc)
+    Athena_statistics(dataPath, measure, sub, loc, sub_types)
 
 
 function axes3_CreateFcn(hObject, eventdata, handles)
@@ -181,3 +194,4 @@ function meas2_CreateFcn(hObject, eventdata, handles)
             get(0, 'defaultUicontrolBackgroundColor'))
         set(hObject, 'BackgroundColor', 'white');
     end
+   

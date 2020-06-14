@@ -28,7 +28,7 @@ function [analysis, subjects] = impossible_analysis(dataPath, measure)
     dataPath = path_check(char_check(dataPath));
     dataPath = strcat(dataPath, measure, path_check('Epmean'));
     
-    subjects = {'PAT.mat', 'HC.mat'};
+    subjects = {'Second.mat', 'First.mat'};
     analysis = {'Total', 'Global', 'Asymmetry', 'Areas'};
     n_sub = length(subjects);
     n_an = length(analysis);

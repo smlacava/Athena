@@ -52,10 +52,13 @@ function Athena_divider_OpeningFcn(hObject, eventdata, handles, ...
     if nargin >= 6
         set(handles.aux_sub, 'String', varargin{3})
     end
-    if nargin == 7
+    if nargin >= 7
         if not(strcmp(varargin{4}, "Static Text"))
             set(handles.aux_loc, 'String', varargin{4})
         end
+    end
+    if nargin >= 8
+        set(handles.sub_types, 'Data', varargin{5})
     end
 
     
@@ -142,9 +145,9 @@ function back_Callback(hObject, eventdata, handles)
     cd(char(funDir{1}));
     addpath 'Auxiliary'
     addpath 'Graphics'
-    [dataPath, measure, sub, loc] = GUI_transition(handles);
+    [dataPath, measure, sub, loc, sub_types] = GUI_transition(handles);
     close(Athena_divider)
-    Athena_utility(dataPath, measure, sub, loc)
+    Athena_utility(dataPath, measure, sub, loc, sub_types)
 
 
 function axes3_CreateFcn(hObject, eventdata, handles)

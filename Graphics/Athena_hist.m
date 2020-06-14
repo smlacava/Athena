@@ -39,8 +39,11 @@ function Athena_hist_OpeningFcn(hObject, eventdata, handles, varargin)
     if nargin >= 6
         set(handles.aux_sub, 'String', varargin{3})
     end
-    if nargin == 7
+    if nargin >= 7
         set(handles.aux_loc, 'String', varargin{4})
+    end
+    if nargin >= 8
+        set(handles.sub_types, 'Data', varargin{5})
     end
     dataPath_text_Callback(hObject, eventdata, handles)
     
@@ -60,6 +63,20 @@ function dataPath_text_Callback(hObject, eventdata, handles)
     addpath 'Epochs Analysis'
     
     dataPath = get(handles.dataPath_text, 'String');
+    subjectsFile = strcat(path_check(dataPath), 'Subjects.mat');
+    if exist(subjectsFile, 'file')
+        set(handles.aux_sub, 'String', subjectsFile)
+        try
+            sub_info = load(subjectsFile);
+            aux_sub_info = fields(sub_info);
+            eval(strcat("sub_info = sub_info.", aux_sub_info{1}, ";"));
+            sub_types = categories(categorical(sub_info(:, end)));
+            if length(sub_types) == 2
+                set(handles.sub_types, 'Data', sub_types)
+            end
+        catch
+        end
+    end
     if exist(dataPath, 'dir')
         cases = dir(dataPath);
         measures = [];
@@ -100,7 +117,7 @@ function Run_Callback(hObject, eventdata, handles)
     addpath 'Correlations'
     addpath 'Auxiliary'
     addpath 'Graphics'
-    
+    sub_types = get(handles.sub_types, 'Data');
     if strcmp(get(handles.dataPath_text, 'String'), 'es. C:\User\Data')
         problem('You have to select a directory')
     else
@@ -118,14 +135,14 @@ function Run_Callback(hObject, eventdata, handles)
             set(handles.histogram2, 'Position', [0.4825 0.5622 0.498 0.31])
             histogram(HC, bins, 'FaceColor', [0.43, 0.8, 0.72], ...
                 'FaceAlpha', 1)
-            legend({'group 0'})
+            legend(sub_types(1))
             L = ylim;
             ylim([L(1) L(2)*1.1])
             axis(handles.histogram2);
             axes(handles.histogram2);
             histogram(PAT, bins, 'FaceColor', [0.07, 0.12, 0.42], ...
                 'FaceAlpha', 1)
-            legend({'group 1'})
+            legend(sub_types(2))
             L = ylim;
             ylim([L(1) L(2)*1.1])
         elseif not(isempty(PAT))
@@ -139,7 +156,7 @@ function Run_Callback(hObject, eventdata, handles)
             end
             histogram(PAT, bins, 'FaceColor', [0.07, 0.12, 0.42], ...
                 'FaceAlpha', 1)
-            legend({'group 1'})
+            legend(sub_types(2))
             L = ylim;
             ylim([L(1) L(2)*1.1])
         elseif not(isempty(HC))
@@ -153,7 +170,7 @@ function Run_Callback(hObject, eventdata, handles)
             end
             histogram(HC, bins, 'FaceColor', [0.43, 0.8, 0.72], ...
                 'FaceAlpha', 1)
-            legend({'group 0'})
+            legend(sub_types(1))
             L = ylim;
             ylim([L(1) L(2)*1.1])
         else
@@ -197,8 +214,8 @@ function [PAT, HC, bins, measure, band, location] = ...
         check = 1;
     end
     
-    [PAT, ~, locs] = load_data(strcat(measure_path, 'PAT.mat'));
-    HC = load_data(strcat(measure_path, 'HC.mat'));
+    [PAT, ~, locs] = load_data(strcat(measure_path, 'Second.mat'));
+    HC = load_data(strcat(measure_path, 'First.mat'));
     
     if check == 0
         idx_loc = 1;
@@ -233,12 +250,12 @@ function back_Callback(hObject, eventdata, handles)
     cd(char(funDir{1}));
     addpath 'Auxiliary'
     addpath 'Graphics'
-    [dataPath, measure, sub, loc] = GUI_transition(handles);
+    [dataPath, measure, sub, loc, sub_types] = GUI_transition(handles);
     if strcmp(dataPath, 'es. C:\User\Data')
         dataPath = "Static Text";
     end
     close(Athena_hist)
-    Athena_statistics(dataPath, measure, sub, loc)
+    Athena_statistics(dataPath, measure, sub, loc, sub_types)
 
 
 function export_Callback(hObject, eventdata, handles)
@@ -255,7 +272,7 @@ function export_Callback(hObject, eventdata, handles)
             histogram_initialization(handles);
     
         distributions_histogram(HC, PAT, measure, ...
-            {'Group 0', 'Group 1'}, location, band, bins)
+            get(handles.sub_types, 'Data'), location, band, bins)
     end
 
 

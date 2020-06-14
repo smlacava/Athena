@@ -39,8 +39,11 @@ function Athena_distr_OpeningFcn(hObject, eventdata, handles, varargin)
     if nargin >= 6
         set(handles.aux_sub, 'String', varargin{3})
     end
-    if nargin == 7
+    if nargin >= 7
         set(handles.aux_loc, 'String', varargin{4})
+    end
+    if nargin >= 8
+        set(handles.sub_types, 'Data', varargin{5})
     end
     dataPath_text_Callback(hObject, eventdata, handles)
     
@@ -60,6 +63,20 @@ function dataPath_text_Callback(hObject, eventdata, handles)
     addpath 'Epochs Analysis'
     
     dataPath = get(handles.dataPath_text, 'String');
+    subjectsFile = strcat(path_check(dataPath), 'Subjects.mat');
+    if exist(subjectsFile, 'file')
+        set(handles.aux_sub, 'String', subjectsFile)
+        try
+            sub_info = load(subjectsFile);
+            aux_sub_info = fields(sub_info);
+            eval(strcat("sub_info = sub_info.", aux_sub_info{1}, ";"));
+            sub_types = categories(categorical(sub_info(:, end)));
+            if length(sub_types) == 2
+                set(handles.sub_types, 'Data', sub_types)
+            end
+        catch
+        end
+    end
     if exist(dataPath, 'dir')
         cases = dir(dataPath);
         measures = [];
@@ -100,7 +117,7 @@ function Run_Callback(hObject, eventdata, handles)
     addpath 'Correlations'
     addpath 'Auxiliary'
     addpath 'Graphics'
-    
+    sub_types = get(handles.sub_types, 'Data');
     if strcmp(get(handles.dataPath_text, 'String'), 'es. C:\User\Data')
         problem('You have to select a directory')
     else
@@ -121,14 +138,14 @@ function Run_Callback(hObject, eventdata, handles)
                 [0.43, 0.8, 0.72])
             hold on
             min_lim = 0;
-            list = [list, 'group 0'];
+            list = [list, sub_types{1}];
         end
         if not(isempty(PAT))
             scatter(linspace(1.4, 1.6, length(PAT)), PAT, 36, ...
                 [0.07, 0.12, 0.42])
             hold on
             max_lim = 2;
-            list = [list, 'group 1'];
+            list = [list, sub_types{2}];
         end
         if not(isempty(HC))
             plot([0.3, 0.7], [m1, m1], 'k')
@@ -212,12 +229,12 @@ function back_Callback(hObject, eventdata, handles)
     cd(char(funDir{1}));
     addpath 'Auxiliary'
     addpath 'Graphics'
-    [dataPath, measure, sub, loc] = GUI_transition(handles);
+    [dataPath, measure, sub, loc, sub_types] = GUI_transition(handles);
     if strcmp(dataPath, 'es. C:\User\Data')
         dataPath = "Static Text";
     end
     close(Athena_distr)
-    Athena_statistics(dataPath, measure, sub, loc)
+    Athena_statistics(dataPath, measure, sub, loc, sub_types)
 
 
 function export_Callback(hObject, eventdata, handles)
@@ -228,13 +245,14 @@ function export_Callback(hObject, eventdata, handles)
             return;
         end
     end
+    sub_types = get(handles.sub_types, 'Data');
     if strcmp(get(handles.loc, 'Enable'), 'on') && ...
             strcmp(get(handles.loc, 'Enable'), 'on')
         [PAT, HC, parameter, measure, band, location] = ...
             distributions_initialization(handles);
     
-        distributions_scatterplot(HC, PAT, measure, ...
-            {'Group 0', 'Group 1'}, location, band, parameter)
+        distributions_scatterplot(HC, PAT, measure, sub_types, ...
+            location, band, parameter)
     end
 
 

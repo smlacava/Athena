@@ -39,8 +39,14 @@ function Athena_indcorr_OpeningFcn(hObject, eventdata, handles, varargin)
     if nargin >= 6
         set(handles.aux_sub, 'String', varargin{3})
     end
-    if nargin == 7
+    if nargin >= 7
         set(handles.aux_loc, 'String', varargin{4})
+    end
+    if nargin >= 8
+        sub_types = varargin{5};
+        set(handles.sub_types, 'Data', sub_types)
+        set(handles.PAT, 'String', sub_types{2})
+        set(handles.HC, 'String', sub_types{1})
     end
     set_handles(hObject, eventdata, handles)
 
@@ -116,12 +122,12 @@ function back_Callback(~, eventdata, handles)
     cd(char(funDir{1}));
     addpath 'Auxiliary'
     addpath 'Graphics'
-    [dataPath, measure, sub, loc] = GUI_transition(handles);
+    [dataPath, measure, sub, loc, sub_types] = GUI_transition(handles);
     if strcmp(dataPath, 'es. C:\User\Data')
         dataPath = "Static Text";
     end
     close(Athena_indcorr)
-    Athena_statistics(dataPath, measure, sub, loc)
+    Athena_statistics(dataPath, measure, sub, loc, sub_types)
 
     
 function axes3_CreateFcn(hObject, eventdata, handles)
@@ -152,9 +158,24 @@ function ind_search_Callback(hObject, eventdata, handles)
     
 function set_handles(hObject, eventdata, handles)
     dataPath = get(handles.dataPath_text, 'String');
+    subjectsFile = strcat(path_check(limit_path(dataPath, ...
+        get(handles.aux_measure, 'String'))), 'Subjects.mat');
+    if exist(subjectsFile, 'file')
+        set(handles.aux_sub, 'String', subjectsFile)
+        try
+            sub_info = load(subjectsFile);
+            aux_sub_info = fields(sub_info);
+            eval(strcat("sub_info = sub_info.", aux_sub_info{1}, ";"));
+            sub_types = categories(categorical(sub_info(:, end)));
+            if length(sub_types) == 2
+                set(handles.sub_types, 'Data', sub_types)
+            end
+        catch
+        end
+    end
     if exist(dataPath, 'dir')
         [imp_analysis, imp_subjects] = impossible_analysis(dataPath);
-        subjects_list = {'PAT.mat', 'HC.mat'};
+        subjects_list = {'Second.mat', 'First.mat'};
         s_hand = {handles.PAT, handles.HC};
         analysis_list = {'Total', 'Global', 'Asymmetry', 'Areas'};
         a_hand = {handles.tot_button, handles.glob_button, ...

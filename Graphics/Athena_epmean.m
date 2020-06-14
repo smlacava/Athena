@@ -23,6 +23,7 @@ function Athena_epmean_OpeningFcn(hObject, eventdata, handles, varargin)
     [x, ~] = imread('logo.png');
     Im = imresize(x, [250 250]);
     set(handles.help_button, 'CData', Im)
+    check_types = 0;
     if nargin >= 4
         path = varargin{1};
         set(handles.aux_dataPath, 'String', path)
@@ -44,9 +45,23 @@ function Athena_epmean_OpeningFcn(hObject, eventdata, handles, varargin)
             set(handles.subjectsFile, 'String', ...
                 strcat(path_check(path), 'Subjects.mat'))            
         end
+        try
+            sub_info = load(get(handles.subjectsFile, 'String'));
+            aux_sub_info = fields(sub_info);
+            eval(strcat("sub_info = sub_info.", aux_sub_info{1}, ";"));
+            sub_types = categories(categorical(sub_info(:, end)));
+            if length(sub_types) == 2
+                set(handles.sub_types, 'Data', sub_types)
+                check_types = 1;
+            end
+        catch
+        end
     end
-    if nargin == 7
+    if nargin >= 7
         set(handles.aux_loc, 'String', varargin{4})
+    end
+    if nargin >= 8 && check_types == 0
+        set(handles.sub_types, 'Data', varargin{5})
     end
         
 
@@ -119,7 +134,8 @@ function Run_Callback(hObject, eventdata, handles)
         save(strcat(path_check(get(handles.aux_dataPath, 'String')), ...
             'Subjects.mat'), 'subjects')
     end
-    locs = epmean_and_manage(dataPath, type, sub);
+    [locs, sub_types] = epmean_and_manage(dataPath, type, sub);
+    set(handles.sub_types, 'Data', sub_types)
     if not(isempty(locs))
         set(handles.aux_loc, 'String', locs)
     end
@@ -136,13 +152,13 @@ function data_search_Callback(hObject, eventdata, handles)
 
 
 function next_Callback(~, ~, handles)
-    [dataPath, measure, ~, loc] = GUI_transition(handles, 'sub');
+    [dataPath, measure, ~, loc, sub_types] = GUI_transition(handles, 'sub');
     sub = get(handles.subjectsFile, 'String');
     if strcmp('es. C:\User\Sub.mat', sub)
         sub = "Static Text";
     end
     close(Athena_epmean)
-    Athena_an(dataPath, measure, sub, loc)
+    Athena_an(dataPath, measure, sub, loc, sub_types)
 
 
 function back_Callback(hObject, eventdata, handles)
@@ -175,13 +191,13 @@ function meaext_Callback(hObject, eventdata, handles)
     cd(char(funDir{1}));
     addpath 'Auxiliary'
     addpath 'Graphics'
-    [dataPath, measure, ~, loc] = GUI_transition(handles, 'sub');
+    [dataPath, measure, ~, loc, types] = GUI_transition(handles, 'sub');
     sub = get(handles.subjectsFile, 'String');
     if strcmp('es. C:\User\Sub.mat', sub)
         sub = "Static Text";
     end
     close(Athena_epmean)
-    Athena_guided(dataPath, measure, sub, loc)
+    Athena_guided(dataPath, measure, sub, loc, types)
 
 
 function subMaking_Callback(~, ~, handles)
@@ -192,5 +208,5 @@ function subMaking_Callback(~, ~, handles)
     addpath 'Graphics'
     [dataPath, measure, ~, loc] = GUI_transition(handles, 'sub');
     sub = string(get(handles.subjectsFile, 'String'));
-    Athena_submaking(dataPath, measure, sub, loc)
+    Athena_submaking(dataPath, measure, sub, loc, types)
     close(Athena_epmean)

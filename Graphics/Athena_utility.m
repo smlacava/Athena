@@ -32,8 +32,11 @@ function Athena_utility_OpeningFcn(hObject, eventdata, handles, varargin)
     if nargin >= 6
         set(handles.aux_sub, 'String', varargin{3})
     end
-    if nargin == 7
+    if nargin >= 7
         set(handles.aux_loc, 'String', varargin{4})
+    end
+    if nargin >= 8
+        set(handles.sub_types, 'Data', varargin{5})
     end
     auxPath = pwd;
     funDir = mfilename('fullpath');
@@ -81,13 +84,13 @@ function openAnalysis(utility, handles)
     cd(char(funDir{1}));
     addpath 'Auxiliary'
     addpath 'Graphics'
-    [dataPath, measure, sub, loc] = GUI_transition(handles);
+    [dataPath, measure, sub, loc, sub_types] = GUI_transition(handles);
     close(Athena_utility)
     an_handle = analysis_interfaces{strcmp(analysis_list, utility)};
     if strcmp(utility, 'folder_decompress')
-        an_handle(dataPath, measure, sub, loc, 'folder')
+        an_handle(dataPath, measure, sub, loc, sub_types, 'folder')
     elseif strcmp(utility, 'file_decompress')
-        an_handle(dataPath, measure, sub, loc, 'file')
+        an_handle(dataPath, measure, sub, loc, sub_types, 'file')
     else
-        an_handle(dataPath, measure, sub, loc)
+        an_handle(dataPath, measure, sub, loc, sub_types)
     end

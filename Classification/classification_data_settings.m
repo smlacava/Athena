@@ -16,11 +16,11 @@ function classification_data_settings(dataPath, analysis_types, ...
     measures, data_type)
 
     subjects = load_data(strcat(dataPath, 'Subjects.mat'));
-    if isstring(subjects(:, end))
-        subjects = str2double(subjects(:, end));
-    end
-    nPAT = sum(subjects(:, end));
-    nHC = length(subjects)-nPAT;
+
+    cat_subjects = categorical(subjects(:, end));
+    sub_types = categories(cat_subjects);
+    nPAT = sum(cat_subjects == sub_types{2});
+    nHC = length(cat_subjects)-nPAT;
     
     outPath = path_check(create_directory(dataPath, 'Classification'));
     dataPath = path_check(strcat(path_check(dataPath), 'StatAn'));

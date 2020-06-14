@@ -39,11 +39,14 @@ function Athena_utest_OpeningFcn(hObject, eventdata, handles, varargin)
     if nargin >= 6
         set(handles.aux_sub, 'String', varargin{3})
     end
-    if nargin == 7
+    if nargin >= 7
         loc = varargin{4};
         if not(strcmp(loc, 'Static Text'))
             set(handles.aux_loc, 'String', loc)
         end
+    end
+    if nargin >= 8
+        set(handles.sub_types, 'Data', varargin{5})
     end
     hands = [handles.asy_button, handles.tot_button, ...
         handles.glob_button, handles.areas_button];
@@ -51,13 +54,14 @@ function Athena_utest_OpeningFcn(hObject, eventdata, handles, varargin)
     for i = 1:length(types)
         try
             load(strcat(path_check(path), path_check(measure), ...
-                path_check('Epmean'), path_check(types{i}), 'PAT.mat'))
-            if isempty(PAT.data)
+                path_check('Epmean'), path_check(types{i}), 'Second.mat'))
+            if isempty(Second.data)
                 set(hands(i), 'Enable', 'off')
             else
                 load(strcat(path_check(path), path_check(measure), ...
-                    path_check('Epmean'), path_check(types{i}), 'HC.mat'))
-                if isempty(HC.data)
+                    path_check('Epmean'), path_check(types{i}), ...
+                    'First.mat'))
+                if isempty(First.data)
                     set(hands(i), 'Enable', 'off')
                 end
             end
@@ -81,6 +85,22 @@ function dataPath_text_Callback(hObject, eventdata, handles)
     addpath 'Auxiliary'
     addpath 'Graphics'
     addpath 'Epochs Analysis'
+    dataPath = get(handles.dataPath_text, 'String');
+    subjectsFile = strcat(path_check(limit_path(dataPath, ...
+        get(handles.aux_measure, 'String'))), 'Subjects.mat');
+    if exist(subjectsFile, 'file')
+        set(handles.aux_sub, 'String', subjectsFile)
+        try
+            sub_info = load(subjectsFile);
+            aux_sub_info = fields(sub_info);
+            eval(strcat("sub_info = sub_info.", aux_sub_info{1}, ";"));
+            sub_types = categories(categorical(sub_info(:, end)));
+            if length(sub_types) == 2
+                set(handles.sub_types, 'Data', sub_types)
+            end
+        catch
+        end
+    end
 
 
 function dataPath_text_CreateFcn(hObject, eventdata, handles)
@@ -125,15 +145,15 @@ function Run_Callback(hObject, eventdata, handles)
     data_name = strcat(path_check(dataPath), path_check('Epmean'), ...
         path_check(char_check(analysis)));
     try
-        [HC, ~, locs] = load_data(strcat(data_name, 'HC.mat'));
-        PAT = load_data(strcat(data_name, 'PAT.mat'));
+        [HC, ~, locs] = load_data(strcat(data_name, 'First.mat'));
+        PAT = load_data(strcat(data_name, 'Second.mat'));
     catch
         problem(strcat(measure, " epochs averaging of not computed"));
         return;
     end
     
     statistical_analysis(HC, PAT, locs, cons, dataPath, measure, ...
-        analysis, save_check);
+        analysis, get(handles.sub_types, 'Data'), save_check);
 
     
 function data_search_Callback(hObject, eventdata, handles)
@@ -174,12 +194,12 @@ function back_Callback(hObject, eventdata, handles)
     cd(char(funDir{1}));
     addpath 'Auxiliary'
     addpath 'Graphics'
-    [dataPath, measure, sub, loc] = GUI_transition(handles);
+    [dataPath, measure, sub, loc, sub_types] = GUI_transition(handles);
     if strcmp(dataPath, 'es. C:\User\Data')
         dataPath = "Static Text";
     end
     close(Athena_utest)
-    Athena_statistics(dataPath, measure, sub, loc)
+    Athena_statistics(dataPath, measure, sub, loc, sub_types)
 
 
 function axes3_CreateFcn(hObject, eventdata, handles)

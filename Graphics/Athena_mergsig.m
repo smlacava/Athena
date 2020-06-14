@@ -46,11 +46,14 @@ function Athena_mergsig_OpeningFcn(hObject, eventdata, handles, varargin)
     if nargin >= 6
         set(handles.aux_sub, 'String', varargin{3})
     end
-    if nargin == 7
+    if nargin >= 7
         loc = varargin{4};
         if not(strcmp(loc, 'Static Text'))
             set(handles.aux_loc, 'String', loc)
         end
+    end
+    if nargin >= 8
+        set(handles.sub_types, 'Data', varargin{5})
     end
 
     
@@ -200,12 +203,12 @@ function back_Callback(hObject, eventdata, handles)
     cd(char(funDir{1}));
     addpath 'Auxiliary'
     addpath 'Graphics'
-    [dataPath, measure, sub, loc] = GUI_transition(handles);
+    [dataPath, measure, sub, loc, sub_types] = GUI_transition(handles);
     if strcmp(dataPath, 'es. C:\User\Data')
         dataPath="Static Text";
     end
     close(Athena_mergsig)
-    Athena_an(dataPath, measure, sub, loc)
+    Athena_an(dataPath, measure, sub, loc, sub_types)
 
     
 function axes3_CreateFcn(hObject, eventdata, handles)
@@ -223,9 +226,9 @@ function Classification_Callback(hObject, eventdata, handles)
     cd(char(funDir{1}));
     addpath 'Auxiliary'
     addpath 'Graphics'
-    [dataPath, measure, sub, loc] = GUI_transition(handles);
+    [dataPath, measure, sub, loc, sub_types] = GUI_transition(handles);
     close(Athena_mergsig)
-    Athena_selectClass(dataPath, measure, sub, loc)
+    Athena_selectClass(dataPath, measure, sub, loc, sub_types)
 
 
 function allData_Callback(hObject, eventdata, handles)

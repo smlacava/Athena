@@ -1,23 +1,25 @@
 %% epmean_and_manage
 % This function computes the epochs mean of the data matrices and saves
-% a single data matrix for the patients (PAT) and another one for the 
-% healthy controls (HC)
+% a single data matrix for the Firstients (First) and another one for the 
+% healthy controls (Second)
 % 
-% epmean_and_manage(inDir, type, subFile, locations_file)
+% [locations_file, sub_types] = epmean_and_manage(inDir, type, subFile, ...
+%       locations_file)
 %
 % input:
 %   inDir is the data directory 
 %   type is the measure type (offset, plv, aec, etc.)
 %   subFile is the file which contains the subjects list with their class
-%   locations_file is the name (with its path) of the file which contains
+%   locations_file is the name (with its Firsth) of the file which contains
 %       the name of each locations (optional)
 %
 % output:
 %   locations_file is the file of the locations
+%   sub_types is the list of subjects' types
 
 
-function locations_file = epmean_and_manage(inDir, type, subFile, ...
-    locations_file)
+function [locations_file, sub_types] = epmean_and_manage(inDir, type, ...
+    subFile, locations_file)
     
     if nargin == 3
         locations_file = [];
@@ -43,10 +45,8 @@ function locations_file = epmean_and_manage(inDir, type, subFile, ...
     globDir = path_check(subdir(epDir, 'Global'));
 
     cases = define_cases(inDir);
-    Subjects = load_data(subFile);
-    nSUB = length(Subjects);
-    nPAT = sum(double(Subjects(:, end)));
-    nHC = nSUB-nPAT;
+    [Subjects, sub_types, nSUB, nFirst, nSecond] = ...
+        define_sub_types(subFile);
     av_functions = {@asymmetry_av, @total_av, @global_av, @areas_av};
     av_paths = {asyDir, totDir, globDir, areasDir};
     ntypes = length(av_paths);
@@ -128,13 +128,13 @@ function locations_file = epmean_and_manage(inDir, type, subFile, ...
         f_av = av_functions{j};
         setup_data{j} = f_av(data);
         setup_size(j) = length(setup_data{j}.locations);  
-        loc_av(j).PAT = zeros(nPAT, nBands, setup_size(j));
-        loc_av(j).HC = zeros(nHC, nBands, setup_size(j));
+        loc_av(j).First = zeros(nFirst, nBands, setup_size(j));
+        loc_av(j).Second = zeros(nSecond, nBands, setup_size(j));
     end
     
     
-    countPAT = 1;
-    countHC = 1;
+    countFirst = 1;
+    countSecond = 1;
     waitbar(0, f, 'Computing averages of signals')
     n_cases = length(cases);
     for i = 1:n_cases
@@ -153,8 +153,8 @@ function locations_file = epmean_and_manage(inDir, type, subFile, ...
         data.locations = locs;
         data.measure = squeeze(mean(data.measure, ind_ep));
         for j = 1:ntypes
-            check_type = not(isempty(loc_av(j).PAT)) || ...
-                not(isempty(loc_av(j).HC));
+            check_type = not(isempty(loc_av(j).First)) || ...
+                not(isempty(loc_av(j).Second));
             if check_type
                 aux_data = data;
                 f_av = av_functions{j};
@@ -163,12 +163,12 @@ function locations_file = epmean_and_manage(inDir, type, subFile, ...
                 save(strcat(av_paths{j}, cases(i).name), 'aux_data') 
                 [ind, del_ind] = match_locations(...
                     setup_data{j}.locations, aux_data.locations);
-                if length(size(loc_av(j).PAT)) == 3
-                    loc_av(j).PAT(:, :, del_ind) = [];
-                    loc_av(j).HC(:, :, del_ind) = [];
+                if length(size(loc_av(j).First)) == 3
+                    loc_av(j).First(:, :, del_ind) = [];
+                    loc_av(j).Second(:, :, del_ind) = [];
                 else
-                    loc_av(j).PAT(:, del_ind) = [];
-                    loc_av(j).HC(:, del_ind) = [];
+                    loc_av(j).First(:, del_ind) = [];
+                    loc_av(j).Second(:, del_ind) = [];
                 end
                 setup_data{j}.locations(del_ind) = [];
                 if length(size(aux_data.measure)) == 2 ...
@@ -185,31 +185,33 @@ function locations_file = epmean_and_manage(inDir, type, subFile, ...
                     if check_type
                         if length(size(aux_data.measure)) == 1 || ...
                                     min(size(aux_data.measure)) == 1
-                            if patient_check(Subjects(k, end))
-                                loc_av(j).PAT(countPAT, :) = ...
+                            if patient_check(Subjects(k, end), ...
+                                sub_types{1})
+                                loc_av(j).First(countFirst, :) = ...
                                     aux_data.measure';
-                                countPAT = countPAT+floor(j/ntypes);
+                                countFirst = countFirst+floor(j/ntypes);
                             else
-                                loc_av(j).HC(countHC, :) = ...
+                                loc_av(j).Second(countSecond, :) = ...
                                     aux_data.measure';
-                                countHC = countHC+floor(j/ntypes);
+                                countSecond = countSecond+floor(j/ntypes);
                             end
                         else
-                            if patient_check(Subjects(k, end))
-                                loc_av(j).PAT(countPAT, :, :) = ...
+                            if patient_check(Subjects(k, end), ...
+                                sub_types{1})
+                                loc_av(j).First(countFirst, :, :) = ...
                                 aux_data.measure;
-                                countPAT = countPAT+floor(j/ntypes);
+                                countFirst = countFirst+floor(j/ntypes);
                             else
-                                loc_av(j).HC(countHC, :, :) = ...
+                                loc_av(j).Second(countSecond, :, :) = ...
                                     aux_data.measure;
-                                countHC = countHC+floor(j/ntypes);
+                                countSecond = countSecond+floor(j/ntypes);
                             end
                         end
                     else
-                        if patient_check(Subjects(k, end))
-                            countPAT = countPAT+floor(j/ntypes);
+                        if patient_check(Subjects(k, end), sub_types{1})
+                            countFirst = countFirst+floor(j/ntypes);
                         else
-                            countHC = countHC+floor(j/ntypes);
+                            countSecond = countSecond+floor(j/ntypes);
                         end
                     end
                     break;
@@ -222,18 +224,18 @@ function locations_file = epmean_and_manage(inDir, type, subFile, ...
      
     waitbar(1, f ,'Saving data')    
     for j = 1:ntypes
-        PAT = struct();
-        HC = struct();
-    	PAT.data = loc_av(j).PAT;
-        HC.data = loc_av(j).HC;
-        PAT.locations = setup_data{j}.locations;
-        HC.locations = setup_data{j}.locations;
+        First = struct();
+        Second = struct();
+    	First.data = loc_av(j).First;
+        Second.data = loc_av(j).Second;
+        First.locations = setup_data{j}.locations;
+        Second.locations = setup_data{j}.locations;
         if j == 2
-            locations = PAT.locations;
+            locations = First.locations;
             save(strcat(path_check(inDir), 'Locations.mat'), 'locations')
         end
-        save(strcat(av_paths{j}, 'PAT.mat'), 'PAT')
-        save(strcat(av_paths{j}, 'HC.mat'), 'HC')
+        save(strcat(av_paths{j}, 'First.mat'), 'First')
+        save(strcat(av_paths{j}, 'Second.mat'), 'Second')
     end
     locations_file = strcat(path_check(limit_path(inDir, type)), ...
         'Locations.mat');
@@ -255,4 +257,37 @@ function check = check_loc_file(locations_file)
         end
     end
     check = (check == 0);
+end
+
+
+%% define_sub_types
+% This function defines the types of subjects through a file containing
+% information about them
+%
+% [Subjects, sub_types, nSUB, nFirst, nSecond] = define_sub_types(subFile)
+%
+% Input:
+%   subFile is the name of the file, with its path, containing the list of
+%       the subjects
+%
+% Output:
+%   Subjects is the matrix of the subjects
+%   sub_types is the list of subjects' types
+%   nSUB is the total number of subjects
+%   nFirst is the number of subjects belonging to the first type
+%   nSecond is the number of subjects belonging to the second type
+
+
+function [Subjects, sub_types, nSUB, nFirst, nSecond] = ...
+    define_sub_types(subFile)
+    Subjects = load_data(subFile);
+    try
+        S = categorical(Subjects{:, end});
+    catch
+        S = categorical(Subjects(:, end));
+    end
+    sub_types = categories(S);
+    nSUB = length(S);
+    nFirst = sum(S == sub_types(1));
+    nSecond = nSUB-nFirst;
 end
