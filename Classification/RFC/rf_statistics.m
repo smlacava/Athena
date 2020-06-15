@@ -5,7 +5,7 @@
 % statistics = rf_statistics(data, evaluation_method, split_value, ...
 %       n_trees, bagging_value, pruning, n_repetitions, min_samples, ...
 %       accuracy, min_accuracy, max_accuracy, cm, conf_mat, AUC, roc, ...
-%       pca_value, pc, reject_value, rejected)
+%       reject_value, rejected)
 %
 % input:
 %   data is the dataset table
@@ -23,8 +23,6 @@
 %   conf_mat is the confusion matrix figure
 %   AUC is the overall AUC value
 %   roc is the roc curve figure
-%   pca_value is the principal component analysis threshold value
-%   pc is the principal component analysis figure
 %   reject_value is the rejection threshold
 %   rejected is the list of labels of the rejected samples
 %
@@ -35,14 +33,14 @@
 function statistics = rf_statistics(data, evaluation_method, ...
     split_value, n_trees, bagging_value, pruning, n_repetitions, ...
     min_samples, accuracy, min_accuracy, max_accuracy, cm, conf_mat, ...
-    AUC, roc, pca_value, pc, reject_value, rejected)
+    AUC, roc, reject_value, rejected)
 
     statistics.parameters = struct();
     statistics.parameters.trees_number = n_trees;
     statistics.parameters.bagging_value = bagging_value;
     statistics.parameters.pruning = pruning;
     
-    statistics = statistics_function(statistics, data, pca_value, pc, ...
+    statistics = statistics_function(statistics, data, ...
     	evaluation_method, split_value, n_repetitions, min_samples, ...
         accuracy, min_accuracy, max_accuracy, cm, conf_mat, AUC, roc, ...
         rejected, reject_value);

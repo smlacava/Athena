@@ -1,4 +1,17 @@
-function success()
+%% success
+% This function is used to declare the end of a process
+%
+% success(msg)
+%
+% Input:
+%   msg is the message which has to be showed ('Operation Completed' by
+%       default)
+
+
+function success(msg)
+    if nargin == 0
+        msg = 'Operation Completed';
+    end
     bgc = [1 1 1];
     fgc = [0.067 0.118 0.424];
     btn = [0.427 0.804 0.722];
@@ -13,7 +26,7 @@ function success()
     axes('pos', [0 0.4 0.25 0.46])
     imshow('logo.png')
     ht = uicontrol('Style', 'text', 'Units', 'normalized', ...
-        'Position', [.25 0.4 0.6 0.3], 'String', 'Operation Completed', ...
+        'Position', [.25 0.4 0.6 0.3], 'String', msg, ...
         'FontUnits', 'normalized', 'FontSize', 0.38, ...
         'BackgroundColor', bgc, 'ForegroundColor', 'k', ...
         'horizontalAlignment', 'left');

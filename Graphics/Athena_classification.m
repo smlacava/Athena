@@ -40,7 +40,7 @@ function Athena_classification_OpeningFcn(hObject, eventdata, handles, ...
         set(handles.sub_types, 'Data', varargin{5})
     end
     if nargin >= 9
-        if strcmp(varargin{5}, 'nn')
+        if strcmp(varargin{6}, 'nn')
             set(handles.help_button, 'Callback', ...
                 "web('https://github.com/smlacava/Athena/wiki/Neural-Network-classifier')")
             set(handles.DTclassifier, 'Visible', 'off')
@@ -105,17 +105,6 @@ function fraction_text_CreateFcn(hObject, eventdata, handles)
         set(hObject, 'BackgroundColor', 'white');
     end
 
-
-function pca_value_Callback(hObject, eventdata, handles)
-
-
-function pca_value_CreateFcn(hObject, eventdata, handles)
-    if ispc && isequal(get(hObject, 'BackgroundColor'), ...
-            get(0, 'defaultUicontrolBackgroundColor'))
-        set(hObject, 'BackgroundColor', 'white');
-    end
-
-
 function pruning_text_Callback(hObject, eventdata, handles)
 
 
@@ -148,10 +137,10 @@ function Run_Callback(hObject, eventdata, handles)
     if get(handles.default_parameters, 'Value') == 1
         if strcmpi(get(handles.DTclassifier, 'Visible'), 'on')
             statistics = random_forest(data, 7, 0.5, 'on', 1000, 1, ...
-                100, 'split', 0.8);
+                'split', 0.8);
         else
             statistics = neural_network(data, 10, 0.2, 1, 10, 1, ...
-                100, 'split', 0.5, 0.4);
+                'split', 0.5, 0.4);
         end
     else
         repetitions = str2double(get(handles.repetitions_text, 'String'));
@@ -159,7 +148,6 @@ function Run_Callback(hObject, eventdata, handles)
         nodes = str2double(get(handles.nodes_text, 'String'));
         fraction = str2double(get(handles.fraction_text, 'String'));
         pruning = get(handles.yes_button, 'Value');
-        pca_value = str2double(get(handles.pca_value, 'String'));
         if get(handles.TTS_button, 'Value') == 1
             eval_method = 'split';
         else
@@ -181,16 +169,10 @@ function Run_Callback(hObject, eventdata, handles)
         if repetitions == 0
             repetitions = 1;
         end
-        if pca_value < 1 && pca_value > 0
-            pca_value = pca_value*100;
-        elseif not(pca_value > 0  && pca_value <= 100)
-            problem('The PCA value must be a value between 0 and 100');
-            return
-        end
         
         if strcmpi(get(handles.DTclassifier, 'Visible'), 'on')
             statistics = random_forest(data, nodes, fraction, ...
-                pruning, repetitions, 1, pca_value, eval_method, n_train);
+                pruning, repetitions, 1, eval_method, n_train);
         else
             if fraction+n_train >= 1
                 problem(char_check(strcat("The sum between validation", ...
@@ -199,7 +181,7 @@ function Run_Callback(hObject, eventdata, handles)
                 return
             end                
             statistics = neural_network(data, nodes, fraction, 1, ...
-                repetitions, 1, pca_value, eval_method, n_train);
+                repetitions, 1, eval_method, n_train);
         end
     end
     resultDir = strcat(path_check(dataPath), 'Classification');
@@ -245,7 +227,6 @@ function default_parameters_Callback(hObject, eventdata, handles)
     set(handles.TTS_button, 'Enable', value)
     set(handles.nodes_text, 'Enable', value)
     set(handles.fraction_text, 'Enable', value)
-    set(handles.pca_value, 'Enable', value)
 
 
 function DTclassifier_Callback(hObject, eventdata, handles)

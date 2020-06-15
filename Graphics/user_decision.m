@@ -1,3 +1,14 @@
+%% user_decision
+% This function is used to ask the user if he/she wants to compute an
+% action
+%
+% answer = user_decision(msg, title)
+%
+% Input:
+%   msg is the message which has to be showed
+%   title is the title of the image
+
+
 function [answer] = user_decision(msg, title)
     bgc = [1 1 1];
     fgc = [0.067 0.118 0.424];

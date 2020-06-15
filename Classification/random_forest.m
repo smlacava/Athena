@@ -5,8 +5,8 @@
 % matrix, and the overall ROC curve and AUC value
 %
 % statistics = random_forest(data, n_trees, resample_value, pruning, ...
-%       n_repetitions, min_samples, pca_value, eval_method, ...
-%       split_value, reject_option)
+%       n_repetitions, min_samples, eval_method, split_value, ...
+%       reject_option)
 %
 % input:
 %   data is the data set table
@@ -19,8 +19,6 @@
 %       (1 as default)
 %   min_samples is the minimum number of examples of each class in the
 %       training data set (1 as default)
-%   pca_value is the variance percentage threshold to reduce the number of
-%       predictors through the principal component analysis
 %   eval_method is the evaluation method, which can be 'split' to randomly
 %       split the dataset in training set and test set or 'leaveoneout' to
 %       train the classifier on all the samples except one used to test
@@ -37,8 +35,8 @@
 
 
 function statistics = random_forest(data, n_trees, resample_value, ...
-    pruning, repetitions, min_samples, pca_value, eval_method, ...
-    split_value, reject_value)
+    pruning, repetitions, min_samples, eval_method, split_value, ...
+    reject_value)
     
     funDir = mfilename('fullpath');
     funDir = split(funDir, 'random_forest');
@@ -61,16 +59,13 @@ function statistics = random_forest(data, n_trees, resample_value, ...
     if nargin < 6 || isempty(min_samples)
         min_samples = 1;
     end
-    if nargin < 7 || isempty(pca_value)
-        pca_value = 100;
-    end
-    if nargin < 8 || isempty(eval_method)
+    if nargin < 7 || isempty(eval_method)
         eval_method = 'split';
     end
-    if nargin < 9 || isempty(split_value)
+    if nargin < 8 || isempty(split_value)
         split_value = 0.8;
     end
-    if nargin < 10 || isempty(reject_value) || reject_value < 0.5
+    if nargin < 9 || isempty(reject_value) || reject_value < 0.5
         reject_value = 0.5;
     end
     rejected = [];
@@ -99,8 +94,6 @@ function statistics = random_forest(data, n_trees, resample_value, ...
         problem('There are not enough parameters to evaluate')
         return;
     end
-    
-    [data, pc] = reduce_predictors(data, pca_value, bg_color);
     
     if strcmp(pruning, 'on')
         if strcmpi(eval_method, 'split')
@@ -135,6 +128,6 @@ function statistics = random_forest(data, n_trees, resample_value, ...
     statistics = rf_statistics(data, eval_method, split_value, ...
         n_trees, resample_value, pruning, repetitions, min_samples, ...
         accuracy, min_accuracy, max_accuracy, cm, conf_mat, AUC, roc, ...
-        pca_value, pc, reject_value, rejected);
+        reject_value, rejected);
     close(f)
 end

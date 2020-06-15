@@ -2,17 +2,20 @@
 % This function computes the data table for a following classification
 % (data classes will be defined in data.group column)
 %
-% classification_data_settings(dataPath, analysis_types, measures, ...
-%       data_type)
+% data = classification_data_settings(dataPath, analysis_types, ...
+%       measures, data_type)
 %
-% input:
+% Input:
 %   dataPath is the main folder of the study
 %   analysis_types is the list of spatial analysis to include
 %   measures is the list of measures to include
 %   data_type is the type of data to include (only significant or all)
+%
+% Output:
+%   data is the resulting data table
 
 
-function classification_data_settings(dataPath, analysis_types, ...
+function data = classification_data_settings(dataPath, analysis_types, ...
     measures, data_type)
 
     subjects = load_data(strcat(dataPath, 'Subjects.mat'));

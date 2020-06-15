@@ -5,8 +5,7 @@
 % matrix, and the overall ROC curve and AUC value
 %
 % statistics = neural_network(data, n_layers, validation_value, ~, ...
-%    repetitions, min_samples, pca_value, eval_method, training_value, ...
-%    reject_value)
+%    repetitions, min_samples, eval_method, training_value, reject_value)
 %
 % input:
 %   data is the data set table
@@ -15,8 +14,6 @@
 %   ~ can take every value (it is not used)
 %   min_samples is the minimum number of examples of each class in the
 %       training data set (1 as default)
-%   pca_value is the variance percentage threshold to reduce the number of
-%       predictors through the principal component analysis
 %   eval_method is the evaluation method, which can be 'split' to randomly
 %       split the dataset in training set and test set or 'leaveoneout' to
 %       train the classifier on all the samples except one used to test
@@ -33,8 +30,7 @@
 
 
 function statistics = neural_network(data, n_layers, validation_value, ...
-    ~, repetitions, min_samples, pca_value, eval_method, ...
-    training_value, reject_value)
+    ~, repetitions, min_samples, eval_method, training_value, reject_value)
     
     funDir = mfilename('fullpath');
     funDir = split(funDir, 'neural_network');
@@ -54,16 +50,13 @@ function statistics = neural_network(data, n_layers, validation_value, ...
     if nargin < 6 || isempty(min_samples)
         min_samples = 1;
     end
-    if nargin < 7 || isempty(pca_value)
-        pca_value = 100;
-    end
-    if nargin < 8 || isempty(eval_method)
+    if nargin < 7 || isempty(eval_method)
         eval_method = 'split';
     end
-    if nargin < 9 || isempty(training_value)
+    if nargin < 8 || isempty(training_value)
         training_value = 0.8;
     end
-    if nargin < 10 || isempty(reject_value) || reject_value < 0.5
+    if nargin < 9 || isempty(reject_value) || reject_value < 0.5
         reject_value = 0.5;
     end
     rejected = [];
@@ -89,8 +82,6 @@ function statistics = neural_network(data, n_layers, validation_value, ...
         initial_settings('nn', data, repetitions, eval_method, ...
         training_value, validation_value);
     
-    [data, pc] = reduce_predictors(data, pca_value, bg_color);
-    
     for r = 1:repetitions
         [scores, labels, accuracy, min_accuracy, max_accuracy, cm, ...
             n_PAT, n_HC, rejected] = eval_func(data, ...
@@ -107,6 +98,6 @@ function statistics = neural_network(data, n_layers, validation_value, ...
     statistics = nn_statistics(data, eval_method, training_value, ...
         validation_value, n_layers, repetitions, min_samples, ...
         accuracy, min_accuracy, max_accuracy, cm, conf_mat, AUC, roc, ...
-        pca_value, pc, reject_value, rejected);
+        reject_value, rejected);
     close(f)
 end

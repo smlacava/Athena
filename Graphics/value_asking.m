@@ -1,3 +1,16 @@
+%% value_asking
+% This function is used to ask a value to the user
+% 
+% answer = value_asking(initialValue, title, msg, maxvalue)
+%
+% Input:
+%   initialValue is the value initially shown by the interface
+%   title is the title of the interface
+%   msg is the message shown by the interface
+%   maxvalue is the maximum possible value which can be inserted by the
+%       user (Infinite by default)
+
+
 function [answer] = value_asking(initialValue, title, msg, maxvalue)
     switch nargin
         case 0

@@ -18,7 +18,7 @@
 
 function [data, pc] = reduce_predictors(data, pca_value, bg_color)
     if nargin == 2
-        bg_color = [0.67 0.98 0.92];
+        bg_color = [1 1 1];
     end
     
     if isempty(pca_value) || pca_value <=0 || pca_value > 100

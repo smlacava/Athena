@@ -2,7 +2,7 @@
 % This function updates the structure which contains parameters and
 % statistics of a classifier
 % 
-%statistics = statistics_function(statistics, data, pca_value, pc, ...
+%statistics = statistics_function(statistics, data, ...
 %    evaluation_method, training_value, n_repetitions, min_samples, ...
 %    accuracy, min_accuracy, max_accuracy, cm, conf_mat, AUC, roc, ...
 %    rejected, reject_value)
@@ -10,8 +10,6 @@
 % input:
 %   statistics is the structure which has to be updated
 %   data is the dataset table
-%   pca_value is the principal component analysis threshold value
-%   pc is the principal component analysis figure
 %   evaluation_method is the used evaluation method 
 %   training_value is the traning fraction
 %   n_repetitions is the number of classification repetitions
@@ -30,14 +28,11 @@
 %   statistics is the resulting staistics structure
 
 
-function statistics = statistics_function(statistics, data, pca_value, ...
-    pc, evaluation_method, training_value, n_repetitions, min_samples, ...
+function statistics = statistics_function(statistics, data, ...
+    evaluation_method, training_value, n_repetitions, min_samples, ...
     accuracy, min_accuracy, max_accuracy, cm, conf_mat, AUC, roc, ...
     rejected, reject_value)
 
-    statistics.parameters.pca = struct();
-    statistics.parameters.pca.percentage = pca_value;
-    statistics.parameters.pca.figure = pc;
     statistics.parameters.evaluation_method = evaluation_method;
     if strcmpi(evaluation_method, 'split')
         statistics.parameters.training_fraction = training_value;

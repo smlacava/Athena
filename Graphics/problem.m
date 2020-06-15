@@ -1,3 +1,12 @@
+%% problem
+% This function is used to communicate a problem to the user
+%
+% problem(message)
+%
+% Input:
+%   message is the description of the problem
+
+
 function problem(message)
     bgc = [1 1 1];
     fgc = [0.067 0.118 0.424];
