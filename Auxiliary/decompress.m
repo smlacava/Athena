@@ -17,6 +17,14 @@ function decompress(file, directory_check, outDir)
         directory_check = 0;
     end
     
+    auxDir = pwd;
+    outDir = '';
+    aux_outDir = split(file, filesep);
+    for i = 1:length(aux_outDir)-1
+        outDir = strcat(outDir, aux_outDir{i}, filesep);
+    end
+    cd(outDir)
+    
     names = {'.tar.gz', '.tar', '.tgz', '.zip', '.gz'};
     functions = {@untar, @untar, @untar, @unzip, @gunzip};
     
@@ -37,4 +45,5 @@ function decompress(file, directory_check, outDir)
             end
         end
     end
+    cd(auxDir)
 end

@@ -7,10 +7,17 @@ function ep_scatter(data, nEpochs, nBands, name, yname)
     set(gcf, 'color', [1 1 1])
     xlabel('Bands')
     ylabel(yname)
-    xticks(1:nBands)
+    bands = nBands;
+    if iscell(nBands) || isstring(nBands)
+        nBands = length(nBands);
+        xticks(1:nBands)
+        xticklabels(bands)
+    else
+        xticks(1:nBands)
+    end
     xlim([0, nBands+1])
     hold on
-    labels = [];
+    labels = [];        
     for i = 1:nBands
         scatter(i*ones(1, nEpochs), data(i, :, :), 'MarkerEdgeColor', ...
             [0.067 0.118 0.424])

@@ -125,8 +125,8 @@ function Run_Callback(hObject, eventdata, handles)
     data_name = strcat(path_check(dataPath), path_check('Epmean'), ...
         path_check(char_check(analysis)));
     try
-        [HC, ~, locs] = load_data(strcat(data_name, 'HC.mat'));
-        PAT = load_data(strcat(data_name, 'PAT.mat'));
+        [HC, ~, locs] = load_data(strcat(data_name, 'First.mat'));
+        PAT = load_data(strcat(data_name, 'Second.mat'));
     catch
         problem(strcat(measure, " epochs averaging of not computed"));
         return;
@@ -174,12 +174,12 @@ function back_Callback(hObject, eventdata, handles)
     cd(char(funDir{1}));
     addpath 'Auxiliary'
     addpath 'Graphics'
-    [dataPath, measure, sub, loc] = GUI_transition(handles);
+    [dataPath, measure, sub, loc, sub_types] = GUI_transition(handles);
     if strcmp(dataPath, 'es. C:\User\Data')
         dataPath = "Static Text";
     end
     close(Athena_statan)
-    Athena_statistics(dataPath, measure, sub, loc)
+    Athena_statistics(dataPath, measure, sub, loc,sub_types)
 
 
 function axes3_CreateFcn(hObject, eventdata, handles)

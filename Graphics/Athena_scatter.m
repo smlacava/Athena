@@ -146,26 +146,42 @@ function Run_Callback(hObject, eventdata, handles)
     end
     
     
-function [PAT1, HC1, PAT2, HC2, measure1, measure2, band1, band2, ...
-    location1, location2] = measures_scatter_initialization(handles)
+function [PAT1, HC1, PAT2, HC2, measure1, measure2, band_name1, ...
+    band_name2, location1, location2] = ...
+    measures_scatter_initialization(handles)
 
     dataPath = get(handles.dataPath_text, 'String');
     measures_list = get(handles.meas1, 'String');
-    measure1 = measures_list(get(handles.meas1, 'Value'));
-    measure2 = measures_list(get(handles.meas2, 'Value'));
+    if iscell(measures_list)
+        measure1 = measures_list(get(handles.meas1, 'Value'));
+        measure2 = measures_list(get(handles.meas2, 'Value'));
+    else 
+        measure1 = measures_list;
+        measure2 = measures_list;
+    end
     
     bands_list1 = get(handles.band1, 'String');
     bands_list2 = get(handles.band2, 'String');
-    band1 = str2double(bands_list1(get(handles.band1, 'Value')));
-    band2 = str2double(bands_list2(get(handles.band2, 'Value')));
+    band1 = get(handles.band1, 'Value');
+    band2 = get(handles.band2, 'Value');
+    band_name1 = bands_list1(band1);
+    band_name2 = bands_list2(band2);
     
     areas1_list = get(handles.area1, 'String');
-    area1 = areas1_list(get(handles.area1, 'Value'));
+    if iscell(areas1_list)
+        area1 = areas1_list(get(handles.area1, 'Value'));
+    else
+        area1 = areas1_list;
+    end
     if strcmpi(area1, 'Channels')
         area1 = "Total";
     end
     areas2_list = get(handles.area2, 'String');
-    area2 = areas2_list(get(handles.area2, 'Value'));
+    if iscell(areas2_list)
+        area2 = areas2_list(get(handles.area2, 'Value'));
+    else
+        area2 = area2_list;
+    end
     if strcmpi(area2, 'Channels')
         area2 = "Total";
     end
@@ -177,6 +193,8 @@ function [PAT1, HC1, PAT2, HC2, measure1, measure2, band1, band2, ...
     
     locations_list1 = get(handles.loc1, 'String');
     locations_list2 = get(handles.loc2, 'String');
+    location1 = area1;
+    location2 = area2;
     check1 = 0;
     check2 = 0;
     
@@ -220,12 +238,7 @@ function [PAT1, HC1, PAT2, HC2, measure1, measure2, band1, band2, ...
     PAT2 = PAT2(:, band2, idx_loc2);
     HC2 = HC2(:, band2, idx_loc2);
     
-    if not(exist('location1', 'var'))
-        location1 = get(handles.loc1, 'String');
-    end
-    if not(exist('location2', 'var'))
-        location2 = get(handles.loc2, 'String');
-    end
+
 
 function data_search_Callback(hObject, eventdata, handles)
 	d = uigetdir;
@@ -278,8 +291,8 @@ function export_Callback(hObject, eventdata, handles)
         hold on
         scatter(PAT1, PAT2, 'r')
         legend(sub_types)
-        xlabel(strcat(measure1, " ", location1, " Band ", string(band1)))
-        ylabel(strcat(measure2, " ", location2, " Band ", string(band2)))
+        xlabel(strcat(measure1, " ", location1, " ", string(band1)))
+        ylabel(strcat(measure2, " ", location2, " ", string(band2)))
     end
 
 function loc2_Callback(hObject, eventdata, handles)
@@ -295,7 +308,11 @@ function loc2_CreateFcn(hObject, eventdata, handles)
 function area2_Callback(hObject, eventdata, handles)
     dataPath = get(handles.dataPath_text, 'String');
     measures_list = get(handles.meas2, 'String');
-    measure = measures_list(get(handles.meas2, 'Value'));
+    if iscell(measures_list)
+        measure = measures_list(get(handles.meas2, 'Value'));
+    else
+        measure = measures_list;
+    end
     areas_list = get(handles.area2, 'String');
     area = areas_list(get(handles.area2, 'Value'));
     if strcmpi(area, 'Channels')
@@ -303,7 +320,7 @@ function area2_Callback(hObject, eventdata, handles)
     end
     [~, ~, locations] = load_data(strcat(path_check(dataPath), ...
         path_check(measure), path_check('Epmean'), path_check(area), ...
-        'PAT.mat'));
+        'Second.mat'));
     set(handles.loc2, 'Value', 1)
     set(handles.loc2, 'String', locations)
     if not(strcmpi(locations, 'asymmetry') | strcmpi(locations, 'global'))
@@ -335,7 +352,11 @@ function band2_CreateFcn(hObject, eventdata, handles)
 function meas2_Callback(hObject, eventdata, handles)
     dataPath = get(handles.dataPath_text, 'String');
     measures_list = get(handles.meas2, 'String');
-    measure = measures_list(get(handles.meas2, 'Value'));
+    if iscell(measures_list)
+        measure = measures_list(get(handles.meas2, 'Value'));
+    else
+        measure = measures_list;
+    end
     dataPath = strcat(path_check(dataPath), path_check(measure), ...
             path_check('Epmean'));
     if exist(dataPath, 'dir')
@@ -343,7 +364,13 @@ function meas2_Callback(hObject, eventdata, handles)
             "Total"])
         cases = define_cases(dataPath);
         load(strcat(dataPath, cases(1).name));
-        set(handles.band2, 'String', string(1:size(data.measure, 1)))
+        bands = define_bands(limit_path(dataPath, 'Epmean'), ...
+            size(data.measure, 1));
+        if iscell(bands) || isstring(bands)
+            set(handles.band2, 'String', string(bands))
+        else
+            set(handles.band2, 'String', string(1:size(data.measure, 1)))
+        end
         set(handles.band2, 'Value', 1)
         set(handles.area2, 'Value', 1)
         set(handles.loc2, 'Value', 1)
@@ -375,7 +402,11 @@ function meas2_CreateFcn(hObject, eventdata, handles)
 function meas1_Callback(hObject, eventdata, handles)
     dataPath = get(handles.dataPath_text, 'String');
     measures_list = get(handles.meas1, 'String');
-    measure = measures_list(get(handles.meas1, 'Value'));
+    if iscell(measures_list)
+        measure = measures_list(get(handles.meas1, 'Value'));
+    else
+        measure = measures_list;
+    end
     dataPath = strcat(path_check(dataPath), path_check(measure), ...
             path_check('Epmean'));
     if exist(dataPath, 'dir')
@@ -383,7 +414,13 @@ function meas1_Callback(hObject, eventdata, handles)
             "Channels"])
         cases = define_cases(dataPath);
         load(strcat(dataPath, cases(1).name));
-        set(handles.band1, 'String', string(1:size(data.measure, 1)))
+        bands = define_bands(limit_path(dataPath, 'Epmean'), ...
+            size(data.measure, 1));
+        if iscell(bands) || isstring(bands)
+            set(handles.band1, 'String', string(bands))
+        else
+            set(handles.band1, 'String', string(1:size(data.measure, 1)))
+        end
         set(handles.band1, 'Value', 1)
         set(handles.area1, 'Value', 1)
         set(handles.loc1, 'Value', 1)
@@ -425,7 +462,11 @@ function band1_CreateFcn(hObject, eventdata, handles)
 function area1_Callback(hObject, eventdata, handles)
     dataPath = get(handles.dataPath_text, 'String');
     measures_list = get(handles.meas1, 'String');
-    measure = measures_list(get(handles.meas1, 'Value'));
+    if iscell(measures_list)
+        measure = measures_list(get(handles.meas1, 'Value'));
+    else
+        measure = measures_list;
+    end
     areas_list = get(handles.area1, 'String');
     area = areas_list(get(handles.area1, 'Value'));
     if strcmpi(area, 'Channels')
@@ -433,7 +474,7 @@ function area1_Callback(hObject, eventdata, handles)
     end
     [~, ~, locations] = load_data(strcat(path_check(dataPath), ...
         path_check(measure), path_check('Epmean'), path_check(area), ...
-        'PAT.mat'));
+        'Second.mat'));
     set(handles.loc1, 'Value', 1)
     set(handles.loc1, 'String', locations)
     if not(strcmpi(locations, 'asymmetry') | strcmpi(locations, 'global'))

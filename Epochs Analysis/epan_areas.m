@@ -9,7 +9,7 @@
 % input:
 %   data is the measure matrix
 %   nEpochs is the number of epochs
-%   nBands is the number of frequency bands
+%   nBands is the number of frequency bands (or the list)
 %   measure is the name of the measure
 %   name is the name of the analyzed subject
 %   CentralLoc is the array which contains the indices of every central

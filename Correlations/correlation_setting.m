@@ -52,7 +52,11 @@ function [data, sub_list, alpha, bg_color, locs, bands_names, P, RHO, ...
     
     P = zeros(nLoc, nBands);
     RHO = P;
-    bands_names = cell(nBands, 1);
-    for i = 1:nBands
-        bands_names{i, 1} = char_check(strcat("Band ", string(i)));
+    try
+        bands_names = cellstr(define_bands(dataPath, nBands)');
+    catch
+        bands_names = cell(nBands, 1);
+        for i = 1:nBands
+            bands_names{i, 1} = char_check(strcat("Band ", string(i)));
+        end
     end

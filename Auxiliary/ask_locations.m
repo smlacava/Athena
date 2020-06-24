@@ -2,7 +2,7 @@
 % This function asks a file which contains the list of the locations of a
 % time series
 %
-% loc_path = ask_locations(message)
+% locations = ask_locations(message)
 %
 % input:
 %   message is the request message (optional)

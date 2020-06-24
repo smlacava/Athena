@@ -7,7 +7,7 @@
 % input:
 %   data is the measure matrix
 %   nEpochs is the number of epochs
-%   nBands is the number of frequency bands
+%   nBands is the number of frequency bands (or the list)
 %   measure is the name of the measure
 %   name is the name of the analyzed subject
 %   RightLoc is the array which contains the indexes of the locations in
@@ -28,6 +28,10 @@ function epan_asy_conn(data, nEpochs, nBands, measure, name, RightLoc, ...
         aux(1, :, :, :) = data;
         data = aux;
     end
+    bands = nBands;
+    if iscell(nBands) || isstring(nBands)
+        nBands = length(bands);
+    end
     
     idx = conn_index(data);
     
@@ -38,5 +42,6 @@ function epan_asy_conn(data, nEpochs, nBands, measure, name, RightLoc, ...
         sum(data(:, :, LeftLoc, LeftLoc), 3)), idx)/L;
     asy = abs(data_asy(:, :, 1)-data_asy(:, :, 2));
     
+    nBands = bands;
     ep_scatter(asy, nEpochs, nBands, ...
         strcat(char_check(name),' Asymmetry'), measure)

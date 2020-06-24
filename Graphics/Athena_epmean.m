@@ -208,5 +208,5 @@ function subMaking_Callback(~, ~, handles)
     addpath 'Graphics'
     [dataPath, measure, ~, loc] = GUI_transition(handles, 'sub');
     sub = string(get(handles.subjectsFile, 'String'));
-    Athena_submaking(dataPath, measure, sub, loc, types)
+    Athena_submaking(dataPath, measure, sub, loc)
     close(Athena_epmean)

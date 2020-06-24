@@ -30,7 +30,7 @@ function distributions_scatterplot(first_group, second_group, measure, ...
         title = strcat(measure, " ", location);
     end
     if nargin > 5
-        title = strcat(title, " Band ", string(band));
+        title = strcat(title, " ", string(band));
     end
     if nargin > 6
         title = strcat(title, " - ", parameter);

@@ -20,10 +20,22 @@ function varargout = Athena(varargin)
 function Athena_OpeningFcn(hObject, ~, handles, varargin)
     handles.output = hObject;
     guidata(hObject, handles);
+    try
+        funDir = '';
+        auxDir = which('Athena.m');
+        auxDir = split(auxDir, filesep);
+        for i = 1:length(auxDir)-1
+            funDir = strcat(funDir, auxDir{i}, filesep);
+        end
+        addpath(funDir)
+        cd(funDir)
+    catch
+        funDir = '';
+    end
     [x, ~] = imread('logo.png');
     Im = imresize(x, [250 250]);
     set(handles.help_button, 'CData', Im)
-    [y, ~] = imread(strcat('docs', filesep, 'utility.png'));
+    [y, ~] = imread(strcat(funDir, 'docs', filesep, 'utility.png'));
     Im2 = imresize(y, [35 35]);
     set(handles.Utility, 'CData', Im2)
     set(handles.guided, 'Tooltip', sprintf(strcat(...

@@ -26,6 +26,8 @@ function epochs_analysis(dataPath, name, anType, measure, epochs, ...
     if strcmp(measure, 'offset') || strcmp(measure, 'exponent')
         bands = 1;
     end
+    
+    bands = define_bands(dataPath, bands);
     cases = define_cases(dataPath);
     locations = [];
     name = split(name, '.');
@@ -90,6 +92,22 @@ function epochs_analysis(dataPath, name, anType, measure, epochs, ...
             epan_tot(data, epochs, bands, measure, name, loc)
         else
             epan_tot_conn(data, epochs, bands, measure, name, loc)
+        end
+    end
+end
+
+
+function bands = define_bands(dataPath, bands)
+    dataFile = strcat(dataPath, 'Auxiliary.txt');
+    if exist(dataFile, 'file')
+        parameters = read_file(dataFile);
+        cf = search_parameter(parameters, 'cf');
+        if not(isempty(cf)) 
+            bands = {};
+            for i = 1:length(cf)-1
+                bands = [bands strcat(string(cf(i)), '-', ...
+                    string(cf(i+1)), " Hz")];
+            end
         end
     end
 end

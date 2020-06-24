@@ -161,17 +161,22 @@ function Run_Callback(hObject, eventdata, handles)
     end
     
     
-function [PAT, HC, parameter, measure, band, location] = ...
+function [PAT, HC, parameter, measure, band_name, location] = ...
     distributions_initialization(handles)
 
     dataPath = get(handles.dataPath_text, 'String');
     measure = define_measure(handles);
     
     bands_list = get(handles.band, 'String');
-    band = str2double(bands_list(get(handles.band, 'Value')));
+    band = get(handles.band, 'Value');
+    band_name = bands_list(band);
     
     areas_list = get(handles.area, 'String');
-    area = areas_list(get(handles.area, 'Value'));
+    if iscell(areas_list)
+        area = areas_list(get(handles.area, 'Value'));
+    else
+        area = areas_list;
+    end
     if strcmpi(area, 'Channels')
         area = "Total";
     end
@@ -193,8 +198,8 @@ function [PAT, HC, parameter, measure, band, location] = ...
         check = 1;
     end
     
-    [PAT, ~, locs] = load_data(strcat(measure_path, 'PAT.mat'));
-    HC = load_data(strcat(measure_path, 'HC.mat'));
+    [PAT, ~, locs] = load_data(strcat(measure_path, 'Second.mat'));
+    HC = load_data(strcat(measure_path, 'First.mat'));
     
     if check == 0
         idx_loc = 1;
@@ -266,7 +271,13 @@ function meas_Callback(hObject, eventdata, handles)
             "Channels"])
         cases = define_cases(dataPath);
         load(strcat(dataPath, cases(1).name));
-        set(handles.band, 'String', string(1:size(data.measure, 1)))
+        bands = define_bands(limit_path(dataPath, 'Epmean'), ...
+            size(data.measure, 1));
+        if iscell(bands) || isstring(bands)
+            set(handles.band, 'String', string(bands))
+        else
+            set(handles.band, 'String', string(1:size(data.measure, 1)))
+        end
         set(handles.band, 'Value', 1)
         set(handles.area, 'Value', 1)
         set(handles.loc, 'Value', 1)
@@ -315,7 +326,7 @@ function area_Callback(hObject, eventdata, handles)
     end
     [~, ~, locations] = load_data(strcat(path_check(dataPath), ...
         path_check(measure), path_check('Epmean'), path_check(area), ...
-        'PAT.mat'));
+        'First.mat'));
     set(handles.loc, 'Value', 1)
     set(handles.loc, 'String', locations)
     if not(strcmpi(locations, 'asymmetry') | strcmpi(locations, 'global'))
@@ -351,8 +362,8 @@ function median_Callback(hObject, eventdata, handles)
 
 function measure = define_measure(handles)
     measures_list = get(handles.meas, 'String');
-    if ischar(measures_list)
-        measure = measures_list;
+    if iscell(measures_list)
+        measure = measures_list{get(handles.meas, 'Value')};
     else
-        measure = measures_list(get(handles.meas, 'Value'));
+    	measure = measures_list;
     end

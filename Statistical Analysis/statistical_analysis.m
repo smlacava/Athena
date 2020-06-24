@@ -52,9 +52,12 @@ function [P, Psig, data, data_sig] = statistical_analysis(First, ...
     Psig = {};
     data_sig = [];
     data = zeros(nSecond+nFirst, nBands*nLocs);
-    bands_names = cell(nBands, 1);
-    for i = 1:nBands
-        bands_names{i, 1} = char_check(strcat("Band ", string(i)));
+    bands_names = cellstr(define_bands(dataPath, nBands)');
+    if not(iscell(bands_names))
+        bands_names = cell(nBands, 1);
+        for i = 1:nBands
+            bands_names{i, 1} = char_check(strcat("Band ", string(i)));
+        end
     end
     data_names = cell(1, nBands*nLocs);
     
@@ -64,10 +67,10 @@ function [P, Psig, data, data_sig] = statistical_analysis(First, ...
             for j = 1:nBands
                 index = j+nBands*(i-1);
                 data_names{index} = char_check(strcat(aux_loc, ...
-                    " - Band ", string(j)));
+                    " - ", bands_names{j}));
                 [P(j, i), aux_Psig, aux_data] = u_test(Second(:, j, i), ...
-                    First(:, j, i), char_check(strcat("Band ", ...
-                    string(j), " ", locs{i})), group_types{1}, ...
+                    First(:, j, i), char_check(strcat(locs{i}, " - ", ...
+                    bands_names{j})), group_types{1}, ...
                     group_types{2}, alpha);
                 data(1:nSecond, index) = Second(:, j, i);
                 data(nSecond+1:end, index) = First(:, j, i);
@@ -86,27 +89,28 @@ function [P, Psig, data, data_sig] = statistical_analysis(First, ...
     end
     
     [statanType, statanDir] = save_data(dataPath, measure, analysis, ...
-        locs, nBands, data, Psig, data_sig);
+        locs, bands_names, data, Psig, data_sig);
     
     show_figures(data, data_names, P, bands_names, locs, Psig, ...
         statanType, statanDir, save_check)
 end
 
 
-function feature_names = compute_feature_names(locs, nBands)
+function feature_names = compute_feature_names(locs, bands_names)
     nLocs = length(locs);
+    nBands = length(bands_names);
     feature_names = cell(nLocs*nBands, 1);
     for i = 1:nLocs
         for j = 1:nBands
             feature_names{(i-1)*nBands+j, 1} = ...
-                char_check(strcat("Band ", string(j), " ", locs{i}));
+                char_check(strcat(locs{i}, " ", bands_names{j}));
         end
     end
 end
 
 
 function [statanType, statanDir] = save_data(dataPath, measure, ...
-    analysis, locs, nBands, data, Psig, data_sig)
+    analysis, locs, bands_names, data, Psig, data_sig)
     
     statanType = strcat(measure, '_', analysis, '.mat');
     statanDir = path_check(create_directory(path_check(...
@@ -119,7 +123,7 @@ function [statanType, statanDir] = save_data(dataPath, measure, ...
     save(char_check(strcat(statanDir, statanType)), 'statAnResult')
     
     statAnData = struct();
-    statAnData.feature_names = compute_feature_names(locs, nBands);
+    statAnData.feature_names = compute_feature_names(locs, bands_names);
     statAnData.data = data;
     save(char_check(strcat(subDir, statanType)), 'statAnData')
 end
