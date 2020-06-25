@@ -228,8 +228,22 @@ function batch_study(dataFile)
     if sum(strcmp(search_parameter(parameters, 'MergingData'), 'true'))
     	MergingAreas = search_parameter(parameters, 'MergingAreas');
         MergingMeasures = search_parameter(parameters, 'MergingMeasures');
-        classification_data_settings(dataPath, MergingAreas, ...
+        data = classification_data_settings(dataPath, MergingAreas, ...
             MergingMeasures, search_parameter(parameters, 'DataType'));
+        pca_value = search_parameter(parameters, 'PCAValue');
+        if not(isempty(pca_value))
+            if pca_value < 1 && pca_value > 0
+                pca_value = pca_value*100;
+            end
+            [data] = reduce_predictors(data, pca_value);
+            fpca = figure('Color', [1 1 1], 'NumberTitle', 'off', ...
+                'Name', 'Statistical Analysis - Significant Results');
+            pca = uitable(fpca, 'Data', ...
+                cellstr(data.Properties.VariableNames(2:end))', ...
+                'Position', [20 20 525 375], 'ColumnName', {'Features'});
+            save(strcat(path_check(dataPath), 'Classification', ...
+                filesep, 'Classification_Data.mat'), 'data')
+        end
     end
     
     if sum(strcmp(search_parameter(parameters, 'RF_Classification'), ...
