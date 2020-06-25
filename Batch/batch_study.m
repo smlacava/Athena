@@ -96,6 +96,7 @@ function batch_study(dataFile)
         end
     end
     
+    sub_types = {'First'; 'Second'};
     if sum(strcmp(search_parameter(parameters, 'EpochsAverage'), 'true'))
         if not(exist(search_parameter(parameters, 'Subjects'), 'file'))
             problem(strcat(search_parameter(parameters, 'Subjects'), ...
@@ -108,8 +109,8 @@ function batch_study(dataFile)
                 mkdir(path_check(strcat(path_check(strcat(dataPath, ...
                     measure{m})), 'Epmean')))
             end
-            locations_file = epmean_and_manage(dataPath, measure{m}, ...
-                search_parameter(parameters, 'Subjects'), ...
+            [locations_file, sub_types] = epmean_and_manage(dataPath, ...
+                measure{m}, search_parameter(parameters, 'Subjects'), ...
                 search_parameter(parameters, 'locations'));
             if exist('auxiliary.txt', 'file')
                 auxID = fopen('auxiliary.txt', 'a+');
@@ -121,6 +122,14 @@ function batch_study(dataFile)
                 search_parameter(parameters, 'Subjects'));
         end
     end
+    parameters = [parameters, 'subjects_types', {sub_types}];
+    bands_names = [];
+    for i = 1:length(cf)-1
+        bands_names = [bands_names; string(strcat(string(cf(i)), "-", ...
+            string(cf(i+1)), " Hz"))];
+    end
+    bands_names = cellstr(bands_names);
+    parameters = [parameters, 'frequency_bands', {bands_names}];
   
     %% Analysis    
     if sum(strcmp(search_parameter(parameters, 'EpochsAnalysis'), 'true'))
@@ -183,14 +192,15 @@ function batch_study(dataFile)
             Areas_UT = search_parameter(parameters, 'Areas_UT');
             for i = 1:length(Areas_UT)
                 saPath = path_check(strcat(managedPath{m}, Areas_UT{i}));
-                PAT = strcat(saPath, 'PAT.mat');
-                HC = strcat(saPath, 'HC.mat');
+                PAT = strcat(saPath, 'Second.mat');
+                HC = strcat(saPath, 'First.mat');
                 [PAT, ~, locs] = load_data(PAT);
                 HC = load_data(HC);
                 anType = areas_check(Areas_UT{i,1});
                 statistical_analysis(HC, PAT, locs, ....
                     cons_check(search_parameter(parameters, ...
-                    'Conservativeness_UT')), dataPath, measure{m}, anType)
+                    'Conservativeness_UT')), measurePath{m}, ...
+                    measure{m}, anType, sub_types)
             end
         end
         

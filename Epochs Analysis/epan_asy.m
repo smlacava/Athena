@@ -35,6 +35,6 @@ function epan_asy(data, nEpochs, nBands, measure, name, RightLoc, LeftLoc)
     
     nBands = bands;
     ep_scatter(asy, nEpochs, nBands, ...
-        strcat(char_check(name), ' Asymmetry'), measure)
+        strcat(char_check(name), " Asymmetry"), measure)
 end
         

@@ -16,6 +16,8 @@ function batch_scatter(parameters)
     
     band1 = search_parameter(parameters, 'Scatter_Band1');
     band2 = search_parameter(parameters, 'Scatter_Band2');
+    cf = search_parameter(parameters, 'cf');
+    bands_names = search_parameter(parameters, 'frequency_bands');
     
     location1 = search_parameter(parameters, 'Scatter_Location1');
     location2 = search_parameter(parameters, 'Scatter_Location2');
@@ -28,10 +30,10 @@ function batch_scatter(parameters)
     measure2_path = path_check(strcat(path_check(dataPath), ...
         path_check(measure2), path_check('Epmean'), area2));
     
-    [PAT1, ~, locs1] = load_data(strcat(measure1_path, 'PAT.mat'));
-    HC1 = load_data(strcat(measure1_path, 'HC.mat'));
-    [PAT2, ~, locs2] = load_data(strcat(measure2_path, 'PAT.mat'));
-    HC2 = load_data(strcat(measure2_path, 'HC.mat'));
+    [PAT1, ~, locs1] = load_data(strcat(measure1_path, 'Second.mat'));
+    HC1 = load_data(strcat(measure1_path, 'First.mat'));
+    [PAT2, ~, locs2] = load_data(strcat(measure2_path, 'Second.mat'));
+    HC2 = load_data(strcat(measure2_path, 'First.mat'));
     
     if check1 == 0
         idx_loc1 = 1;
@@ -59,14 +61,14 @@ function batch_scatter(parameters)
     PAT2 = PAT2(:, band2, idx_loc2);
     HC2 = HC2(:, band2, idx_loc2);
     
-    figure('Name', strcat(measure1, " ", location1, " Band ", ...
-        string(band1), " - ", measure2, " ", location2, " Band ", ...
-        string(band2)), 'NumberTitle', 'off', 'ToolBar', 'none');
+    figure('Name', strcat(measure1, " ", location1, " ", ...
+        bands_names{band1}, " - ", measure2, " ", location2, " Band ", ...
+        bands_names{band2}), 'NumberTitle', 'off', 'ToolBar', 'none');
     set(gcf, 'color', [1 1 1])
     scatter(HC1, HC2, 'b')
     hold on
     scatter(PAT1, PAT2, 'r')
     legend('group 0', 'group 1')
-    xlabel(strcat(measure1, " ", location1, " Band ", string(band1)))
-    ylabel(strcat(measure2, " ", location2, " Band ", string(band2)))
+    xlabel(strcat(measure1, " ", location1, " ", bands_names{band1}))
+    ylabel(strcat(measure2, " ", location2, " ", bands_names{band2}))
 end

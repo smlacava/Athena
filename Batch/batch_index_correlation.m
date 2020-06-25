@@ -29,7 +29,7 @@ function batch_index_correlation(parameters, managedPath, measure, ...
     Areas_IC = search_parameter(parameters, 'Areas_IC');
     for i = 1:length(Areas_IC)
         [data, ~, locs] = load_data(strcat(path_check(...
-            strcat(managedPath, Areas_IC{i})), 'PAT.mat'));
+            strcat(managedPath, Areas_IC{i})), 'Second.mat'));
         if length(size(data)) == 3
             nBands = size(data, 2);
         else
@@ -37,18 +37,13 @@ function batch_index_correlation(parameters, managedPath, measure, ...
         end
         RHO = zeros(length(locs), nBands);
         P = RHO;
-        bands = string();
-        for j = 1:nBands
-            bands = [bands; strcat('Band', string(j))];
-        end
-        bands(1, :) = [];
-        bands = cellstr(bands);
+
         [data, ~, locations] = load_data(char_check(...
             strcat(path_check(strcat(managedPath, Areas_IC{i})), ...
             search_parameter(parameters, 'Group_IC'), '.mat')));
         subs = {};
         if strcmp(char_check(search_parameter(parameters, 'Group_IC')), ...
-                'PAT')
+                'Second')
             for s = 1:length(Subjects)
                 if patient_check(char_check(Subjects(s, end)))
                     subs = [subs, char_check(Subjects(s, 1))];
@@ -61,9 +56,10 @@ function batch_index_correlation(parameters, managedPath, measure, ...
                 end
             end
         end
+        bands = search_parameter(parameters, 'frequency_bands');
         index_correlation(data, subs, bands, measure, ...
             search_parameter(parameters, 'Index'), alpha, bg_color, ...
-            locations, P, RHO, length(locations), nBands);
+            locations, P, RHO, length(locations), nBands, 1);
     end
     pause(2)
 end

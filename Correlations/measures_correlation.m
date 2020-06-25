@@ -31,6 +31,9 @@ function measures_correlation(xData, yData, sub_list, bands_names, ...
     measures, alpha, bg_color, locs, P, RHO, nLoc, nBands, save_check, ...
     dataPath)    
     if nargin < 13
+        save_check = 0;
+    end
+    if nargin < 14
         dataPath = '';
     end
     funDir = mfilename('fullpath');

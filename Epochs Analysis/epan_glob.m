@@ -22,5 +22,5 @@ function epan_glob(data, nEpochs, nBands, measure, name)
     glob = mean(data, 3);
     
     ep_scatter(glob, nEpochs, nBands, ...
-        strcat(char_check(name),' Global'), measure)
+        strcat(char_check(name), " Global"), measure)
 end

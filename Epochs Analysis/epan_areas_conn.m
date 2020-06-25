@@ -98,5 +98,5 @@ function epan_areas_conn(data, nEpochs, nBands, measure, name, ...
     
     for i = 1:length(areas)
         ep_scatter(data_areas(:, :, i), nEpochs, nBands, ...
-            strcat(char_check(name), ' ', char_check(areas(i))), measure)
+            strcat(char_check(name), " ", char_check(areas(i))), measure)
     end

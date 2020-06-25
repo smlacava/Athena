@@ -16,6 +16,9 @@ function batch_histogram(parameters)
     band = search_parameter(parameters, 'Histogram_Band');
     location = search_parameter(parameters, 'Histogram_Location');
     bins = search_parameter(parameters, 'Histogram_Resolution');
+    sub_types = search_parameter(parameters, 'subjects_types');
+    band_name = search_parameter(parameters, 'frequency_bands');
+    band_name = band_name{band};
     
     aux_bins = str2double(bins);
     if isnan(aux_bins)
@@ -34,8 +37,8 @@ function batch_histogram(parameters)
     measure_path = path_check(strcat(path_check(dataPath), ...
         path_check(measure), path_check('Epmean'), area));
     
-    [PAT, ~, locs] = load_data(strcat(measure_path, 'PAT.mat'));
-    HC = load_data(strcat(measure_path, 'HC.mat'));
+    [PAT, ~, locs] = load_data(strcat(measure_path, 'Second.mat'));
+    HC = load_data(strcat(measure_path, 'First.mat'));
     
     if check == 0
         idx_loc = 1;
@@ -51,6 +54,6 @@ function batch_histogram(parameters)
     PAT = PAT(:, band, idx_loc);
     HC = HC(:, band, idx_loc);
     
-    distributions_histogram(HC, PAT, measure, {'Group 0', 'Group 1'}, ...
-        location, band, bins)
+    distributions_histogram(HC, PAT, measure, sub_types, ...
+        location, band_name, bins)
 end

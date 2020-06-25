@@ -34,6 +34,12 @@ function index_correlation(data, sub_list, bands_names, measure, Index, ...
     cd(char(funDir{1}));
     addpath 'Auxiliary'
     addpath 'Graphics'
+    if nargin < 13
+        save_check = 0;
+    end
+    if nargin < 14
+        dataPath = '';
+    end
     if isempty(P)
         P = zeros(nLoc, nBands);
     end

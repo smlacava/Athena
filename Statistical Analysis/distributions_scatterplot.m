@@ -12,7 +12,7 @@
 %   labels is the cell array which contains the name of each group
 %       (optional, {'first group', 'second group'} by default)
 %   location is the name of the compared location (optional)
-%   band is the number of the frequency band (optional)
+%   band is the number of the frequency band, or its name (optional)
 %   parameter can take 'mean' to compute the mean of the distribution, or
 %       'median' to compute the median of the distribution ('median' by
 %       default)
@@ -30,7 +30,11 @@ function distributions_scatterplot(first_group, second_group, measure, ...
         title = strcat(measure, " ", location);
     end
     if nargin > 5
-        title = strcat(title, " ", string(band));
+        try
+            title = strcat(title, " ", band);
+        catch
+            title = strcat(title, " ", string(band));
+        end
     end
     if nargin > 6
         title = strcat(title, " - ", parameter);

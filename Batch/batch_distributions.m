@@ -16,13 +16,16 @@ function batch_distributions(parameters)
     band = search_parameter(parameters, 'Distributions_Band');
     location = search_parameter(parameters, 'Distributions_Location');
     parameter = search_parameter(parameters, 'Distributions_Parameter');
+    sub_types = search_parameter(parameters, 'subjects_types');
+    band_name = search_parameter(parameters, 'frequency_bands');
+    band_name = band_name{band};
     
     [area, check] = batch_check_area(location);
     measure_path = path_check(strcat(path_check(dataPath), ...
         path_check(measure), path_check('Epmean'), area));
     
-    [PAT, ~, locs] = load_data(strcat(measure_path, 'PAT.mat'));
-    HC = load_data(strcat(measure_path, 'HC.mat'));
+    [PAT, ~, locs] = load_data(strcat(measure_path, 'Second.mat'));
+    HC = load_data(strcat(measure_path, 'First.mat'));
     
     if check == 0
         idx_loc = 1;
@@ -38,6 +41,6 @@ function batch_distributions(parameters)
     PAT = PAT(:, band, idx_loc);
     HC = HC(:, band, idx_loc);
     
-    distributions_scatterplot(HC, PAT, measure, {'Group 0', 'Group 1'}, ...
-        location, band, parameter)
+    distributions_scatterplot(HC, PAT, measure, sub_types, ...
+        location, band_name, parameter)
 end

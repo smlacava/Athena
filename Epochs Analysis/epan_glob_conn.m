@@ -22,5 +22,5 @@ function epan_glob_conn(data, nEpochs, nBands, measure, name)
     glob = squeeze(sum(data, [3 4])/(dim(3)*dim(3)-dim(3)));
     
     ep_scatter(glob, nEpochs, nBands, ...
-        strcat(char_check(name), ' Global'), measure)
+        strcat(char_check(name), " Global"), measure)
 end
