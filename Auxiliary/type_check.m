@@ -15,7 +15,8 @@
 function [type, connCheck] = type_check(measure)
     type = string(measure);
     connCheck = 0;
-    if sum(strcmpi(measure, ["PLI", "PLV", "AEC", "AECo"]))
+    if sum(strcmpi(measure, ["PLI", "PLV", "AEC", "AECo", "MSC", ...
+            "coherence"]))
         type = "CONN";
         connCheck = 1;
     elseif strcmpi(measure, "exponent")

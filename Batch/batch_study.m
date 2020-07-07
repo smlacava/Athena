@@ -10,7 +10,8 @@
 
 
 function batch_study(dataFile)
-    MEASURES = ["PLV", "PLI", "AEC", "AECo", "offset", "exponent", "PSDr"];
+    MEASURES = ["PLV", "PLI", "AEC", "AECo", "offset", "exponent", ...
+        "PSDr", "coherence"];
     true = ["True", "true", "TRUE", "t", "1", "OK", "ok"];
     bg_color = [1 1 1];
     

@@ -18,10 +18,10 @@ function PLV = phase_locking_value(sig)
     for i = 1:nLoc     
         for j = 1:nLoc      
             if i < j 
-            PLV(i, j) = abs(mean(...
-                exp(1i*(unwrap(angle(complex_sig(:,i)))-...
-                unwrap(angle(complex_sig(:, j))))), 1));
-            PLV(j, i) = PLV(i, j);              
+                PLV(i, j) = abs(mean(...
+                    exp(1i*(unwrap(angle(complex_sig(:,i)))-...
+                    unwrap(angle(complex_sig(:, j))))), 1));
+                PLV(j, i) = PLV(i, j);              
             end
         end
     end

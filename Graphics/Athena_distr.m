@@ -83,7 +83,8 @@ function dataPath_text_Callback(hObject, eventdata, handles)
         for i = 1:length(cases)
         	if cases(i).isdir == 1
                 if sum(strcmp(cases(i).name, {'offset', 'exponent', ...
-                        'PSDr', 'PLI', 'PLV', 'AEC', 'AECo'}))
+                        'PSDr', 'PLI', 'PLV', 'AEC', 'AECo', 'MSC', ...
+                        'coherence'}))
                     measures = [measures, string(cases(i).name)];
                 end
             end

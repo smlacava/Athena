@@ -33,8 +33,8 @@ function [locations_file, sub_types] = epmean_and_manage(inDir, type, ...
 
     type = char_check(string(type));
     inDir = path_check(inDir);
-    if sum(contains(inDir, {'AECo', 'AEC', 'PLI', 'PLV', 'PSDr', ...
-            'offset', 'exponent'})) == 0
+    if sum(contains(inDir, {'AECo', 'AEC', 'PLI', 'PLV', 'coherence', ...
+            'PSDr', 'offset', 'exponent'})) == 0
         inDir = path_check(strcat(inDir, type));
     end
     epDir = subdir(inDir, 'Epmean');
@@ -106,7 +106,8 @@ function [locations_file, sub_types] = epmean_and_manage(inDir, type, ...
         nLoc = size(measure, 3);
         nBands = size(measure, 1);
         ind_ep = 2;
-    elseif sum(strcmpi(type, ["pli"; "plv"; "aec"; "aecc"; "aeco"; "conn"]))
+    elseif sum(strcmpi(type, ["pli"; "plv"; "aec"; "aecc"; "aeco"; ...
+            "msc"; "coherence"; "conn"]))
         nLoc = size(measure, 3);
         nBands = size(measure, 1);
         ind_ep = 2;

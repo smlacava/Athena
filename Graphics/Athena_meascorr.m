@@ -95,7 +95,7 @@ function Run_Callback(hObject, eventdata, handles)
         nBands, analysis, sub_group] = correlation_setting(handles);
     
     meas_state = [get(handles.meas1,'Value') get(handles.meas2,'Value')];
-    meas_list = {'PSDr', 'PLV', 'PLI', 'AEC', 'AECo'};
+    meas_list = {'PSDr', 'PLV', 'PLI', 'AEC', 'AECo', 'coherence'};
     measures = meas_list(meas_state);
     
     dataPath = path_check(get(handles.aux_dataPath, 'String'));

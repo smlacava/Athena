@@ -1,6 +1,6 @@
 %% conn_index
 % This function is used to compute an index for some connectivity
-% computations
+% computations.
 %
 % idx = conn_index(data)
 %

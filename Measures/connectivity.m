@@ -1,8 +1,9 @@
 %% connectivity
 % This function computes the connectivity between EEG channels or ROIs,
 % using the phase locking value (PLV), the phase lag index (PLI), the
-% amplitude envelope correlation corrected (also called orthogonalized, 
-% AECo) or the amplitude envelope correlation not corrected (AEC).
+% magnitude-squared coherence (MSC), the amplitude envelope correlation 
+% corrected (also called orthogonalized, AECo) or the amplitude envelope 
+% correlation not corrected (AEC).
 %
 % connectivity(fs, cf, nEpochs, dt, inDir, outDirs, tStart, outTypes)
 %
@@ -14,7 +15,7 @@
 %   inDir is the directory containing each case
 %   tStart is the starting time (in seconds) to computate the first sample
 %       of the first epoch
-%   outTypes is the list of variables to save (PLI, PLV, AEC, AECo)
+%   outTypes is the list of variables to save (PLI, PLV, AEC, AECo, MSC)
 
 
 function connectivity(fs, cf, nEpochs, dt, inDir, tStart, outTypes)
@@ -41,6 +42,7 @@ function connectivity(fs, cf, nEpochs, dt, inDir, tStart, outTypes)
     AECnames = ["aec", "AEC", "Aec"];
     AECOnames = ["aeco", "aec_o", "AECo", "AEC_o", "Aeco", "Aec_o", ...
         "AECc", "AEC_c", "aecc", "aec_c", "Aecc", "Aec_c"];
+    MSCnames = ["coherence", "MSC", "coh", "msc", "COH", "Coherence"];
     
     inDir = path_check(inDir);
     cases = define_cases(inDir);
@@ -69,6 +71,8 @@ function connectivity(fs, cf, nEpochs, dt, inDir, tStart, outTypes)
                 outTypes = [outTypes, "AECo"];
             elseif contains(sup(i, 1), AECnames)
                 outTypes = [outTypes, "AEC"];
+            elseif contains(sup(i, 1), MSCnames)
+                outTypes = [outTypes, "coherence"];
             end
         end
         if length(outDirs) == length(outTypes)
@@ -85,6 +89,8 @@ function connectivity(fs, cf, nEpochs, dt, inDir, tStart, outTypes)
         	outTypes(i) = "AECo";
         elseif contains(outTypes(i), AECnames)
         	outTypes(i) = "AEC";
+        elseif contains(outTypes(i, 1), MSCnames)
+            outTypes(i) = "coherence";
         end
     end
     
@@ -129,6 +135,9 @@ function connectivity(fs, cf, nEpochs, dt, inDir, tStart, outTypes)
                         elseif strcmpi(outTypes(c), "AEC")
                             conn.data(j, k, :, :) = ...
                                 amplitude_envelope_correlation(data);
+                        elseif strcmpi(outTypes(c), "coherence")
+                            conn.data(j, k, :, :) = ...
+                                magnitude_squared_coherence(data);
                         end
                     end
                 end

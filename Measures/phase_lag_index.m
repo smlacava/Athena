@@ -19,9 +19,9 @@ function PLI = phase_lag_index(sig)
     for i = 1:nLoc    
         for j = 1:nLoc         
             if i < j       
-            PLI(i, j) = abs(mean(sign(angle(...
-                complex_sig(:, i)./complex_sig(:, j)))));                       
-            PLI(j, i) = PLI(i, j);     
+                PLI(i, j) = abs(mean(sign(angle(...
+                    complex_sig(:, i)./complex_sig(:, j)))));                       
+                PLI(j, i) = PLI(i, j);     
             end
         end
     end

@@ -160,6 +160,9 @@ function Run_Callback(hObject, eventdata, handles)
     if get(handles.checkExponent, 'Value') == 1
         measType = [measType "Exponent"];
     end
+    if get(handles.checkCOH, 'Value') == 1
+        measType = [measType "Coherence"];
+    end
 
     data = classification_data_settings(dataPath, anType, measType, ...
         dataType);
@@ -276,3 +279,6 @@ function sigData_Callback(hObject, eventdata, handles)
 
 
 function checkbox26_Callback(hObject, eventdata, handles)
+
+
+function checkCOH_Callback(hObject, eventdata, handles)

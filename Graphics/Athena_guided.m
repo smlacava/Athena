@@ -48,10 +48,10 @@ function Athena_guided_OpeningFcn(hObject, eventdata, handles, varargin)
     
     if exist('fooof', 'file')
         set(handles.meas, 'String', ["relative PSD", "PLV", "PLI", ...
-            "AEC", "AEC corrected", "Offset", "Exponent"]);
+            "AEC", "AEC corrected", "Coherence", "Offset", "Exponent"]);
     else
         set(handles.meas, 'String', ["relative PSD", "PLV", "PLI", ...
-            "AEC", "AEC corrected"]);
+            "AEC", "AEC corrected", "Coherence"]);
     end
 
     
@@ -132,7 +132,8 @@ function totBand_text_CreateFcn(hObject, eventdata, handles)
 function Run_Callback(hObject, eventdata, handles)  
     [~, ~, sub, loc, sub_types] = GUI_transition(handles, 'dataPath', ...
         'measure');
-    measures = ["PSDr", "PLV", "PLI", "AEC", "AECo", "offset", "exponent"];
+    measures = ["PSDr", "PLV", "PLI", "AEC", "AECo", "coherence", ...
+        "offset", "exponent"];
     dataPath = string(get(handles.dataPath_text, 'String'));
     
     if strcmp(dataPath, 'es. C:\User\Data')
@@ -176,7 +177,8 @@ function back_Callback(hObject, eventdata, handles)
     addpath 'Graphics'
     [~, ~, sub, loc, sub_types] = GUI_transition(handles, 'dataPath', ...
         'measure');
-    measures = ["PSDr", "PLV", "PLI", "AEC", "AECo", "offset", "exponent"];
+    measures = ["PSDr", "PLV", "PLI", "AEC", "AECo", "coherence", ...
+        "offset", "exponent"];
     measure = measures(get(handles.meas, 'Value'));
     dataPath = string(get(handles.dataPath_text, 'String'));
     close(Athena_guided)
@@ -197,7 +199,8 @@ function next_Callback(~, eventdata, handles)
     addpath 'Graphics'
     [~, ~, sub, loc, sub_types] = GUI_transition(handles, 'dataPath', ...
         'measure');
-    measures = ["PSDr", "PLV", "PLI", "AEC", "AECo", "offset", "exponent"];
+    measures = ["PSDr", "PLV", "PLI", "AEC", "AECo", "coherence", ...
+        "offset", "exponent"];
     measure = measures(get(handles.meas, 'Value'));
     dataPath = string(get(handles.dataPath_text, 'String'));
     close(Athena_guided)

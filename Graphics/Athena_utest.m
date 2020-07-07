@@ -119,7 +119,8 @@ function Run_Callback(hObject, eventdata, handles)
     dataPath = get(handles.dataPath_text, 'String');
     dataPath = path_check(dataPath);
     measure = get(handles.aux_measure, 'String');
-    measures = {'PLI', 'PLV', 'PSDr', 'AEC', 'AECo', 'offset', 'exponent'};
+    measures = {'PLI', 'PLV', 'PSDr', 'AEC', 'AECo', 'coherence', ...
+        'offset', 'exponent'};
     for i = 1:length(measures)
         if strcmpi(measures{i}, dataPath(end-length(measures{i}):end-1))
             measure = measures{i};
