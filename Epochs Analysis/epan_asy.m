@@ -2,7 +2,8 @@
 % This function computes the epochs analysis of a previously extracted 
 % not-connectivity measure of the asymmetry of a subject.
 %
-% epan_areas(data, nEpochs, nBands, measure, name, RightLoc, LeftLoc)
+% epan_areas(data, nEpochs, nBands, measure, name, RightLoc, LeftLoc, ...
+%         save_check, format, dataPath)
 %
 % input:
 %   data is the measure matrix
@@ -14,9 +15,17 @@
 %       the right hemisphere
 %   LeftLoc is the array which contains the indexes of the locations in
 %       the left hemisphere
+%   save_check is 1 if the resulting figures have to be saved (0 otherwise)
+%   format is the format in which the figures have to be eventually saved
+%   dataPath is the data directory
 
-function epan_asy(data, nEpochs, nBands, measure, name, RightLoc, LeftLoc)
-    
+function epan_asy(data, nEpochs, nBands, measure, name, RightLoc, ...
+    LeftLoc, save_check, format, dataPath)
+    if nargin < 8
+        save_check = 0;
+        format = '';
+        dataPath = '';
+    end
     dim = size(data);
     if length(dim) == 2
         aux = zeros(1, dim(1), dim(2));
@@ -35,6 +44,7 @@ function epan_asy(data, nEpochs, nBands, measure, name, RightLoc, LeftLoc)
     
     nBands = bands;
     ep_scatter(asy, nEpochs, nBands, ...
-        strcat(char_check(name), " Asymmetry"), measure)
+        strcat(char_check(name), " Asymmetry"), measure, save_check, ...
+        format, dataPath)
 end
         

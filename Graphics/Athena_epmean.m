@@ -134,6 +134,15 @@ function Run_Callback(hObject, eventdata, handles)
         save(strcat(path_check(get(handles.aux_dataPath, 'String')), ...
             'Subjects.mat'), 'subjects')
     end
+    if not(exist('type', 'var'))
+        aux_type = split(dataPath, filesep);
+        if not(isempty(aux_type{end}))
+            type = aux_type{end};
+        else
+            type = aux_type{end-1};
+        end
+    end
+        
     [locs, sub_types] = epmean_and_manage(dataPath, type, sub);
     set(handles.sub_types, 'Data', sub_types)
     if not(isempty(locs))

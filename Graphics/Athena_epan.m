@@ -122,6 +122,8 @@ function Run_Callback(hObject, eventdata, handles)
     	return
     end
     cd(char(dataPath))
+    [save_check, format] = Athena_save_figures('Save figures', ...
+        'Do you want to save the resulting figure?');
     
     if exist('auxiliary.txt', 'file')
         auxID = fopen('auxiliary.txt','r');
@@ -159,7 +161,9 @@ function Run_Callback(hObject, eventdata, handles)
     else
         anType = 'areas';
     end
-    epochs_analysis(dataPath, subName, anType, measure, epochs, bands, loc)    
+    epochs_analysis(dataPath, subName, anType, measure, epochs, bands, ...
+        loc, save_check, format)  
+    
        
 
 function data_search_Callback(hObject, eventdata, handles)

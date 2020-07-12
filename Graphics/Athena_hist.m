@@ -118,13 +118,18 @@ function Run_Callback(hObject, eventdata, handles)
     addpath 'Correlations'
     addpath 'Auxiliary'
     addpath 'Graphics'
+    
+    [save_check, format] = Athena_save_figures('Save figure', ...
+        'Do you want to save the resulting figure?');
+    
     sub_types = get(handles.sub_types, 'Data');
     if strcmp(get(handles.dataPath_text, 'String'), 'es. C:\User\Data')
         problem('You have to select a directory')
     else
         axis(handles.histogram);
         axes(handles.histogram);
-        [PAT, HC, bins] = histogram_initialization(handles);
+        [PAT, HC, bins, measure, band_name, location] = ...
+            histogram_initialization(handles);
         if not(isempty(PAT)) && not(isempty(HC))
             xmax = max(max(max(PAT)), max(max(HC)))*1.1;
             if length(bins) == 1
@@ -179,6 +184,22 @@ function Run_Callback(hObject, eventdata, handles)
             return;
         end
         set(handles.help_button, 'Visible', 'off')
+        if save_check == 1
+            outDir = create_directory(get(handles.dataPath_text, ...
+                'String'), 'Figures');
+            export_Callback(hObject, eventdata, handles)
+            if strcmp(format, '.fig')
+                savefig(char_check(strcat(path_check(outDir), ...
+                    'Histogram_', location, '_', measure, '_', ...
+                    band_name, format)));
+            else
+                Image = getframe(gcf);
+                imwrite(Image.cdata, char_check(strcat(...
+                    path_check(outDir), 'Histogram_', location, '_', ...
+                    measure, '_', band_name, format)));
+            end
+            close(gcf)
+        end
     end
     
     

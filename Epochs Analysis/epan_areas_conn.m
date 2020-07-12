@@ -22,9 +22,18 @@
 %       location
 %   ParietalLoc is the array which contains the indices of every parietal
 %       location
+%   save_check is 1 if the resulting figures have to be saved (0 otherwise)
+%   format is the format in which the figures have to be eventually saved
+%   dataPath is the data directory
 
 function epan_areas_conn(data, nEpochs, nBands, measure, name, ...
-    CentralLoc, FrontalLoc, TemporalLoc, OccipitalLoc, ParietalLoc)
+    CentralLoc, FrontalLoc, TemporalLoc, OccipitalLoc, ParietalLoc, ...
+    save_check, format, dataPath)
+    if nargin < 11
+        save_check = 0;
+        format = '';
+        dataPath = '';
+    end
     
     Front = length(FrontalLoc);
     Front = Front*Front-Front;
@@ -98,5 +107,6 @@ function epan_areas_conn(data, nEpochs, nBands, measure, name, ...
     
     for i = 1:length(areas)
         ep_scatter(data_areas(:, :, i), nEpochs, nBands, ...
-            strcat(char_check(name), " ", char_check(areas(i))), measure)
+            strcat(char_check(name), " ", char_check(areas(i))), ...
+            measure, save_check, format, dataPath)
     end

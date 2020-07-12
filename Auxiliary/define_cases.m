@@ -53,7 +53,8 @@ function cases = check_cases(cases, check)
     if check == 1
         toAvoid = {'Locations', 'Subjects', 'StatAn', 'Index', 'PSDr', ...
             'AEC', 'AECc', 'AECo', 'offset', 'exponential', 'PLI', ...
-            'PLV', 'HC', 'PAT', 'Classification'};
+            'PLV', 'coherence', 'First', 'Second', 'Classification', ...
+            'Figures'};
         for i = 1:length(toAvoid)
             cases = cases(not(contains({cases.name}, toAvoid{i})));
         end

@@ -2,7 +2,8 @@
 % This function executes the epochs analysis of a previously extacted
 % measure of a subject in a selected study area.
 %
-% epochs_analysis(dataPath, name, anType, measure, epochs, bands, loc)
+% epochs_analysis(dataPath, name, anType, measure, epochs, bands, loc, ...
+%         save_check, format)
 %
 % input:
 %   dataPath is the directory which contains the matrix of the selected 
@@ -14,10 +15,12 @@
 %   bands is the number of frequency bands
 %   loc is the name of the file (with its path) which contains information
 %       about the locations
+%   save_check is 1 if the resulting figures have to be saved (0 otherwise)
+%   format is the format in which the figures have to be eventually saved
 
 
 function epochs_analysis(dataPath, name, anType, measure, epochs, ...
-    bands, loc)
+    bands, loc, save_check, format)
     dataPath = char_check(path_check(dataPath));
     measure = char_check(measure);
     if not(strcmp(dataPath(end-length(measure):end-1), measure))
@@ -26,7 +29,10 @@ function epochs_analysis(dataPath, name, anType, measure, epochs, ...
     if strcmp(measure, 'offset') || strcmp(measure, 'exponent')
         bands = 1;
     end
-    
+    if nargin < 8
+        save_check = 0;
+        format = '';
+    end
     bands = define_bands(dataPath, bands);
     cases = define_cases(dataPath);
     locations = [];
@@ -57,22 +63,26 @@ function epochs_analysis(dataPath, name, anType, measure, epochs, ...
     else
         loc = locations(:, 1);
     end
-       
+    
+    dataPath = limit_path(dataPath, measure);
     if strcmp(anType, 'asymmetry')
         [RightLoc, LeftLoc] = asymmetry_manager(loc);
         if (strcmp(measure, 'PSDr') || strcmp(measure, 'offset') ...
                 || strcmp(measure, 'exponent'))
-            epan_asy(data, epochs, bands, measure, name, RightLoc, LeftLoc)
+            epan_asy(data, epochs, bands, measure, name, RightLoc, ...
+                LeftLoc, save_check, format, dataPath)
         else
             epan_asy_conn(data, epochs, bands, measure, name, RightLoc, ...
-                LeftLoc)
+                LeftLoc, save_check, format, dataPath)
         end
     elseif strcmp(anType, 'global')
         if (strcmp(measure, 'PSDr') || strcmp(measure, 'offset') ...
                 || strcmp(measure, 'exponent'))
-            epan_glob(data, epochs, bands, measure, name)
+            epan_glob(data, epochs, bands, measure, name, ...
+                save_check, format, dataPath)
         else
-            epan_glob_conn(data, epochs, bands, measure, name)
+            epan_glob_conn(data, epochs, bands, measure, name, ...
+                save_check, format, dataPath)
         end
     elseif strcmp(anType, 'areas')
         [CentralLoc, FrontalLoc, TemporalLoc, OccipitalLoc, ...
@@ -80,18 +90,21 @@ function epochs_analysis(dataPath, name, anType, measure, epochs, ...
         if (strcmp(measure, 'PSDr') || strcmp(measure, 'offset') ...
                 || strcmp(measure, 'exponent'))
             epan_areas(data, epochs, bands, measure, name, CentralLoc, ...
-                FrontalLoc, TemporalLoc, OccipitalLoc, ParietalLoc)
+                FrontalLoc, TemporalLoc, OccipitalLoc, ParietalLoc, ...
+                save_check, format, dataPath)
         else
             epan_areas_conn(data, epochs, bands, measure, name, ...
                 CentralLoc, FrontalLoc, TemporalLoc, OccipitalLoc, ...
-                ParietalLoc)
+                ParietalLoc, save_check, format, dataPath)
         end
     else
         if (strcmp(measure, 'PSDr') || strcmp(measure, 'offset') ...
                 || strcmp(measure, 'exponent'))
-            epan_tot(data, epochs, bands, measure, name, loc)
+            epan_tot(data, epochs, bands, measure, name, loc, ...
+                save_check, format, dataPath)
         else
-            epan_tot_conn(data, epochs, bands, measure, name, loc)
+            epan_tot_conn(data, epochs, bands, measure, name, loc, ...
+                save_check, format, dataPath)
         end
     end
 end

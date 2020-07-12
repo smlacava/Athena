@@ -118,6 +118,10 @@ function Run_Callback(hObject, eventdata, handles)
     addpath 'Correlations'
     addpath 'Auxiliary'
     addpath 'Graphics'
+    
+    [save_check, format] = Athena_save_figures('Save figure', ...
+        'Do you want to save the resulting figure?');
+    
     sub_types = get(handles.sub_types, 'Data');
     if strcmp(get(handles.loc1, 'Visible'), 'off') || ...
             strcmp(get(handles.loc2, 'Visible'), 'off') 
@@ -136,12 +140,31 @@ function Run_Callback(hObject, eventdata, handles)
         problem('You have to select a directory')
     else
         axis(handles.scatter);
-        [PAT1, HC1, PAT2, HC2] = measures_scatter_initialization(handles);
+        [PAT1, HC1, PAT2, HC2, measure1, measure2, band_name1, ...
+            band_name2, location1, location2] = ...
+            measures_scatter_initialization(handles);
         scatter(HC1, HC2, 'b')
         hold on
         scatter(PAT1, PAT2, 'r')
         legend(sub_types)
         hold off
+        if save_check == 1
+            outDir = create_directory(get(handles.dataPath_text, ...
+                'String'), 'Figures');
+            export_Callback(hObject, eventdata, handles)
+            if strcmp(format, '.fig')
+                savefig(char_check(strcat(path_check(outDir), ...
+                    'Scatter_', measure1, band_name1, location1, '_', ...
+                    measure2, band_name2, location2, format)));
+            else
+                Image = getframe(gcf);
+                imwrite(Image.cdata, char_check(strcat(...
+                    path_check(outDir), 'Scatter_', measure1, ...
+                    band_name1, location1, '_', measure2, band_name2, ...
+                    location2, format)));
+            end
+            close(gcf)
+        end
         set(handles.help_button, 'Visible', 'off')
     end
     

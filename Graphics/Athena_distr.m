@@ -118,12 +118,17 @@ function Run_Callback(hObject, eventdata, handles)
     addpath 'Correlations'
     addpath 'Auxiliary'
     addpath 'Graphics'
+    
+    [save_check, format] = Athena_save_figures('Save figure', ...
+        'Do you want to save the resulting figure?');
+    
     sub_types = get(handles.sub_types, 'Data');
     if strcmp(get(handles.dataPath_text, 'String'), 'es. C:\User\Data')
         problem('You have to select a directory')
     else
         axis(handles.scatter);
-        [PAT, HC, parameter] = distributions_initialization(handles);
+        [PAT, HC, parameter, measure, band_name] = ...
+            distributions_initialization(handles);
         if strcmpi(parameter, 'mean')
             m1 = mean(HC);
             m2 = mean(PAT);
@@ -159,6 +164,23 @@ function Run_Callback(hObject, eventdata, handles)
         hold off
         set(handles.scatter, 'XTick', [])
         set(handles.help_button, 'Visible', 'off')
+        
+        if save_check == 1
+            outDir = create_directory(get(handles.dataPath_text, ...
+                'String'), 'Figures');
+            export_Callback(hObject, eventdata, handles)
+            if strcmp(format, '.fig')
+                savefig(char_check(strcat(path_check(outDir), ...
+                    'Distribution_', area, '_', measure, '_', band_name, ...
+                    format)));
+            else
+                Image = getframe(gcf);
+                imwrite(Image.cdata, char_check(strcat(...
+                    path_check(outDir), 'Distribution_', area, '_', ...
+                    measure, '_', band_name, format)));
+            end
+            close(gcf)
+        end
     end
     
     
