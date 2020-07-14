@@ -90,6 +90,7 @@ function Run_Callback(hObject, eventdata, handles)
             'Do you want to save the resulting tables?', 'U Test'), 'yes')
         save_check = 1;
     end
+    [save_check_fig, format] = Athena_save_figures();
     
     [~, sub_list, alpha, bg_color, locs, bands_names, P, RHO, nLoc, ...
         nBands, analysis, sub_group] = correlation_setting(handles);
@@ -131,7 +132,7 @@ function Run_Callback(hObject, eventdata, handles)
     corrPath = create_directory(corrPath, 'Data');
     measures_correlation(xData, yData, sub_list, bands_names, ...
         measures, alpha, bg_color, locs, P, RHO, nLoc, nBands, ...
-        save_check, corrPath)
+        save_check, corrPath, save_check_fig, format)
        
 
 function data_search_Callback(hObject, eventdata, handles)

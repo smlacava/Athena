@@ -10,7 +10,7 @@
 
 
 function batch_histogram(parameters)
-
+    format = search_parameter(parameters, 'format');
     dataPath = search_parameter(parameters, 'dataPath');
     measure = search_parameter(parameters, 'Histogram_Measure');
     band = search_parameter(parameters, 'Histogram_Band');
@@ -56,4 +56,17 @@ function batch_histogram(parameters)
     
     distributions_histogram(HC, PAT, measure, sub_types, ...
         location, band_name, bins)
+    if str2double(search_parameter(parameters, 'save_figures')) == 1
+        outDir = create_directory(dataPath, 'Figures');
+        if strcmp(format, '.fig')
+            savefig(char_check(strcat(path_check(outDir), ...
+                'Histogram_', measure, '_', location, '_', band_name, ...
+                format)));
+        else
+            Image = getframe(gcf);
+            imwrite(Image.cdata, char_check(strcat(path_check(outDir), ...
+                'Histogram_', measure, '_', location, '_', band_name, ...
+                format)));
+        end
+    end
 end

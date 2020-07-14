@@ -1,9 +1,11 @@
 You can jump to fill al the fields relative to unwanted steps.
 
-DATA PATH AND MEASURES
+STUDY PARAMETERS
 The datapath is the directory which contains all the time series.
 dataPath=D:\study\name\
 measures=PLI PLV offset
+save_figures=1
+format=.jpg
 
 LOCATIONS AND SUBJECTS FILES
 The locations file is needed in analysis.

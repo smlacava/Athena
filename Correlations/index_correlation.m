@@ -3,7 +3,8 @@
 % index array relative to each analyzed subject.
 % 
 % index_correlation(data, sub_list, bands_names, measure, Index, alpha, ...
-%       bg_color, locs, P, RHO, nLoc, nBands, save_check, dataPath)    
+%       bg_color, locs, P, RHO, nLoc, nBands, save_check, dataPath, ...
+%       save_check_fig, format)    
 %
 % input:
 %   data is the data matrix to correlate
@@ -25,10 +26,14 @@
 %   save_check has to be 1 if the user wants to save the resulting graphs
 %       (0 by default)
 %   dataPath is the directory where to save the data (optional)
+%   save_check_fig is 1 if the resulting figures have to be saved (0 
+%       otherwise)
+%   format is the format in which the figures have to be eventually saved
 
 
 function index_correlation(data, sub_list, bands_names, measure, Index, ...
-    alpha, bg_color, locs, P, RHO, nLoc, nBands, save_check, dataPath)    
+    alpha, bg_color, locs, P, RHO, nLoc, nBands, save_check, dataPath, ...
+    save_check_fig, format)    
     funDir = mfilename('fullpath');
     funDir = split(funDir, 'Correlations');
     cd(char(funDir{1}));
@@ -39,6 +44,12 @@ function index_correlation(data, sub_list, bands_names, measure, Index, ...
     end
     if nargin < 14
         dataPath = '';
+    end
+    if nargin < 15
+        save_check_fig = 0;
+    end
+    if nargin < 16
+        format = '';
     end
     if isempty(P)
         P = zeros(nLoc, nBands);
@@ -55,12 +66,13 @@ function index_correlation(data, sub_list, bands_names, measure, Index, ...
             for j = 1:nBands
                 [P(i, j), RHO(i, j)] = correlation(data(:, j, i), ...
                     Index(:, end), char_check(strcat(locs{i}, " ", ...
-                    bands_names{j})), measure, 'Index', sub_list, alpha);
+                    bands_names{j})), measure, 'Index', sub_list, ...
+                    alpha, save_check_fig, format, dataPath);
             end
         else
             [P(i, 1), RHO(i, 1)] = correlation(data(:, i), ...
                 Index(:, end), char_check(locs{i}), measure, 'Index', ...
-                sub_list, alpha);
+                sub_list, alpha, save_check_fig, format, dataPath);
         end
     end
     
@@ -71,7 +83,7 @@ function index_correlation(data, sub_list, bands_names, measure, Index, ...
             locs = 'Areas';
         elseif not(contains(locs, 'Asymmetry')) && ...
                 not(contains(locs, 'Global'))
-            locs = total;
+            locs = 'Channels';
         end
             
         save_name = strcat(dataPath, filesep, 'correlation_', ...
@@ -87,7 +99,7 @@ function index_correlation(data, sub_list, bands_names, measure, Index, ...
             if contains(char(locs), 'global')
                 locs = 'globality';
             end
-            p_table.Properties.VariableNames = {char(replace(replace(aux_locs, '-', ...
+            p_table.Properties.VariableNames = {char(replace(replace(locs, '-', ...
                 ''), ' ', ''))};
             rho_table.Properties.VariableNames = {char(replace(replace(locs, '-', ...
                 ''), ' ', ''))};
@@ -98,13 +110,8 @@ function index_correlation(data, sub_list, bands_names, measure, Index, ...
             rho_table.Properties.RowNames = replace(replace(bands_names, '-', ...
                 ''), ' ', '');
         catch
-            if contains(char(locs), 'global')
-                locs = 'globality';
-            end
-            p_table.Properties.RowNames = {char(replace(replace(bands_names, '-', ...
-                ''), ' ', ''))};
-            rho_table.Properties.RowNames = {char(replace(replace(bands_names, '-', ...
-                ''), ' ', ''))};
+            p_table.Properties.RowNames = bands_names;
+            rho_table.Properties.RowNames = bands_names;
         end
         save(strcat(save_name, '_pvalues.mat'), 'p_table' )
         save(strcat(save_name, '_rho.mat'), 'rho_table' )

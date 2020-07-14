@@ -79,6 +79,7 @@ function Run_Callback(hObject, eventdata, handles)
             'Do you want to save the resulting tables?', 'U Test'), 'yes')
         save_check = 1;
     end
+    [save_check_fig, format] = Athena_save_figures();
     
     Ind = get(handles.ind_text, 'String');
     if not(exist(Ind, 'file'))
@@ -98,7 +99,8 @@ function Run_Callback(hObject, eventdata, handles)
     corrPath = create_directory(dataPath, 'StatAn');
     corrPath = create_directory(corrPath, 'Data');
     index_correlation(data, sub_list, bands_names, measure, Index, ...
-        alpha, bg_color, locs, P, RHO, nLoc, nBands, save_check, corrPath)
+        alpha, bg_color, locs, P, RHO, nLoc, nBands, save_check, ...
+        dataPath, save_check_fig, format)
     
    
 function data_search_Callback(hObject, eventdata, handles)

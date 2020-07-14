@@ -10,7 +10,7 @@
 
 
 function batch_distributions(parameters)
-
+    format = search_parameter(parameters, 'format');
     dataPath = search_parameter(parameters, 'dataPath');
     measure = search_parameter(parameters, 'Distributions_Measure');
     band = search_parameter(parameters, 'Distributions_Band');
@@ -43,4 +43,17 @@ function batch_distributions(parameters)
     
     distributions_scatterplot(HC, PAT, measure, sub_types, ...
         location, band_name, parameter)
+    if str2double(search_parameter(parameters, 'save_figures')) == 1
+        outDir = create_directory(dataPath, 'Figures');
+        if strcmp(format, '.fig')
+            savefig(char_check(strcat(path_check(outDir), ...
+                'Distribution_', measure, '_', location, '_', ...
+                band_name, '_', parameter, format)));
+        else
+            Image = getframe(gcf);
+            imwrite(Image.cdata, char_check(strcat(path_check(outDir), ...
+                'Distribution_', measure, '_', location, '_', ...
+                band_name, '_', parameter, format)));
+        end
+    end
 end

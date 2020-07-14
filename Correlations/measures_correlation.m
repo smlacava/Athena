@@ -3,7 +3,8 @@
 % measures.
 % 
 % measures_correlation(xData, yData, sub_list, bands_names, measures, ...
-%       alpha, bg_color, locs, P, RHO, nLoc, nBands, save_check, dataPath)   
+%       alpha, bg_color, locs, P, RHO, nLoc, nBands, save_check, ...
+%       dataPath, save_check_fig, format)   
 %
 % input:
 %   xData is the first data matrix to correlate
@@ -25,17 +26,27 @@
 %   save_check has to be 1 if the user wants to save the resulting graphs
 %       (0 by default)
 %   dataPath is the directory where to save the data (optional)
+%   save_check_fig is 1 if the resulting figures have to be saved (0 
+%       otherwise)
+%   format is the format in which the figures have to be eventually saved
 
 
 function measures_correlation(xData, yData, sub_list, bands_names, ...
     measures, alpha, bg_color, locs, P, RHO, nLoc, nBands, save_check, ...
-    dataPath)    
+    dataPath, save_check_fig, format)    
     if nargin < 13
         save_check = 0;
     end
     if nargin < 14
         dataPath = '';
     end
+    if nargin < 15
+        save_check_fig = 0;
+    end
+    if nargin < 16
+        format = '';
+    end
+    
     funDir = mfilename('fullpath');
     funDir = split(funDir, 'Correlations');
     cd(char(funDir{1}));
@@ -60,12 +71,13 @@ function measures_correlation(xData, yData, sub_list, bands_names, ...
                 [P(i, j), RHO(i, j)] = correlation(xData(:, j, i), ...
                     yData(:, j, i), char_check(strcat(locs{i}, " ", ...
                     bands_names{j})), measures(1), measures(2), ...
-                    sub_list, alpha);
+                    sub_list, alpha, save_check_fig, format, dataPath);
             end
         else
             [P(i, 1), RHO(i, 1)] = correlation(xData(:, i), ...
                 yData(:, i), char_check(locs{i}), measures(1), ...
-                measures(2), sub_list, alpha);
+                measures(2), sub_list, alpha, save_check_fig, format, ...
+                dataPath);
         end
     end
     
@@ -76,7 +88,7 @@ function measures_correlation(xData, yData, sub_list, bands_names, ...
             locs = 'Areas';
         elseif not(contains(locs, 'Asymmetry')) && ...
                 not(contains(locs, 'Global'))
-            locs = total;
+            locs = 'Channels';
         end
         save_name = strcat(dataPath, filesep, 'correlation_', ...
             measures{1}, '_', measures{2}, '_', locs);

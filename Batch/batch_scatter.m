@@ -11,6 +11,7 @@
 
 function batch_scatter(parameters)
     dataPath = search_parameter(parameters, 'dataPath');
+    format = search_parameter(parameters, 'format');
     measure1 = search_parameter(parameters, 'Scatter_Measure1');
     measure2 = search_parameter(parameters, 'Scatter_Measure2');
     
@@ -71,4 +72,20 @@ function batch_scatter(parameters)
     legend('group 0', 'group 1')
     xlabel(strcat(measure1, " ", location1, " ", bands_names{band1}))
     ylabel(strcat(measure2, " ", location2, " ", bands_names{band2}))
+    
+    if str2double(search_parameter(parameters, 'save_figures')) == 1
+        outDir = create_directory(dataPath, 'Figures');
+        if strcmp(format, '.fig')
+            savefig(char_check(strcat(path_check(outDir), ...
+                'Scatter_', measure1, "_", location1, "_", ...
+                bands_names{band1}, '_', measure2, "_", location2, "_", ...
+                bands_names{band2}, format)));
+        else
+            Image = getframe(gcf);
+            imwrite(Image.cdata, char_check(strcat(path_check(outDir), ...
+                'Scatter_', measure1, "_", location1, "_", ...
+                bands_names{band1}, '_', measure2, "_", location2, "_", ...
+                bands_names{band2}, format)));
+        end
+    end
 end

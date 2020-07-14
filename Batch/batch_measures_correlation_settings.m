@@ -36,10 +36,19 @@ function  [xData, yData, nLoc, nBands, locs] = ...
     if sum(strcmp(analysis, ["global", "Asymmetry"]))
         nLoc = 1;
     end
-    if length(size(xData)) == 3 || sum(strcmp(analysis, ["global", ...
-            "Asymmetry"])) 
-        nBands = size(xData, 2);
-    else
+    nBands = define_nBands(xData, analysis);
+end
+
+
+function nBands = define_nBands(data, area)
+    nBands = 1;
+    if length(size(data)) == 3
+        nBands = size(data, 2);
+    elseif sum(strcmpi(area, {'global', 'asymmetry'}))
+        nBands = size(data);
+        nBands = nBands(end);
+    end
+    if length(size(data)) == 1
         nBands = 1;
     end
 end
