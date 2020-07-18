@@ -29,6 +29,10 @@ function batch_random_forest(parameters)
             search_parameter(parameters, 'RF_Rejection'));
     end
     resultDir = strcat(path_check(dataPath), 'Classification');
+    roc_fig = findobj( 'Type', 'Figure', 'Name', 'ROC curve' );
+    roc_fig.Name = 'Random Forest ROC curve';
+    cm_fig = findobj( 'Type', 'Figure', 'Name', 'Confusion Matrix' );
+    cm_fig.Name = 'Random Forest Confusion Matrix';
     if not(exist(resultDir, 'dir'))
         mkdir(resultDir);
     end

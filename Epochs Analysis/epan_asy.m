@@ -40,11 +40,17 @@ function epan_asy(data, nEpochs, nBands, measure, name, RightLoc, ...
     data_asy = zeros(nBands, nEpochs, 2);
     data_asy(:, :, 1) = mean(data(:, :, RightLoc), 3);
     data_asy(:, :, 2) = mean(data(:, :, LeftLoc), 3);
-    asy = abs(data_asy(:, :, 1)-data_asy(:, :, 2));
+    data = abs(data_asy(:, :, 1) - data_asy(:, :, 2));
     
     nBands = bands;
-    ep_scatter(asy, nEpochs, nBands, ...
-        strcat(char_check(name), " Asymmetry"), measure, save_check, ...
-        format, dataPath)
+    if length(size(data)) == 1 && nEpochs > 1
+        ep_plot(squeeze(data), nEpochs, measure, strcat(...
+            nBands, '_asymmetry'), save_check, format, dataPath)
+        return
+    end
+    for j = 1:length(nBands)
+        ep_plot(squeeze(data(j, :)), nEpochs, measure, strcat(...
+            nBands(j), '_asymmetry'), save_check, format, dataPath)
+    end
 end
         

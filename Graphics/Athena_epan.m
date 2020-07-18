@@ -27,15 +27,11 @@ function Athena_epan_OpeningFcn(hObject, eventdata, handles, varargin)
     if nargin >= 4
         path = varargin{1};
         set(handles.aux_dataPath, 'String', path)
+        set(handles.dataPath_text, 'String', path)
     end
     if nargin >= 5
         measure = varargin{2};
         set(handles.aux_measure, 'String', measure)
-        if not(strcmp(path, 'Static Text')) && ...
-                not(strcmp(measure, 'Static Text'))
-            dataPath = strcat(path_check(path), measure);
-            set(handles.dataPath_text, 'String', dataPath)
-        end
     end
     if nargin >= 6
         subs = varargin{3};
@@ -50,6 +46,7 @@ function Athena_epan_OpeningFcn(hObject, eventdata, handles, varargin)
     if nargin >= 8
         set(handles.sub_types, 'Data', varargin{5})
     end
+    dataPath_text_Callback(hObject, eventdata, handles)
 
 
 
@@ -103,6 +100,21 @@ function dataPath_text_Callback(hObject, eventdata, handles)
         fclose(auxID);     
         set(handles.Subjects, 'String', subs);
     end
+    if exist(dataPath, 'dir')
+        cases = dir(dataPath);
+        measures = [];
+        for i = 1:length(cases)
+        	if cases(i).isdir == 1
+                if sum(strcmp(cases(i).name, {'offset', 'exponent', ...
+                        'PSDr', 'PLI', 'PLV', 'AEC', 'AECo', 'MSC', ...
+                        'coherence'}))
+                    measures = [measures, string(cases(i).name)];
+                end
+            end
+        end
+        set(handles.Measures_list, 'String', measures)
+        set(handles.Measures_list, 'Value', 1)
+    end
     cd(auxPath)
 
 
@@ -114,14 +126,15 @@ function dataPath_text_CreateFcn(hObject, eventdata, handles)
 
     
 function Run_Callback(hObject, eventdata, handles)
-    measure = char_check(get(handles.aux_measure, 'String'));
+    measures_list = get(handles.Measures_list, 'String');
+    measure = measures_list(get(handles.Measures_list, 'Value'));
     dataPath = get(handles.dataPath_text, 'String');
     dataPath = path_check(dataPath);
     if not(exist(dataPath, 'dir'))
     	problem(strcat("Directory ", dataPath, " not found"))
     	return
     end
-    cd(char(dataPath))
+    cd(path_check(strcat(dataPath, measure)))
     [save_check, format] = Athena_save_figures('Save figures', ...
         'Do you want to save the resulting figure?');
     
@@ -195,7 +208,9 @@ function data_search_Callback(hObject, eventdata, handles)
             fclose(auxID);     
         end
         cd(char(auxPath))
+        dataPath_text_Callback(hObject, eventdata, handles)
     end
+    
 
     
 function back_Callback(hObject, eventdata, handles)
@@ -231,6 +246,16 @@ function Subjects_Callback(hObject, eventdata, handles)
 
 
 function Subjects_CreateFcn(hObject, eventdata, handles)
+    if ispc && isequal(get(hObject, 'BackgroundColor'), ...
+            get(0, 'defaultUicontrolBackgroundColor'))
+        set(hObject, 'BackgroundColor', 'white');
+    end
+
+
+function Measures_list_Callback(hObject, eventdata, handles)
+
+
+function Measures_list_CreateFcn(hObject, eventdata, handles)
     if ispc && isequal(get(hObject, 'BackgroundColor'), ...
             get(0, 'defaultUicontrolBackgroundColor'))
         set(hObject, 'BackgroundColor', 'white');

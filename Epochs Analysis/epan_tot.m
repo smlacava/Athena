@@ -32,9 +32,19 @@ function epan_tot(data, nEpochs, nBands, measure, name, locations, ...
         aux(1, :, :) = data;
         data = aux;
     end
-    for i = 1:nLoc
-        ep_scatter(data(:, :, i), nEpochs, nBands, ...
-            strcat(char_check(name), " ", char_check(locations(i, 1))), ...
-            measure, save_check, format, dataPath)
+    
+    if length(size(data)) == 2 && nEpochs > 1
+        for i = 1:nLoc
+            ep_plot(squeeze(data(:, i)), nEpochs, measure, strcat(...
+                nBands, '_', locations{i}), save_check, format, dataPath)
+        end
+        return
+    end
+    for j = 1:length(nBands)
+        for i = 1:nLoc
+            ep_plot(squeeze(data(j, :, i)), nEpochs, measure, strcat(...
+                nBands(j), '_', locations{i}), save_check, format, ...
+                dataPath)
+        end
     end
 end

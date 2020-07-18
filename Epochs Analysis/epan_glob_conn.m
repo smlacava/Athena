@@ -29,9 +29,14 @@ function epan_glob_conn(data, nEpochs, nBands, measure, name, ...
         data = aux;
     end
     
-    glob = squeeze(sum(data, [3 4])/(dim(3)*dim(3)-dim(3)));
-    
-    ep_scatter(glob, nEpochs, nBands, ...
-        strcat(char_check(name), " Global"), measure, save_check, ...
-        format, dataPath)
+    data = squeeze(sum(data, [3 4])/(dim(3)*dim(3)-dim(3)));
+    if length(size(data)) == 1 && nEpochs > 1
+        ep_plot(squeeze(data), nEpochs, measure, strcat(nBands, ...
+            '_global'), save_check, format, dataPath)
+        return
+    end
+    for j = 1:length(nBands)
+        ep_plot(squeeze(data(j, :)), nEpochs, measure, strcat(...
+            nBands(j), '_global'), save_check, format, dataPath)
+    end
 end

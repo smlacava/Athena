@@ -138,7 +138,7 @@ function batch_study(dataFile)
     bands_names = cellstr(bands_names);
     parameters = [parameters, 'frequency_bands', {bands_names}];
   
-    %% Analysis    
+    %% Statistical and Visual Analysis    
     if sum(strcmp(search_parameter(parameters, 'EpochsAnalysis'), 'true'))
         batch_epochs_analysis(parameters, dataPath, measure{m}, nBands, ...
             n_measures, save_check_fig, format);
@@ -168,10 +168,6 @@ function batch_study(dataFile)
     for m = 1:n_measures
         if not(exist(managedPath{m}, 'dir')) && ...
                 sum([sum(strcmp(search_parameter(parameters, ...
-                'MeasuresCorrelation'), true_val)), ...
-                sum(strcmp(search_parameter(parameters, ...
-                'IndexCorrelation'), true_val)), ...
-                sum(strcmp(search_parameter(parameters, ...
                 'UTest'), true_val)), ...
                 sum(strcmp(search_parameter(parameters, ...
                 'ScatterAnalysis'), true_val)), ...
@@ -181,19 +177,8 @@ function batch_study(dataFile)
                 'HistogramAnalysis'), true_val))]) > 0
             problem('Epochs Avarage not computed')
             return
-        else
-            cd(dataPath)
-        
-            Subjects = load_data(search_parameter(parameters, 'Subjects'));
-            if sum(strcmp(search_parameter(parameters, ...
-                    'IndexCorrelation'), 'true'))
-                if search_ext_toolbox(statTool)
-                    batch_index_correlation(parameters, managedPath{m}, ...
-                        measure{m}, Subjects, nBands, locations, ...
-                        bg_color, save_check_fig, format);
-                end
-            end
         end
+        cd(dataPath)
         
         if sum(strcmp(search_parameter(parameters, ...
                 'UTest'), 'true'))
@@ -210,12 +195,6 @@ function batch_study(dataFile)
                     'Conservativeness_UT')), measurePath{m}, ...
                     measure{m}, anType, sub_types)
             end
-        end
-        
-        if sum(strcmp(search_parameter(parameters, ...
-                'MeasuresCorrelation'), 'true'))
-            batch_measures_correlation(parameters, dataPath, locations, ...
-                bg_color, save_check_fig, format)
         end
         
         if strcmpi(search_parameter(parameters, 'ScatterAnalysis'), 'true')
@@ -264,4 +243,35 @@ function batch_study(dataFile)
             'true')) && search_ext_toolbox('Deep Learning Toolbox') == 1
         batch_neural_network(parameters);
     end
+    
+    %% Correlation Analysis
+    for m = 1:n_measures
+        if not(exist(managedPath{m}, 'dir')) && ...
+                sum([sum(strcmp(search_parameter(parameters, ...
+                'MeasuresCorrelation'), true_val)), ...
+                sum(strcmp(search_parameter(parameters, ...
+                'IndexCorrelation'), true_val))]) > 0
+            problem('Epochs Avarage not computed')
+            return
+        else
+            cd(dataPath)
+        
+            Subjects = load_data(search_parameter(parameters, 'Subjects'));
+            if sum(strcmp(search_parameter(parameters, ...
+                    'IndexCorrelation'), 'true'))
+                if search_ext_toolbox(statTool)
+                    batch_index_correlation(parameters, managedPath{m}, ...
+                        measure{m}, Subjects, nBands, locations, ...
+                        bg_color, save_check_fig, format);
+                end
+            end
+        end
+        
+        if sum(strcmp(search_parameter(parameters, ...
+                'MeasuresCorrelation'), 'true'))
+            batch_measures_correlation(parameters, dataPath, locations, ...
+                bg_color, save_check_fig, format)
+        end  
+    end
+    success()
 end

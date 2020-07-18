@@ -99,8 +99,26 @@ function epan_areas(data, nEpochs, nBands, measure, name, CentralLoc, ...
         data_areas(:, :, loc) = mean(data(:, :, CentralLoc), 3);
     end
     
-    for i = 1:length(areas)
-        ep_scatter(data_areas(:, :, i), nEpochs, nBands, ...
-            strcat(char_check(name), " ", char_check(areas(i))), ...
-            measure, save_check, format, dataPath)
+    if length(size(data)) == 2 && nEpochs > 1
+        for i = 1:nLoc
+            ep_plot(squeeze(data(:, i)), nEpochs, measure, strcat(...
+                nBands, '_', areas{i}), save_check, format, dataPath)
+        end
+        return
+    end
+    
+    data = data_areas;
+    if length(size(data)) == 2 && nEpochs > 1
+        for i = 1:nLoc
+            ep_plot(squeeze(data(:, i)), nEpochs, measure, strcat(...
+                nBands, '_', areas{i}), save_check, format, dataPath)
+        end
+        return
+    end
+    for j = 1:length(nBands)
+        for i = 1:nLoc
+            ep_plot(squeeze(data(j, :, i)), nEpochs, measure, strcat(...
+                nBands(j), '_', areas{i}), save_check, format, ...
+                dataPath)
+        end
     end
