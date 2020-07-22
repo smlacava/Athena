@@ -7,10 +7,15 @@
 %
 % input:
 %   First is the data matrix relative to the first group of subjects 
-%       (such as healthy controls)
+%       (such as healthy controls), or the name of the file (with its path)
+%       which contains it (in this case, if locs is an empty array, it will 
+%       be tried to load it by this file)
 %   Second is the data matrix relative to the second group of subjects
-%       (such as patients)
-%   locs is the ordered list of locations
+%       (such as patients), or the name of the file (with its path) which
+%       contains it
+%   locs is the ordered list of locations, or the name of the file which
+%       contains it (with its path), or an empty array if the locations
+%       list has to be loaded by the First file
 %   cons is the conservativiteness value (0 for minimum conservativeness, 1
 %       for maximum conservativeness)
 %   dataPath is the Path relative to the main study's folder (or directory)
@@ -40,6 +45,9 @@ function [P, Psig, data, data_sig] = statistical_analysis(First, ...
     if nargin <= 8
         save_check = 0;
     end
+    
+    [First, Second, locs] = check_data(First, Second, locs);
+    
     nFirst = size(First, 1);
     nSecond = size(Second, 1);
     nLocs = length(locs);
@@ -163,5 +171,48 @@ function show_figures(data, data_names, P, bands_names, locs, Psig, ...
             'Name', 'Statistical Analysis - Significant Results');
         ps = uitable(fs3, 'Data', cellstr(Psig), 'Position', ...
             [20 20 525 375], 'ColumnName', {'Significant comparisons'});
+    end
+end
+
+
+%% check_data
+% This function check if some arguments are matrices or the name of the
+% files which contain them, and eventually load them.
+%
+% [First, Second, locs] = check_data(First, Second, locs)
+%
+% Input:
+%   First is the data matrix relative to the first group of subjects 
+%       (such as healthy controls), or the name of the file (with its path)
+%       which contains it (in this case, if locs is an empty array, it will 
+%       be tried to load it by this file)
+%   Second is the data matrix relative to the second group of subjects
+%       (such as patients), or the name of the file (with its path) which
+%       contains it
+%   locs is the ordered list of locations, or the name of the file which
+%       contains it (with its path), or an empty array if the locations
+%       list has to be loaded by the First file
+%
+% Output:
+%   First is the data matrix relative to the first group of subjects 
+%   Second is the data matrix relative to the second group of subjects
+%   locs is the ordered list of locations
+
+function [First, Second, locs] = check_data(First, Second, locs)
+    if ischar(First) || isstring(First)
+        if isempty(locs)
+            [First, ~, locs] = load_data(First);
+        else
+            First = load_data(First);
+            if ischar(locs) || isStringScalar(locs)
+                try
+                    locs = load(locs);
+                catch
+                end
+            end
+        end
+    end
+    if ischar(Second) || isstring(Second)
+        Second = load_data(Second);
     end
 end

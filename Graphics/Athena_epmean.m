@@ -144,6 +144,9 @@ function Run_Callback(hObject, eventdata, handles)
     end
         
     [locs, sub_types] = epmean_and_manage(dataPath, type, sub);
+    Athena_history_update(strcat('[locs, sub_types] = connectivity(', ...
+            strcat("'", dataPath, "'"), ",", strcat("'", type, "'"), ...
+            ',', strcat("'", sub, "'"), ')'));
     set(handles.sub_types, 'Data', sub_types)
     if not(isempty(locs))
         set(handles.aux_loc, 'String', locs)

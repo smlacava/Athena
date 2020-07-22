@@ -45,7 +45,6 @@ function Athena_guided_OpeningFcn(hObject, eventdata, handles, varargin)
     if nargin >= 8
         set(handles.sub_types, 'Data', varargin{5})
     end
-    
     if exist('fooof', 'file')
         set(handles.meas, 'String', ["relative PSD", "PLV", "PLI", ...
             "AEC", "AEC corrected", "Coherence", "Offset", "Exponent"]);
@@ -53,6 +52,9 @@ function Athena_guided_OpeningFcn(hObject, eventdata, handles, varargin)
         set(handles.meas, 'String', ["relative PSD", "PLV", "PLI", ...
             "AEC", "AEC corrected", "Coherence"]);
     end
+    
+    Athena_history_update({}, 1);
+    
 
     
 function varargout = Athena_guided_OutputFcn(hObject, eventdata, handles) 

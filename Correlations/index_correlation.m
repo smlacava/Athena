@@ -7,7 +7,8 @@
 %       save_check_fig, format)    
 %
 % input:
-%   data is the data matrix to correlate
+%   data is the data matrix to correlate, or the name of the file (with its
+%       path) which contains it
 %   sub_list is the cell array which contains the subjects' names of the
 %       considered group
 %   bands_names is the cell array which containd the names of each
@@ -57,9 +58,7 @@ function index_correlation(data, sub_list, bands_names, measure, Index, ...
     if isempty(RHO)
         RHO = zeros(nLoc, nBands);
     end
-    if ischar(Index)
-        Index = load_data(Index);
-    end
+    [data, Index] = check_data(data, Index);
     
     for i = 1:nLoc
         if nBands > 1
@@ -128,3 +127,34 @@ function index_correlation(data, sub_list, bands_names, measure, Index, ...
         'NumberTitle', 'off', 'Color', [1 1 1]);
     r = uitable(fs2, 'Data', RHO', 'Position', [20 20 525 375], ...
         'RowName', bands_names, 'ColumnName', locs);
+end
+
+
+%% check_data
+% This function check if some arguments are matrices or the name of the
+% files which contain them, and eventually load them.
+%
+% [data, Index] = check_data(data, Index)
+%
+% Input:
+%   data is the data matrix or the name of the file (with its path) which
+%       contains it
+%   Index is the index matrix or the name of the file (with its path) which
+%       contains it
+%
+% Output:
+%   data is the data matrix
+%   Index is the index matrix
+
+function [data, Index] = check_data(data, Index)
+    if ischar(data) || isstring(data)
+        data = load_data(data);
+    end
+    if ischar(Index) || isstring(Index)
+        Index = load_data(Index);
+        if size(Index, 1) < size(Index, 2)
+            Index = Index';
+        end
+        Index = Index(:, end);
+    end
+end

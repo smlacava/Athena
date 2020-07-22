@@ -59,6 +59,7 @@ function statistics = neural_network(data, n_layers, validation_value, ...
     if nargin < 9 || isempty(reject_value) || reject_value < 0.5
         reject_value = 0.5;
     end
+    data = check_data(data);
     rejected = [];
     
     f = waitbar(0,'Processing your data', 'Color', '[1 1 1]');
@@ -100,4 +101,24 @@ function statistics = neural_network(data, n_layers, validation_value, ...
         accuracy, min_accuracy, max_accuracy, cm, conf_mat, AUC, roc, ...
         reject_value, rejected);
     close(f)
+end
+
+
+%% check_data
+% This function check if the argument is a data table or the name of the
+% file which contains it and, in this case, download it.
+%
+% data = check_data(data)
+%
+% Input:
+%   data is the data table, or the name of the file (with its path) which
+%       contains it
+%
+% Output:
+%   data is the data table
+
+function data = check_data(data)
+    if ischar(data) || isstring(data)
+        load(data);
+    end
 end

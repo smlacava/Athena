@@ -163,10 +163,15 @@ function Run_Callback(hObject, eventdata, handles)
     if get(handles.checkCOH, 'Value') == 1
         measType = [measType "Coherence"];
     end
-
+    
+    value = 100;
     data = classification_data_settings(dataPath, anType, measType, ...
         dataType);
-    [data, pc] = reduce_predictors(data, 100);
+    if size(data, 2) == 1
+        problem('There are not enough data parameters')
+        return
+    end
+    [data, pc] = reduce_predictors(data, value);
     answer = user_decision(strcat("The resulting dataset is composed ", ...
         string(size(data, 2)-1), " features. Do you want to apply ", ...
         "the Principal Component Analysis on your data?"), ...
@@ -204,6 +209,30 @@ function Run_Callback(hObject, eventdata, handles)
         save(strcat(path_check(dataPath), 'Classification', filesep, ...
             'Classification_Data.mat'), 'data')
     end
+    
+    anType_text = '{';
+    try
+        anType_text = strcat(anType_text, "'", anType(1), "'");
+        for i = 2:length(anType)
+            anType_text = strcat(anType_text, ",'", anType(i), "'");
+        end
+    catch
+    end
+    anType_text = strcat(anType_text, '}');
+    measType_text = '{';
+    try
+        measType_text = strcat(measType_text, "'", measType(1), "'");
+        for i = 2:length(measType)
+            measType_text = strcat(measType_text, ",'", measType(i), "'");
+        end
+    catch
+    end
+    measType_text = strcat(measType_text, '}');
+    Athena_history_update(strcat('data=classification_data_settings(', ...
+        strcat("'", dataPath, "'"), ',',  anType_text, ',', ...
+        measType_text, ',',  strcat("'", dataType, "'"), ')'));
+    Athena_history_update(strcat('data=reduce_predictors(data, ', ...
+        string(value), ')'));
     success();
 
 

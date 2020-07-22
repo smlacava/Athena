@@ -187,7 +187,7 @@ function Run_Callback(hObject, eventdata, handles)
         if save_check == 1
             outDir = create_directory(get(handles.dataPath_text, ...
                 'String'), 'Figures');
-            export_Callback(hObject, eventdata, handles)
+            export_Callback(hObject, eventdata, handles, 'no')
             if strcmp(format, '.fig')
                 savefig(char_check(strcat(path_check(outDir), ...
                     'Histogram_', location, '_', measure, '_', ...
@@ -204,8 +204,11 @@ function Run_Callback(hObject, eventdata, handles)
     
     
 function [PAT, HC, bins, measure, band_name, location] = ...
-    histogram_initialization(handles)
+    histogram_initialization(handles, flag)
 
+    if nargin == 1
+        flag = '';
+    end
     dataPath = get(handles.dataPath_text, 'String');
     measure = define_measure(handles);
     
@@ -261,6 +264,27 @@ function [PAT, HC, bins, measure, band_name, location] = ...
     if not(exist('location', 'var'))
         location = get(handles.loc, 'String');
     end
+    
+    if strcmp(flag, 'no')
+        return
+    end
+    
+    sub_types = get(handles.sub_types, 'Data');
+    sub_types_list = '{';
+    try
+        sub_types_list = strcat(sub_types_list, "'", sub_types{1}, "'");
+    catch
+    end
+    try
+        sub_types_list = strcat(sub_types_list, ",'", sub_types{2}, "'");
+    catch
+    end
+    sub_types_list = strcat(sub_types_list, '}');
+    Athena_history_update(strcat("distribution_histogram_analysis(", ...
+        strcat("'", dataPath, "'"), ',', strcat("'", measure, "'"), ...
+        ',', strcat("'", area, "'"), ',', string(band), ',', ...
+        string(idx_loc), ',', sub_types_list, ',', string(bins), ',', ...
+        strcat("'", location, "'"), ',', strcat("'", band_name, "'"),')'));
 
     
 function data_search_Callback(hObject, eventdata, handles)
@@ -285,7 +309,10 @@ function back_Callback(hObject, eventdata, handles)
     Athena_statistics(dataPath, measure, sub, loc, sub_types)
 
 
-function export_Callback(hObject, eventdata, handles)
+function export_Callback(hObject, eventdata, handles, flag)
+    if nargin == 3
+        flag = '';
+    end
     if strcmp(get(handles.loc, 'Visible'), 'off') 
         areas_list = get(handles.area, 'String');
         area = areas_list(get(handles.area, 'Value'));
@@ -296,7 +323,7 @@ function export_Callback(hObject, eventdata, handles)
     if strcmp(get(handles.loc, 'Enable'), 'on') && ...
             strcmp(get(handles.loc, 'Enable'), 'on')
         [PAT, HC, bins, measure, band, location] = ...
-            histogram_initialization(handles);
+            histogram_initialization(handles, flag);
     
         distributions_histogram(HC, PAT, measure, ...
             get(handles.sub_types, 'Data'), location, band, bins)

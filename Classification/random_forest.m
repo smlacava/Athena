@@ -9,7 +9,7 @@
 %       reject_option)
 %
 % input:
-%   data is the data set table
+%   data is the data set table, or the name of the file which contains it
 %   n_trees is the number of trees for each random forest classifier (1 as
 %       default)
 %   resample_value is the fraction of training data set to use in training
@@ -68,6 +68,7 @@ function statistics = random_forest(data, n_trees, resample_value, ...
     if nargin < 9 || isempty(reject_value) || reject_value < 0.5
         reject_value = 0.5;
     end
+    data = check_data(data);
     rejected = [];
     
     f = waitbar(0,'Processing your data', 'Color', '[1 1 1]');
@@ -130,4 +131,24 @@ function statistics = random_forest(data, n_trees, resample_value, ...
         accuracy, min_accuracy, max_accuracy, cm, conf_mat, AUC, roc, ...
         reject_value, rejected);
     close(f)
+end
+
+
+%% check_data
+% This function check if the argument is a data table or the name of the
+% file which contains it and, in this case, download it.
+%
+% data = check_data(data)
+%
+% Input:
+%   data is the data table, or the name of the file (with its path) which
+%       contains it
+%
+% Output:
+%   data is the data table
+
+function data = check_data(data)
+    if ischar(data) || isstring(data)
+        load(data);
+    end
 end

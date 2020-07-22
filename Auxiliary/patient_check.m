@@ -22,5 +22,3 @@ function [group] = patient_check(group_var, patient_group_name)
         group = true;
     end
 end
-            
-     

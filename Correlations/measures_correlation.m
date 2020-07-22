@@ -1,4 +1,4 @@
-%% index correlation
+%% measures correlation
 % This function computes the correlation between the matrices of two
 % measures.
 % 
@@ -52,6 +52,8 @@ function measures_correlation(xData, yData, sub_list, bands_names, ...
     cd(char(funDir{1}));
     addpath 'Auxiliary'
     addpath 'Graphics'
+    
+    [xData, yData] = check_data(xData, yData);
     if isempty(P)
         P = zeros(nLoc, nBands);
     end
@@ -133,3 +135,30 @@ function measures_correlation(xData, yData, sub_list, bands_names, ...
         'NumberTitle', 'off', 'Color', bg_color);
     r = uitable(fs2, 'Data', RHO', 'Position', [20 20 525 375], ...
         'RowName', bands_names, 'ColumnName', locs);
+end
+
+
+%% check_data
+% This function check if some arguments are matrices or the name of the
+% files which contain them, and eventually load them.
+%
+% [xData, yData] = check_data(xData, yData)
+%
+% Input:
+%   xData is the first data matrix or the name of the file (with its path)
+%       which contains it
+%   yData is the second data matrix or the name of the file (with its path)
+%       which contains it
+%
+% Output:
+%   xData is the first data matrix
+%   yData is the second data matrix
+
+function [xData, yData] = check_data(xData, yData)
+    if ischar(xData) || isstring(xData)
+        xData = load_data(xData);
+    end
+    if ischar(yData) || isstring(yData)
+        yData = load_data(yData);
+    end
+end
