@@ -79,8 +79,7 @@ function dataPath_text_Callback(hObject, eventdata, handles)
         measures = [];
         for i = 1:length(cases)
         	if cases(i).isdir == 1
-                if sum(strcmp(cases(i).name, {'offset', 'exponent', ...
-                        'PSDr', 'PLI', 'PLV', 'AEC', 'AECo', 'coherence'}))
+                if sum(strcmp(cases(i).name, Athena_measures_list(1)))
                     measures = [measures, string(cases(i).name)];
                 end
             end

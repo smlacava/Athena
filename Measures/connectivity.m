@@ -43,6 +43,7 @@ function connectivity(fs, cf, nEpochs, dt, inDir, tStart, outTypes)
     AECOnames = ["aeco", "aec_o", "AECo", "AEC_o", "Aeco", "Aec_o", ...
         "AECc", "AEC_c", "aecc", "aec_c", "Aecc", "Aec_c"];
     MSCnames = ["coherence", "MSC", "coh", "msc", "COH", "Coherence"];
+    ICOHnames = ["ICOH", "Coherency", "coherency"];
     
     inDir = path_check(inDir);
     cases = define_cases(inDir);
@@ -73,6 +74,8 @@ function connectivity(fs, cf, nEpochs, dt, inDir, tStart, outTypes)
                 outTypes = [outTypes, "AEC"];
             elseif contains(sup(i, 1), MSCnames)
                 outTypes = [outTypes, "coherence"];
+            elseif contains(sup(i, 1), ICOHnames)
+                outTypes = [outTypes, "ICOH"];
             end
         end
         if length(outDirs) == length(outTypes)
@@ -89,6 +92,8 @@ function connectivity(fs, cf, nEpochs, dt, inDir, tStart, outTypes)
         	outTypes(i) = "AECo";
         elseif contains(outTypes(i), AECnames)
         	outTypes(i) = "AEC";
+        elseif contains(outTypes(i, 1), ICOHnames)
+            outTypes(i) = "ICOH";
         elseif contains(outTypes(i, 1), MSCnames)
             outTypes(i) = "coherence";
         end
@@ -138,6 +143,9 @@ function connectivity(fs, cf, nEpochs, dt, inDir, tStart, outTypes)
                         elseif strcmpi(outTypes(c), "coherence")
                             conn.data(j, k, :, :) = ...
                                 magnitude_squared_coherence(data);
+                        elseif strcmpi(outTypes(c), "ICOH")
+                            conn.data(j, k, :, :) = ...
+                                imaginary_coherency(data);
                         end
                     end
                 end

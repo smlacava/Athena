@@ -26,15 +26,14 @@ function Athena_indcorr_OpeningFcn(hObject, eventdata, handles, varargin)
     if nargin >= 4
         path = varargin{1};
         set(handles.aux_dataPath, 'String', path)
+        if not(strcmp(path, "Static Text"))
+            set(handles.dataPath_text,'String', path)
+        end
+        set_measures(path, handles);
     end
     if nargin >= 5
         measure = varargin{2};
         set(handles.aux_measure, 'String', measure)
-        if not(strcmp(path, "Static Text")) && ...
-                not(strcmp(measure, "Static Text"))
-            dataPath = strcat(path_check(path), measure);
-            set(handles.dataPath_text,'String', dataPath)
-        end
     end
     if nargin >= 6
         set(handles.aux_sub, 'String', varargin{3})
@@ -58,6 +57,7 @@ function varargout = Athena_indcorr_OutputFcn(hObject, eventdata, handles)
 
 function dataPath_text_Callback(hObject, eventdata, handles)
     set_handles(hObject, eventdata, handles)
+    set_measures(get(handles.dataPath_text, 'String'), handles);
 
 
 function dataPath_text_CreateFcn(hObject, eventdata, handles)
@@ -185,6 +185,9 @@ function ind_search_Callback(hObject, eventdata, handles)
     
 function set_handles(hObject, eventdata, handles)
     dataPath = get(handles.dataPath_text, 'String');
+    measures_list = string(get(handles.meas, 'String'));
+    dataPath = strcat(path_check(dataPath), ...
+        measures_list(get(handles.meas, 'Value')));
     subjectsFile = strcat(path_check(limit_path(dataPath, ...
         get(handles.aux_measure, 'String'))), 'Subjects.mat');
     if exist(subjectsFile, 'file')
@@ -234,3 +237,22 @@ function set_handles(hObject, eventdata, handles)
     end 
     
     
+function set_measures(path, handles)
+    aux_measures = Athena_measures_list();
+    measures = [];
+    for i = 1:length(aux_measures)
+        if exist(strcat(path_check(path), aux_measures(i)),'dir')
+            measures = [measures, aux_measures(i)];
+        end
+    end
+    set(handles.meas, 'String', measures);
+
+
+function meas_Callback(hObject, eventdata, handles)
+
+
+function popupmenu10_CreateFcn(hObject, eventdata, handles)
+    if ispc && isequal(get(hObject,'BackgroundColor'), ...
+            get(0,'defaultUicontrolBackgroundColor'))
+        set(hObject,'BackgroundColor','white');
+    end

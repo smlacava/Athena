@@ -30,17 +30,22 @@
 function [P, Psig, data_sig] = u_test(first_group, second_group, ...
     label, first_name, second_name, alpha)
 
-    P = ranksum(first_group, second_group);
+    [P, H] = ranksum(first_group, second_group, 'alpha', alpha);
     if nargin > 2
         Psig = [];
         data_sig = [];
-        if P < alpha
-        	diff = mean(first_group)-mean(second_group);
+        if H == 1
+            first_median = median(first_group);
+            second_median = median(second_group);
+        	diff = first_median-second_median;
             data_sig = [first_group; second_group];
+            med_text = strcat(" (", first_name, " median = ", ...
+                string(first_median), ", ", second_name, " median = ", ...
+                string(second_median), ")");
             if diff > 0
-            	Psig = strcat(label, " major in ", first_name);
+            	Psig = strcat(label, " major in ", first_name, med_text);
             else
-            	Psig = strcat(label, " major in ", second_name);
+            	Psig = strcat(label, " major in ", second_name, med_text);
             end
         end
     end

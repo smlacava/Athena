@@ -46,11 +46,9 @@ function Athena_guided_OpeningFcn(hObject, eventdata, handles, varargin)
         set(handles.sub_types, 'Data', varargin{5})
     end
     if exist('fooof', 'file')
-        set(handles.meas, 'String', ["relative PSD", "PLV", "PLI", ...
-            "AEC", "AEC corrected", "Coherence", "Offset", "Exponent"]);
+        set(handles.meas, 'String', Athena_measures_list());
     else
-        set(handles.meas, 'String', ["relative PSD", "PLV", "PLI", ...
-            "AEC", "AEC corrected", "Coherence"]);
+        set(handles.meas, 'String', Athena_measures_list(0, 1));
     end
     
     Athena_history_update({}, 1);
@@ -134,8 +132,7 @@ function totBand_text_CreateFcn(hObject, eventdata, handles)
 function Run_Callback(hObject, eventdata, handles)  
     [~, ~, sub, loc, sub_types] = GUI_transition(handles, 'dataPath', ...
         'measure');
-    measures = ["PSDr", "PLV", "PLI", "AEC", "AECo", "coherence", ...
-        "offset", "exponent"];
+    measures = get(handles.meas, 'String');
     dataPath = string(get(handles.dataPath_text, 'String'));
     
     if strcmp(dataPath, 'es. C:\User\Data')
@@ -149,7 +146,7 @@ function Run_Callback(hObject, eventdata, handles)
     
     dataPath = string(path_check(dataPath));
     meas_state = get(handles.meas, 'Value');
-    measure = measures(meas_state);
+    measure = measures{meas_state};
     close(Athena_guided)
     Athena_params(dataPath, measure, sub, loc, sub_types)
     
@@ -179,8 +176,7 @@ function back_Callback(hObject, eventdata, handles)
     addpath 'Graphics'
     [~, ~, sub, loc, sub_types] = GUI_transition(handles, 'dataPath', ...
         'measure');
-    measures = ["PSDr", "PLV", "PLI", "AEC", "AECo", "coherence", ...
-        "offset", "exponent"];
+    measures = Athena_measures_list();
     measure = measures(get(handles.meas, 'Value'));
     dataPath = string(get(handles.dataPath_text, 'String'));
     close(Athena_guided)
@@ -201,8 +197,7 @@ function next_Callback(~, eventdata, handles)
     addpath 'Graphics'
     [~, ~, sub, loc, sub_types] = GUI_transition(handles, 'dataPath', ...
         'measure');
-    measures = ["PSDr", "PLV", "PLI", "AEC", "AECo", "coherence", ...
-        "offset", "exponent"];
+    measures = Athena_measures_list();
     measure = measures(get(handles.meas, 'Value'));
     dataPath = string(get(handles.dataPath_text, 'String'));
     close(Athena_guided)

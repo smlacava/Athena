@@ -29,6 +29,7 @@ function Athena_meascorr_OpeningFcn(hObject, eventdata, handles, varargin)
         if not(strcmp(path, 'Static Text'))
             set(handles.dataPath_text, 'String', path)
         end
+        set_measures(path, handles);
     end
     if nargin >= 5
         set(handles.aux_measure, 'String', varargin{2})
@@ -45,7 +46,7 @@ function Athena_meascorr_OpeningFcn(hObject, eventdata, handles, varargin)
         set(handles.PAT, 'String', sub_types{2})
         set(handles.HC, 'String', sub_types{1})
     end
-
+    
     
 function varargout = Athena_meascorr_OutputFcn(hObject, eventdata, handles) 
     varargout{1} = handles.output;
@@ -53,6 +54,7 @@ function varargout = Athena_meascorr_OutputFcn(hObject, eventdata, handles)
 
 function dataPath_text_Callback(hObject, eventdata, handles)
     dataPath = get(handles.dataPath_text, 'String');
+    set_measures(dataPath, handles);
     subjectsFile = strcat(path_check(dataPath), 'Subjects.mat');
     if exist(subjectsFile, 'file')
         set(handles.aux_sub, 'String', subjectsFile)
@@ -70,7 +72,6 @@ function dataPath_text_Callback(hObject, eventdata, handles)
 
 
 function dataPath_text_CreateFcn(hObject, eventdata, handles)
-
     if ispc && isequal(get(hObject, 'BackgroundColor'), ...
             get(0, 'defaultUicontrolBackgroundColor'))
         set(hObject, 'BackgroundColor', 'white');
@@ -95,8 +96,8 @@ function Run_Callback(hObject, eventdata, handles)
     [~, sub_list, alpha, bg_color, locs, bands_names, P, RHO, nLoc, ...
         nBands, analysis, sub_group] = correlation_setting(handles);
     
-    meas_state = [get(handles.meas1,'Value') get(handles.meas2,'Value')];
-    meas_list = {'PSDr', 'PLV', 'PLI', 'AEC', 'AECo', 'coherence'};
+    meas_state = [get(handles.meas1, 'Value') get(handles.meas2, 'Value')];
+    meas_list = string(get(handles.meas1, 'String'));
     measures = meas_list(meas_state);
     
     dataPath = path_check(get(handles.aux_dataPath, 'String'));
@@ -174,6 +175,7 @@ function data_search_Callback(hObject, eventdata, handles)
         auxPath = pwd;
         dataPath = get(handles.dataPath_text, 'String');
         dataPath = path_check(dataPath);
+        set_measures(path)
         cd(dataPath)
         if exist('auxiliary.txt', 'file')
             auxID = fopen('auxiliary.txt', 'r');
@@ -228,3 +230,13 @@ function meas2_CreateFcn(hObject, eventdata, handles)
         set(hObject, 'BackgroundColor', 'white');
     end
    
+function set_measures(path, handles)
+    aux_measures = Athena_measures_list();
+    measures = [];
+    for i = 1:length(aux_measures)
+        if exist(strcat(path_check(path), aux_measures(i)),'dir')
+            measures = [measures, aux_measures(i)];
+        end
+    end
+    set(handles.meas1, 'String', measures);
+    set(handles.meas2, 'String', measures);

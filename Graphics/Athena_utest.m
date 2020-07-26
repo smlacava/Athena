@@ -119,8 +119,7 @@ function Run_Callback(hObject, eventdata, handles)
     dataPath = get(handles.dataPath_text, 'String');
     dataPath = path_check(dataPath);
     measure = get(handles.aux_measure, 'String');
-    measures = {'PLI', 'PLV', 'PSDr', 'AEC', 'AECo', 'coherence', ...
-        'offset', 'exponent'};
+    measures = Athena_measures_list(1);
     for i = 1:length(measures)
         if strcmpi(measures{i}, dataPath(end-length(measures{i}):end-1))
             measure = measures{i};

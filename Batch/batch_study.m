@@ -10,8 +10,7 @@
 
 
 function batch_study(dataFile)
-    MEASURES = ["PLV", "PLI", "AEC", "AECo", "offset", "exponent", ...
-        "PSDr", "coherence"];
+    MEASURES = Athena_measures_list();
     true_val = ["True", "true", "TRUE", "t", "1", "OK", "ok"];
     bg_color = [1 1 1];
     
@@ -21,13 +20,13 @@ function batch_study(dataFile)
     % ClassificationData, Group_IC, Areas_IC, Conservativeness_IC, 
     % Areas_EA, Areas_SA, Conservativeness_SA, Measure1, Measure2, 
     % Areas_MC, Group_MC, MergingData, MergingMeasures, MergingAreas, 
-    % Subject, RF_Classification, DataType, RF_DefaultClassification, 
-    % RF_TrainPercentage, RF_TreesNumber, RF_FResampleValue, RF_Pruning, 
-    % RF_Repetitions, RF_MinimumClassExamples, RF_PCAValue, RF_Evaluation, 
-    % RF_Rejection, NN_Classification, NN_DefaultClassificationParameters, 
-    % NN_TrainPercentage, NN_HiddenLayersNumber, NN_ValidationValue, 
-    % NN_Repetitions, NN_MinimumClassExamples, NN_PCAValue, NN_Evaluation,
-    % NN_Rejection
+    % Subject, PCAValue, RF_Classification, DataType, 
+    % RF_DefaultClassification, RF_TrainPercentage, RF_TreesNumber,
+    % RF_FResampleValue, RF_Pruning, RF_Repetitions,
+    % RF_MinimumClassExamples, RF_Evaluation, RF_Rejection,
+    % NN_Classification, NN_DefaultClassificationParameters,
+    % NN_TrainPercentage, NN_HiddenLayersNumber, NN_ValidationValue,
+    % NN_Repetitions, NN_MinimumClassExamples, NN_Evaluation, NN_Rejection
     parameters = read_file(dataFile);
     
     %% Preprocessing and Extraction

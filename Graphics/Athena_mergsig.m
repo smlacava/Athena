@@ -163,6 +163,9 @@ function Run_Callback(hObject, eventdata, handles)
     if get(handles.checkCOH, 'Value') == 1
         measType = [measType "Coherence"];
     end
+    if get(handles.checkICOH, 'Value') == 1
+        measType = [measType "ICOH"];
+    end
     
     value = 100;
     data = classification_data_settings(dataPath, anType, measType, ...
@@ -311,3 +314,6 @@ function checkbox26_Callback(hObject, eventdata, handles)
 
 
 function checkCOH_Callback(hObject, eventdata, handles)
+
+
+function checkICOH_Callback(hObject, eventdata, handles)
