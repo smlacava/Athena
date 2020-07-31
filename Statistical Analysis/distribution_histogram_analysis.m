@@ -12,7 +12,9 @@
 %   area is the spatial subdivision analyzed
 %   band_number is the number of the analyzed frequency band
 %   location_number is the number of the analyzed location
-%   bins is the number of bins of the histogram
+%   bins is the number of bins of the histogram, or a character array which
+%       can be 'fd' or 'auto' in order to apply the Freedman-Diaconis rule,
+%       or 'scott' in order to apply the Scott's rule
 %   location_name is the name of the analyzed location ('' by default)
 %   band_name is the name of the analyzed frequency band ('' by default)
 

@@ -38,6 +38,19 @@ function distributions_histogram(first_group, second_group, measure, ...
         first_group = first_group';
         second_group = second_group';
     end
+    if ischar(bins)
+        if strcmpi(bins, 'auto')
+            bins = 'fd';
+        end
+        aux_bins_data = [];
+        if exist('first_group', 'var')
+            aux_bins_data = [aux_bins_data; first_group];
+        end
+        if exist('second_group', 'var')
+            aux_bins_data = [aux_bins_data; second_group];
+        end
+        [~, bins] = histcounts(aux_bins_data, 'BinMethod', bins); 
+    end
       
     
     figure('Name', title, 'NumberTitle', 'off', 'ToolBar', 'none');

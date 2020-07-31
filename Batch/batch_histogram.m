@@ -26,11 +26,13 @@ function batch_histogram(parameters)
             bins = 5;
         elseif strcmpi(bins, 'medium')
             bins = 10;
-        else
+        elseif strcmpi(bins, 'high')
             bins = 30;
+        elseif strcmpi(bins, 'auto')
+            bins = 'fd';
+        elseif not(strcmpi(bins, 'fd')) && not(strcmpi(bins, 'scott'))
+            bins = aux_bins;
         end
-    else
-        bins = aux_bins;
     end
     
     [area, check] = batch_check_area(location);
