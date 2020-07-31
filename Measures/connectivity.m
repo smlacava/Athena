@@ -5,7 +5,8 @@
 % corrected (also called orthogonalized, AECo) or the amplitude envelope 
 % correlation not corrected (AEC).
 %
-% connectivity(fs, cf, nEpochs, dt, inDir, outDirs, tStart, outTypes)
+% connectivity(fs, cf, nEpochs, dt, inDir, outDirs, tStart, outTypes, ...
+%         filter_name)
 %
 % input:
 %   fs is the sampling frequency
@@ -16,15 +17,22 @@
 %   tStart is the starting time (in seconds) to computate the first sample
 %       of the first epoch
 %   outTypes is the list of variables to save (PLI, PLV, AEC, AECo, MSC)
+%   filter_name is the name of the filtering function (athena_filter as
+%       default)
 
+function connectivity(fs, cf, nEpochs, dt, inDir, tStart, outTypes, ...
+    filter_name)
 
-function connectivity(fs, cf, nEpochs, dt, inDir, tStart, outTypes)
     switch nargin
         case 5
             tStart=0;
             outTypes="";
+            filter_name = 'athena_filter';
         case 6
             outTypes="";
+            filter_name = 'athena_filter';
+        case 7
+            filter_name = 'athena_filter';
     end
     
     f = waitbar(0, 'Processing your data', 'Color', '[1 1 1]');
@@ -33,6 +41,7 @@ function connectivity(fs, cf, nEpochs, dt, inDir, tStart, outTypes)
     fchild(1).JavaPeer.setStringPainted(true)
     askList = 'Insert the connectivity measures separated by a comma';
     
+    filter_handle = eval(strcat('@', filter_name));
 	dt = fs*dt;
     tStart = tStart*fs+1; 
     nBands = length(cf)-1;
@@ -104,7 +113,8 @@ function connectivity(fs, cf, nEpochs, dt, inDir, tStart, outTypes)
     	[p, q] = rat(fs/fsOld);
         time_series = resample(time_series', p, q)';
     end
-    check = check_filtering(time_series, dt, tStart, fs, cf);
+    check = check_filtering(time_series, dt, tStart, fs, cf, ...
+        filter_handle);
     if check
         close(f)
         return;
@@ -126,7 +136,7 @@ function connectivity(fs, cf, nEpochs, dt, inDir, tStart, outTypes)
                     for k = 1:nEpochs
                         ti = ((k-1)*dt)+tStart;
                         tf = k*dt+tStart-1;
-                        data = athena_filter(time_series(:, ti:tf), fs, ...
+                        data = filter_handle(time_series(:, ti:tf), fs, ...
                             cf(j), cf(j+1));                 
                         data = data';
                         if strcmpi(outTypes(c), "PLI")

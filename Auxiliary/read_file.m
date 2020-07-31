@@ -10,7 +10,7 @@
 %
 % output:
 %   parameters is a cell array which contains all the parameters which have
-%       to be used in batch analysis (in order, dataPath, fs, cf, epNum, 
+%       to be used in batch analysis (dataPath, fs, cf, epNum, filter_file,
 %       epTime, tStart, totBand, measure, Subjects, locations, Index, 
 %       MeasureExtraction, EpochsAverage, EpochsAnalysis, IndexCorrelation,
 %       UTest, MeasuresCorrelation, ClassificationData, 
@@ -25,7 +25,7 @@
 %       HistogramAnalysis, Histogram_Measure, Histogram_Bands,
 %       Histogram_Location, Histogram_bins, DistributionsAnalysis,
 %       Distributions_Measure, Distributions_Bands, 
-%       Distributions_Location, Distributions_Parameter
+%       Distributions_Location, Distributions_Parameter)
 
 function parameters = read_file(dataFile)
     
@@ -53,7 +53,7 @@ function parameters = read_file(dataFile)
         'Distributions_Band=', 'Distributions_Location=', ...
         'Distributions_Parameter=', 'HistogramAnalysis=', ...
         'Histogram_Measure=', 'Histogram_Band=', 'Histogram_bins=', ...
-        'Histogram_Location=', 'save_figures=', 'format='};
+        'Histogram_Location=', 'save_figures=', 'format=', 'filter_file='};
     n_params = length(params_names);
     pre_parameters = cell(n_params, 1);
     

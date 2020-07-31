@@ -2,7 +2,7 @@
 % This function is used to filter an epoch of the input time series through
 % a FIR bandpass filter
 %
-% [smoothdata] = athena_filter(data, fs, fmin, fmax)
+% smoothdata = athena_filter(data, fs, fmin, fmax)
 %
 % input:
 %   data is the time series to filter
@@ -13,7 +13,7 @@
 % output:
 %   smoothdata is the filtered data
 
-function [smoothdata] = athena_filter(data, fs, fmin, fmax)
+function smoothdata = athena_filter(data, fs, fmin, fmax)
     [locs, frames] = size(data);
     order = 3*fix(fs/fmin);
     coef = fir1(order, [fmin fmax]./(fs/2));

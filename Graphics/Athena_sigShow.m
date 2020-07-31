@@ -529,6 +529,9 @@ function Filter_ClickedCallback(~, ~, handles)
                 string(fs), " Hz (the maximum value is ", ...
                 string(ceil(fs/2)), ")"))
         else
+            filter_file = choose_filter(get(handles.filter_name,'String'));
+            set(handles.filter_name, 'String', filter_file);
+            filter_handle = eval(strcat('@', filter_file));
             f = waitbar(0, 'Initialization', 'Color', '[1 1 1]');
             fchild = allchild(f);
             fchild(1).JavaPeer.setForeground(...
@@ -537,13 +540,15 @@ function Filter_ClickedCallback(~, ~, handles)
         
             data = get(handles.signal_matrix, 'Data');
             waitbar(0.33, f , 'Filtering in progress')
-            filt_data = athena_filter(data, fs, fmin, fmax);
+            filt_data = filter_handle(data, fs, fmin, fmax);
             waitbar(0.66, f , 'Data setting')
             set(handles.filt_matrix, 'Data', filt_data);
             set(handles.fmin, 'String', char(string(fmin)));
             set(handles.fmax, 'String', char(string(fmax)));
             set(handles.filt_check, 'String', 'filtered');
             close(f)
+            Filtered_button_Callback(1, 1, handles)
+            Filtered_button_Callback(1, 1, handles)
         end
     end
 
@@ -691,8 +696,12 @@ function reset_filtered(handles)
         fmax = str2double(get(handles.fmax, 'String'));
         fs = str2double(get(handles.fs_text, 'String'));
         data = get(handles.signal_matrix, 'Data');
-        filt_data = athena_filter(data, fs, fmin, fmax);
+        filter_handle = eval(strcat('@', get(handles.filter_name, ...
+            'String')));
+        filt_data = filter_handle(data, fs, fmin, fmax);
         set(handles.filt_matrix, 'Data', filt_data);
+        Filtered_button_Callback(1, 1, handles)
+        Filtered_button_Callback(1, 1, handles)
     catch
     end
     
