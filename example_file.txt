@@ -7,11 +7,14 @@ measures=PLI PLV offset
 save_figures=1
 format=.jpg
 
-LOCATIONS AND SUBJECTS FILES
+EXTERNAL FILES
 The locations file is needed in analysis.
 The subjects file is needed in Epochs Average step and Epochs Analysis.
+The filter file is used in order to substitute the default filter with an custom one.
 Locations=D:\study\locations\ROI.mat
 Subjects=D:\study\subjects_folder\Subjects.mat
+filter_file=athena_filter.m
+
 
 MEASURE PARAMETERS
 These parameters are needed to compute the measure extraction.

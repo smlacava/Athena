@@ -1,9 +1,9 @@
-function varargout = Athena_freqShow(varargin)
+function varargout = Athena_tfShow(varargin)
     gui_Singleton = 1;
     gui_State = struct('gui_Name',       mfilename, ...
                    'gui_Singleton',  gui_Singleton, ...
-                   'gui_OpeningFcn', @Athena_freqShow_OpeningFcn, ...
-                   'gui_OutputFcn',  @Athena_freqShow_OutputFcn, ...
+                   'gui_OpeningFcn', @Athena_tfShow_OpeningFcn, ...
+                   'gui_OutputFcn',  @Athena_tfShow_OutputFcn, ...
                    'gui_LayoutFcn',  [] , ...
                    'gui_Callback',   []);
     if nargin && ischar(varargin{1})
@@ -17,7 +17,7 @@ function varargout = Athena_freqShow(varargin)
     end
 
     
-function Athena_freqShow_OpeningFcn(hObject, ~, handles, varargin)
+function Athena_tfShow_OpeningFcn(hObject, ~, handles, varargin)
     handles.output = hObject;
     guidata(hObject, handles);
     try
@@ -76,7 +76,7 @@ function Athena_freqShow_OpeningFcn(hObject, ~, handles, varargin)
                 length(data)/str2double(get(handles.fs_text, 'String')))])
             waitbar(0.5, f)
             close(f)
-            freqPlot(handles);
+            start_show_ClickedCallback(1, 1, handles);
         else
             set(handles.Title, 'String', "    Data directory not found");
         end
@@ -96,13 +96,13 @@ function Athena_freqShow_OpeningFcn(hObject, ~, handles, varargin)
     end
 
     
-function varargout = Athena_freqShow_OutputFcn(~, ~, handles) 
+function varargout = Athena_tfShow_OutputFcn(~, ~, handles) 
     varargout{1} = handles.output;
 
 
 function back_Callback(~, ~, handles)
     [dataPath, measure, sub, loc, sub_types] = GUI_transition(handles);
-    close(Athena_freqShow)
+    close(Athena_tfShow)
     Athena(dataPath, measure, sub, loc, sub_types)
 
 
@@ -190,8 +190,8 @@ function Previous_Callback(~, ~, handles)
         case_name = case_name{1};
         set(handles.Title, 'String', strcat("    subject: ", case_name));
         close(f)
-        freqPlot(handles, data, fs, locs)
-        start_show_ClickedCallback(1, 1, handles)
+        
+        start_show_ClickedCallback(1, 1, handles);
     elseif case_number > length(cases)
         set(handles.case_number, 'String', string(case_max));
     else
@@ -209,7 +209,7 @@ function right_Callback(~, ~, handles)
         dt = time(2)-time(1);
         set(handles.time_shown_value, 'Data', [Limit/fs-dt Limit/fs])
     end
-    freqPlot(handles, data)
+    start_show_ClickedCallback(1, 1, handles);
     
     
 function left_Callback(~, ~, handles)
@@ -221,7 +221,7 @@ function left_Callback(~, ~, handles)
         dt = time(2)-time(1);
         set(handles.time_shown_value, 'Data', [0 dt])
     end
-    freqPlot(handles, data)
+    start_show_ClickedCallback(1, 1, handles);
     
     
 function big_right_Callback(~, ~, handles)
@@ -234,7 +234,7 @@ function big_right_Callback(~, ~, handles)
     else
         set(handles.time_shown_value, 'Data', [Limit/fs-dt, Limit/fs])
     end
-    freqPlot(handles, data)
+    start_show_ClickedCallback(1, 1, handles);
     
     
 function big_left_Callback(~, ~, handles)
@@ -246,7 +246,7 @@ function big_left_Callback(~, ~, handles)
     else
         set(handles.time_shown_value, 'Data', [0 dt])
     end
-    freqPlot(handles, data)
+    start_show_ClickedCallback(1, 1, handles);
 
     
 function fs_ClickedCallback(~, ~, handles)
@@ -272,7 +272,7 @@ function fs_ClickedCallback(~, ~, handles)
                     'Insert the sampling frequency of the signal');
             end 
             set(handles.fs_text, 'String', string(fs));
-            freqPlot(handles)
+            start_show_ClickedCallback(1, 1, handles);
         else
             problem('The sampling frequency is already setted in the file');
         end
@@ -296,7 +296,7 @@ function time_window_ClickedCallback(~, ~, handles)
         end
         if time(1)+tw <= Limit
             set(handles.time_shown_value, 'Data', [time(1), time(1)+tw])
-            freqPlot(handles)
+            start_show_ClickedCallback(1, 1, handles);
         end
     catch
     end
@@ -314,40 +314,8 @@ function Go_to_ClickedCallback(~, ~, handles)
             problem('The time cannot be less than 0');
         else
             set(handles.time_shown_value, 'Data', [tmin tmin+dt])
-            freqPlot(handles)
+            start_show_ClickedCallback(1, 1, handles);
         end
-    catch
-    end
-    
-    
-function freqPlot(handles, varargin)
-    try
-        locs_ind = get(handles.locs_ind, 'Data');
-        locs = get(handles.locs_matrix, 'Data');
-        fs = str2double(get(handles.fs_text, 'String'));
-        axis(handles.signal);
-        [data, fmin, fmax, time_shown] = get_data(handles);
-        data(locs_ind==0, :) = [];
-        time_string = strcat(string(time_shown(1)), " - ", ...
-            string(time_shown(2)), " s");
-        try
-            location_string = locs{locs_ind == 1};
-        catch
-            [~, location_string] = max(locs_ind);
-            location_string = string(location_string);
-        end
-        data = data(1, time_shown(1)*fs+1:time_shown(2)*fs);
-        [pxx, w] = pwelch(data, [], 0, [], fs);
-        pxx = 10*log(pxx);
-        idx_min = max(1, find(w > fmin, 1)-1);
-        maximum = length(w);
-        idx_max = min(maximum, maximum - find(flipud(w) < fmax, 1) + 2);
-        plot(w, pxx)
-        xlim([fmin, fmax])
-        aux_pxx = pxx(idx_min:idx_max);
-        ylim([min(min(aux_pxx))-5, max(max(aux_pxx))+5])
-        set(handles.time_text, 'String', time_string)
-        set(handles.loc_shown, 'String', location_string)
     catch
     end
     
@@ -368,7 +336,7 @@ function Loc_ClickedCallback(~, ~, handles)
         locs(:, 2) = [];
         set(handles.locs_matrix, 'Data', locs);
         set(handles.aux_loc, 'String', filename);
-        freqPlot(handles)
+        start_show_ClickedCallback(1, 1, handles);
     catch
     end
     
@@ -391,7 +359,7 @@ function LocsToShow_ClickedCallback(~, ~, handles)
         locs_ind = zeros(length(locs), 1);
         locs_ind(selectedLocs) = 1;
         set(handles.locs_ind, 'Data', locs_ind);
-        freqPlot(handles, data, fs, locs)
+        start_show_ClickedCallback(1, 1, handles);
     end
 
     
@@ -484,15 +452,36 @@ function forward_show_ClickedCallback(hObject, eventdata, handles)
      final = floor(length(data)/fs);
      dt = time(2)-time(1);
      set(handles.time_shown_value, 'Data', [final-dt final]);
-     freqPlot(handles)
+     start_show_ClickedCallback(1, 1, handles);
      
      
  function start_show_ClickedCallback(~, ~, handles)
      axes(handles.signal);
-     [data, ~, ~, time, fs] = get_data(handles);
-     dt = time(2)-time(1);
-     set(handles.time_shown_value, 'Data', [0 dt]);
-     freqPlot(handles);
+     [data, fmin, fmax, time, fs] = get_data(handles);
+     locs_ind = get(handles.locs_ind, 'Data');
+     locs = get(handles.locs_matrix, 'Data');
+     axis(handles.signal);
+     idx_chan = 1:length(locs);
+     idx_chan(locs_ind == 0) = [];
+     time_string = strcat(string(time(1)), " - ", ...
+        string(time(2)), " s");
+     try
+         location_string = locs{locs_ind == 1};
+     catch
+         [~, location_string] = max(locs_ind);
+             location_string = string(location_string);
+     end
+     set(handles.time_text, 'String', time_string)
+     set(handles.loc_shown, 'String', location_string)
+     [tf, times, frequencies, f_ticks, t_ticks, n_steps] = ...
+         time_frequency_analysis(data, fs, idx_chan, fmin, fmax, ...
+        time(1), time(2), 40, 3, 10, 0);
+     axes(handles.signal);
+     axis(handles.signal);
+     contourf(times, frequencies, tf, n_steps, 'linecolor', 'none');
+     yticks(f_ticks);
+     xticks(t_ticks);
+     
        
  function stop_show_ClickedCallback(~, ~, handles)
      set(handles.big_forward_show, 'State', 'off')
@@ -530,7 +519,7 @@ function fmin_Callback(hObject, eventdata, handles)
                 "than the Nyquist frequency (", ...
                 string(str2double(get(handles.fs_text, 'String'))/2), ")"))
         else
-            freqPlot(handles)
+            start_show_ClickedCallback(1, 1, handles);
             frequencies{1} = fmin;
             set(handles.freq_matrix, 'Data', frequencies)
         end
@@ -562,7 +551,7 @@ function fmax_Callback(hObject, eventdata, handles)
                 "than the Nyquist frequency (", ...
                 string(str2double(get(handles.fs_text, 'String'))/2), ")"))
         else
-            freqPlot(handles)
+            start_show_ClickedCallback(1, 1, handles);
             frequencies{2} = fmax;
             set(handles.freq_matrix, 'Data', frequencies)
         end

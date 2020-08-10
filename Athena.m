@@ -98,6 +98,12 @@ function guided_Callback(~, ~, handles)
     [dataPath, measure, sub, loc] = GUI_transition(handles);
     close(Athena)
     Athena_guided(dataPath, measure, sub, loc)
+    
+    
+function tf_analysis_Callback(~, ~, handles)
+    [dataPath, measure, sub, loc] = GUI_transition(handles);
+    close(Athena)
+    Athena_tfPath(dataPath, measure, sub, loc)
 
     
 function batch_Callback(hObject, eventdata, handles)
@@ -105,10 +111,12 @@ function batch_Callback(hObject, eventdata, handles)
     close(Athena)
     Athena_batch(dataPath, measure, sub, loc)
     
+    
 function spectrum_Callback(hObject, eventdata, handles)
     [dataPath, measure, sub, loc] = GUI_transition(handles);
     close(Athena)
     Athena_freqPath(dataPath, measure, sub, loc)
+    
     
 function display_Callback(hObject, eventdata, handles)
     [dataPath, measure, sub, loc] = GUI_transition(handles);
