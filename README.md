@@ -39,6 +39,10 @@ The graphic interface allows:
 - To *select the locations* to show
 - To *save a piece of signal*, by choosing the *starting time*, the *locations* and the *length of the time window* to save
 
+Furthermore, it is possible to **display the spectra* of the signals, and to execute a **time-frequency analysis** on them.
+
+[Download Athena](https://github.com/smlacava/Athena/archive/master.zip) to start you analysis!
+
 
 ## Measure extraction
 The measures extractably by ATHENA can be divided in:
@@ -47,6 +51,8 @@ The measures extractably by ATHENA can be divided in:
   - **PLV** (Phase Locking Value)
   - **AEC** (Amplitude Envelope Correlation)
   - **corrected AEC** (Amplitude Envelope Correlation)
+  - **Coherence**
+  - **ICOH** (Cohenency)
 - *Power measures*
   - **relative PSD** (Power Spectral Density) 
 - *Background measures*

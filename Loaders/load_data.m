@@ -26,6 +26,7 @@ function [data, fs, locs] = load_data(dataFile, locFLAG, varargin)
         locFLAG = 0;
     end
     
+    connFLAG = 0;
     avoid_locs = {'PHOTICPH', 'IBI', 'BURSTS', 'SUPPR', 'PHOTICREF'};
     avoid_locs_cont = {'DC', 'EKG'};
     loc_types = {'AF', 'FT', 'FC', 'FP', 'TP', 'CP', 'LO', 'SO', 'IO', ...
@@ -36,6 +37,9 @@ function [data, fs, locs] = load_data(dataFile, locFLAG, varargin)
     
     if contains(dataFile, '.mat')
         data = load(dataFile);
+        if isfield(data, 'conn')
+            connFLAG = 1;
+        end
         data = struct2cell(data);
         data = data{1};
         if isstruct(data)
@@ -172,6 +176,11 @@ function [data, fs, locs] = load_data(dataFile, locFLAG, varargin)
     end
     if isa(data, 'single')
         data = double(data);
+    end
+    
+    dims = size(data);
+    if connFLAG == 0 && length(dims) == 3
+        data = reshape(data, [dims(1), dims(2)*dims(3)]);
     end
 end
     
