@@ -39,9 +39,9 @@ The graphic interface allows:
 - To *select the locations* to show
 - To *save a piece of signal*, by choosing the *starting time*, the *locations* and the *length of the time window* to save
 
-Furthermore, it is possible to **display the spectra* of the signals, and to execute a **time-frequency analysis** on them.
+Furthermore, it is possible to *display the spectra* of the signals, and to execute a **time-frequency analysis** on them.
 
-[Download Athena](https://github.com/smlacava/Athena/archive/master.zip) to start you analysis!
+[**Download Athena now to start you analysis!**](https://github.com/smlacava/Athena/archive/master.zip)
 
 
 ## Measure extraction
@@ -115,6 +115,6 @@ can be used for a classification or other external analysis.
 
 
 ## The wiki
-For any doubt, you can consult the [toolbox **wiki**](https://github.com/smlacava/Athena/wiki/Home). 
+For any doubt, you can consult the toolbox [**wiki**](https://github.com/smlacava/Athena/wiki/Home). 
 
 > The toolbox is still under construction

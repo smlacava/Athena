@@ -15,7 +15,7 @@ function batch_histogram(parameters)
     measure = search_parameter(parameters, 'Histogram_Measure');
     band = search_parameter(parameters, 'Histogram_Band');
     location = search_parameter(parameters, 'Histogram_Location');
-    bins = search_parameter(parameters, 'Histogram_Resolution');
+    bins = search_parameter(parameters, 'Histogram_bins');
     sub_types = search_parameter(parameters, 'subjects_types');
     band_name = search_parameter(parameters, 'frequency_bands');
     band_name = band_name{band};
@@ -30,9 +30,9 @@ function batch_histogram(parameters)
             bins = 30;
         elseif strcmpi(bins, 'auto')
             bins = 'fd';
-        elseif not(strcmpi(bins, 'fd')) && not(strcmpi(bins, 'scott'))
-            bins = aux_bins;
         end
+    else
+        bins = aux_bins;
     end
     
     [area, check] = batch_check_area(location);

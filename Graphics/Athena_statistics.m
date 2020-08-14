@@ -80,9 +80,11 @@ function Hist_Callback(hObject, eventdata, handles)
 
 function openAnalysis(analysis, handles)
     analysis_list = {'histogram', 'utest', 'index_correlation', ...
-        'measures_correlation', 'distributions', 'back'};
+        'measures_correlation', 'distributions', ...
+        'descriptive_statistics', 'back'};
     analysis_interfaces = {@Athena_hist, @Athena_utest, ...
-        @Athena_indcorr, @Athena_meascorr, @Athena_distr, @Athena_an};
+        @Athena_indcorr, @Athena_meascorr, @Athena_distr, ...
+        @Athena_descriptive_statistics, @Athena_an};
     to_check = {'utest', 'index_correlation', 'measures_correlation'};
     if sum(strcmp(to_check, analysis))
         if not(search_ext_toolbox(...
@@ -99,3 +101,7 @@ function openAnalysis(analysis, handles)
     close(Athena_statistics)
     an_handle = analysis_interfaces{strcmp(analysis_list, analysis)};
     an_handle(dataPath, measure, sub, loc, sub_types)
+
+    
+function DescStat_Callback(hObject, eventdata, handles)
+    openAnalysis('descriptive_statistics', handles)

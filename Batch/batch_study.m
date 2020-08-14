@@ -13,21 +13,9 @@ function batch_study(dataFile)
     MEASURES = Athena_measures_list();
     true_val = ["True", "true", "TRUE", "t", "1", "OK", "ok"];
     bg_color = [1 1 1];
-    
-    % dataPath, fs, cf, epNum, epTime, tStart, totBand, measure, Subjects, 
-    % locations, Index, MeasureExtraction, EpochsAverage, EpochsAnalysis, 
-    % IndexCorrelation, StatisticalAnalysis, MeasuresCorrelation, 
-    % ClassificationData, Group_IC, Areas_IC, Conservativeness_IC, 
-    % Areas_EA, Areas_SA, Conservativeness_SA, Measure1, Measure2, 
-    % Areas_MC, Group_MC, MergingData, MergingMeasures, MergingAreas, 
-    % Subject, PCAValue, RF_Classification, DataType, 
-    % RF_DefaultClassification, RF_TrainPercentage, RF_TreesNumber,
-    % RF_FResampleValue, RF_Pruning, RF_Repetitions,
-    % RF_MinimumClassExamples, RF_Evaluation, RF_Rejection,
-    % NN_Classification, NN_DefaultClassificationParameters,
-    % NN_TrainPercentage, NN_HiddenLayersNumber, NN_ValidationValue,
-    % NN_Repetitions, NN_MinimumClassExamples, NN_Evaluation, NN_Rejection
     parameters = read_file(dataFile);
+    statTool = 'Statistics and Machine Learning Toolbox';
+    deepTool = 'Deep Learning Toolbox';
     
     %% Preprocessing and Extraction
     dataPath = path_check(search_parameter(parameters, 'dataPath'));
@@ -48,8 +36,6 @@ function batch_study(dataFile)
     if isempty(save_check_fig)
         save_check_fig = 0;
     end
-    statTool = 'Statistics and Machine Learning Toolbox';
-    deepTool = 'Deep Learning Toolbox';
     
     if not(exist(dataPath, 'dir'))
         problem(strcat('Directory ', dataPath, ' not found'))
@@ -180,6 +166,8 @@ function batch_study(dataFile)
                 sum(strcmp(search_parameter(parameters, ...
                 'DistributionsAnalysis'), true_val)), ...
                 sum(strcmp(search_parameter(parameters, ...
+                'DescriptiveAnalysis'), true_val)), ...
+                sum(strcmp(search_parameter(parameters, ...
                 'HistogramAnalysis'), true_val))]) > 0
             problem('Epochs Avarage not computed')
             return
@@ -210,6 +198,10 @@ function batch_study(dataFile)
         if strcmpi(search_parameter(parameters, ...
                 'DistributionsAnalysis'), 'true')
             batch_distributions(parameters);
+        end
+        if strcmpi(search_parameter(parameters, ...
+                'DescriptiveAnalysis'), 'true')
+            batch_descriptive_analysis(parameters);
         end
         if strcmpi(search_parameter(parameters, ...
                 'HistogramAnalysis'), 'true')

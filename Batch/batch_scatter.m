@@ -36,7 +36,7 @@ function batch_scatter(parameters)
     [PAT2, ~, locs2] = load_data(strcat(measure2_path, 'Second.mat'));
     HC2 = load_data(strcat(measure2_path, 'First.mat'));
     
-    if check1 == 0
+    if check1 == 1
         idx_loc1 = 1;
     else
         for i = 1:length(locs1)

@@ -7,6 +7,7 @@ measures=PLI PLV offset
 save_figures=1
 format=.jpg
 
+
 EXTERNAL FILES
 The locations file is needed in analysis.
 The subjects file is needed in Epochs Average step and Epochs Analysis.
@@ -29,11 +30,13 @@ epTime=15
 tStart=0
 totBand=1 40
 
+
 EPOCHS AVERAGE
 The epochs average computes the average of the measure in every band
 and every locations and join the subjects of the same group (patients
 and healthy controls)
 EpochsAverage=false
+
 
 INDEX CORRELATION
 The index correlation computes the correlation between an index and 
@@ -44,6 +47,16 @@ Group_IC=PAT
 Areas_IC=Areas Global Asymmetry
 Conservativeness_IC=min
 
+
+DESCRIPTIVE STATISTICAL ANALYSIS
+The descriptive statistical analysis computes some statistical values
+such as the mean, the median and the variance of a measure
+DescriptiveAnalysis=true
+Descriptive_Measure=PLV
+Descriptive_Band=2
+Descriptive_Location=Global
+
+
 DISTRIBUTIONS ANALYSIS
 The distributions analysis shows the distributions and the differences
 between the two studied groups 
@@ -52,6 +65,7 @@ Distributions_Measure=PLV
 Distributions_Band=2
 Distributions_Location=Global
 Distributions_Parameter=median
+
 
 HISTOGRAM ANALYSIS
 The histogram analysis shows the histogram of the distributions of
@@ -62,12 +76,14 @@ Histogram_Band=2
 Histogram_Location=Global
 Histogram_bins=10
 
+
 EPOCHS ANALYSIS
 The epochs analysis show the values of the measure of the selected
 subject in every epoch.
 EpochsAnalysis=false
 Subject=509
 Areas_EA=Areas Global Asymmetry
+
 
 U-Test
 The U test verifies if there are differences between patients and 
@@ -86,6 +102,7 @@ Areas_MC=Asymmetry
 Conservativeness_MC=max
 Group_MC=PAT
 
+
 SCATTER ANALYSIS
 The scatter analysis show a scatter plot related to two measures, 
 also with different frequency and spatial parameters, or related to
@@ -99,6 +116,7 @@ Scatter_Band2=1
 Scatter_Location1=Frontal
 Scatter_Location2=AF3
 
+
 CLASSIFICATION DATA SETTINGS
 This step merges the significant data, previously computed in
 statistical analysis, to use them for the classification or other
@@ -108,6 +126,7 @@ DataType=Significant
 MergingMeasures=PSDr offset PLI PLV
 MergingAreas=Total Areas Global Asymmetry
 PCAValue=95
+
 
 RANDOM FOREST CLASSIFICATION
 RF_Classification=true
@@ -120,6 +139,7 @@ RF_Repetitions=1000
 RF_MinimumClassExamples=1
 RF_Evaluation=split
 RF_Rejection=none
+
 
 NEURAL NETWORK CLASSIFICATION
 NN_Classification=true
