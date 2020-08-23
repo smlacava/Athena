@@ -37,6 +37,13 @@ and every locations and join the subjects of the same group (patients
 and healthy controls)
 EpochsAverage=false
 
+NETWORK METRICS
+The network metrics computations allows to extract some network metrics
+on a connectivity measure
+NetworkMetricsAnalysis=true
+Network_Metrics_Measure=PLV
+Network_Metrics_Band=2
+Network_Metric=Betweenness Centrality
 
 INDEX CORRELATION
 The index correlation computes the correlation between an index and 

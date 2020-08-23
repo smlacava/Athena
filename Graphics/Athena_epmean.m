@@ -63,6 +63,11 @@ function Athena_epmean_OpeningFcn(hObject, eventdata, handles, varargin)
     if nargin >= 8 && check_types == 0
         set(handles.sub_types, 'Data', varargin{5})
     end
+    if strcmpi(get(handles.aux_loc, 'String'), 'Static Text') && ...
+            exist(strcat(path_check(path), 'Locations.mat'), 'file')
+        set(handles.aux_loc, 'String', ...
+            strcat(path_check(path), 'Locations.mat'));
+    end
         
 
 function varargout = Athena_epmean_OutputFcn(hObject, eventdata, handles) 
@@ -80,6 +85,12 @@ function sub_text_CreateFcn(hObject, eventdata, handles)
 
 
 function dataPath_text_Callback(hObject, eventdata, handles)
+    path = get(handles.dataPath_text, 'String');
+    if strcmpi(get(handles.aux_loc, 'String'), 'Static Text') && ...
+            exist(strcat(path_check(path), 'Locations.mat'), 'file')
+        set(handles.aux_loc, 'String', ...
+            strcat(path_check(path), 'Locations.mat'));
+    end
 
 
 function dataPath_text_CreateFcn(hObject, eventdata, handles)

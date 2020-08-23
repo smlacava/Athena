@@ -72,6 +72,7 @@ function Athena_OpeningFcn(hObject, ~, handles, varargin)
     addpath 'Epochs Analysis'
     addpath 'Epochs Management'
     addpath 'Loaders'
+    addpath 'Network Metrics'
     savepath
     if nargin >= 4
         set(handles.aux_dataPath, 'String', varargin{1})

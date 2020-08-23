@@ -131,6 +131,10 @@ function batch_study(dataFile)
     parameters = [parameters, 'frequency_bands', {bands_names}];
   
     %% Statistical and Visual Analysis    
+    if sum(strcmp(search_parameter(parameters, ...
+            'NetworkMetricsAnalysis'), 'true'))
+        batch_network_measure(parameters)
+    end
     if sum(strcmp(search_parameter(parameters, 'EpochsAnalysis'), 'true'))
         batch_epochs_analysis(parameters, dataPath, measure{m}, nBands, ...
             n_measures, save_check_fig, format);

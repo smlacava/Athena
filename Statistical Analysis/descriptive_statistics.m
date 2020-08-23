@@ -20,7 +20,7 @@
 %       (the fourth central moment of the data vector, divided by fourth 
 %       power of its standard deviation)
 %   skewness_value is the sample skewness of the values of the data vector
-%       (the third central moment of the data vector, divided by tge cube
+%       (the third central moment of the data vector, divided by the cube
 %       of its standard deviation)
 
 

@@ -121,3 +121,15 @@ function scatterAn_Callback(hObject, eventdata, handles)
     [dataPath, measure, sub, loc, sub_types] = GUI_transition(handles);
     close(Athena_an)
     Athena_scatter(dataPath, measure, sub, loc, sub_types)
+
+
+function netmeas_Callback(hObject, eventdata, handles)
+    funDir = mfilename('fullpath');
+    funDir = split(funDir, 'Graphics');
+    cd(char(funDir{1}));
+    addpath 'Auxiliary'
+    addpath 'Graphics'
+    [dataPath, measure, sub, loc, sub_types] = GUI_transition(handles);
+    close(Athena_an)
+    Athena_netmeas(dataPath, measure, sub, loc, sub_types)
+
