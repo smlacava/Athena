@@ -97,12 +97,16 @@ The user can choose between various statistical analysis:
        measures
 - **Distribution analysis**: the user can compare the distribution of a measure of the group of patients with the one of the group of healty 
   controls
+- **Histogram analysis**: the user can visually analyze the histogram related to the extracted measures
+- **Descriptive statistics**: the user can compute some descriptive statistical measures, such as the median, the variance and the kurtosis,
+  and compare these value between the analyzed groups
 
 
 Furthermore, the user can execute some visual analysis:
 - **Scatter Plot analysis**: the user can visually analyze the scatter plot related to two measures, also with different spatial and 
        frequency parameters, or to different parameters of the same measure
 - **Epochs Analysis**: the user can study the variation of a measure through the epochs in every frequency band for a subject
+- **Network Measures**: the user can extract some network measures related to the connectivity measures
 
 
 ## Classification

@@ -101,8 +101,10 @@ function dataPath_text_Callback(hObject, eventdata, handles)
         set(handles.meas, 'String', measures)
         set(handles.meas, 'Value', 1)
     end
-    set(handles.band, 'Visible', 'off')
     set(handles.network, 'Visible', 'off')
+    set(handles.normGroup, 'Visible', 'off')
+    set(handles.normText, 'Visible', 'off')
+    set(handles.network_text, 'Visible', 'off')
     
 function dataPath_text_CreateFcn(hObject, eventdata, handles)
     if ispc && isequal(get(hObject, 'BackgroundColor'), ...
@@ -112,7 +114,7 @@ function dataPath_text_CreateFcn(hObject, eventdata, handles)
 
 
 function Run_Callback(hObject, eventdata, handles)
-    [dataPath, measure, netmeas, band_idx, locations_file, ...
+    [dataPath, measure, netmeas, locations_file, normFLAG, ...
         network_measure_name] = network_measure_initialization(handles);
     if not(exist(strcat(path_check(dataPath), measure), 'dir'))
         problem('Measure not extracted')
@@ -121,33 +123,31 @@ function Run_Callback(hObject, eventdata, handles)
         problem('Locations file not found')
         return
     end
-    network_measure(dataPath, measure, netmeas, band_idx, ...
-    	locations_file);
+    network_measure(dataPath, measure, netmeas, locations_file, normFLAG);
     
     Athena_history_update(strcat("network_measure(", ...
         strcat("'", dataPath, "'"), ',', strcat("'", measure, "'"), ...
-        ',', strcat("'", netmeas, "'"), ',', string(band_idx), ...
-        ',', strcat("'", locations_file, "'"), ')'));
+        ',', strcat("'", netmeas, "'"), ',', ...
+        strcat("'", locations_file, "'"), ',', string(normFLAG), ')'));
     
     success(strcat('You will find the resulting files in a', ...
         " subdirectory of the ", measure, " measure (", dataPath, '\', ...
         measure, '\Network\', network_measure_name, ')'))
         
     
-function [dataPath, measure, network_measure, band, ...
-    locations_file, network_measure_name] = ...
-    network_measure_initialization(handles)
+function [dataPath, measure, network_measure, locations_file, normFLAG, ...
+    network_measure_name] = network_measure_initialization(handles)
     
     dataPath = get(handles.dataPath_text, 'String');
     measure = define_measure(handles);
-    
-    band = get(handles.band, 'Value');
  
     network_measures_list = get(handles.network, 'String');
     network_measures_args = get(handles.network_args, 'String');
     netmeas = get(handles.network, 'Value');
     network_measure = network_measures_args{netmeas};
     network_measure_name = network_measures_list{netmeas};
+    
+    normFLAG = get(handles.YesNorm, 'Value');
     
     locations_file = get(handles.aux_loc, 'String');
 
@@ -181,40 +181,22 @@ function meas_Callback(hObject, eventdata, handles)
     if exist(dataPath, 'dir')
         cases = define_cases(dataPath);
         load(strcat(dataPath, cases(1).name));
-        bands = define_bands(dataPath, size(conn.data, 1));
-        if iscell(bands) || isstring(bands)
-            set(handles.band, 'String', string(bands))
-        else
-            set(handles.band, 'String', string(1:size(data.measure, 1)))
-        end
-        set(handles.band, 'Value', 1)
         set(handles.network, 'Value', 1)
-        set(handles.band, 'Visible', 'on')
-        set(handles.band_text, 'Visible', 'on')
         set(handles.network_text, 'Visible', 'on')
         set(handles.network, 'Visible', 'on')
         set(handles.network, 'Enable', 'on')
-        set(handles.band, 'Enable', 'on')
+        set(handles.normGroup, 'Visible', 'on')
+        set(handles.normText, 'Visible', 'on')
         
     else
         set(handles.network, 'Enable', 'off')
-        set(handles.band, 'Enable', 'off')
         set(handles.network_text, 'Enable', 'off')
-        set(handles.band_text, 'Enable', 'off')
+        set(handles.normGroup, 'Visible', 'off')
+        set(handles.normText, 'Visible', 'off')
     end
 
 
 function meas_CreateFcn(hObject, eventdata, handles)
-    if ispc && isequal(get(hObject,'BackgroundColor'), ...
-            get(0,'defaultUicontrolBackgroundColor'))
-        set(hObject,'BackgroundColor','white');
-    end
-
-
-function band_Callback(hObject, eventdata, handles)
-
-
-function band_CreateFcn(hObject, eventdata, handles)
     if ispc && isequal(get(hObject,'BackgroundColor'), ...
             get(0,'defaultUicontrolBackgroundColor'))
         set(hObject,'BackgroundColor','white');

@@ -27,6 +27,11 @@ function Athena_epmean_OpeningFcn(hObject, eventdata, handles, varargin)
     if nargin >= 4
         path = varargin{1};
         set(handles.aux_dataPath, 'String', path)
+        if strcmpi(get(handles.aux_loc, 'String'), 'Static Text') && ...
+            exist(strcat(path_check(path), 'Locations.mat'), 'file')
+            set(handles.aux_loc, 'String', strcat(path_check(path), ...
+                'Locations.mat'));
+        end
     end
     if nargin >= 5
         measure = varargin{2};
@@ -63,11 +68,7 @@ function Athena_epmean_OpeningFcn(hObject, eventdata, handles, varargin)
     if nargin >= 8 && check_types == 0
         set(handles.sub_types, 'Data', varargin{5})
     end
-    if strcmpi(get(handles.aux_loc, 'String'), 'Static Text') && ...
-            exist(strcat(path_check(path), 'Locations.mat'), 'file')
-        set(handles.aux_loc, 'String', ...
-            strcat(path_check(path), 'Locations.mat'));
-    end
+
         
 
 function varargout = Athena_epmean_OutputFcn(hObject, eventdata, handles) 
@@ -175,7 +176,18 @@ function data_search_Callback(hObject, eventdata, handles)
 
 
 function next_Callback(~, ~, handles)
-    [dataPath, measure, ~, loc, sub_types] = GUI_transition(handles, 'sub');
+    [dataPath, measure, ~, loc, sub_types] = GUI_transition(handles, ...
+        'sub');
+    if strcmpi(dataPath, 'Static Text') || ...
+            contains(dataPath, 'es. C:\User\Data')
+        dataPath = get(handles.dataPath_text, 'String');
+        if strcmpi(dataPath, 'Static Text') || ...
+                contains(dataPath, 'es. C:\User\Data')
+            problem(strcat('Insert the data directory of the study', ...
+                ' before going on with your analysis'))
+            return;
+        end
+    end
     sub = get(handles.subjectsFile, 'String');
     if strcmp('es. C:\User\Sub.mat', sub)
         sub = "Static Text";

@@ -42,7 +42,7 @@ The network metrics computations allows to extract some network metrics
 on a connectivity measure
 NetworkMetricsAnalysis=true
 Network_Metrics_Measure=PLV
-Network_Metrics_Band=2
+Network_Normalization=true
 Network_Metric=Betweenness Centrality
 
 INDEX CORRELATION

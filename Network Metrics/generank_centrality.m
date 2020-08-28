@@ -4,10 +4,12 @@
 % et al., 2005: GeneRank: Using search engine technology for the analysis 
 % of microarray experiments).
 %
-% pr = generank_centrality(data, d_factor, gr_prob)
+% pr = generank_centrality(data, normFLAG, d_factor, gr_prob)
 %
 % Input:
 %   data is the (nodes x nodes) adjacency matrix
+%   normFLAG has to be 1 in order to normalize the generank centrality
+%       vector as gr/max(gr), 0 otherwise (1 by default)
 %   d_factor is the damping factor (0.85 as default)
 %   gr_probability is the initial PageRank probability (vector of 1s as
 %       default)
@@ -16,16 +18,19 @@
 %   gr is the (nodes x 1) generank centrality vector
 
 
-function gr = generank_centrality(data, d_factor, gr_prob)
+function gr = generank_centrality(data, normFLAG, d_factor, gr_prob)
+    
+    if nargin < 2 || isempty(normFLAG)
+        normFLAG = 1;
+    end
+    if nargin < 3 || isempty(d_factor)
+        d_factor = 0.85;
+    end
     
     data = squeeze(data);
     N = length(data);
-    
-    if nargin < 2
-        d_factor = 0.85;
-    end
 
-    if nargin < 3
+    if nargin < 4
         norm_pr_prob = ones(N, 1)/N;
     else
         gr_prob = abs(gr_prob);
@@ -43,5 +48,7 @@ function gr = generank_centrality(data, d_factor, gr_prob)
     aux_rank = (1-d_factor)*norm_pr_prob;
     
     gr = base_rank\aux_rank;
-    gr = gr/sum(gr);
+    if normFLAG == 1
+        gr = gr./max(gr);
+    end
 end

@@ -1,19 +1,24 @@
 %% katz_centrality
 % This function computes the katz centrality.
 %
-% kc = katz_centrality(data, a_factor)
+% kc = katz_centrality(data, normFLAG, a_factor)
 %
 % Input:
 %   data is the (nodes x nodes) adjacency matrix
+%   normFLAG has to be 1 in order to normalize the katz centrality
+%       vector as kc/max(kc), 0 otherwise (1 by default)
 %   a_factor is the attenuation factor
 %
 % Output:
 %   kc is the (nodes x 1) katz centrality vector
 
 
-function kc = katz_centrality(data, a_factor)
-    if nargin < 2
-        a_factor = 0.85;
+function kc = katz_centrality(data, normFLAG, a_factor)
+    if nargin < 2 || isempty(normFLAG)
+        normFLAG = 1;
+    end
+    if nargin < 3
+        a_factor = 0.85;   
     end
     
     data = squeeze(data);
@@ -26,4 +31,8 @@ function kc = katz_centrality(data, a_factor)
     id = eye(N);
     
     kc = (id - a_factor*data)\aux_ones;
+    
+    if normFLAG == 1
+        kc = kc./max(kc);
+    end
 end

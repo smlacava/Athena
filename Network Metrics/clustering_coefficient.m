@@ -8,8 +8,8 @@
 % 
 % Input:
 %   data is the (nodes x nodes) connection matrix
-%   normFLAG has to be 1 in order to normalize the betweenness centrality
-%       vector as bc/[(N-1)(N-2)] (considering bc as the betweenness 
+%   normFLAG has to be 1 in order to normalize the clustering coefficient
+%       vector as cc/max(cc) (considering bc as the betweenness 
 %       centrality vector and n as the number of nodes), 0 otherwise (1 by 
 %       default)
 %

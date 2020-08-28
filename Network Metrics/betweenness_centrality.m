@@ -9,7 +9,7 @@
 % Input:
 %   data is the (nodes x nodes) binary connection matrix
 %   normFLAG has to be 1 in order to normalize the betweenness centrality
-%       vector as BC/[(N-1)(N-2)], 0 otherwise (1 by default)
+%       vector as bc/max(bc), 0 otherwise (1 by default)
 %
 % Output:
 %   bc is the (nodes x 1) node betweenness centrality vector
@@ -63,7 +63,7 @@ function bc = betweenness_centrality(data, normFLAG)
             paths_number, n, aux_matrix);
     end
     if normFLAG == 1
-        bc = bc/((n-1)*(n-2));
+        bc = bc./max(bc(:));
     end
 end
 

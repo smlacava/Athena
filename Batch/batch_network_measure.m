@@ -13,8 +13,11 @@
 function batch_network_measure(parameters)
     dataPath = path_check(search_parameter(parameters, 'dataPath'));
     measure = search_parameter(parameters, 'Network_Metrics_Measure');
-    band = search_parameter(parameters, 'Network_Metrics_Band');
-    bands_names = search_parameter(parameters, 'frequency_bands');
+    normFLAG = search_parameter(parameters, 'Network_Normalization');
+    if isempty(normFLAG) || strcmpi(normFLAG, 'true') || ...
+            str2double(normFLAG) == 1
+        normFLAG = 1;
+    end
         
     network = search_parameter(parameters, 'Network_Metric');
     
@@ -34,7 +37,6 @@ function batch_network_measure(parameters)
     end
     
     locations_file = search_parameter(parameters, 'Locations');
-    network_measure(dataPath, measure, network, band, ...
-        locations_file);
+    network_measure(dataPath, measure, network, locations_file, normFLAG);
 end
     

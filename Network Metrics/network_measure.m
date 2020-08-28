@@ -3,29 +3,32 @@
 % all subjects, considering the adjacency matrix as the average of the
 % connectivity matrix between the epochs.
 %
-% network_measure(dataPath, measure, network_measure, band, locations_file)
+% network_measure(dataPath, measure, network_measure, loc_file, normFLAG)
 %
 % Input:
 %   dataPath is the main folder of the study
 %   measure is the analyzed connectivity measure
 %   network_measure is the name of network metrics to analyze
-%   band is the number of frequency band to analyze
-%   locations_file is the name of the file (with its path) which contains
-%       the list of common locations (optional, the the file Location.mat
+%   loc_file is the name of the file (with its path) which contains the
+%       list of common locations (optional, the the file Location.mat
 %       computed by Athena inside the measure directory by default and if
 %       it is an empty vector)
+%   normFLAG has to be 1 in order to normalize the network measure vector
+%       by dividing it by its maximum value, 0 otherwise (1 by default)
 
 
-function network_measure(dataPath, measure, network_measure, band, ...
-    locations_file)
+function network_measure(dataPath, measure, network_measure, loc_file, ...
+    normFLAG)
     
+    if nargin < 4
+        loc_file = [];
+    end
     if nargin < 5
-        locations_file = [];
+        normFLAG = 1;
     end
     
     dataPath = path_check(strcat(path_check(dataPath), measure));
     bands_list = define_bands(dataPath, {});
-    band_name = bands_list(band);
     
     network_metrics = {'betweenness_centrality', ...
         'closeness_centrality', 'clustering_coefficient', ...
@@ -38,29 +41,36 @@ function network_measure(dataPath, measure, network_measure, band, ...
     functions = {@betweenness_centrality, ...
         @closeness_centrality, @clustering_coefficient, ...
         @eigenvector_centrality, @generank_centrality, ...
-        @katz_centrality, @strength, @subgrap_centrality};
+        @katz_centrality, @strength, @subgraph_centrality};
     network_function = functions(strcmpi(network_measure, network_metrics));
     network_function = network_function{1};
     network = network_names(strcmpi(network_measure, network_metrics));
     network = network{1};
     
-    if isempty(locations_file)
-        locations_file = strcat(dataPath, 'Locations.mat');
+    if isempty(loc_file)
+        loc_file = strcat(dataPath, 'Locations.mat');
     end
-    if not(exist(locations_file, 'file'))
+    if not(exist(loc_file, 'file'))
         error('Locations file not found')
     end
-    locations = load_data(locations_file);
+    locations = load_data(loc_file);
     
     cases = define_cases(dataPath);
     outDir = path_check(strcat(path_check(strcat(path_check(dataPath), ...
         'Network')), network));
     create_directory(outDir);
+    
+    nBands = length(bands_list);
     for i = 1:length(cases)
         load(strcat(dataPath, cases(i).name));
-        data = data_management(conn, locations, band, bands_list);
-        network_data = network_function(data);
-        save(strcat(outDir, band_name, cases(i).name), ....
+        for band = 1:nBands
+            data = data_management(conn, locations, band, bands_list);
+            if i == 1 && band == 1
+                network_data = zeros(length(data), nBands);
+            end
+            network_data(:, band) = network_function(data, normFLAG);
+        end
+        save(strcat(outDir, cases(i).name), ....
             'network_data')
     end
 end
