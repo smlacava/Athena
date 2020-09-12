@@ -192,6 +192,26 @@ function next_Callback(~, ~, handles)
     if strcmp('es. C:\User\Sub.mat', sub)
         sub = "Static Text";
     end
+    if strcmpi(loc, "Static Text")
+        dir_file = strcat(path_check(dataPath), 'Locations.mat');
+        if exist(dir_file, 'file')
+            answer = user_decision(strcat("Do you want to use the ", ...
+                "locations file inside the measure directory?"), ...
+                "Locations file");
+            if strcmpi(answer, "yes")
+                loc = dir_file;
+            end
+        end
+        if strcmpi(loc, "Static Text")
+        	answer = user_decision(strcat("Do you want to choose a ", ...
+                    "locations file?"), "Locations file");
+            if strcmpi(answer, "yes")
+                loc = file_asking(dir_file, "Locations file", ...
+                    "Select the locations file");
+            end
+        end
+    end       
+                
     close(Athena_epmean)
     Athena_an(dataPath, measure, sub, loc, sub_types)
 

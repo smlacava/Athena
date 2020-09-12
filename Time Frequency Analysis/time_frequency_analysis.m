@@ -2,7 +2,9 @@
 % This function computes the time-frequency plot of a channel of a signal
 % or of the average of the time series related to every location, by using
 % variable number of wavelet cycles in order to mediate between temporal
-% and frequency precision
+% and frequency precision (using the algorithm proposed by Cohen, 2018: A 
+% better way to define and describe Morlet wavelets for time-frequency 
+% analysis).
 %
 % [tf, times, frequencies, f_ticks, t_ticks, n_steps]  = ...
 %         time_frequency_analysis(data, fs, idx_chan, fmin, fmax, tmin, ...
