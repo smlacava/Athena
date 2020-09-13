@@ -109,11 +109,7 @@ function parameters = read_file(dataFile)
                 aux_par = split(prop, '=');
                 aux_par = aux_par{2};
                 if contains(prop, 'cf=')
-                    aux_par = str2double(split(aux_par))';
-                    if isnan(aux_par(end))
-                        aux_par(end) = [];
-                    end
-                    pre_parameters{cf} = aux_par(1:end);
+                    pre_parameters{cf} = cf_reader(aux_par);
                 else
                     check = 0;
                     for j = 1:length(par_functions)

@@ -171,7 +171,7 @@ function Run_Callback(hObject, eventdata, handles)
     addpath 'Graphics'
     
     fs = str2double(get(handles.fs_text, 'String'));
-    cf = str2double(split(get(handles.cf_text, 'String'), ' '))';
+    cf = cf_reader(get(handles.cf_text, 'String'));
     epNum = str2double(get(handles.epNum_text, 'String'));
     epTime = str2double(get(handles.epTime_text, 'String'));
     tStart = str2double(get(handles.tStart_text, 'String'));
