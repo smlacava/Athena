@@ -18,7 +18,7 @@
 %       relative PSD)
 
 
-function []=batch_measureExtraction(measure, fs, cf, epNum, epTime, ...
+function batch_measureExtraction(measure, fs, cf, epNum, epTime, ...
     dataPath, tStart, totBand)
     
     cases = define_cases(dataPath);
@@ -30,6 +30,8 @@ function []=batch_measureExtraction(measure, fs, cf, epNum, epTime, ...
     
     if strcmp(measure, "PSDr")
         PSDr(fs, cf, epNum, epTime, dataPath, tStart, totBand)
+    elseif strcmp(measure, "PEntropy")
+        PSDr(fs, cf, epNum, epTime, dataPath, tStart)
     elseif sum(strcmp(measure, ["exponent", "offset"]))
         FOOOFer(fs, cf, epNum, epTime, dataPath, tStart, measure)
     else

@@ -39,7 +39,7 @@ function measures = Athena_measures_list(cellFLAG, aperiodicFLAG, ...
     
     connectivity_measures = {'PLI', 'PLV', 'AEC', 'AECo', 'Coherence', ...
         'ICOH'};
-    power_measures = {'PSDr'};
+    power_measures = {'PSDr', 'PEntropy'};
     aperiodic_measures = {'Offset', 'Exponent'};
     
     measures = {};

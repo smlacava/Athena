@@ -2,7 +2,7 @@
 % This function computes the Power Spectral Density relative over a total
 % band defined by the user, using the Welch's power formulation.
 %
-% PSDr(fs, cf, nEpochs, dt, inDir, outDir, tStart, cfstart, cfstop)
+% PSDr(fs, cf, nEpochs, dt, inDir, tStart, relBand)
 %
 % input:
 %   fs is the sampling frequency
@@ -12,10 +12,6 @@
 %   inDir is the directory containing each case
 %   tStart is the starting time (in seconds) to computate the first sample
 %       of the first epoch (0 as default)
-%   cfstart is the index of the first minimum cf value's step to save (1 as
-%       default)
-%   cfstop is the index of the last maximum cf value's step to save
-%       (length(cf) as default)
 %   relBand is the total band used to obtain the relative band 
 %       ([min(min(cf),1) max(max(cf),40)] as default, the first value is 
 %       the minimum between 1 and the first cut frequency and the second
@@ -54,10 +50,7 @@ function PSDr(fs, cf, nEpochs, dt, inDir, tStart, relBand)
         try
             [time_series, fsOld, locations] = ...
                 load_data(strcat(inDir, cases(i).name), 1);
-            if fsOld ~= fs
-                [p, q] = rat(fs/fsOld);
-                time_series = resample(time_series', p, q)';
-            end
+            time_series = resample(time_series, fs, fsOld);
             time_series = time_series(:, tStart:end);
             psdr.data = zeros(nBands, nEpochs, size(time_series, 1));
             psdr.locations = locations;
@@ -69,33 +62,14 @@ function PSDr(fs, cf, nEpochs, dt, inDir, tStart, relBand)
                     bandPower = zeros(nBands, 1);
 
                     for b = 1:nBands
-                        fPre = [find(w > cf(b+cfstart), 1), ...
-                            find(w > cf(b+cfstart), 1)-1];
-                        [~,y] = min([w(fPre(1))-cf(b+cfstart), ...
-                            cf(b+cfstart)-w(fPre(2))]);
-                        infft = fPre(y);
-                
-                        fPost = [find(w > cf(b+cfstart+1), 1), ...
-                            find(w > cf(b+cfstart+1), 1)-1];
-                        [~,y] = min([w(fPost(1))-cf(b+cfstart+1), ...
-                            cf(b+cfstart+1)-w(fPost(2))]);
-                        supft = fPost(y);
+                        [infft, supft] = band_index(w, cf(b+cfstart), ...
+                            cf(b+cfstart+1));
 
                         bandPower(b, 1) = sum(pxx(infft:supft));
                     end     
-            
-                    fPre = [find(w>relBand(1), 1), ...
-                        find(w > relBand(1), 1)-1];
-                    [~, y] = min([w(fPre(1))-relBand(1), ...
-                        relBand(1)-w(fPre(2))]);
-                    infft = fPre(y);
-                
-                    fPost = [find(w > relBand(end), 1), ...
-                        find(w > relBand(end), 1)-1];
-                    [~, y] = min([w(fPost(1))-relBand(end), ...
-                        relBand(end)-w(fPost(2))]);
-                    supft = fPost(y);
-
+                    
+                    [infft, supft] = band_index(w, relBand(1), ...
+                        relBand(end));
                     totalPower = sum(pxx(infft:supft));             
 
                     for b = 1:nBands
@@ -119,4 +93,31 @@ function PSDr(fs, cf, nEpochs, dt, inDir, tStart, relBand)
         waitbar(i/length(cases), f)
     end
     close(f)
+end
+
+
+%% band_index
+% This function computes the minimum value and the maximum value of a
+% vector of frequencies, related to the frequency values nearest to two
+% different frequencies.
+%
+% [infft, supft] = band_index(w, min_band, max_band)
+%
+% Input:
+%   w is the vector of frequencies
+%   min_band is the minimum frequency to search
+%   max_band is the maximum frequency to search
+%
+% Output:
+%   infft is the minimum frequency value
+%   supft is the maximum frequency value
+
+function [infft, supft] = band_index(w, min_band, max_band)
+    fPre = [find(w > min_band, 1), find(w > min_band, 1)-1];
+    [~,y] = min([w(fPre(1))-min_band, min_band-w(fPre(2))]);
+    infft = fPre(y);
+                
+    fPost = [find(w > max_band, 1), find(w > max_band, 1)-1];
+    [~,y] = min([w(fPost(1))-max_band, max_band-w(fPost(2))]);
+    supft = fPost(y);
 end

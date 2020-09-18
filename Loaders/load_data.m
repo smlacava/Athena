@@ -37,8 +37,10 @@ function [data, fs, locs] = load_data(dataFile, locFLAG, varargin)
     
     if contains(dataFile, '.mat')
         data = load(dataFile);
+        split_file = split(dataFile, filesep);
         if isfield(data, 'conn') || isfield(data, 'Second') || ...
-                isfield(data, 'First')
+                isfield(data, 'First') || ...
+                any(strcmpi(Athena_measures_list(), split_file{end-1}))
             athenaFLAG = 1;
         end
         data = struct2cell(data);
