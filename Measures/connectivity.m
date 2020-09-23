@@ -5,8 +5,7 @@
 % corrected (also called orthogonalized, AECo) or the amplitude envelope 
 % correlation not corrected (AEC).
 %
-% connectivity(fs, cf, nEpochs, dt, inDir, outDirs, tStart, outTypes, ...
-%         filter_name)
+% connectivity(fs, cf, nEpochs, dt, inDir, tStart, outTypes, filter_name)
 %
 % input:
 %   fs is the sampling frequency
@@ -16,7 +15,7 @@
 %   inDir is the directory containing each case
 %   tStart is the starting time (in seconds) to computate the first sample
 %       of the first epoch
-%   outTypes is the list of variables to save (PLI, PLV, AEC, AECo, MSC)
+%   outTypes is the list of connectivity types to compute (PLI, PLV, etc.)
 %   filter_name is the name of the filtering function (athena_filter as
 %       default)
 

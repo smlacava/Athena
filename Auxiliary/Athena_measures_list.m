@@ -3,7 +3,7 @@
 % allowed measures.
 %
 % measures = Athena_measures_list(cellFLAG, aperiodicFLAG, ...
-%         connectivityFLAG, powerFLAG)
+%         connectivityFLAG, powerentropyFLAG)
 %
 % Input:
 %   cellFLAG has to be 1 in order to obtain the list as a cell array, or 0
@@ -12,8 +12,8 @@
 %       the list, or 0 to avoid them (1 by default)
 %   connectivityFLAG has to be 1 in order to insert the connectivity
 %       measures in the list, or 0 to avoid them (1 by default)
-%   powerFLAG has to be 1 in order to insert the power measures in the
-%       list, or 0 to avoid them (1 by default)
+%   powerentropyFLAG has to be 1 in order to insert the power measures and
+%       the entropy measures in the list, or 0 to avoid them (1 by default)
 %       
 % 
 % Output:
@@ -23,7 +23,7 @@
 
 
 function measures = Athena_measures_list(cellFLAG, aperiodicFLAG, ...
-    connectivityFLAG, powerFLAG)
+    connectivityFLAG, powerentropyFLAG)
     if nargin < 1
         cellFLAG = 0;
     end
@@ -34,17 +34,18 @@ function measures = Athena_measures_list(cellFLAG, aperiodicFLAG, ...
         connectivityFLAG = 1;
     end
     if nargin < 4
-        powerFLAG = 1;
+        powerentropyFLAG = 1;
     end
     
     connectivity_measures = {'PLI', 'PLV', 'AEC', 'AECo', 'Coherence', ...
         'ICOH'};
-    power_measures = {'PSDr', 'PEntropy'};
+    powerentropy_measures = {'PSDr', 'PEntropy', 'sample_entropy', ...
+        'approximate_entropy'};
     aperiodic_measures = {'Offset', 'Exponent'};
     
     measures = {};
-    if powerFLAG == 1
-        measures = [measures, power_measures];
+    if powerentropyFLAG == 1
+        measures = [measures, powerentropy_measures];
     end
     if connectivityFLAG == 1
         measures = [measures, connectivity_measures];

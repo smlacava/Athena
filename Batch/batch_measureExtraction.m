@@ -1,54 +1,72 @@
 %% batch_measureExtraction
 % This function is used in the batch mode to extract the selected measure.
 %
-% batch_measureExtraction(measure, fs, cf, epNum, epTime, dataPath, ...
-%   tStart, totBand)
+% batch_measureExtraction(parameters, dataPath, measure, cf)
 %
 % input: 
-%   measure is the string which represents the measure to extract
-%   fs is the sampling frequency
-%   cf is the array containing the cut frequencies
-%   epNum is the number of epochs
-%   epTime is the time window of each epoch
-%   dataPath is the name of the directory (with its path) which contains
-%       the time series
-%   tStart is the initial time of the first epoch
-%   totBand is an array containing the minimum and the maximum cut
-%       frequency to use in the extraction (used to extract the 
-%       relative PSD)
+%   parameters is the cell array which contains the pairs name-value used
+%       in the batch study
+%   dataPath is the main directory of the study (optional)
+%   measure is the string which represents the measure to extract, or a
+%       list which contains the list of measures (optional)
+%   cf is the array containing the cut frequencies (optional)
 
 
-function batch_measureExtraction(measure, fs, cf, epNum, epTime, ...
-    dataPath, tStart, totBand)
-    
-    cases = define_cases(dataPath);
-    time_series = load(strcat(dataPath, cases(1).name));
-    if length(time_series) < (tStart+(epNum*epTime))
-        problem("The time series has not enough samples")
-        return
+function batch_measureExtraction(parameters, dataPath, measure, cf)
+    if nargin < 2
+        dataPath = path_check(search_parameter(parameters, 'dataPath'));
     end
-    
-    if strcmp(measure, "PSDr")
-        PSDr(fs, cf, epNum, epTime, dataPath, tStart, totBand)
-    elseif strcmp(measure, "PEntropy")
-        PSDr(fs, cf, epNum, epTime, dataPath, tStart)
-    elseif sum(strcmp(measure, ["exponent", "offset"]))
-        FOOOFer(fs, cf, epNum, epTime, dataPath, tStart, measure)
+    if nargin < 3
+        measure = search_parameter(parameters, 'measures');
+    end
+    if nargin < 4
+        cf = search_parameter(parameters, 'cf');
+    end
+
+    n_measures = length(measure);
+    epNum = search_parameter(parameters, 'epNum');
+    fs = search_parameter(parameters, 'fs');
+    epTime = search_parameter(parameters, 'epTime');
+    tStart = search_parameter(parameters, 'tStart');
+    filter_file = search_parameter(parameters, 'filter_file');
+    if isempty(filter_file)
+        filter_name = 'athena_filter';
     else
-        connectivity(fs, cf, epNum, epTime, dataPath, tStart, measure)
+        filter_name = batch_check_filter(filter_file);
     end
+    
+    for m = 1:n_measures
+        if strcmp(measure{m}, 'PSDr') && ...
+                length(search_parameter(parameters, 'totBand')) ~= 2
+            problem('Invalid total band')
+            return
+        end
+        [type, ~] = type_check(measure{m});
+        if strcmpi(measure{m}, 'PSDr')
+            PSDr(fs, cf, epNum, epTime, dataPath, tStart, ...
+                search_parameter(parameters, 'totBand'))
+            
+        elseif strcmpi(measure{m}, 'PEntropy')
+            spectral_entropy(fs, cf, epNum, epTime, dataPath, tStart)
+            
+        elseif strcmpi(measure{m}, 'approximate_entropy') || ...
+                strcmpi(measure{m}, 'sample_entropy')
+            time_entropy(fs, cf, epNum, epTime, dataPath, tStart, ...
+                [measure{m}], filter_name);
+            
+        elseif strcmpi(measure{m}, 'offset') || ...
+                strcmpi(measure{m}, 'exponent')
+            cf_bg = [cf(1), cf(end)];
+            FOOOFer(fs, cf_bg, epNum, epTime, dataPath, tStart, type)
+            
+        else
+            connectivity(fs, cf, epNum, epTime, dataPath, tStart, ...
+                measure{m}, filter_name)         
+        end
         
-    auxID=fopen('auxiliary.txt', 'w');
-    fprintf(auxID, 'dataPath=%s', dataPath);
-    fprintf(auxID, '\nfs=%d', fs);
-    fprintf(auxID, '\ncf=');
-    for i = 1:length(cf)
-        fprintf(auxID, '%d ', cf(i));
+        measure_update_file(cf, measure{m}, ...
+            search_parameter(parameters, 'totBand'), dataPath, fs, ...
+            epNum, epTime, tStart);
+        pause(1)
     end
-    fprintf(auxID, '\nepNum=%d', epNum);
-    fprintf(auxID, '\nepTime=%d', epTime);
-    fprintf(auxID, '\ntStart=%d', tStart);
-    fprintf(auxID, '\ntotBand=%d %d', totBand(1), totBand(2));
-    fprintf(auxID, '\nmeasure=%s', measure);
-    fclose(auxID);
 end

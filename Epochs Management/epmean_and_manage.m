@@ -125,6 +125,9 @@ function [locations_file, sub_types] = epmean_and_manage(inDir, type, ...
     end
     for j = 1:ntypes
         f_av = av_functions{j};
+        if size(data.measure, 2) == 1
+            data.measure = data.measure';
+        end
         setup_data{j} = f_av(data);
         setup_size(j) = length(setup_data{j}.locations);  
         loc_av(j).First = zeros(nFirst, nBands, setup_size(j));
@@ -134,7 +137,7 @@ function [locations_file, sub_types] = epmean_and_manage(inDir, type, ...
     
     countFirst = 1;
     countSecond = 1;
-    waitbar(0, f, 'Computing averages of signals')
+    waitbar(0, f, 'Computing temporal averages and spatial management')
     n_cases = length(cases);
     for i = 1:n_cases
         [measure, ~, locs] = load_data(strcat(inDir, cases(i).name));
@@ -155,6 +158,9 @@ function [locations_file, sub_types] = epmean_and_manage(inDir, type, ...
             check_type = not(isempty(loc_av(j).First)) || ...
                 not(isempty(loc_av(j).Second));
             if check_type
+                if size(data.measure, 2) == 1
+                    data.measure = data.measure';
+                end
                 aux_data = data;
                 f_av = av_functions{j};
                 aux_data = f_av(aux_data);
