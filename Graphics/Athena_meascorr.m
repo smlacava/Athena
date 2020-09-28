@@ -101,18 +101,16 @@ function Run_Callback(hObject, eventdata, handles)
     measures = meas_list(meas_state);
     
     dataPath = path_check(get(handles.aux_dataPath, 'String'));
-    data_name = strcat(dataPath, path_check(measures{1}), ...
-        path_check('Epmean'), path_check(char_check(analysis)), ...
-        char_check(sub_group));
+    measure_path = measurePath(dataPath, measures{1}, analysis); 
+    data_name = strcat(measure_path, char_check(sub_group));
     try
         xData = load_data(data_name);
     catch
         problem(strcat(measures{1}, " epochs averaging of not computed"));
         return;
     end
-    data_name = strcat(dataPath, path_check(measures{2}), ...
-    	path_check('Epmean'), path_check(char_check(analysis)), ...
-        char_check(sub_group));
+    measure_path = measurePath(dataPath, measures{2}, analysis); 
+    data_name = strcat(measure_path, char_check(sub_group));
     try
         yData = load_data(data_name);
     catch
@@ -231,12 +229,6 @@ function meas2_CreateFcn(hObject, eventdata, handles)
     end
    
 function set_measures(path, handles)
-    aux_measures = Athena_measures_list();
-    measures = [];
-    for i = 1:length(aux_measures)
-        if exist(strcat(path_check(path), aux_measures(i)),'dir')
-            measures = [measures, aux_measures(i)];
-        end
-    end
+    measures = available_measures(path, 1);
     set(handles.meas1, 'String', measures);
     set(handles.meas2, 'String', measures);

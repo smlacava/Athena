@@ -24,7 +24,7 @@
 %       Scatter_Band2, Scatter_Location1, Scatter_Location2,
 %       HistogramAnalysis, Histogram_Measure, Histogram_Bands,
 %       Histogram_Location, Histogram_bins, DistributionsAnalysis,
-%       Distributions_Measure, Distributions_Bands, 
+%       Distributions_Measure, Distributions_Bands, UTestMeasure,
 %       Distributions_Location, Distributions_Parameter, 
 %       Descriptive_Measure, Descriptive_Band, Descriptive_Location, 
 %       DescriptiveAnalysis, NetworkMetricsAnalysis, 
@@ -60,7 +60,7 @@ function parameters = read_file(dataFile)
         'filter_file=', 'Descriptive_Measure=', 'Descriptive_Band=', ...
         'Descriptive_Location=', 'DescriptiveAnalysis=', ...
         'NetworkMetricsAnalysis=', 'Network_Metrics_Measure=', ...
-        'Network_Normalization=', 'Network_Metric='};
+        'Network_Normalization=', 'Network_Metric=', 'UTestMeasure='};
     n_params = length(params_names);
     pre_parameters = cell(n_params, 1);
     

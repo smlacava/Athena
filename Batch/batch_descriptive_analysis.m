@@ -15,12 +15,11 @@ function batch_descriptive_analysis(parameters)
     band = search_parameter(parameters, 'Descriptive_Band');
     location = search_parameter(parameters, 'Descriptive_Location');
     sub_types = search_parameter(parameters, 'subjects_types');
-    band_name = search_parameter(parameters, 'frequency_bands');
+    band_name = batch_define_bands(parameters, measure);
     band_name = band_name{band};
     
     [area, check] = batch_check_area(location);
-    measure_path = path_check(strcat(path_check(dataPath), ...
-        path_check(measure), path_check('Epmean'), area));
+    measure_path = measurePath(dataPath, measure, area);
     
     [~, ~, locs] = load_data(strcat(measure_path, 'Second.mat'));
     if isempty(locs)

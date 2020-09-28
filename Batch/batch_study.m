@@ -29,7 +29,7 @@ function batch_study(dataFile)
         filter_name = batch_check_filter(filter_file);
     end
     n_measures = length(measure);
-    measurePath = cell(n_measures, 1);
+    measuresPath = cell(n_measures, 1);
     save_check_fig = sum(strcmpi(search_parameter(parameters, ...
         'save_figures'), true_val));
     format = search_parameter(parameters, 'format');
@@ -49,9 +49,9 @@ function batch_study(dataFile)
             problem(strcat(measure{m}, ' is an invalid measure'))
             return
         end
-        measurePath{m} = path_check(strcat(dataPath, measure{m}));
-        if not(exist(measurePath{m}, 'dir'))
-            mkdir(measurePath{m});
+        measuresPath{m} = path_check(strcat(dataPath, measure{m}));
+        if not(exist(measuresPath{m}, 'dir'))
+            mkdir(measuresPath{m});
         end
     end
  
@@ -108,7 +108,7 @@ function batch_study(dataFile)
     
     managedPath = cell(n_measures, 1);
     for m = 1:n_measures
-        managedPath{m} = path_check(strcat(measurePath{m}, 'Epmean'));
+        managedPath{m} = batch_measurePath(dataPath, measure{m});
     end
     
     if exist('locations_file', 'var') && ischar(locations_file)
@@ -127,56 +127,41 @@ function batch_study(dataFile)
     end
 
     
-    for m = 1:n_measures
-        if not(exist(managedPath{m}, 'dir')) && ...
-                sum([sum(strcmp(search_parameter(parameters, ...
-                'UTest'), true_val)), ...
-                sum(strcmp(search_parameter(parameters, ...
-                'ScatterAnalysis'), true_val)), ...
-                sum(strcmp(search_parameter(parameters, ...
-                'DistributionsAnalysis'), true_val)), ...
-                sum(strcmp(search_parameter(parameters, ...
-                'DescriptiveAnalysis'), true_val)), ...
-                sum(strcmp(search_parameter(parameters, ...
-                'HistogramAnalysis'), true_val))]) > 0
-            problem('Epochs Avarage not computed')
-            return
+    cd(dataPath)
+    if sum(strcmp(search_parameter(parameters, ...
+            'UTest'), 'true'))
+        Areas_UT = search_parameter(parameters, 'Areas_UT');
+        for i = 1:length(Areas_UT)
+            saPath = measurePath(dataPath, search_parameter(parameters, ...
+                'UTestMeasure'), Areas_UT{i});
+            PAT = strcat(path_check(saPath), 'Second.mat');
+            HC = strcat(path_check(saPath), 'First.mat');
+            [PAT, ~, locs] = load_data(PAT);
+            HC = load_data(HC);
+            anType = areas_check(Areas_UT{i,1});
+            statistical_analysis(HC, PAT, locs, ....
+                cons_check(search_parameter(parameters, ...
+                'Conservativeness_UT')), saPath, ...
+                search_parameter(parameters, 'UTestMeasure'), anType, ...
+                sub_types)
         end
-        cd(dataPath)
-        
-        if sum(strcmp(search_parameter(parameters, ...
-                'UTest'), 'true'))
-            Areas_UT = search_parameter(parameters, 'Areas_UT');
-            for i = 1:length(Areas_UT)
-                saPath = path_check(strcat(managedPath{m}, Areas_UT{i}));
-                PAT = strcat(saPath, 'Second.mat');
-                HC = strcat(saPath, 'First.mat');
-                [PAT, ~, locs] = load_data(PAT);
-                HC = load_data(HC);
-                anType = areas_check(Areas_UT{i,1});
-                statistical_analysis(HC, PAT, locs, ....
-                    cons_check(search_parameter(parameters, ...
-                    'Conservativeness_UT')), measurePath{m}, ...
-                    measure{m}, anType, sub_types)
-            end
-        end
-        
-        if strcmpi(search_parameter(parameters, 'ScatterAnalysis'), 'true')
-            batch_scatter(parameters);
-        end
-        
-        if strcmpi(search_parameter(parameters, ...
-                'DistributionsAnalysis'), 'true')
-            batch_distributions(parameters);
-        end
-        if strcmpi(search_parameter(parameters, ...
-                'DescriptiveAnalysis'), 'true')
-            batch_descriptive_analysis(parameters);
-        end
-        if strcmpi(search_parameter(parameters, ...
-                'HistogramAnalysis'), 'true')
-            batch_histogram(parameters);
-        end
+    end
+    
+    if strcmpi(search_parameter(parameters, 'ScatterAnalysis'), 'true')
+        batch_scatter(parameters);
+    end
+    
+    if strcmpi(search_parameter(parameters, ...
+            'DistributionsAnalysis'), 'true')
+        batch_distributions(parameters);
+    end
+    if strcmpi(search_parameter(parameters, ...
+            'DescriptiveAnalysis'), 'true')
+        batch_descriptive_analysis(parameters);
+    end
+    if strcmpi(search_parameter(parameters, ...
+            'HistogramAnalysis'), 'true')
+        batch_histogram(parameters);
     end
     
     %% Classification 

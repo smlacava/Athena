@@ -47,7 +47,7 @@ function Athena_indcorr_OpeningFcn(hObject, eventdata, handles, varargin)
         set(handles.PAT, 'String', sub_types{2})
         set(handles.HC, 'String', sub_types{1})
     end
-    set_handles(hObject, eventdata, handles)
+    dataPath_text_Callback(hObject, eventdata, handles)
 
 
     
@@ -203,53 +203,15 @@ function set_handles(hObject, eventdata, handles)
         catch
         end
     end
-    if exist(dataPath, 'dir')
-        [imp_analysis, imp_subjects] = impossible_analysis(dataPath);
-        subjects_list = {'Second.mat', 'First.mat'};
-        s_hand = {handles.PAT, handles.HC};
-        analysis_list = {'Total', 'Global', 'Asymmetry', 'Areas'};
-        a_hand = {handles.tot_button, handles.glob_button, ...
-            handles.asy_button, handles.areas_button};
-    
-        imp_a = length(imp_analysis);
-        if imp_a ~= 0
-            n_an = length(a_hand);
-            for i = 1:n_an
-                for j = 1:imp_a
-                    if strcmp(imp_analysis{j}, analysis_list{i})
-                        set(a_hand{i}, 'Enable', 'off')
-                    end
-                end
-            end
-        end
-    
-        imp_s = length(imp_subjects);
-        if imp_s ~= 0
-            n_sub = length(s_hand);
-            for i = 1:n_sub
-                for j = 1:imp_s
-                    if strcmp(imp_subjects{j}, subjects_list{i})
-                        set(s_hand{i}, 'Enable', 'off')
-                    end
-                end
-            end
-        end
-    end 
     
     
 function set_measures(path, handles)
-    aux_measures = Athena_measures_list();
-    measures = [];
-    for i = 1:length(aux_measures)
-        if exist(strcat(path_check(path), aux_measures(i)),'dir')
-            measures = [measures, aux_measures(i)];
-        end
-    end
+    measures = available_measures(path, 1);
     set(handles.meas, 'String', measures);
 
 
 function meas_Callback(hObject, eventdata, handles)
-
+  
 
 function popupmenu10_CreateFcn(hObject, eventdata, handles)
     if ispc && isequal(get(hObject,'BackgroundColor'), ...

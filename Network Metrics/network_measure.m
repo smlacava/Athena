@@ -3,7 +3,8 @@
 % all subjects, considering the adjacency matrix as the average of the
 % connectivity matrix between the epochs.
 %
-% network_measure(dataPath, measure, network_measure, loc_file, normFLAG)
+% network_measure(dataPath, measure, network_measure, loc_file, ...
+%       subFile, normFLAG)
 %
 % Input:
 %   dataPath is the main folder of the study
@@ -13,22 +14,29 @@
 %       list of common locations (optional, the the file Location.mat
 %       computed by Athena inside the measure directory by default and if
 %       it is an empty vector)
+%   subFile is the name of the file which contains the subjects list with 
+%       their belonging class (use an empty vector as value for this
+%       parameter to avoid grouping, [] by default)
 %   normFLAG has to be 1 in order to normalize the network measure vector
 %       by dividing it by its maximum value, 0 otherwise (1 by default)
 
 
 function network_measure(dataPath, measure, network_measure, loc_file, ...
-    normFLAG)
+    subFile, normFLAG)
     
     if nargin < 4
         loc_file = [];
     end
-    if nargin < 5
+    if nargin < 5 || isempty(subFile)
+        groupFLAG = 0;
+    else
+        groupFLAG = 1;
+        [Subjects, sub_types, nSUB, nFirst, nSecond] = ...
+            define_sub_types(subFile);
+    end
+    if nargin < 6
         normFLAG = 1;
     end
-    
-    dataPath = path_check(strcat(path_check(dataPath), measure));
-    bands_list = define_bands(dataPath, {});
     
     network_metrics = {'betweenness_centrality', ...
         'closeness_centrality', 'clustering_coefficient', ...
@@ -47,6 +55,13 @@ function network_measure(dataPath, measure, network_measure, loc_file, ...
     network = network_names(strcmpi(network_measure, network_metrics));
     network = network{1};
     
+    inDir = identify_directory(dataPath, measure);
+    dataPath = path_check(strcat(path_check(dataPath), measure));
+    outDir = path_check(strcat(path_check(strcat(path_check(dataPath), ...
+        'Network')), network));
+    bands_list = define_bands(dataPath, {});
+    nBands = length(bands_list);
+    
     if isempty(loc_file)
         loc_file = strcat(dataPath, 'Locations.mat');
     end
@@ -55,24 +70,66 @@ function network_measure(dataPath, measure, network_measure, loc_file, ...
     end
     locations = load_data(loc_file);
     
-    cases = define_cases(dataPath);
-    outDir = path_check(strcat(path_check(strcat(path_check(dataPath), ...
-        'Network')), network));
+    cases = define_cases(inDir);
     create_directory(outDir);
-    
-    nBands = length(bands_list);
+    globDir = strcat(path_check(outDir), 'Global', filesep);
+    totDir = strcat(path_check(outDir), 'Total', filesep);
+    asyDir = strcat(path_check(outDir), 'Asymmetry', filesep);
+    areasDir = strcat(path_check(outDir), 'Areas', filesep);
+    create_directory(globDir);
+    create_directory(totDir);
+    create_directory(asyDir);
+    create_directory(areasDir);
+   
+    network_data = struct();
+    countFirst = 1;
+    countSecond = 1;
     for i = 1:length(cases)
-        load(strcat(dataPath, cases(i).name));
+        load(strcat(inDir, cases(i).name));
         for band = 1:nBands
-            data = data_management(conn, locations, band, bands_list);
+            aux_data = data_management(data, locations, band, bands_list);
             if i == 1 && band == 1
-                network_data = zeros(length(data), nBands);
+                network_data.measure = zeros(nBands, length(aux_data));
             end
-            network_data(:, band) = network_function(data, normFLAG);
+            network_data.measure(band, :) = network_function(aux_data, ...
+                normFLAG)';
         end
-        save(strcat(outDir, cases(i).name), ....
-            'network_data')
+        network_data.locations = locations;
+        save(strcat(outDir, cases(i).name), 'network_data')
+        
+        if groupFLAG == 1
+            if i == 1
+                [globFirst, globSecond, asyFirst, asySecond, ...
+                    areasFirst, areasSecond, totFirst, totSecond, ...
+                    areas, total] = groups_initialization(network_data, ...
+                    nFirst, nSecond, nBands);
+            end
+        end
+        aux_data = global_av(network_data);
+        [globFirst, globSecond, ~, ~] = group_assignment(aux_data, ...
+            globFirst, globSecond, countFirst, countSecond, Subjects, ...
+            sub_types{1}, cases(i).name);
+        save(strcat(globDir, cases(i).name), 'aux_data');
+        aux_data = total_av(network_data);
+        [totFirst, totSecond, ~, ~] = group_assignment(aux_data, ...
+            totFirst, totSecond, countFirst, countSecond, Subjects, ...
+            sub_types{1}, cases(i).name);
+        save(strcat(totDir, cases(i).name), 'aux_data');
+        aux_data = areas_av(network_data);
+        [areasFirst, areasSecond, ~, ~] = group_assignment(aux_data, ...
+            areasFirst, areasSecond, countFirst, countSecond, Subjects, ...
+            sub_types{1}, cases(i).name);
+        save(strcat(areasDir, cases(i).name), 'aux_data');
+        aux_data = asymmetry_av(network_data);
+        [asyFirst, asySecond, countFirst, countSecond] = ...
+            group_assignment(aux_data, asyFirst, asySecond, countFirst, ...
+            countSecond, Subjects, sub_types{1}, cases(i).name);
+        save(strcat(asyDir, cases(i).name), 'aux_data');
     end
+    
+    save_groups(globFirst, globSecond, asyFirst, asySecond, areasFirst, ...
+        areasSecond, totFirst, totSecond, areas, total, globDir, ...
+        asyDir, areasDir, totDir);
 end
 
 
@@ -97,17 +154,17 @@ end
 
 
 function data = data_management(conn, locations, band, bands_list)
-    if length(size(conn.data)) == 4
-        data = squeeze(conn.data(band, :, :, :));
+    if length(size(conn.measure)) == 4
+        data = squeeze(conn.measure(band, :, :, :));
         if length(size(data)) > 2
             data = squeeze(mean(data, 1));
         end
     elseif length(bands_list) > 1
-        data = squeeze(conn.data(band, :, :));
-    elseif length(size(conn.data)) == 3
-        data = squeeze(mean(conn.data, 1));
+        data = squeeze(conn.measure(band, :, :));
+    elseif length(size(conn.measure)) == 3
+        data = squeeze(mean(conn.measure, 1));
     else
-        data = conn.data;
+        data = conn.measure;
     end
     if isempty(conn.locations)
         return;
@@ -115,7 +172,8 @@ function data = data_management(conn, locations, band, bands_list)
     aux_locations = conn.locations;
     del_ind = [];
     for j = 1:length(aux_locations)
-        if sum(strcmpi(aux_locations{j}, locations)) == 0
+        bool_loc = strcmpi(aux_locations{j}, locations);
+        if sum(bool_loc) == 0
             del_ind = [del_ind, j];
         end
     end
@@ -134,3 +192,209 @@ function data = data_management(conn, locations, band, bands_list)
     data = data(idx, :);
     data = data(:, idx);
 end    
+
+
+%% identify_directory
+% This function check if the measure subfolder contains the Epmean folder,
+% and in this case use it to compute the network metrix, otherwise it uses
+% the raw measures.
+%
+% dataPath = identify_directory(dataPath, measure)
+%
+% Input:
+%   dataPath is the main folder of the study
+%   measure is the name of the connectivity measure
+%
+% Output:
+%   dataPath is the folder from which extract data
+
+
+function dataPath = identify_directory(dataPath, measure)
+    dataPath = path_check(strcat(path_check(dataPath), measure));
+    if exist(strcat(dataPath, 'Epmean'), 'dir')
+        dataPath = strcat(dataPath, 'Epmean', filesep);
+    end
+end
+
+
+%% groups_initialization
+% This function initialize the groups matrices.
+%
+% [globFirst, globSecond, asyFirst, asySecond, areasFirst, areasSecond, ...
+%    totFirst, totSecond] = groups_initialization(network_data, nFirst, ...
+%    nSecond, nBands)
+%
+% Input:
+%   network_data is the network measure related to a subject
+%   nFirst is the number of subjects belonging to the first group
+%   nSecond is the number of subjects belonging to the second group
+%   nBands is the number of analyzed frequency bands
+%
+% Output:
+%   globFirst is the 0s matrix related to the first group of subjects in
+%       the global area
+%   globSecond is the 0s matrix related to the second group of subjects in
+%       the global area
+%   asyFirst is the 0s matrix related to the first group of subjects in the
+%       asymmetry
+%   asySecond is the 0s matrix related to the second group of subjects in
+%       the asymmetry
+%   areasFirst is the 0s matrix related to the first group of subjects in
+%       the single macroareas
+%   areasSecond is the 0s matrix related to the second group of subjects in
+%       the single macroareas
+%   totFirst is the 0s matrix related to the first group of subjects in the
+%       single locations
+%   totSecond is the 0s matrix related to the second group of subjects in
+%       the single locations
+
+
+function [globFirst, globSecond, asyFirst, asySecond, areasFirst, ...
+    areasSecond, totFirst, totSecond, areas, total] = ...
+    groups_initialization(network_data, nFirst, nSecond, nBands)
+    
+    aux_data = areas_av(network_data);
+    
+    areas = aux_data.locations;
+    total = network_data.locations;
+    
+	globFirst = zeros(nFirst, nBands);
+    globSecond = zeros(nSecond, nBands);
+    asyFirst = zeros(nFirst, nBands);
+    asySecond = zeros(nSecond, nBands);
+    areasFirst = zeros(nFirst, nBands, length(aux_data.locations));
+    areasSecond = zeros(nSecond, nBands, length(aux_data.locations));
+    totFirst = zeros(nFirst, nBands, length(network_data.locations));
+    totSecond = zeros(nSecond, nBands, length(network_data.locations));
+end
+
+%% group_assignment
+% This function assign the subject to the belonging group.
+%
+% [First, Second, countFirst, countSecond] = group_assignment(aux_data, ...
+%       First, Second, countFirst, countSecond, Subjects, sub_type, name)
+%
+% Input:
+%   aux_data is the data structure related to a subject to insert
+%   First is the matrix related to the first group of subjects
+%   Second is the matrix related to the second group of subjects
+%   countFirst is the index of the first non-updated first group subject
+%   countSecond is the index of the first non-updated second group subject
+%   Subjects is the matrix which contains the list of subjects on the first
+%       column and the belonging class on the last one
+%   sub_type is the name of the first group of subjects
+%   name is the name of the subject to insert
+%
+% Output:
+%   First is the updated matrix related to the first group of subjects
+%   Second is the updated matrix related to the second group of subjects
+%   countFirst is the index of the following non-updated first group 
+%       subject
+%   countSecond is the index of the following non-updated second group 
+%       subject
+
+function [First, Second, countFirst, countSecond] = ...
+    group_assignment(aux_data, First, Second, countFirst, countSecond, ...
+    Subjects, sub_type, name)
+
+    for k = 1:length(Subjects)
+        try
+            sub_test = contains(strtok(name, '.'), string(Subjects(k)));
+        catch
+            sub_test = contains(strtok(name, '.'), Subjects{k});
+        end
+        if sub_test == 1
+            break;
+        end
+    end
+
+    dim = length(size(aux_data.measure));
+    
+    if patient_check(Subjects(k, end), sub_type)
+        if dim == 2
+            First(countFirst, :, :) = aux_data.measure;
+        elseif dim == 3
+            First(countFirst, :, :, :) = aux_data.measure;
+        end
+        countFirst = countFirst+1;
+    else
+        if dim == 2
+            Second(countSecond, :, :) = aux_data.measure;
+        elseif dim == 3
+            Second(countSecond, :, :, :) = aux_data.measure;
+        end
+        countSecond = countSecond+1;
+    end
+end
+
+
+%% save_groups
+% This function saves the network measures computed on the single spatial 
+% subdivisions, grouped per subject classes.
+%
+% save_groups(globFirst, globSecond, asyFirst, asySecond, areasFirst, ...
+%    areasSecond, totFirst, totSecond, areas, total, globDir, asyDir, ...
+%    areasDir, totDir)
+%
+% Input:
+%   globFirst is the matrix related to the first group in the global area
+%   globSecond is the matrix related to the second group in the global area
+%   asyFirst is the matrix related to the first group in the asymmetry
+%   asySecond is the matrix related to the second group in the asymmetry
+%   areasFirst is the matrix related to the first group in the single
+%       macroareas
+%   areasSecond is the matrix related to the second group in the single
+%       macroareas
+%   totFirst is the matrix related to the first group in the single
+%       locations
+%   totSecond is the matrix related to the second group in the single
+%       locations
+%   areas is the list of macroareas
+%   total is the list of the single locations
+%   globDir is the output directory related to the global analysis
+%   asyDir is the output directory related to the asymmetry analysis
+%   areasDir is the output directory related to the macroareas analysis
+%   totDir is the output directory related to the single locations analysis
+
+
+function save_groups(globFirst, globSecond, asyFirst, asySecond, ...
+    areasFirst, areasSecond, totFirst, totSecond, areas, total, ...
+    globDir, asyDir, areasDir, totDir)
+    
+    First = struct();
+    Second = struct();
+    First.data = globFirst;
+    Second.data = globSecond;
+    First.locations = "global";
+    Second.locations = "global";
+    save(strcat(globDir, 'First.mat'), 'First')
+    save(strcat(globDir, 'Second.mat'), 'Second')
+    
+    First = struct();
+    Second = struct();
+    First.data = totFirst;
+    Second.data = totSecond;
+    First.locations = total;
+    Second.locations = total;
+    save(strcat(totDir, 'First.mat'), 'First')
+    save(strcat(totDir, 'Second.mat'), 'Second')
+    
+    First = struct();
+    Second = struct();
+    First.data = asyFirst;
+    Second.data = asySecond;
+    First.locations = "asymmetry";
+    Second.locations = "asymmetry";
+    save(strcat(asyDir, 'First.mat'), 'First')
+    save(strcat(asyDir, 'Second.mat'), 'Second')
+    
+    First = struct();
+    Second = struct();
+    First.data = areasFirst;
+    Second.data = areasSecond;
+    First.locations = areas;
+    Second.locations = areas;
+    save(strcat(areasDir, 'First.mat'), 'First')
+    save(strcat(areasDir, 'Second.mat'), 'Second')
+end
+    

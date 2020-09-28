@@ -53,8 +53,23 @@ function [data, sub_list, alpha, bg_color, locs, bands_names, P, RHO, ...
 
     bg_color = [1 1 1];
     im = imread('untitled3.png');
-    dataPath = strcat(path_check(get(handles.aux_dataPath, 'String')), ...
-        path_check(get(handles.aux_measure, 'String')));
+    try
+        measures = get(handles.meas1, 'String');
+        measure = measures{get(handles.meas1, 'Value')};
+    catch
+        measures = get(handles.meas, 'String');
+        measure = measures{get(handles.meas, 'Value')};
+    end
+    
+    an_selected = [get(handles.asy_button, 'Value'), ...
+        get(handles.tot_button, 'Value'), ...
+        get(handles.glob_button, 'Value'), ...
+        get(handles.areas_button, 'Value')];
+    an_paths = {'Asymmetry', 'Total', 'Global', 'Areas'};
+    analysis = an_paths(an_selected == 1);
+    
+    dataPath = measurePath(get(handles.aux_dataPath, 'String'), measure,...
+        analysis);
     if not(exist(dataPath, 'dir'))
         problem(strcat("Directory ", dataPath, " not found"))
         return
@@ -64,13 +79,6 @@ function [data, sub_list, alpha, bg_color, locs, bands_names, P, RHO, ...
     cons_selected = [get(handles.minCons, 'Value'), ...
         get(handles.maxCons, 'Value')];
     cons(cons_selected == 0) = [];
-    
-    an_selected = [get(handles.asy_button, 'Value'), ...
-        get(handles.tot_button, 'Value'), ...
-        get(handles.glob_button, 'Value'), ...
-        get(handles.areas_button, 'Value')];
-    an_paths = {'Asymmetry', 'Total', 'Global', 'Areas'};
-    analysis = an_paths(an_selected == 1);
     
     sub_group_names = get(handles.sub_types, 'Data');
     sub_selected = [get(handles.HC, 'Value'), get(handles.PAT, 'Value')];
@@ -87,8 +95,8 @@ function [data, sub_list, alpha, bg_color, locs, bands_names, P, RHO, ...
         end
     end
     
-    [data, ~, locs] = load_data(char_check(strcat(dataPath, ...
-        path_check('Epmean'), path_check(analysis), sub_group)));
+    [data, ~, locs] = load_data(char(strcat(path_check(dataPath), ...
+        sub_group)));
     
     nSub = size(data, 1);
     nLoc = length(locs);

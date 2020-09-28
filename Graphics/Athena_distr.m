@@ -78,15 +78,7 @@ function dataPath_text_Callback(hObject, eventdata, handles)
         end
     end
     if exist(dataPath, 'dir')
-        cases = dir(dataPath);
-        measures = [];
-        for i = 1:length(cases)
-        	if cases(i).isdir == 1
-                if sum(strcmp(cases(i).name, Athena_measures_list(1)))
-                    measures = [measures, string(cases(i).name)];
-                end
-            end
-        end
+        measures = available_measures(dataPath, 1, 1);
         set(handles.meas, 'String', measures)
         set(handles.meas, 'Value', 1)
     end
@@ -205,8 +197,7 @@ function [PAT, HC, parameter, measure, band_name, location] = ...
         area = "Total";
     end
     
-    measure_path = path_check(strcat(path_check(dataPath), ...
-        path_check(measure), path_check('Epmean'), area));
+    measure_path = measurePath(dataPath, measure, area);
     
     locations_list = get(handles.loc, 'String');
     check = 0;
@@ -314,15 +305,16 @@ function export_Callback(hObject, eventdata, handles, flag)
 function meas_Callback(hObject, eventdata, handles)
     dataPath = get(handles.dataPath_text, 'String');
     measure = define_measure(handles);
-    dataPath = strcat(path_check(dataPath), path_check(measure), ...
-            path_check('Epmean'));
+    dataPath = Athena_measure_path_management(dataPath, measure);
     if exist(dataPath, 'dir')
         set(handles.area, 'String', ["Areas", "Asymmetry", "Global", ...
             "Channels"])
         cases = define_cases(dataPath);
         load(strcat(dataPath, cases(1).name));
-        bands = define_bands(limit_path(dataPath, 'Epmean'), ...
-            size(data.measure, 1));
+        if exist('network_data', 'var')
+            data = network_data;
+        end
+        bands = Athena_bands_management(dataPath, measure, data);
         if iscell(bands) || isstring(bands)
             set(handles.band, 'String', string(bands))
         else
@@ -374,9 +366,7 @@ function area_Callback(hObject, eventdata, handles)
     if strcmpi(area, 'Channels')
         area = "Total";
     end
-    [~, ~, locations] = load_data(strcat(path_check(dataPath), ...
-        path_check(measure), path_check('Epmean'), path_check(area), ...
-        'First.mat'));
+    locations = area_definition(handles, handles.meas, handles.area);
     set(handles.loc, 'Value', 1)
     set(handles.loc, 'String', locations)
     if not(strcmpi(locations, 'asymmetry') | strcmpi(locations, 'global'))

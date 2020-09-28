@@ -60,6 +60,8 @@ The measures extractably by ATHENA can be divided in:
   - **Offset**
 - *Entropy measures*
   - **Spectral Entropy**
+  - **Sample Entropy**
+  - **Approximate Entropy**
   
   
 The *parameters* to choose to extract the measures are:

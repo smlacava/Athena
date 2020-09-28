@@ -75,15 +75,7 @@ function dataPath_text_Callback(hObject, eventdata, handles)
         end
     end
     if exist(dataPath, 'dir')
-        cases = dir(dataPath);
-        measures = [];
-        for i = 1:length(cases)
-        	if cases(i).isdir == 1
-                if sum(strcmp(cases(i).name, Athena_measures_list(1)))
-                    measures = [measures, string(cases(i).name)];
-                end
-            end
-        end
+        measures = available_measures(dataPath, 1, 1);
         set(handles.meas1, 'String', measures)
         set(handles.meas2, 'String', measures)
         set(handles.meas1, 'Value', 1)
@@ -208,10 +200,8 @@ function [PAT1, HC1, PAT2, HC2, measure1, measure2, band_name1, ...
         area2 = "Total";
     end
     
-    measure1_path = path_check(strcat(path_check(dataPath), ...
-        path_check(measure1), path_check('Epmean'), area1));
-    measure2_path = path_check(strcat(path_check(dataPath), ...
-        path_check(measure2), path_check('Epmean'), area2));
+    measure1_path = measurePath(dataPath, measure1, area1);
+    measure2_path = measurePath(dataPath, measure2, area2);
     
     locations_list1 = get(handles.loc1, 'String');
     locations_list2 = get(handles.loc2, 'String');
@@ -346,23 +336,66 @@ function loc2_CreateFcn(hObject, eventdata, handles)
         set(hObject,'BackgroundColor','white');
     end
 
+    
+%% measure_definition
+% This function evaluate the frequency bands and the areas related to the
+% selected extracted measure.
 
-function area2_Callback(hObject, eventdata, handles)
+function measure_definition(handles, number)
+    number = string(number);
+    measure_handle = strcat('handles.meas', number);
+    band_handle = strcat('handles.band', number);
+    area_handle = strcat('handles.area', number);
+    loc_handle = strcat('handles.loc', number);
+    band_text_handle = strcat(band_handle, '_text');
+    area_text_handle = strcat(area_handle, '_text');
+    loc_text_handle = strcat('handles.location', number, '_text');
+    
     dataPath = get(handles.dataPath_text, 'String');
-    measures_list = get(handles.meas2, 'String');
+    measures_list = get(eval(measure_handle), 'String');
     if iscell(measures_list)
-        measure = measures_list(get(handles.meas2, 'Value'));
+        measure = measures_list(get(eval(measure_handle), 'Value'));
     else
         measure = measures_list;
     end
-    areas_list = get(handles.area2, 'String');
-    area = areas_list(get(handles.area2, 'Value'));
-    if strcmpi(area, 'Channels')
-        area = "Total";
+    dataPath = Athena_measure_path_management(dataPath, measure);
+    if exist(dataPath, 'dir')
+        set(eval(area_handle), 'String', ["Areas", "Asymmetry", ...
+            "Global", "Channels"])
+        cases = define_cases(dataPath);
+        load(strcat(dataPath, cases(1).name));
+        if exist('network_data', 'var')
+            data = network_data;
+        end
+        bands = Athena_bands_management(dataPath, measure, data);
+        if iscell(bands) || isstring(bands)
+            set(eval(band_handle), 'String', string(bands))
+        else
+            set(eval(band_handle), 'String', ...
+                string(1:size(data.measure, 1)))
+        end
+        set(eval(band_handle), 'Value', 1)
+        set(eval(area_handle), 'Value', 1)
+        set(eval(loc_handle), 'Value', 1)
+        set(eval(area_handle), 'Visible', 'on')
+        set(eval(band_handle), 'Visible', 'on')
+        set(eval(band_text_handle), 'Visible', 'on')
+        set(eval(area_text_handle), 'Visible', 'on')
+        set(eval(loc_handle), 'Visible', 'off')
+        set(eval(loc_text_handle), 'Visible', 'off')
+        set(eval(area_handle), 'Enable', 'on')
+        set(eval(band_handle), 'Enable', 'on')
+        
+    else
+        set(eval(area_handle), 'String', 'Average not found')
+        set(eval(area_handle), 'Enable', 'off')
+        set(eval(band_handle), 'Enable', 'off')
+        set(eval(area_text_handle), 'Enable', 'off')
+        set(eval(band_text_handle), 'Enable', 'off')
     end
-    [~, ~, locations] = load_data(strcat(path_check(dataPath), ...
-        path_check(measure), path_check('Epmean'), path_check(area), ...
-        'Second.mat'));
+
+function area2_Callback(hObject, eventdata, handles)
+    locations = area_definition(handles, handles.meas2, handles.area2);
     set(handles.loc2, 'Value', 1)
     set(handles.loc2, 'String', locations)
     if not(strcmpi(locations, 'asymmetry') | strcmpi(locations, 'global'))
@@ -392,46 +425,7 @@ function band2_CreateFcn(hObject, eventdata, handles)
 
 
 function meas2_Callback(hObject, eventdata, handles)
-    dataPath = get(handles.dataPath_text, 'String');
-    measures_list = get(handles.meas2, 'String');
-    if iscell(measures_list)
-        measure = measures_list(get(handles.meas2, 'Value'));
-    else
-        measure = measures_list;
-    end
-    dataPath = strcat(path_check(dataPath), path_check(measure), ...
-            path_check('Epmean'));
-    if exist(dataPath, 'dir')
-        set(handles.area2, 'String', ["Areas", "Asymmetry", "Global", ...
-            "Total"])
-        cases = define_cases(dataPath);
-        load(strcat(dataPath, cases(1).name));
-        bands = define_bands(limit_path(dataPath, 'Epmean'), ...
-            size(data.measure, 1));
-        if iscell(bands) || isstring(bands)
-            set(handles.band2, 'String', string(bands))
-        else
-            set(handles.band2, 'String', string(1:size(data.measure, 1)))
-        end
-        set(handles.band2, 'Value', 1)
-        set(handles.area2, 'Value', 1)
-        set(handles.loc2, 'Value', 1)
-        set(handles.area2, 'Visible', 'on')
-        set(handles.band2, 'Visible', 'on')
-        set(handles.band2_text, 'Visible', 'on')
-        set(handles.area2_text, 'Visible', 'on')
-        set(handles.loc2, 'Visible', 'off')
-        set(handles.location2_text, 'Visible', 'off')
-        set(handles.area2, 'Enable', 'on')
-        set(handles.band2, 'Enable', 'on')
-        
-    else
-        set(handles.area2, 'String', 'Average not found')
-        set(handles.area2, 'Enable', 'off')
-        set(handles.band2, 'Enable', 'off')
-        set(handles.area2_text, 'Enable', 'off')
-        set(handles.band2_text, 'Enable', 'off')
-    end
+    measure_definition(handles, 2)
 
 
 function meas2_CreateFcn(hObject, eventdata, handles)
@@ -442,46 +436,7 @@ function meas2_CreateFcn(hObject, eventdata, handles)
 
 
 function meas1_Callback(hObject, eventdata, handles)
-    dataPath = get(handles.dataPath_text, 'String');
-    measures_list = get(handles.meas1, 'String');
-    if iscell(measures_list)
-        measure = measures_list(get(handles.meas1, 'Value'));
-    else
-        measure = measures_list;
-    end
-    dataPath = strcat(path_check(dataPath), path_check(measure), ...
-            path_check('Epmean'));
-    if exist(dataPath, 'dir')
-        set(handles.area1, 'String', ["Areas", "Asymmetry", "Global", ...
-            "Channels"])
-        cases = define_cases(dataPath);
-        load(strcat(dataPath, cases(1).name));
-        bands = define_bands(limit_path(dataPath, 'Epmean'), ...
-            size(data.measure, 1));
-        if iscell(bands) || isstring(bands)
-            set(handles.band1, 'String', string(bands))
-        else
-            set(handles.band1, 'String', string(1:size(data.measure, 1)))
-        end
-        set(handles.band1, 'Value', 1)
-        set(handles.area1, 'Value', 1)
-        set(handles.loc1, 'Value', 1)
-        set(handles.area1, 'Visible', 'on')
-        set(handles.band1, 'Visible', 'on')
-        set(handles.band1_text, 'Visible', 'on')
-        set(handles.area1_text, 'Visible', 'on')
-        set(handles.loc1, 'Visible', 'off')
-        set(handles.location1_text, 'Visible', 'off')
-        set(handles.area1, 'Enable', 'on')
-        set(handles.band1, 'Enable', 'on')
-        
-    else
-        set(handles.area1, 'String', 'Average not found')
-        set(handles.area1, 'Enable', 'off')
-        set(handles.band1, 'Enable', 'off')
-        set(handles.area1_text, 'Enable', 'off')
-        set(handles.band1_text, 'Enable', 'off')
-    end
+    measure_definition(handles, 1)
 
 
 function meas1_CreateFcn(hObject, eventdata, handles)
@@ -502,21 +457,7 @@ function band1_CreateFcn(hObject, eventdata, handles)
 
 
 function area1_Callback(hObject, eventdata, handles)
-    dataPath = get(handles.dataPath_text, 'String');
-    measures_list = get(handles.meas1, 'String');
-    if iscell(measures_list)
-        measure = measures_list(get(handles.meas1, 'Value'));
-    else
-        measure = measures_list;
-    end
-    areas_list = get(handles.area1, 'String');
-    area = areas_list(get(handles.area1, 'Value'));
-    if strcmpi(area, 'Channels')
-        area = "Total";
-    end
-    [~, ~, locations] = load_data(strcat(path_check(dataPath), ...
-        path_check(measure), path_check('Epmean'), path_check(area), ...
-        'Second.mat'));
+    locations = area_definition(handles, handles.meas1, handles.area1);
     set(handles.loc1, 'Value', 1)
     set(handles.loc1, 'String', locations)
     if not(strcmpi(locations, 'asymmetry') | strcmpi(locations, 'global'))
