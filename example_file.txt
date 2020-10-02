@@ -49,6 +49,7 @@ INDEX CORRELATION
 The index correlation computes the correlation between an index and 
 the corresponding value of the measure.
 IndexCorrelation=false
+IC_Measure=PLV
 Index=D:\study\Ind.mat
 Group_IC=PAT
 Areas_IC=Areas Global Asymmetry

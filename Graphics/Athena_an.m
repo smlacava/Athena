@@ -76,7 +76,7 @@ function clasData_Callback(hObject, eventdata, handles)
     addpath 'Graphics'
     [dataPath, measure, sub, loc, sub_types] = GUI_transition(handles);
     close(Athena_an)
-    Athena_mergsig(dataPath, measure, sub, loc, sub_types)
+    Athena_mergsig2(dataPath, measure, sub, loc, sub_types)
 
 
 function EpAn_Callback(hObject, eventdata, handles)

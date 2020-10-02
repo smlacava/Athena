@@ -58,7 +58,7 @@ function PSDr(fs, cf, nEpochs, dt, inDir, tStart, relBand)
         
                 for j = 1:size(time_series, 1)
                     data = squeeze(time_series(j, dt*(k-1)+1:k*dt));           
-                    [pxx, w] = pwelch(data, [], 0, [], fs);
+                    [pxx, w] = pwelch(data, [], [], [], fs);
                     bandPower = zeros(nBands, 1);
 
                     for b = 1:nBands

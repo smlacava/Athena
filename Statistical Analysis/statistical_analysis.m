@@ -60,6 +60,15 @@ function [P, Psig, data, data_sig] = statistical_analysis(First, ...
     Psig = {};
     data_sig = [];
     data = zeros(nSecond+nFirst, nBands*nLocs);
+    if not(contains(dataPath, measure))
+        if contains(measure, "-")
+            aux_measure = split(measure, '-');
+            aux_measure = aux_measure(1);
+        else
+            aux_measure = measure;
+        end
+        dataPath = strcat(path_check(dataPath), path_check(aux_measure));
+    end
     bands_names = cellstr(define_bands(dataPath, nBands)');
     if not(iscell(bands_names))
         bands_names = cell(nBands, 1);
@@ -121,8 +130,14 @@ function [statanType, statanDir] = save_data(dataPath, measure, ...
     analysis, locs, bands_names, data, Psig, data_sig)
     
     statanType = strcat(measure, '_', analysis, '.mat');
+    if contains(measure, '-')
+        aux_measure = split(measure, '-');
+        aux_measure = aux_measure(1);
+    else
+        aux_measure = measure;
+    end
     statanDir = path_check(create_directory(path_check(...
-        limit_path(dataPath, measure)), path_check('StatAn')));
+        limit_path(dataPath, aux_measure)), path_check('StatAn')));
     subDir = path_check(create_directory(statanDir, 'Data'));
     
     statAnResult = struct();

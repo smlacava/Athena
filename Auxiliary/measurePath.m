@@ -17,13 +17,17 @@
 
 
 function path = measurePath(dataPath, measure, area)
+    if nargin < 3
+        area = '';
+    end
     if contains(measure, '-')
         aux_meas = split(measure, '-');
-        path = path_check(strcat(path_check(dataPath), ...
+        path = strcat(path_check(dataPath), ...
             path_check(aux_meas(1)), path_check('Network'), ...
-            path_check(aux_meas(end)), area));
+            path_check(aux_meas(end)), area);
     else
-        path = path_check(strcat(path_check(dataPath), ...
-            path_check(measure), path_check('Epmean'), area));
+        path = strcat(path_check(dataPath), ...
+            path_check(measure), path_check('Epmean'), area);
     end
+    path = path_check(path);
 end

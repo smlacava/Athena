@@ -185,11 +185,7 @@ function ind_search_Callback(hObject, eventdata, handles)
     
 function set_handles(hObject, eventdata, handles)
     dataPath = get(handles.dataPath_text, 'String');
-    measures_list = string(get(handles.meas, 'String'));
-    dataPath = strcat(path_check(dataPath), ...
-        measures_list(get(handles.meas, 'Value')));
-    subjectsFile = strcat(path_check(limit_path(dataPath, ...
-        get(handles.aux_measure, 'String'))), 'Subjects.mat');
+    subjectsFile = strcat(path_check(dataPath), 'Subjects.mat');
     if exist(subjectsFile, 'file')
         set(handles.aux_sub, 'String', subjectsFile)
         try
@@ -199,6 +195,8 @@ function set_handles(hObject, eventdata, handles)
             sub_types = categories(categorical(sub_info(:, end)));
             if length(sub_types) == 2
                 set(handles.sub_types, 'Data', sub_types)
+                set(handles.PAT, 'String', sub_types{2})
+                set(handles.HC, 'String', sub_types{1})
             end
         catch
         end
@@ -211,6 +209,7 @@ function set_measures(path, handles)
 
 
 function meas_Callback(hObject, eventdata, handles)
+    set_handles(hObject, eventdata, handles)
   
 
 function popupmenu10_CreateFcn(hObject, eventdata, handles)

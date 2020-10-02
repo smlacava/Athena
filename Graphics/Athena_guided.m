@@ -200,6 +200,14 @@ function next_Callback(~, eventdata, handles)
     measures = Athena_measures_list();
     measure = measures(get(handles.meas, 'Value'));
     dataPath = string(get(handles.dataPath_text, 'String'));
+    if not(exist(dataPath, 'dir'))
+        msg = 'Continue without selecting a valid directory?';
+        title = 'Directory not found';
+        answer = user_decision(msg, title);
+        if strcmpi(answer, 'no')
+            return;
+        end
+    end
     close(Athena_guided)
     if strcmp('es. C:\User\Data', dataPath)
         dataPath = "Static Text";

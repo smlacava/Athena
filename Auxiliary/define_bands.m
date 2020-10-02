@@ -25,6 +25,10 @@ function bands = define_bands(dataPath, bands, backFLAG)
         dataFile = strcat(path_check(limit_path(dataPath, 'Network')), ...
             'auxiliary.txt');
     end
+    if not(exist(dataFile, 'file'))
+        dataFile = strcat(path_check(limit_path(dataPath, 'Epmean')), ...
+            'auxiliary.txt');
+    end
     
     if backFLAG == 1
         parameters = read_file(dataFile);

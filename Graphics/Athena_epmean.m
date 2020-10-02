@@ -156,7 +156,7 @@ function Run_Callback(hObject, eventdata, handles)
     end
         
     [locs, sub_types] = epmean_and_manage(dataPath, type, sub);
-    Athena_history_update(strcat('[locs, sub_types] = connectivity(', ...
+    Athena_history_update(strcat('[locs, sub_types] = epmean_and_manage(', ...
             strcat("'", dataPath, "'"), ",", strcat("'", type, "'"), ...
             ',', strcat("'", sub, "'"), ')'));
     set(handles.sub_types, 'Data', sub_types)
@@ -203,6 +203,7 @@ function next_Callback(~, ~, handles)
             end
         end
         if strcmpi(loc, "Static Text")
+            
         	answer = user_decision(strcat("Do you want to choose a ", ...
                     "locations file?"), "Locations file");
             if strcmpi(answer, "yes")

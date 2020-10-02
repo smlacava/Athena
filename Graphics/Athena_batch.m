@@ -84,7 +84,6 @@ function Run_Callback(~, eventdata, handles)
         return
     else
         batch_study(dataFile);
-        success();
     end
     
     

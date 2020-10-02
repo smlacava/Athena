@@ -64,7 +64,7 @@ function [locations_file, sub_types] = epmean_and_manage(inDir, type, ...
         end
     end
     if isempty(locations)
-        aux_locs = ask_locations();
+        aux_locs = set_locations(inDir);
         if not(isempty(aux_locs))
             [r, c] = size(aux_locs);
             if r < c
@@ -251,6 +251,16 @@ function [locations_file, sub_types] = epmean_and_manage(inDir, type, ...
     close(f)
 end
 
+%% check_loc_file
+% This function checks if the locations file is valid.
+%
+% check = check_loc_file(locations_file)
+%
+% Input:
+%   locations_file is the file which contains the locations
+%
+% Output:
+%   check is 1 if the locations file is valid, 0 otherwise
 
 function check = check_loc_file(locations_file)
     check = 0;
@@ -262,4 +272,36 @@ function check = check_loc_file(locations_file)
         end
     end
     check = (check == 0);
+end
+
+%% set_locations
+% This function is used to set the locations if they have not been used as
+% input parameter in the main function.
+%
+% aux_locs = set_locations(inDir)
+%
+% Input:
+%   inDir is the measure subdirectory
+%   
+% Output:
+%   aux_locs is the list of locations
+
+function aux_locs = set_locations(inDir)
+    aux_path = split(path_check(inDir), filesep);
+    aux_locations_file = '';
+    msg = 'Do you want to use the locations file in the main directory of the study?';
+    for p = 1:length(aux_path)-2
+        aux_locations_file = strcat(aux_locations_file, aux_path{p},...
+            filesep);
+    end
+    aux_locations_file = strcat(aux_locations_file, 'Locations.mat');
+    if exist(aux_locations_file, 'file')
+        if strcmpi(user_decision(msg, 'Locations file detected'), 'yes')
+            aux_locs = load_data(aux_locations_file);
+        else
+            aux_locs = ask_locations();
+        end
+    else
+        aux_locs = ask_locations();
+    end
 end

@@ -32,8 +32,7 @@ function Athena_utest_OpeningFcn(hObject, eventdata, handles, varargin)
         set(handles.aux_measure, 'String', measure)
         if not(strcmp(path, 'Static Text')) && ...
                 not(strcmp(measure, 'Static Text'))
-            dataPath = strcat(path_check(path), measure);
-            set(handles.dataPath_text, 'String', dataPath)
+            set(handles.dataPath_text, 'String', path)
         end
     end
     if nargin >= 6
@@ -48,27 +47,7 @@ function Athena_utest_OpeningFcn(hObject, eventdata, handles, varargin)
     if nargin >= 8
         set(handles.sub_types, 'Data', varargin{5})
     end
-    hands = [handles.asy_button, handles.tot_button, ...
-        handles.glob_button, handles.areas_button];
-    types = {'Asymmetry', 'Total', 'Global', 'Areas'};
-    for i = 1:length(types)
-        try
-            load(strcat(path_check(path), path_check(measure), ...
-                path_check('Epmean'), path_check(types{i}), 'Second.mat'))
-            if isempty(Second.data)
-                set(hands(i), 'Enable', 'off')
-            else
-                load(strcat(path_check(path), path_check(measure), ...
-                    path_check('Epmean'), path_check(types{i}), ...
-                    'First.mat'))
-                if isempty(First.data)
-                    set(hands(i), 'Enable', 'off')
-                end
-            end
-        catch
-            set(hands(i), 'Enable', 'off')
-        end
-    end
+    dataPath_text_Callback(hObject, eventdata, handles)
             
                 
 
@@ -101,6 +80,32 @@ function dataPath_text_Callback(hObject, eventdata, handles)
         catch
         end
     end
+    if exist(dataPath, 'dir')
+        measures = available_measures(dataPath, 1, 1);
+        set(handles.measure, 'String', measures)
+        set(handles.measure, 'Value', 1)
+    end
+    hands = [handles.asy_button, handles.tot_button, ...
+        handles.glob_button, handles.areas_button];
+    types = {'Asymmetry', 'Total', 'Global', 'Areas'};
+    for i = 1:length(types)
+        try
+            data_name = measurePath(dataPath, measure, types{i});
+            load(strcat(path_check(data_name), 'Second.mat'))
+            if isempty(Second.data)
+                set(hands(i), 'Enable', 'off')
+            else
+                load(strcat(path_check(data_name), 'First.mat'))
+                if isempty(First.data)
+                    set(hands(i), 'Enable', 'off')
+                else
+                    set(hands(i), 'Enable', 'on')
+                end
+            end
+        catch
+            set(hands(i), 'Enable', 'off')
+        end
+    end
 
 
 function dataPath_text_CreateFcn(hObject, eventdata, handles)
@@ -118,13 +123,7 @@ function Run_Callback(hObject, eventdata, handles)
     end
     dataPath = get(handles.dataPath_text, 'String');
     dataPath = path_check(dataPath);
-    measure = get(handles.aux_measure, 'String');
-    measures = Athena_measures_list(1);
-    for i = 1:length(measures)
-        if strcmpi(measures{i}, dataPath(end-length(measures{i}):end-1))
-            measure = measures{i};
-        end
-    end
+    measure = define_measure(handles);
     if not(exist(dataPath, 'dir'))
     	problem(strcat("Directory ", dataPath, " not found"));
         return;
@@ -142,8 +141,7 @@ function Run_Callback(hObject, eventdata, handles)
     an_paths = {'Asymmetry', 'Total', 'Global', 'Areas'};
     analysis = an_paths(an_selected == 1);
     
-    data_name = strcat(path_check(dataPath), path_check('Epmean'), ...
-        path_check(char_check(analysis)));
+    data_name = measurePath(dataPath, measure, analysis);
     try
         [HC, ~, locs] = load_data(strcat(data_name, 'First.mat'));
         PAT = load_data(strcat(data_name, 'Second.mat'));
@@ -223,4 +221,21 @@ function aux_loc_CreateFcn(hObject, eventdata, handles)
     if ispc && isequal(get(hObject, 'BackgroundColor'), ...
             get(0, 'defaultUicontrolBackgroundColor'))
         set(hObject, 'BackgroundColor', 'white');
+    end
+
+
+function measure_Callback(hObject, eventdata, handles)
+
+function measure_CreateFcn(hObject, eventdata, handles)
+    if ispc && isequal(get(hObject,'BackgroundColor'), ...
+            get(0,'defaultUicontrolBackgroundColor'))
+        set(hObject,'BackgroundColor','white');
+    end
+
+function measure = define_measure(handles)
+    measures_list = get(handles.measure, 'String');
+    if iscell(measures_list)
+        measure = measures_list{get(handles.measure, 'Value')};
+    else
+    	measure = measures_list;
     end

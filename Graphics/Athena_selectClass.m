@@ -58,7 +58,7 @@ function back_Callback(hObject, eventdata, handles)
     addpath 'Graphics'
     [dataPath, measure, sub, loc] = GUI_transition(handles);
     close(Athena_selectClass)
-    Athena_mergsig(dataPath, measure, sub, loc)
+    Athena_mergsig2(dataPath, measure, sub, loc)
     
     
 function axes3_CreateFcn(hObject, eventdata, handles)

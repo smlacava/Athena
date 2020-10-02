@@ -13,7 +13,7 @@
 %       to be used in batch analysis (dataPath, fs, cf, epNum, filter_file,
 %       epTime, tStart, totBand, measure, Subjects, locations, Index, 
 %       MeasureExtraction, EpochsAverage, EpochsAnalysis, IndexCorrelation,
-%       UTest, MeasuresCorrelation, ClassificationData, 
+%       UTest, MeasuresCorrelation, ClassificationData, IC_Measure,
 %       Group_IC, Areas_IC, Conservativeness_IC, Areas_EA, Areas_SA, 
 %       Conservativeness_SA, Measure1, Measure2, Areas_MC, Group_MC,
 %       MergingData, DataType, MergingMeasures, MergingAreas, Subject, 
@@ -60,7 +60,8 @@ function parameters = read_file(dataFile)
         'filter_file=', 'Descriptive_Measure=', 'Descriptive_Band=', ...
         'Descriptive_Location=', 'DescriptiveAnalysis=', ...
         'NetworkMetricsAnalysis=', 'Network_Metrics_Measure=', ...
-        'Network_Normalization=', 'Network_Metric=', 'UTestMeasure='};
+        'Network_Normalization=', 'Network_Metric=', 'UTestMeasure=', ...
+        'IC_Measure='};
     n_params = length(params_names);
     pre_parameters = cell(n_params, 1);
     
