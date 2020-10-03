@@ -38,19 +38,21 @@ function [data, pc] = reduce_predictors(data, pca_value, bg_color)
         predictors{i} = aux{1};
     end
     raw_data = data{:, 2:end};
+    labels = data{:, 1};
     
-    [~, ~, ~, ~, pctExp] = pca(raw_data);
+    [~, scrs, ~, ~, pctExp] = pca(raw_data);
     
-    
-    if pca_value < 100
-        for i = 1:length(pctExp)
-            if sum(pctExp(1:i)) >= pca_value
-                data = data(:, 1:i+1);
-                break
-            end
+    features = {};
+    for i = 1:length(pctExp)
+        features = [features, char(strcat("Principal_Component_", ...
+            string(i)))];
+        if sum(pctExp(1:i)) >= pca_value
+            data = scrs(:, 1:i);
+            break
         end
-    else
-        i = n_predictors;
+    end
+    if pca_value == 100
+        data = scrs(:, 1:end);
     end
     
     pc = figure('Color', bg_color, 'NumberTitle', 'off', 'Name', ...
@@ -58,16 +60,16 @@ function [data, pc] = reduce_predictors(data, pca_value, bg_color)
     hold on
     pareto(pctExp)
     xlim([0 n_predictors+1])
-    xticklabels(predictors)
+    xticklabels(features)
     xticks(1:n_predictors)
     xtickangle(45)
     plot([n_predictors n_predictors+1], [100 100], 'Color', ...
         [0.00, 0.45, 0.74]);
-    if pca_value < 100
-        real_value = sum(pctExp(1:i));
-        plot([i i], [-1 101], '--r')
-        plot(i, real_value, 'ro')
-    end
+    real_value = sum(pctExp(1:i));
+    plot([i i], [-1 101], '--r')
+    plot(i, real_value, 'ro')
     hold off
     
+    data = [labels, data];
+    data = array2table(data, 'VariableNames', ['group', features]);
 end

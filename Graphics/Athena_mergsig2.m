@@ -150,16 +150,16 @@ function Run_Callback(hObject, eventdata, handles)
         problem('There are not enough data parameters')
         return
     end
-    [data, pc] = reduce_predictors(data, value);
+    [aux_data, pc] = reduce_predictors(data, value);
     answer = user_decision(strcat("The resulting dataset is composed ", ...
         string(size(data, 2)-1), " features. Do you want to apply ", ...
         "the Principal Component Analysis on your data?"), ...
         "Dataset computed");
     close(pc)
-    aux_data = data;
+    pcaFLAG = 0;
     while strcmpi(answer, 'yes')
         value = value_asking(100, 'PCA value', strcat("Choose the ", ...
-            "minimum fraction of thhe total variance which has to be ", ...
+            "minimum fraction of the total variance which has to be ", ...
             "maintained"));
         if value < 1 && value > 0
             value = value*100;
@@ -170,11 +170,16 @@ function Run_Callback(hObject, eventdata, handles)
         [aux_data, pc] = reduce_predictors(data, value);
         answer = user_decision(strcat("The resulting dataset is ", ...
             "composed ", string(size(aux_data, 2)-1), " features. Do ", ...
-            "you want to apply the Principal Component Analysis on ", ...
-            "your data?"), "Dataset computed");
+            "you want to compute again the Principal Component ", ...
+            "Analysis on your data?"), "Dataset computed");
+        if strcmpi(answer, 'yes')
+            pcaFLAG = 1;
+        end
         close(pc)
     end
-    data = aux_data;
+    if pcaFLAG == 1
+        data = aux_data;
+    end
     if size(data, 2) > 0
         answer = user_decision(strcat("Do you want to see the list of", ...
             " features?"), "Dataset computed");

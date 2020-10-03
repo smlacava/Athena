@@ -23,6 +23,11 @@
 
 function network_measure(dataPath, measure, network_measure, loc_file, ...
     subFile, normFLAG)
+
+    f = waitbar(0,'Processing your data', 'Color', '[1 1 1]');
+    fchild = allchild(f);
+    fchild(1).JavaPeer.setForeground(fchild(1).JavaPeer.getBackground.BLUE)
+    fchild(1).JavaPeer.setStringPainted(true)
     
     if nargin < 4
         loc_file = [];
@@ -125,11 +130,13 @@ function network_measure(dataPath, measure, network_measure, loc_file, ...
             group_assignment(aux_data, asyFirst, asySecond, countFirst, ...
             countSecond, Subjects, sub_types{1}, cases(i).name);
         save(strcat(asyDir, cases(i).name), 'aux_data');
+        waitbar(i/length(cases), f)
     end
     
     save_groups(globFirst, globSecond, asyFirst, asySecond, areasFirst, ...
         areasSecond, totFirst, totSecond, areas, total, globDir, ...
         asyDir, areasDir, totDir);
+    close(f)
 end
 
 

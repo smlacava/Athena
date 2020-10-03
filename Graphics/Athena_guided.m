@@ -34,6 +34,7 @@ function Athena_guided_OpeningFcn(hObject, eventdata, handles, varargin)
         aux_dataPath = varargin{1};
         if not(strcmp(aux_dataPath, 'Static Text'))
             set(handles.dataPath_text, 'String', varargin{1})
+            set(handles.aux_dataPath, 'String', varargin{1})
         end
     end
     if nargin >= 6
@@ -60,7 +61,6 @@ function varargout = Athena_guided_OutputFcn(hObject, eventdata, handles)
 
 
 function dataPath_text_Callback(hObject, eventdata, handles)
-
 
 function dataPath_text_CreateFcn(hObject, eventdata, handles)
     if ispc && isequal(get(hObject, 'BackgroundColor'), ...
@@ -156,6 +156,7 @@ function data_search_Callback(hObject, eventdata, handles)
     if d ~= 0
         set(handles.dataPath_text, 'String', d)
     end
+    dataPath_text_Callback(hObject, eventdata, handles)
 
     
 function meas_CreateFcn(hObject, eventdata, handles)
@@ -195,6 +196,13 @@ function next_Callback(~, eventdata, handles)
     cd(char(funDir{1}));
     addpath 'Auxiliary'
     addpath 'Graphics'
+    if strcmp(get(handles.dataPath_text, 'String'), ...
+            get(handles.aux_dataPath, 'String')) == 0
+        if strcmpi(get(handles.aux_dataPath, 'String'), 'Static Text') == 0
+            set(handles.aux_loc, 'String', 'Static Text')
+            set(handles.aux_sub, 'String', 'Static Text')
+        end
+    end
     [~, ~, sub, loc, sub_types] = GUI_transition(handles, 'dataPath', ...
         'measure');
     measures = Athena_measures_list();
