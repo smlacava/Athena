@@ -29,6 +29,6 @@ function cc = clustering_coefficient(data, normFLAG)
     cc = tri_cycles./(overall_conn.*(overall_conn-1));
     
     if normFLAG == 1
-        cc = cc./max(cc(:));
+        cc = value_normalization(ec, 'minmax');
     end
 end

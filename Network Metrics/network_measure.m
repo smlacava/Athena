@@ -16,9 +16,13 @@
 %       it is an empty vector)
 %   subFile is the name of the file which contains the subjects list with 
 %       their belonging class (use an empty vector as value for this
-%       parameter to avoid grouping, [] by default)
+%       parameter to avoid grouping, and in this case all the subjects will 
+%       be considered as belonging to the same group, [] by default)
 %   normFLAG has to be 1 in order to normalize the network measure vector
-%       by dividing it by its maximum value, 0 otherwise (1 by default)
+%       through the minmax normalization, it is also possible to specify 
+%       instead the normalization type between 'minmax', 'zscore' and
+%       'max', while it is possible to use 0 or 'none' to avoid
+%       normalization (1, or 'minmax' equivalently, by defalult)
 
 
 function network_measure(dataPath, measure, network_measure, loc_file, ...
@@ -32,16 +36,28 @@ function network_measure(dataPath, measure, network_measure, loc_file, ...
     if nargin < 4
         loc_file = [];
     end
+    inDir = identify_directory(dataPath, measure);
+    cases = define_cases(inDir);
     if nargin < 5 || isempty(subFile)
-        groupFLAG = 0;
+        nSUB = length(cases);
+        nFirst = nSUB;
+        nSecond = 0;
+        Subjects = [];
+        for i = 1:length(cases)
+            Subjects = [Subjects; strtok(cases(i).name, '.'), "0"];
+        end
+        sub_types = {'0'; '1'};
     else
-        groupFLAG = 1;
         [Subjects, sub_types, nSUB, nFirst, nSecond] = ...
             define_sub_types(subFile);
     end
     if nargin < 6
-        normFLAG = 1;
+        normFLAG = 'minmax';
     end
+    
+    if not(ischar(normFLAG))
+        normFLAG = 'none';
+    end 
     
     network_metrics = {'betweenness_centrality', ...
         'closeness_centrality', 'clustering_coefficient', ...
@@ -60,7 +76,6 @@ function network_measure(dataPath, measure, network_measure, loc_file, ...
     network = network_names(strcmpi(network_measure, network_metrics));
     network = network{1};
     
-    inDir = identify_directory(dataPath, measure);
     dataPath = path_check(strcat(path_check(dataPath), measure));
     outDir = path_check(strcat(path_check(strcat(path_check(dataPath), ...
         'Network')), network));
@@ -75,7 +90,6 @@ function network_measure(dataPath, measure, network_measure, loc_file, ...
     end
     locations = load_data(loc_file);
     
-    cases = define_cases(inDir);
     create_directory(outDir);
     globDir = strcat(path_check(outDir), 'Global', filesep);
     totDir = strcat(path_check(outDir), 'Total', filesep);
@@ -96,19 +110,18 @@ function network_measure(dataPath, measure, network_measure, loc_file, ...
             if i == 1 && band == 1
                 network_data.measure = zeros(nBands, length(aux_data));
             end
-            network_data.measure(band, :) = network_function(aux_data, ...
-                normFLAG)';
+            network_data.measure(band, :) = value_normalization(...
+                network_function(aux_data, 0)', normFLAG);
+            
         end
         network_data.locations = locations;
         save(strcat(outDir, cases(i).name), 'network_data')
         
-        if groupFLAG == 1
-            if i == 1
-                [globFirst, globSecond, asyFirst, asySecond, ...
-                    areasFirst, areasSecond, totFirst, totSecond, ...
-                    areas, total] = groups_initialization(network_data, ...
-                    nFirst, nSecond, nBands);
-            end
+        if i == 1
+            [globFirst, globSecond, asyFirst, asySecond, ...
+                areasFirst, areasSecond, totFirst, totSecond, ...
+                areas, total] = groups_initialization(network_data, ...
+                nFirst, nSecond, nBands);
         end
         aux_data = global_av(network_data);
         [globFirst, globSecond, ~, ~] = group_assignment(aux_data, ...

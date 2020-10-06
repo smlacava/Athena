@@ -24,6 +24,6 @@ function sgc = subgraph_centrality(data, normFLAG)
     sgc = exp_data(1:N:end)';
     
     if normFLAG == 1
-        sgc = sgc./max(sgc);
+        sgc = value_normalization(sgc, 'minmax');
     end
 end

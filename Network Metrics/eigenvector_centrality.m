@@ -30,6 +30,6 @@ function ec = eigenvector_centrality(data, normFLAG)
     end
     
     if normFLAG == 1
-        ec = ec./max(ec);
+       ec = value_normalization(ec, 'minmax');
     end
 end

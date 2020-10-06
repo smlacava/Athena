@@ -1,7 +1,7 @@
 %% betweenness_centrality
 % This function computes the node betweenness centralitty as the fraction
 % as the fraction of all shortest paths in the network that contains a
-% given node (using the algorithm proposed by Brandes, 2000: A faster 
+% given node (based on the algorithm proposed by Brandes, 2000: A faster 
 % algorithm for betweenness centrality)
 %
 % bc = betweenness_centrality(data, normFLAG)
@@ -63,7 +63,7 @@ function bc = betweenness_centrality(data, normFLAG)
             paths_number, n, aux_matrix);
     end
     if normFLAG == 1
-        bc = bc./max(bc(:));
+        bc  = value_normalization(bc, 'minmax');
     end
 end
 

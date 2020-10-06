@@ -49,6 +49,6 @@ function gr = generank_centrality(data, normFLAG, d_factor, gr_prob)
     
     gr = base_rank\aux_rank;
     if normFLAG == 1
-        gr = gr./max(gr);
+        gr = value_normalization(gr, 'minmax');
     end
 end

@@ -16,7 +16,9 @@ function batch_network_measure(parameters)
     normFLAG = search_parameter(parameters, 'Network_Normalization');
     if isempty(normFLAG) || strcmpi(normFLAG, 'true') || ...
             str2double(normFLAG) == 1
-        normFLAG = 1;
+        normFLAG = 'minmax';
+    elseif str2double(normFLAG) == 0
+        normFLAG = 'none';
     end
         
     network = search_parameter(parameters, 'Network_Metric');
@@ -37,6 +39,7 @@ function batch_network_measure(parameters)
     end
     
     locations_file = search_parameter(parameters, 'Locations');
-    network_measure(dataPath, measure, network, locations_file, normFLAG);
+    network_measure(dataPath, measure, network, locations_file, ...
+        search_parameter(parameters, 'Subjects'), normFLAG);
 end
     

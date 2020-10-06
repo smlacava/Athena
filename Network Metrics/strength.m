@@ -21,6 +21,6 @@ function s = strength(data, normFLAG)
     s = sum(squeeze(data), 2);  
     
     if normFLAG == 1
-        s = s./max(s);
+        s = value_normalization(s, 'minmax');
     end
 end

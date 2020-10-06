@@ -33,6 +33,6 @@ function kc = katz_centrality(data, normFLAG, a_factor)
     kc = (id - a_factor*data)\aux_ones;
     
     if normFLAG == 1
-        kc = kc./max(kc);
+        kc = value_normalization(kc, 'minmax');
     end
 end

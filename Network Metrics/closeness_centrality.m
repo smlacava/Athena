@@ -34,6 +34,6 @@ function cc = closeness_centrality(data, normFLAG)
     end
     
     if normFLAG == 1
-        cc = cc./max(cc(:));
+        cc = value_normalization(cc, 'minmax');
     end
 end
