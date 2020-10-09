@@ -27,7 +27,7 @@ function Athena_tfShow_OpeningFcn(hObject, ~, handles, varargin)
     myImage = imread('logo.png');
     set(handles.signal, 'Units', 'pixels');
     resizePos = get(handles.signal, 'Position');
-    myImage= imresize(myImage, [resizePos(3) resizePos(3)]);
+    myImage = imresize(myImage, [resizePos(3) resizePos(3)]);
     axes(handles.signal);
     imshow(myImage);
     set(handles.signal, 'Units', 'normalized');
@@ -475,7 +475,7 @@ function forward_show_ClickedCallback(hObject, eventdata, handles)
      set(handles.loc_shown, 'String', location_string)
      [tf, times, frequencies, f_ticks, t_ticks, n_steps] = ...
          time_frequency_analysis(data, fs, idx_chan, fmin, fmax, ...
-        time(1), time(2), 40, 3, 10, 0);
+         time(1), time(2), 40, 3, 10, 'linear', 0);
      axes(handles.signal);
      axis(handles.signal);
      contourf(times, frequencies, tf, n_steps, 'linecolor', 'none');

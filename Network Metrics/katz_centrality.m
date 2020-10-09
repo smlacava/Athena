@@ -1,5 +1,6 @@
 %% katz_centrality
-% This function computes the katz centrality.
+% This function computes the katz centrality (Katz, 1953: A New Status 
+% Index Derived from Sociometric Index).
 %
 % kc = katz_centrality(data, normFLAG, a_factor)
 %
