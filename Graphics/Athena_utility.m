@@ -75,10 +75,11 @@ function signals_extraction_Callback(hObject, eventdata, handles)
     
 function openAnalysis(utility, handles)
     analysis_list = {'folder_decompress', 'file_decompress', ...
-        'signals_divider', 'signals_extraction', 'back'};
+        'signals_divider', 'signals_extraction', 'resample', ...
+        'common_loc', 'back'};
     analysis_interfaces = {@Athena_decompressor, ...
         @Athena_decompressor, @Athena_dividerPath, @Athena_extract, ...
-        @Athena};
+        @Athena_resample, @Athena_commonLoc, @Athena};
     funDir = mfilename('fullpath');
     funDir = split(funDir, 'Graphics');
     cd(char(funDir{1}));
@@ -94,3 +95,10 @@ function openAnalysis(utility, handles)
     else
         an_handle(dataPath, measure, sub, loc, sub_types)
     end
+
+function resample_Callback(hObject, eventdata, handles)
+	openAnalysis('resample', handles)
+
+
+function common_loc_Callback(hObject, eventdata, handles)
+    openAnalysis('common_loc', handles)

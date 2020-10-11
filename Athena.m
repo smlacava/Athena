@@ -74,6 +74,7 @@ function Athena_OpeningFcn(hObject, ~, handles, varargin)
     addpath 'Loaders'
     addpath 'Network Metrics'
     addpath 'Time Frequency Analysis'
+    addpath 'Utility'
     savepath
     if nargin >= 4
         set(handles.aux_dataPath, 'String', varargin{1})

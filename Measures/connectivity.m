@@ -108,10 +108,7 @@ function connectivity(fs, cf, nEpochs, dt, inDir, tStart, outTypes, ...
     end
     
     [time_series, fsOld] = load_data(strcat(inDir, cases(i).name), 1);
-    if fsOld ~= fs
-    	[p, q] = rat(fs/fsOld);
-        time_series = resample(time_series', p, q)';
-    end
+    time_series = resample_signal(time_series, fs, fsOld);
     check = check_filtering(time_series, dt, tStart, fs, cf, ...
         filter_handle);
     if check
@@ -124,10 +121,7 @@ function connectivity(fs, cf, nEpochs, dt, inDir, tStart, outTypes, ...
             try
                 [time_series, fsOld, locations] = ...
                     load_data(strcat(inDir, cases(i).name), 1);
-                if fsOld ~= fs
-                    [p, q] = rat(fs/fsOld);
-                    time_series = resample(time_series', p, q)';
-                end
+                time_series = resample_signal(time_series', fs, fsOld);
                 nLoc = size(time_series, 1);
                 conn.data = zeros(nBands, nEpochs, nLoc, nLoc);
                 conn.locations = locations;

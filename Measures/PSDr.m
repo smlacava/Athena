@@ -50,7 +50,7 @@ function PSDr(fs, cf, nEpochs, dt, inDir, tStart, relBand)
         try
             [time_series, fsOld, locations] = ...
                 load_data(strcat(inDir, cases(i).name), 1);
-            time_series = resample(time_series, fs, fsOld);
+            time_series = resample_signal(time_series, fs, fsOld);
             time_series = time_series(:, tStart:end);
             psdr.data = zeros(nBands, nEpochs, size(time_series, 1));
             psdr.locations = locations;

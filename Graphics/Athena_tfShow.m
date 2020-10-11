@@ -176,21 +176,14 @@ function Previous_Callback(~, ~, handles)
         set(handles.locs_matrix, 'Data', locs);
         set(handles.locs_ind, 'Data', [1; zeros(length(locs)-1, 1)]);
         time = get(handles.time_shown_value, 'Data');
+        fs = find_fs(fs, handles);
         set(handles.time_shown_value, 'Data', [0, ...
             min(time(2)-time(1), length(data)/fs)])
         set(handles.case_number, 'String', case_number);
-        if isempty(fs)
-            fs = str2double(get(handles.fs_text, 'String'));
-            set(handles.fs_check, 'String', 'not detected');
-        else
-            set(handles.fs_text, 'String', string(fs));
-            set(handles.fs_check, 'String', 'detected');
-        end
         case_name = split(cases(case_number).name, '.');
         case_name = case_name{1};
         set(handles.Title, 'String', strcat("    subject: ", case_name));
         close(f)
-        
         start_show_ClickedCallback(1, 1, handles);
     elseif case_number > length(cases)
         set(handles.case_number, 'String', string(case_max));
@@ -454,6 +447,13 @@ function forward_show_ClickedCallback(hObject, eventdata, handles)
      set(handles.time_shown_value, 'Data', [final-dt final]);
      start_show_ClickedCallback(1, 1, handles);
      
+ function restart_show_ClickedCallback(~, ~, handles)
+     axes(handles.signal);
+     [~, ~, ~, time, ~] = get_data(handles);
+     dt = time(2)-time(1);
+     set(handles.time_shown_value, 'Data', [0, dt]);
+     start_show_ClickedCallback(1, 1, handles);
+         
      
  function start_show_ClickedCallback(~, ~, handles)
      axes(handles.signal);
@@ -480,7 +480,12 @@ function forward_show_ClickedCallback(hObject, eventdata, handles)
      axis(handles.signal);
      contourf(times, frequencies, tf, n_steps, 'linecolor', 'none');
      yticks(f_ticks);
-     xticks(t_ticks);
+     if time(1) == 0
+         xticks([t_ticks t_ticks(end)+1]);
+     else
+        xticks(t_ticks);
+     end
+     xticklabels(string(linspace(time(1), time(2), length(t_ticks))))
      
        
  function stop_show_ClickedCallback(~, ~, handles)
@@ -495,7 +500,8 @@ function locs_ind = location_index(locs, data)
      if isempty(locs_ind)
          locs_ind = ones(min(size(data)), 1);
      end
-    
+
+
     
 function [data, fmin, fmax, time, fs] = get_data(handles)
     data = get(handles.signal_matrix, 'Data');
@@ -564,4 +570,17 @@ function fmax_CreateFcn(hObject, eventdata, handles)
     if ispc && isequal(get(hObject,'BackgroundColor'), ...
             get(0,'defaultUicontrolBackgroundColor'))
         set(hObject,'BackgroundColor','white');
+    end
+
+    
+%% find_fs
+% This function assigns a value to the fs variable
+
+function fs = find_fs(fs, handles)
+    if isempty(fs)
+        fs = str2double(get(handles.fs_text, 'String'));
+        set(handles.fs_check, 'String', 'not detected');
+    else
+        set(handles.fs_text, 'String', string(fs))
+        set(handles.fs_check, 'String', 'detected');
     end

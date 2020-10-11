@@ -38,7 +38,7 @@ function spectral_entropy(fs, cf, nEpochs, dt, inDir, tStart)
         try
             [time_series, fsOld, locations] = ...
                 load_data(strcat(inDir, cases(i).name), 1);
-            time_series = resample(time_series, fs, fsOld);
+            time_series = resample_signal(time_series, fs, fsOld);
             time_series = time_series(:, tStart:end);
             se.data = zeros(nBands, nEpochs, size(time_series, 1));
             se.locations = locations;

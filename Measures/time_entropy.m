@@ -95,7 +95,7 @@ function time_entropy(fs, cf, nEpochs, dt, inDir, tStart, outTypes, ...
     [time_series, fsOld] = load_data(strcat(inDir, cases(i).name), 1);
     if fsOld ~= fs
     	[p, q] = rat(fs/fsOld);
-        time_series = resample(time_series', p, q)';
+        time_series = resample_signal(time_series', p, q)';
     end
     check = check_filtering(time_series, dt, tStart, fs, cf, ...
         filter_handle);
@@ -111,7 +111,7 @@ function time_entropy(fs, cf, nEpochs, dt, inDir, tStart, outTypes, ...
                     load_data(strcat(inDir, cases(i).name), 1);
                 if fsOld ~= fs
                     [p, q] = rat(fs/fsOld);
-                    time_series = resample(time_series', p, q)';
+                    time_series = resample_signal(time_series', p, q)';
                 end
                 nLoc = size(time_series, 1);
                 en.data = zeros(nBands, nEpochs, nLoc);
