@@ -584,3 +584,31 @@ function fs = find_fs(fs, handles)
         set(handles.fs_text, 'String', string(fs))
         set(handles.fs_check, 'String', 'detected');
     end
+
+
+function screen_ClickedCallback(hObject, eventdata, handles)
+    dataPath = path_check(get(handles.aux_dataPath, 'String'));
+    outDir = create_directory(dataPath, 'Images');
+    location = get(handles.loc_shown, 'String');
+    time = split(get(handles.time_text, 'String'));
+    time = strcat(time{1}, time{2}, time{3});
+    freq = strcat(get(handles.fmin, 'String'), '-', get(handles.fmax, ...
+        'String'));
+    subject = split(get(handles.Title, 'String'), 'subject: ');
+    subject = subject{2};
+    axes(handles.signal)
+    Image = getframe(handles.signal);
+    for i = 1:6
+        aux = 0.15*i*ones(1, 3);
+        handles.signal.XColor = aux;
+        handles.signal.YColor = aux;
+        pause(0.03)
+    end
+    for i = 1:6
+        aux = 0.15*(7-i)*ones(1, 3);
+        handles.signal.XColor = aux;
+        handles.signal.YColor = aux;
+        pause(0.03)
+    end
+    imwrite(Image.cdata, char_check(strcat(path_check(outDir), 'TF_', ...
+        subject, '_', location, '_', time, '_', freq, 'Hz.jpg')));
