@@ -155,8 +155,12 @@ function Run_Callback(hObject, eventdata, handles)
         string(size(data, 2)-1), " features. Do you want to apply ", ...
         "the Principal Component Analysis on your data?"), ...
         "Dataset computed");
+    if strcmpi(answer, 'yes')
+        pcaFLAG = 1;
+    else
+        pcaFLAG = 0;
+    end
     close(pc)
-    pcaFLAG = 0;
     while strcmpi(answer, 'yes')
         value = value_asking(100, 'PCA value', strcat("Choose the ", ...
             "minimum fraction of the total variance which has to be ", ...
@@ -167,17 +171,17 @@ function Run_Callback(hObject, eventdata, handles)
             problem('The PCA value must be a value between 0 and 100');
             continue
         end
-        [aux_data, pc] = reduce_predictors(data, value);
+        [aux_data, pc] = reduce_predictors(data, value);       
         answer = user_decision(strcat("The resulting dataset is ", ...
             "composed ", string(size(aux_data, 2)-1), " features. Do ", ...
             "you want to compute again the Principal Component ", ...
             "Analysis on your data?"), "Dataset computed");
-        if strcmpi(answer, 'yes')
-            pcaFLAG = 1;
-        end
         close(pc)
     end
-    if pcaFLAG == 1
+    if pcaFLAG == 1 && ...
+            strcmpi(user_decision(strcat("Do you want to save the PCA", ...
+            " resulting dataset instead of the original one?"), ...
+            "Dataset computed"), 'yes')
         data = aux_data;
     end
     if size(data, 2) > 0
@@ -1552,79 +1556,16 @@ function Asymmetry41_Callback(hObject, eventdata, handles)
 
 % --- Executes on button press in checkbox233.
 function checkbox233_Callback(hObject, eventdata, handles)
-% hObject    handle to checkbox233 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hint: get(hObject,'Value') returns toggle state of checkbox233
-
-
-% --- Executes on selection change in measure42.
 function measure42_Callback(hObject, eventdata, handles)
-% hObject    handle to measure42 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hints: contents = cellstr(get(hObject,'String')) returns measure42 contents as cell array
-%        contents{get(hObject,'Value')} returns selected item from measure42
-
-
-% --- Executes during object creation, after setting all properties.
 function measure42_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to measure42 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: popupmenu controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
-
-
-% --- Executes on button press in Channels42.
 function Channels42_Callback(hObject, eventdata, handles)
-% hObject    handle to Channels42 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hint: get(hObject,'Value') returns toggle state of Channels42
-
-
-% --- Executes on button press in Global42.
 function Global42_Callback(hObject, eventdata, handles)
-% hObject    handle to Global42 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hint: get(hObject,'Value') returns toggle state of Global42
-
-
-% --- Executes on button press in Areas42.
 function Areas42_Callback(hObject, eventdata, handles)
-% hObject    handle to Areas42 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hint: get(hObject,'Value') returns toggle state of Areas42
-
-
-% --- Executes on button press in Asymmetry42.
 function Asymmetry42_Callback(hObject, eventdata, handles)
-% hObject    handle to Asymmetry42 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hint: get(hObject,'Value') returns toggle state of Asymmetry42
-
-
-% --- Executes on button press in checkbox238.
 function checkbox238_Callback(hObject, eventdata, handles)
-% hObject    handle to checkbox238 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hint: get(hObject,'Value') returns toggle state of checkbox238
 
 
 % --- Executes on selection change in measure43.

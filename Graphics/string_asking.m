@@ -1,3 +1,17 @@
+%% string_asking
+% This function asks a string value to the user through a GUI.
+% 
+% [string_value, f] = string_asking(definput, msg, title)
+%
+% Input:
+%   definput is the predefined input string
+%   msg is the message shown by the GUI
+%   title is the title of the GUI
+% 
+% Output:
+%   string_value is the string chosen by the user
+%   f is the figure handle
+
 function [dataPath, f] = string_asking(definput, msg, title)
     dataPath = definput;
     bgc = [1 1 1];

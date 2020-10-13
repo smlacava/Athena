@@ -9,9 +9,11 @@
 %   msg is the message shown by the interface
 %   maxvalue is the maximum possible value which can be inserted by the
 %       user (Infinite by default)
+%
+% Output:
+%   answer is the numerical value inserted by the user
 
-
-function [answer] = value_asking(initialValue, title, msg, maxvalue)
+function answer = value_asking(initialValue, title, msg, maxvalue)
     switch nargin
         case 0
             initialValue = 0;
@@ -46,6 +48,18 @@ function [answer] = value_asking(initialValue, title, msg, maxvalue)
         end
     end   
 end
+
+
+%% inputCheck
+% This function returns the numerical value of a string
+%
+% answer = inputCheck(value)
+%
+% Input:
+%   value is the string (or cell) value which has to be converted
+%
+% Output:
+%   answer is the resulting numerical value
 
 function answer = inputCheck(value)
     value = value{1,1};

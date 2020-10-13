@@ -44,8 +44,7 @@ function [data, pc] = reduce_predictors(data, pca_value, bg_color)
     
     features = {};
     for i = 1:length(pctExp)
-        features = [features, char(strcat("Principal_Component_", ...
-            string(i)))];
+        features = [features, char(strcat("PC", string(i)))];
         if sum(pctExp(1:i)) >= pca_value
             data = scrs(:, 1:i);
             break
@@ -61,7 +60,7 @@ function [data, pc] = reduce_predictors(data, pca_value, bg_color)
     pareto(pctExp)
     xlim([0 n_predictors+1])
     xticklabels(features)
-    xticks(1:n_predictors)
+    xticks(1:length(features))
     xtickangle(45)
     plot([n_predictors n_predictors+1], [100 100], 'Color', ...
         [0.00, 0.45, 0.74]);

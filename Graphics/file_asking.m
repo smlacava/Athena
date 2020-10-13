@@ -1,4 +1,20 @@
-function [answer] = file_asking(definput, title, msg)
+%% file_asking
+% This function generates an interface which allows to ask the user a file,
+% also allowing to search it visually through the file search
+%
+% answer = file_asking(definput, title, msg)
+%
+% Input:
+%   definput is the predefined string representing the default input ('es.
+%       C:/User/filename' by default)
+%   title is the title of the GUI ('Insert value' by default)
+%   msg is the message which is shown by the GUI ('Insert the wished value'
+%       by default
+%
+% Output:
+%   answer is the file chosen by the user
+
+function answer = file_asking(definput, title, msg)
 
     bgc = [1 1 1];
     fgc = [0.067 0.118 0.424];
@@ -58,6 +74,21 @@ function [answer] = file_asking(definput, title, msg)
     end
 end
 
+
+%% inputCheck
+% This function check if the file chosen by the user exists, and if it does
+% not exist the predefined input is returned
+%
+% answer = inputCheck(value, definput)
+% 
+% Input:
+%   value is the file chosen by the user
+%   definput is the predefined input
+% 
+% Output:
+%   answer is the name of the file if it exists, the predefined input
+%       otherwise
+
 function answer = inputCheck(value, definput)
     try
         value = value{1,1};
@@ -67,7 +98,7 @@ function answer = inputCheck(value, definput)
         definput = definput{1,1};
     catch
     end
-    if strcmp(value, definput)
+    if not(exist(value, 'file'))
         answer = definput;
     else
         answer = value;

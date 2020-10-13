@@ -7,9 +7,13 @@
 % Input:
 %   msg is the message which has to be showed
 %   title is the title of the image
+%
+% Output:
+%   answer is the char array correspondent to the user decision ('yes' or
+%       'no', 'no' by default)
 
 
-function [answer] = user_decision(msg, title)
+function answer = user_decision(msg, title)
     bgc = [1 1 1];
     fgc = [0.067 0.118 0.424];
     btn = [0.427 0.804 0.722];

@@ -176,6 +176,9 @@ function Previous_Callback(~, ~, handles)
         set(handles.locs_matrix, 'Data', locs);
         set(handles.locs_ind, 'Data', [1; zeros(length(locs)-1, 1)]);
         time = get(handles.time_shown_value, 'Data');
+        if isempty(fs)
+            fs = str2double(get(handles.fs_text, 'String'));
+        end
         set(handles.time_shown_value, 'Data', [0, ...
             min(time(2)-time(1), length(data)/fs)])
         set(handles.case_number, 'String', case_number);

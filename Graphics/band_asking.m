@@ -1,10 +1,25 @@
+%% band_asking
+% This function returns the chosen cut frequencies values
+% 
+% [fmin, fmax, check] = band_asking(fmin, fmax)
+%
+% Input:
+%   fmin is the value related to the lower cut frequency (0 by default)
+%   fmax is the value related to the higher cut frequency (Inf by default)
+%
+% Output:
+%   fmin is the value related to the lower cut frequency chosen by the user
+%   fmax is the value related to the higher cut frequency chosen by the
+%       user
+%   check is 1 if the 'ok' button has been pushed, 0 otherwise
+
 function [fmin, fmax, check] = band_asking(fmin, fmax)
     if nargin == 0
         fmin = '0';
         fmax = 'Inf';
     else
-        fmin = int2str(fmin);
-        fmax = int2str(fmax);
+        fmin = string(fmin);
+        fmax = string(fmax);
     end
 
     f = figure;

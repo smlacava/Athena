@@ -58,6 +58,10 @@ function Athena_sigShow_OpeningFcn(hObject, ~, handles, varargin)
             set(handles.fs_text, 'String', '1');
             fs = 1;
             set(handles.fs_check, 'String', 'not detected');
+            set(handles.fs_text, 'String', string(value_asking(1, ...
+                'Sampling frequency not found', ...
+                'Insert the sampling frequency of this time series')));
+            
         end
         tw = str2double(get(handles.time_window_value, 'String'));
         set(handles.time_window_value, 'String', ...

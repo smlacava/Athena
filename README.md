@@ -14,7 +14,7 @@ It is possible to choose between a guided or a batch mode:
 - The batch mode allows the user to compute the entire study automatically, chosing all the parameters before starting it
 
 <p align="center">
-  <img src="pipeline_simple.png" width="600" title="hover text">
+  <img src="docs\README_images\pipeline_simple.png" width="600" title="hover text">
 </p>
 
 The *pipeline* provided by *ATHENA* can be subdivided in 3 main steps:
@@ -26,7 +26,7 @@ The *pipeline* provided by *ATHENA* can be subdivided in 3 main steps:
    performance, allowing to change parameters and to study the discriminant capability of the extracted measures
 
 <p align="center">
-  <img src="pipeline_extended.png" width="800" title="hover text">
+  <img src="docs\README_images\pipeline_extended.png" width="800" title="hover text">
 </p>
 
 
@@ -40,6 +40,10 @@ The graphic interface allows:
 - To *save a piece of signal*, by choosing the *starting time*, the *locations* and the *length of the time window* to save
 
 Furthermore, it is possible to *display the spectra* of the signals, and to execute a **time-frequency analysis** on them.
+
+<p align="center">
+  <img src="docs\README_images\Visual.png" width="800" title="hover text">
+</p>
 
 [**Download Athena now to start you analysis!**](https://github.com/smlacava/Athena/archive/master.zip)
 
@@ -112,6 +116,9 @@ Furthermore, the user can execute some visual analysis:
 - **Epochs Analysis**: the user can study the variation of a measure through the epochs in every frequency band for a subject
 - **Network Measures**: the user can extract some network measures related to the connectivity measures
 
+<p align="center">
+  <img src="docs\README_images\Analysis.png" width="800" title="hover text">
+</p>
 
 ## Classification
 Finally, the user can train and test a **Decision Tree** classifier, a **Random Forest** classifier or a Multi-Layer **Neural Network** classifier in order 
