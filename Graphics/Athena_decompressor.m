@@ -1,3 +1,7 @@
+%% Athena_decompressor
+% This function allows to decompress a a data archive or a file (only .zip, 
+% .tar and .gz extensions are supported).
+
 function varargout = Athena_decompressor(varargin)
     gui_Singleton = 1;
     gui_State = struct('gui_Name',       mfilename, ...
@@ -16,7 +20,11 @@ function varargout = Athena_decompressor(varargin)
         gui_mainfcn(gui_State, varargin{:});
     end
 
-
+    
+%% Athena_decompressor_OpeningFcn
+% This function is called during the interface opening, and it sets all the
+% initial parameters with respect to the arguments passed when it is
+% called.
 function Athena_decompressor_OpeningFcn(hObject, eventdata, handles, varargin)
     handles.output = hObject;
     guidata(hObject, handles);
@@ -75,13 +83,19 @@ function file_CreateFcn(hObject, eventdata, handles)
         set(hObject, 'BackgroundColor', 'white');
     end
 
-    
+
+%% data_search_Callback
+% This function opens the file searcher, allowing to select the file which
+% has to be decopressed
 function data_search_Callback(hObject, eventdata, handles)
     [d, dp] = uigetfile({'*.*'});
     if d ~= 0
         set(handles.file, 'String', strcat(string(dp), string(d)))
     end
 
+    
+%% back_Callback
+% This function switches to the Utility Selection interface.
 function back_Callback(hObject, eventdata, handles)
     funDir = mfilename('fullpath');
     funDir = split(funDir, 'Graphics');
@@ -96,6 +110,8 @@ function back_Callback(hObject, eventdata, handles)
 function axes3_CreateFcn(hObject, eventdata, handles)
 
 
+%% RUN_Callback
+% This function allows to decopress the selected file.
 function RUN_Callback(~, eventdata, handles)
     f = waitbar(0,'Initialization', ...
         'Color', '[1 1 1]');

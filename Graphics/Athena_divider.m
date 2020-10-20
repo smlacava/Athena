@@ -1,3 +1,9 @@
+%% Athena_divider
+% This interface allows to subdivide each signal contained inside a
+% directory into a chosen number of contiguous time series windows, which
+% are saved in .mat format, as a structure having the parameters used by
+% the toolbox, eventually selecting also a common resampling frequency.
+
 function varargout = Athena_divider(varargin)
     gui_Singleton = 1;
     gui_State = struct('gui_Name',       mfilename, ...
@@ -16,7 +22,11 @@ function varargout = Athena_divider(varargin)
         gui_mainfcn(gui_State, varargin{:});
     end
 
-    
+
+%% Athena_divider_OpeningFcn
+% This function is called during the interface opening, and it sets all the
+% initial parameters with respect to the arguments passed when it is
+% called.
 function Athena_divider_OpeningFcn(hObject, eventdata, handles, ...
     varargin)
     handles.output = hObject;
@@ -66,6 +76,10 @@ function varargout = Athena_divider_OutputFcn(~, ~, handles)
     varargout{1} = handles.output;
 
 
+%% fs_text_Caller
+% This function is called when the sampling frequency value with which
+% resample all the signals is changed, implementing some controls on the
+% enabled values.
 function fs_text_Callback(hObject, eventdata, handles)
     dataPath = get(handles.aux_dataPath, 'String');
     cases = define_cases(dataPath);
@@ -90,8 +104,7 @@ function fs_text_Callback(hObject, eventdata, handles)
         string(length(data)/fs), " s ");
     set(handles.TotTime, 'String', TotTime);
 
-    
-    
+      
 function fs_text_CreateFcn(hObject, eventdata, handles)
     if ispc && isequal(get(hObject, 'BackgroundColor'), ...
             get(0, 'defaultUicontrolBackgroundColor'))
@@ -103,6 +116,7 @@ function cf_text_Callback(hObject, eventdata, handles)
     [~, ~, totBand] = automatic_parameters(handles, "cf");
     set(handles.totBand_text, 'String', totBand)
 
+    
 function cf_text_CreateFcn(hObject, eventdata, handles)
     if ispc && isequal(get(hObject, 'BackgroundColor'), ...
             get(0, 'defaultUicontrolBackgroundColor'))
@@ -120,6 +134,9 @@ function epNum_text_CreateFcn(hObject, eventdata, handles)
     end
 
 
+%% Run_Callback
+% This function is executed when the Run button is pushed, and it call the
+% signal dividing function by using the chosen parameters.
 function Run_Callback(hObject, eventdata, handles)
     dataPath = char_check(get(handles.aux_dataPath, 'String'));
     dataPath = path_check(dataPath);
@@ -139,6 +156,8 @@ function Run_Callback(hObject, eventdata, handles)
     success();
 
 
+%% back_Callback
+% This function is switch to the Utility list interface.
 function back_Callback(hObject, eventdata, handles)
     funDir = mfilename('fullpath');
     funDir = split(funDir, 'Graphics');

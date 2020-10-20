@@ -1,3 +1,8 @@
+%% Athena_epan
+% This interface allows to execute the visual epoch analysis on a
+% previously extracted measure, on the single subjects.
+
+
 function varargout = Athena_epan(varargin)
     gui_Singleton = 1;
     gui_State = struct('gui_Name',       mfilename, ...
@@ -16,7 +21,10 @@ function varargout = Athena_epan(varargin)
         gui_mainfcn(gui_State, varargin{:});
     end
 
-    
+%% Athena_epan_OpeningFcn
+% This function is called during the interface opening, and it sets all the
+% initial parameters with respect to the arguments passed when it is
+% called.
 function Athena_epan_OpeningFcn(hObject, eventdata, handles, varargin)
     handles.output = hObject;
     guidata(hObject, handles);
@@ -49,11 +57,12 @@ function Athena_epan_OpeningFcn(hObject, eventdata, handles, varargin)
     dataPath_text_Callback(hObject, eventdata, handles)
 
 
-
 function varargout = Athena_epan_OutputFcn(hObject, eventdata, handles) 
     varargout{1} = handles.output;
 
-
+%% dataPath_text_Callback
+% This function is used when the study directory is changed, in order to
+% set the available measures.
 function dataPath_text_Callback(hObject, eventdata, handles)
     auxPath = pwd;
     funDir = mfilename('fullpath');
@@ -101,17 +110,7 @@ function dataPath_text_Callback(hObject, eventdata, handles)
         set(handles.Subjects, 'String', subs);
     end
     if exist(dataPath, 'dir')
-        cases = dir(dataPath);
-        measures = [];
-        for i = 1:length(cases)
-        	if cases(i).isdir == 1
-                if sum(strcmp(cases(i).name, {'offset', 'exponent', ...
-                        'PSDr', 'PLI', 'PLV', 'AEC', 'AECo', 'MSC', ...
-                        'coherence'}))
-                    measures = [measures, string(cases(i).name)];
-                end
-            end
-        end
+        measures = available_measures(dataPath, 0, 1);
         set(handles.Measures_list, 'String', measures)
         set(handles.Measures_list, 'Value', 1)
     end
@@ -124,7 +123,10 @@ function dataPath_text_CreateFcn(hObject, eventdata, handles)
         set(hObject, 'BackgroundColor', 'white');
     end
 
-    
+
+%% Run_Callback
+% This function is called when the Run button is pushed, and it shows the
+% measure variation using the set parameters.
 function Run_Callback(hObject, eventdata, handles)
     measures_list = get(handles.Measures_list, 'String');
     measure = measures_list(get(handles.Measures_list, 'Value'));
@@ -184,7 +186,10 @@ function Run_Callback(hObject, eventdata, handles)
             string(save_check), ',', strcat("'", format, "'"), ')'));
     
        
-
+%% data_search_callback
+% This function is called when the directory-searcher button is pushed, in
+% order to open the file searcher and changes the settings with respect to
+% the analyzed study directory.
 function data_search_Callback(hObject, eventdata, handles)
     d = uigetdir;
     if d ~= 0
@@ -218,7 +223,8 @@ function data_search_Callback(hObject, eventdata, handles)
     end
     
 
-    
+%% back_Callback
+% This function switches to the Analysis list interface.
 function back_Callback(hObject, eventdata, handles)
     funDir = mfilename('fullpath');
     funDir = split(funDir, 'Graphics');

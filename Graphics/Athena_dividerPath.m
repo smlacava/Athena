@@ -1,3 +1,7 @@
+%% Athena_dividerPath
+% This interface is used to select the directory which contains the signals
+% which have to be divided into smaller time windows.
+
 function varargout = Athena_dividerPath(varargin)
     gui_Singleton = 1;
     gui_State = struct('gui_Name',       mfilename, ...
@@ -16,7 +20,10 @@ function varargout = Athena_dividerPath(varargin)
         gui_mainfcn(gui_State, varargin{:});
     end
 
-
+%% Athena_divierPath_OpeningFcn
+% This function is called during the interface opening, and it sets all the
+% initial parameters with respect to the arguments passed when it is
+% called.
 function Athena_dividerPath_OpeningFcn(hObject, eventdata, handles, varargin)
     handles.output = hObject;
     guidata(hObject, handles);
@@ -71,7 +78,8 @@ function data_search_Callback(hObject, eventdata, handles)
     end
 
 
-
+%% back_Callback
+% This function switches to the Utility list interface.
 function back_Callback(hObject, eventdata, handles)
     funDir = mfilename('fullpath');
     funDir = split(funDir, 'Graphics');
@@ -91,6 +99,8 @@ function back_Callback(hObject, eventdata, handles)
 function axes3_CreateFcn(hObject, eventdata, handles)
 
 
+%% next_Callback
+% This function switches to the Signals Divider interface.
 function next_Callback(~, eventdata, handles)
     funDir = mfilename('fullpath');
     funDir = split(funDir, 'Graphics');

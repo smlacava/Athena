@@ -1,3 +1,7 @@
+%% Athena_an
+% This interface allows to select the analysis to perform, or to return
+% back to the previous interface.
+
 function varargout = Athena_an(varargin)
     gui_Singleton = 1;
     gui_State = struct('gui_Name',       mfilename, ...
@@ -16,7 +20,10 @@ function varargout = Athena_an(varargin)
         gui_mainfcn(gui_State, varargin{:});
     end
 
-
+%% Athena_an_OpeningFcn
+% This function is called during the interface opening, and it sets all the
+% initial parameters with respect to the arguments passed when it is
+% called.
 function Athena_an_OpeningFcn(hObject, eventdata, handles, varargin)
     handles.output = hObject;
     guidata(hObject, handles);
@@ -56,7 +63,8 @@ function back_Callback(hObject, eventdata, handles)
     
 function axes3_CreateFcn(hObject, eventdata, handles)
 
-
+%% StatAn_Callback
+% This function switches to the Statistical Analysis interface.
 function StatAn_Callback(hObject, eventdata, handles)
     funDir = mfilename('fullpath');
     funDir = split(funDir, 'Graphics');
@@ -68,6 +76,8 @@ function StatAn_Callback(hObject, eventdata, handles)
     Athena_statistics(dataPath, measure, sub, loc, sub_types)
 
 
+%% clasData_Callback
+% This function switches to the Classification Dataset Creation interface.
 function clasData_Callback(hObject, eventdata, handles)
     funDir = mfilename('fullpath');
     funDir = split(funDir, 'Graphics');
@@ -79,6 +89,8 @@ function clasData_Callback(hObject, eventdata, handles)
     Athena_mergsig2(dataPath, measure, sub, loc, sub_types)
 
 
+%% EpAn_Callback
+% This function switches to the Epoch Analysis interface.
 function EpAn_Callback(hObject, eventdata, handles)
     funDir = mfilename('fullpath');
     funDir = split(funDir, 'Graphics');
@@ -89,7 +101,9 @@ function EpAn_Callback(hObject, eventdata, handles)
     close(Athena_an)
     Athena_epan(dataPath, measure, sub, loc, sub_types)
 
-    
+
+%% meaext_Callback
+% This function switches to the Measure Selection interface.
 function meaext_Callback(hObject, eventdata, handles)
     funDir = mfilename('fullpath');
     funDir = split(funDir, 'Graphics');
@@ -100,7 +114,10 @@ function meaext_Callback(hObject, eventdata, handles)
     close(Athena_an)
     Athena_guided(dataPath, measure, sub, loc, sub_types)
 
-    
+
+%% tempav_Callback
+% This function switches to the Temporal Average, Spatial Management and
+% Subjects Grouping interface.
 function tempav_Callback(hObject, eventdata, handles)
     funDir = mfilename('fullpath');
     funDir = split(funDir, 'Graphics');
@@ -112,6 +129,8 @@ function tempav_Callback(hObject, eventdata, handles)
     Athena_epmean(dataPath, measure, sub, loc, sub_types)
 
 
+%% scatterAn_Callback
+% This function switches to the Scatter Analysis interface.
 function scatterAn_Callback(hObject, eventdata, handles)
     funDir = mfilename('fullpath');
     funDir = split(funDir, 'Graphics');
@@ -123,6 +142,8 @@ function scatterAn_Callback(hObject, eventdata, handles)
     Athena_scatter(dataPath, measure, sub, loc, sub_types)
 
 
+%% netmeas_Callback
+% This function switches to the Network Metrics Estimation interface.
 function netmeas_Callback(hObject, eventdata, handles)
     funDir = mfilename('fullpath');
     funDir = split(funDir, 'Graphics');
@@ -132,4 +153,3 @@ function netmeas_Callback(hObject, eventdata, handles)
     [dataPath, measure, sub, loc, sub_types] = GUI_transition(handles);
     close(Athena_an)
     Athena_netmeas(dataPath, measure, sub, loc, sub_types)
-

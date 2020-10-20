@@ -9,11 +9,6 @@ function varargout = Athena(varargin)
     if nargin && ischar(varargin{1})
         gui_State.gui_Callback = str2func(varargin{1});
     end
-    
-    if version_info() == 1
-        Athena
-        return;
-    end
 
     if nargout
         [varargout{1:nargout}] = gui_mainfcn(gui_State, varargin{:});
@@ -25,6 +20,11 @@ function varargout = Athena(varargin)
 function Athena_OpeningFcn(hObject, ~, handles, varargin)
     handles.output = hObject;
     guidata(hObject, handles);
+    if str2double(get(handles.aux_close, 'String')) == 0
+        if version_info() == 1
+            close(Athena)
+        end
+    end
     try
         funDir = '';
         auxDir = which('Athena.m');
@@ -101,6 +101,7 @@ function varargout = Athena_OutputFcn(~, ~, handles)
 
 function back_Callback(~, ~, ~)
     close(Athena)
+    
     
 function utility_Callback(~, ~, handles)
     [dataPath, measure, sub, loc] = GUI_transition(handles);

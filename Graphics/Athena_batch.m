@@ -1,3 +1,9 @@
+%% Athena_batch
+% This interface allows to execute all the study in batch, by setting the
+% parameters needed for each step in a text file, such as the one provided
+% as example in the main folder of the Athena toolbox.
+
+
 function varargout = Athena_batch(varargin)
     gui_Singleton = 1;
     gui_State = struct('gui_Name',       mfilename, ...
@@ -16,7 +22,11 @@ function varargout = Athena_batch(varargin)
         gui_mainfcn(gui_State, varargin{:});
     end
 
-    
+
+%% Athena_batch_OpeningFcn
+% This function is called during the interface opening, and it sets all the
+% initial parameters with respect to the arguments passed when it is
+% called.
 function Athena_batch_OpeningFcn(hObject, eventdata, handles, varargin)
     handles.output = hObject;
     guidata(hObject, handles);
@@ -62,6 +72,9 @@ function dataFile_text_CreateFcn(hObject, eventdata, handles)
     end
 
 
+%% Run_Callback
+% This function executes all the study by using the parameters file
+% inserted in the appropriate editable text cell.
 function Run_Callback(~, eventdata, handles)
     funDir = mfilename('fullpath');
     funDir = split(funDir, 'Graphics');
@@ -86,7 +99,10 @@ function Run_Callback(~, eventdata, handles)
         batch_study(dataFile);
     end
     
-    
+
+%% data_search_Callback
+% This function is called when the file-searcher button is pushed, in
+% order to open the file searcher and to select the parameters file.
 function data_search_Callback(hObject, ~, handles)
     [i, ip] = uigetfile({'*.*'});
     if i ~= 0
@@ -94,6 +110,8 @@ function data_search_Callback(hObject, ~, handles)
     end
 
 
+%% back_Callback
+% This function switches to the initial interface of the toolbox.
 function back_Callback(hObject, eventdata, handles)
     funDir = mfilename('fullpath');
     funDir = split(funDir, 'Graphics');

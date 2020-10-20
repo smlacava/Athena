@@ -1,3 +1,8 @@
+%% Athena_classification
+% This interface allows to select the parameters of the classification 
+% model to analyze, and to execute the classification analysis on it.
+
+
 function varargout = Athena_classification(varargin)
     gui_Singleton = 1;
     gui_State = struct('gui_Name',       mfilename, ...
@@ -16,7 +21,11 @@ function varargout = Athena_classification(varargin)
         gui_mainfcn(gui_State, varargin{:});
     end
 
-    
+
+%% Athena_classification_OpeningFcn
+% This function is called during the interface opening, and it sets all the
+% initial parameters with respect to the arguments passed when it is
+% called.
 function Athena_classification_OpeningFcn(hObject, eventdata, handles, ...
     varargin)
     handles.output = hObject;
@@ -105,6 +114,7 @@ function fraction_text_CreateFcn(hObject, eventdata, handles)
         set(hObject, 'BackgroundColor', 'white');
     end
 
+    
 function pruning_text_Callback(hObject, eventdata, handles)
 
 
@@ -115,6 +125,9 @@ function pruning_text_CreateFcn(hObject, eventdata, handles)
     end
 
 
+%% Run_Callback
+% This function executes the classification analysis by using the selected
+% parameters, providing some evaluation values and graphic results.
 function Run_Callback(hObject, eventdata, handles)
     dataPath = char_check(get(handles.aux_dataPath, 'String'));
     dataPath = path_check(dataPath);
@@ -209,6 +222,8 @@ function Run_Callback(hObject, eventdata, handles)
     success();
 
 
+%% back_Callback
+% This function switches to the Classifier Selection interface.
 function back_Callback(hObject, eventdata, handles)
     funDir = mfilename('fullpath');
     funDir = split(funDir, 'Graphics');
@@ -229,6 +244,8 @@ function yes_button_Callback(hObject, eventdata, handles)
 function no_button_Callback(hObject, eventdata, handles)
 
 
+%% default_parameters_Callback
+% This function sets the initial parameters.
 function default_parameters_Callback(hObject, eventdata, handles)
     def_par = get(handles.default_parameters, 'Value');
     values = {'on', 'off'};
@@ -244,6 +261,10 @@ function default_parameters_Callback(hObject, eventdata, handles)
     set(handles.fraction_text, 'Enable', value)
 
 
+%% DTclassifier_Callback
+% This function is called when the Decision Tree check button state is
+% changed, in order to enable or disable some parameters, if it is off or
+% on, respectively.
 function DTclassifier_Callback(hObject, eventdata, handles)
     dt_par = get(handles.DTclassifier, 'Value')+1;
     values = {'on', 'off'};

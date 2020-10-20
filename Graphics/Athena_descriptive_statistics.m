@@ -1,3 +1,8 @@
+%% Athena_descriptive_statistics
+% This interface allows to compute some descriptive statistical parameters,
+% and to compare them between the analyzed groups of subjects.
+
+
 function varargout = Athena_descriptive_statistics(varargin)
     gui_Singleton = 1;
     gui_State = struct('gui_Name',       mfilename, ...
@@ -17,6 +22,10 @@ function varargout = Athena_descriptive_statistics(varargin)
     end
 
 
+%% Athena_descriptive_statistics_OpeningFcn
+% This function is called during the interface opening, and it sets all the
+% initial parameters with respect to the arguments passed when it is
+% called.
 function Athena_descriptive_statistics_OpeningFcn(hObject, eventdata, handles, varargin)
     handles.output = hObject;
     guidata(hObject, handles);
@@ -47,12 +56,14 @@ function Athena_descriptive_statistics_OpeningFcn(hObject, eventdata, handles, v
     end
     dataPath_text_Callback(hObject, eventdata, handles)
     
-
     
 function varargout = Athena_descriptive_statistics_OutputFcn(hObject, eventdata, handles) 
     varargout{1} = handles.output;
 
 
+%% dataPath_text_Callback
+% This function is called when the dataPath is modified, in order to
+% refresh the interface, and to set the available measures.
 function dataPath_text_Callback(hObject, eventdata, handles)
     auxPath = pwd;
     funDir = mfilename('fullpath');
@@ -94,6 +105,10 @@ function dataPath_text_CreateFcn(hObject, eventdata, handles)
     end
 
 
+%% Run_Callback
+% This function computes some descriptive statistical parameters (mean,
+% median, min, max, variance, kurtosis, skewness), and allows to compare
+% them between the two groups of subjects.
 function Run_Callback(hObject, eventdata, handles)
     if strcmp(get(handles.loc, 'Visible'), 'off') 
         areas_list = get(handles.area, 'String');
@@ -135,7 +150,12 @@ function Run_Callback(hObject, eventdata, handles)
         close(gcf)
     end
         
-    
+
+%% descriptive_initialization
+% This function returns the parameters used to perform the descriptive
+% statistical analysis, taking them from the handles (if flag is equal to
+% 'yes', then the string representing the command is added to the
+% Athena_history array)
 function [dataPath, measure, area, band, location, ...
     sub_types, location_name, band_name] = ...
     descriptive_initialization(handles, flag)
@@ -212,7 +232,11 @@ function [dataPath, measure, area, band, location, ...
         string(idx_loc), ',', sub_types_list, ',', ...
         strcat("'", location_name, "'"), ',', strcat("'", band_name, "'"),')'));
 
-    
+
+%% data_search_Callback
+% This function is called when the directory-searcher button is pushed, in
+% order to open the file searcher and changes the settings with respect to
+% the analyzed study directory.
 function data_search_Callback(hObject, eventdata, handles)
 	d = uigetdir;
     if d ~= 0
@@ -221,6 +245,8 @@ function data_search_Callback(hObject, eventdata, handles)
     end
 
 
+%% back_Callback
+% This function switches to the Statistical Analysis Selection interface.
 function back_Callback(hObject, eventdata, handles)
     funDir = mfilename('fullpath');
     funDir = split(funDir, 'Graphics');
@@ -235,6 +261,9 @@ function back_Callback(hObject, eventdata, handles)
     Athena_statistics(dataPath, measure, sub, loc, sub_types)
 
 
+%% export_Callback
+% This function exports (saves) the resulting descriptive statistical 
+% analysis figure.
 function export_Callback(hObject, eventdata, handles, flag)
     if nargin == 3
         flag = '';
@@ -248,6 +277,9 @@ function export_Callback(hObject, eventdata, handles, flag)
         band_name, 1);
 
 
+%% meas_Callback
+% This function is used to set the available parameters for the selected
+% measure.
 function meas_Callback(hObject, eventdata, handles)
     dataPath = get(handles.dataPath_text, 'String');
     measure = define_measure(handles);
@@ -304,6 +336,9 @@ function band_CreateFcn(hObject, eventdata, handles)
     end
 
 
+%% area_Callback
+% This function is used to set the locations which are available for the
+% selected spatial subdivision, relating to the selected measure
 function area_Callback(hObject, eventdata, handles)
     locations = area_definition(handles, handles.meas, handles.area);
     set(handles.loc, 'Value', 1)
@@ -316,6 +351,7 @@ function area_Callback(hObject, eventdata, handles)
         set(handles.location_text, 'Visible', 'off')
     end
 
+    
 function area_CreateFcn(hObject, eventdata, handles)
     if ispc && isequal(get(hObject,'BackgroundColor'), ...
             get(0,'defaultUicontrolBackgroundColor'))
@@ -332,7 +368,9 @@ function loc_CreateFcn(hObject, eventdata, handles)
         set(hObject,'BackgroundColor','white');
     end
 
-    
+
+%% define_measure
+% This function returns the selected measure.
 function measure = define_measure(handles)
     measures_list = get(handles.meas, 'String');
     if iscell(measures_list)

@@ -1,6 +1,6 @@
 %% decompress
-% This function decopress a data archive or a file(only .zip, .tar and .gz 
-% extensions are supproted)
+% This function decopress a data archive or a file (only .zip, .tar and .gz 
+% extensions are supported)
 %
 % decompress(file, directory_check, outDir)
 %

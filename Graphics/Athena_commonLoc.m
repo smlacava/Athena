@@ -1,3 +1,8 @@
+%% Athena_commonLoc
+% This interface allows to save from each recording the only common time
+% series, in the same spatial order, in .mat format.
+
+
 function varargout = Athena_commonLoc(varargin)
     gui_Singleton = 1;
     gui_State = struct('gui_Name',       mfilename, ...
@@ -16,7 +21,11 @@ function varargout = Athena_commonLoc(varargin)
         gui_mainfcn(gui_State, varargin{:});
     end
 
-
+    
+%% Athena_commonLoc_OpeningFcn
+% This function is called during the interface opening, and it sets all the
+% initial parameters with respect to the arguments passed when it is
+% called.
 function Athena_commonLoc_OpeningFcn(hObject, eventdata, handles, varargin)
     handles.output = hObject;
     guidata(hObject, handles);
@@ -63,7 +72,10 @@ function dataPath_text_CreateFcn(hObject, eventdata, handles)
         set(hObject, 'BackgroundColor', 'white');
     end
 
-    
+
+%% data_search_Callback
+% This function opens the file sercher, allowing to select the directory
+% which contains the recording to manage.
 function data_search_Callback(hObject, eventdata, handles)
     d = uigetdir;
     if d ~= 0
@@ -71,7 +83,8 @@ function data_search_Callback(hObject, eventdata, handles)
     end
 
 
-
+%% back_Callback
+% This function switches to the Utility Selection interface.
 function back_Callback(hObject, eventdata, handles)
     funDir = mfilename('fullpath');
     funDir = split(funDir, 'Graphics');
@@ -91,6 +104,9 @@ function back_Callback(hObject, eventdata, handles)
 function axes3_CreateFcn(hObject, eventdata, handles)
 
 
+%% run_Callback
+% This function saves from each recording the only common time series, in 
+% the same spatial order, in .mat format.
 function run_Callback(~, eventdata, handles)
     dataPath = get(handles.dataPath_text, 'String');
     common_locations(dataPath, 1);

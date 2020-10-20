@@ -1,3 +1,9 @@
+%% Athena_distr
+% This interface allows to show the distribution related to a measure,
+% selecting the spatial and the frequency parameters, and to compare the
+% mean or the median values between the analyzed groups of subjects.
+
+
 function varargout = Athena_distr(varargin)
     gui_Singleton = 1;
     gui_State = struct('gui_Name',       mfilename, ...
@@ -17,6 +23,10 @@ function varargout = Athena_distr(varargin)
     end
 
 
+%% Athena_distr_OpeningFcn
+% This function is called during the interface opening, and it sets all the
+% initial parameters with respect to the arguments passed when it is
+% called.
 function Athena_distr_OpeningFcn(hObject, eventdata, handles, varargin)
     handles.output = hObject;
     guidata(hObject, handles);
@@ -48,11 +58,13 @@ function Athena_distr_OpeningFcn(hObject, eventdata, handles, varargin)
     dataPath_text_Callback(hObject, eventdata, handles)
     
 
-    
 function varargout = Athena_distr_OutputFcn(hObject, eventdata, handles) 
     varargout{1} = handles.output;
 
 
+%% dataPath_text_Callback
+% This function is called when the dataPath is modified, in order to
+% refresh the interface, and to set the available measures.
 function dataPath_text_Callback(hObject, eventdata, handles)
     auxPath = pwd;
     funDir = mfilename('fullpath');
@@ -93,7 +105,11 @@ function dataPath_text_CreateFcn(hObject, eventdata, handles)
         set(hObject, 'BackgroundColor', 'white');
     end
 
-
+    
+%% Run_Callback
+% This function shows the distributions related of a measure, in the
+% selected location and frequency band, of the different groups of
+% subjects.
 function Run_Callback(hObject, eventdata, handles)
     if strcmp(get(handles.loc, 'Visible'), 'off') 
         areas_list = get(handles.area, 'String');
@@ -174,6 +190,10 @@ function Run_Callback(hObject, eventdata, handles)
     end
     
     
+%% distributions_normalization
+% This function returns the parameters used to perform the distributions
+% analysis, also adding the command-related string to the Athena_history
+% array (if flag is 'yes').
 function [PAT, HC, parameter, measure, band_name, location] = ...
     distributions_initialization(handles, flag)
     
@@ -256,7 +276,11 @@ function [PAT, HC, parameter, measure, band_name, location] = ...
         strcat("'", parameter, "'"), ',', ...
         strcat("'", location, "'"), ',', strcat("'", band_name, "'"),')'));
 
-    
+
+%% data_search_Callback
+% This function is called when the directory-searcher button is pushed, in
+% order to open the file searcher and changes the settings with respect to
+% the analyzed study directory.
 function data_search_Callback(hObject, eventdata, handles)
 	d = uigetdir;
     if d ~= 0
@@ -265,6 +289,8 @@ function data_search_Callback(hObject, eventdata, handles)
     end
 
 
+%% back_Callback
+% This function switches to the Statistical Analysis Selection interface.
 function back_Callback(hObject, eventdata, handles)
     funDir = mfilename('fullpath');
     funDir = split(funDir, 'Graphics');
@@ -279,6 +305,8 @@ function back_Callback(hObject, eventdata, handles)
     Athena_statistics(dataPath, measure, sub, loc, sub_types)
 
 
+%% export_Callback
+% This function exports the distributions analysis figure.
 function export_Callback(hObject, eventdata, handles, flag)
     if nargin == 3
         flag = '';
@@ -302,6 +330,9 @@ function export_Callback(hObject, eventdata, handles, flag)
     end
 
 
+%% meas_Callback
+% This function is used to set the spatial and frequency parameters which
+% are available for the selected measure.
 function meas_Callback(hObject, eventdata, handles)
     dataPath = get(handles.dataPath_text, 'String');
     measure = define_measure(handles);
@@ -358,6 +389,9 @@ function band_CreateFcn(hObject, eventdata, handles)
     end
 
 
+%% area_Callback
+% This function sets the available locations with respect to the selected
+% measure and the selected spatial subdivision.
 function area_Callback(hObject, eventdata, handles)
     dataPath = get(handles.dataPath_text, 'String');
     measure = define_measure(handles);
@@ -377,6 +411,7 @@ function area_Callback(hObject, eventdata, handles)
         set(handles.location_text, 'Visible', 'off')
     end
 
+    
 function area_CreateFcn(hObject, eventdata, handles)
     if ispc && isequal(get(hObject,'BackgroundColor'), ...
             get(0,'defaultUicontrolBackgroundColor'))
@@ -400,6 +435,8 @@ function mean_Callback(hObject, eventdata, handles)
 function median_Callback(hObject, eventdata, handles)
 
 
+%% define_measure
+% This function returns the selected measure.
 function measure = define_measure(handles)
     measures_list = get(handles.meas, 'String');
     if iscell(measures_list)
