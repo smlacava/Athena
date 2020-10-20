@@ -10,7 +10,7 @@
 
 function new_version = version_info()
     new_version = 0;
-    disp()
+    disp(" ")
     disp("Athena")
     try
         text=fileread('.git/HEAD');
@@ -70,5 +70,5 @@ function new_version = version_info()
         diary OFF
     end
     delete version.txt
-    disp()
+    disp(" ")
 end
