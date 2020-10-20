@@ -38,6 +38,7 @@ The graphic interface allows:
 - To *change the sampling frequency* (if it is not already present inside the signal files)
 - To *select the locations* to show
 - To *save a piece of signal*, by choosing the *starting time*, the *locations* and the *length of the time window* to save
+- To make a *screenshot* of the displayed time window
 
 Furthermore, it is possible to *display the spectra* of the signals, and to execute a **time-frequency analysis** on them.
 
