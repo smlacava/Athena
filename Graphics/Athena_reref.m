@@ -1,3 +1,9 @@
+%% Athena_reref
+% This function is used to select the location (or the average of all the
+% locations related recordings) which has to be used to rereference all the
+% time series related to each location.
+
+
 function varargout = Athena_reref(varargin)
     gui_Singleton = 1;
     gui_State = struct('gui_Name',       mfilename, ...
@@ -17,6 +23,10 @@ function varargout = Athena_reref(varargin)
     end
 
 
+%% Athena_reref_OpeningFcn
+% This function is called during the interface opening, and it sets all the
+% initial parameters with respect to the arguments passed when it is
+% called.
 function Athena_reref_OpeningFcn(hObject, ~, handles, varargin)
     handles.output = hObject;
     guidata(hObject, handles);
@@ -33,12 +43,14 @@ function varargout = Athena_reref_OutputFcn(~, ~, handles)
     varargout{1} = handles.output;
 
 
+%% back_Callback
+% This function closes the interface, returning a 0 to the calling
+% function.
 function back_Callback(~, ~, handles)
     assignin('base','Athena_locsSelecting', 0);
         close(Athena_locsSelecting)
 
     
-
 function axes3_CreateFcn(~, ~, ~)
 
 
@@ -52,6 +64,9 @@ function locs_CreateFcn(hObject, ~, ~)
     end
 
 
+%% save_Callback
+% This function closes the interface, returning the selected locations to
+% the calling function.
 function save_Callback(~, ~, handles)
         selectedLocs = get(handles.locs, 'Value');
         %set(handles.output, 'UserData', selectedList);

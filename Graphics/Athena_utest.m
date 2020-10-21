@@ -1,3 +1,8 @@
+%% Athena_utest
+% This interface allows to execute the Mann–Whitney U-Test between the
+% groups of subjects.
+
+
 function varargout = Athena_utest(varargin)
     gui_Singleton = 1;
     gui_State = struct('gui_Name',       mfilename, ...
@@ -16,7 +21,11 @@ function varargout = Athena_utest(varargin)
         gui_mainfcn(gui_State, varargin{:});
     end
 
-    
+
+%% Athena_utest_OpeningFcn
+% This function is called during the interface opening, and it sets all the
+% initial parameters with respect to the arguments passed when it is
+% called.
 function Athena_utest_OpeningFcn(hObject, eventdata, handles, varargin)
     handles.output = hObject;
     guidata(hObject, handles);
@@ -49,13 +58,14 @@ function Athena_utest_OpeningFcn(hObject, eventdata, handles, varargin)
     end
     dataPath_text_Callback(hObject, eventdata, handles)
             
-                
-
-    
+                  
 function varargout = Athena_utest_OutputFcn(hObject, ~, handles) 
     varargout{1} = handles.output;
 
 
+%% dataPath_text_Callback
+% This function is called when the dataPath is modified, in order to
+% refresh the interface, and to set the available measures.
 function dataPath_text_Callback(hObject, eventdata, handles)
     auxPath = pwd;
     funDir = which('Athena.m');
@@ -115,6 +125,9 @@ function dataPath_text_CreateFcn(hObject, eventdata, handles)
     end
 
 
+%% Run_Callback
+% This function is used when the Run button is pushed, and it executes the
+% U-Test by using the selected measure, with the chosen parameters.
 function Run_Callback(hObject, eventdata, handles)
     save_check = 0;
     if strcmpi(user_decision(...
@@ -167,7 +180,10 @@ function Run_Callback(hObject, eventdata, handles)
     statistical_analysis(HC, PAT, locs, cons, dataPath, measure, ...
         analysis, get(handles.sub_types, 'Data'), save_check);
 
-    
+
+%% data_search_Callback
+% This function allows to search the data directory through the file
+% explorer.
 function data_search_Callback(hObject, eventdata, handles)
     d = uigetdir;
     if d ~= 0
@@ -200,6 +216,8 @@ function meas_CreateFcn(hObject, eventdata, handles)
     end
 
 
+%% back_Callback
+% This function switches to the Statistical Analysis list interface.
 function back_Callback(hObject, eventdata, handles)
     funDir = mfilename('fullpath');
     funDir = split(funDir, 'Graphics');
@@ -226,12 +244,16 @@ function aux_loc_CreateFcn(hObject, eventdata, handles)
 
 function measure_Callback(hObject, eventdata, handles)
 
+
 function measure_CreateFcn(hObject, eventdata, handles)
     if ispc && isequal(get(hObject,'BackgroundColor'), ...
             get(0,'defaultUicontrolBackgroundColor'))
         set(hObject,'BackgroundColor','white');
     end
 
+
+%% define_measure
+% This function returns the name of the selected measure.
 function measure = define_measure(handles)
     measures_list = get(handles.measure, 'String');
     if iscell(measures_list)

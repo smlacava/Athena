@@ -1,3 +1,8 @@
+%% Athena_selectClass
+% This interface allows to select the classifier to use for a
+% classification analysis.
+
+
 function varargout = Athena_selectClass(varargin)
     gui_Singleton = 1;
     gui_State = struct('gui_Name',       mfilename, ...
@@ -17,6 +22,10 @@ function varargout = Athena_selectClass(varargin)
     end
 
 
+%% Athena_selectClass_OpeningFcn
+% This function is called during the interface opening, and it sets all the
+% initial parameters with respect to the arguments passed when it is
+% called.
 function Athena_selectClass_OpeningFcn(hObject, eventdata, handles, varargin)
     handles.output = hObject;
     guidata(hObject, handles);
@@ -50,6 +59,8 @@ function varargout = Athena_selectClass_OutputFcn(hObject, eventdata, handles)
     varargout{1} = handles.output;
 
 
+%% back_Callback
+% This function switches to the Classification Dataset Creation interface.
 function back_Callback(hObject, eventdata, handles)
     funDir = mfilename('fullpath');
     funDir = split(funDir, 'Graphics');
@@ -64,6 +75,9 @@ function back_Callback(hObject, eventdata, handles)
 function axes3_CreateFcn(hObject, eventdata, handles)
 
 
+%% NeuralNetwork_Callback
+% This function switches to the Classification interface, setting the
+% neural network as classifier.
 function NeuralNetwork_Callback(hObject, eventdata, handles)
     if search_ext_toolbox('Deep Learning Toolbox') == 1
         funDir = mfilename('fullpath');
@@ -77,6 +91,9 @@ function NeuralNetwork_Callback(hObject, eventdata, handles)
     end
 
 
+%% RandomForest_Callback
+% This function switches to the Classification interface, setting the
+% random forest as classifier.
 function RandomForest_Callback(hObject, eventdata, handles)
     if search_ext_toolbox('Statistics and Machine Learning Toolbox') == 1
         funDir = mfilename('fullpath');

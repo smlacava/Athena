@@ -1,3 +1,9 @@
+%% Athena_hist
+% This interface allows to show the histogram related to a chosen measure,
+% selecting the properly parameters, comparing the histograms if the
+% subjects belong to different groups.
+
+
 function varargout = Athena_hist(varargin)
     gui_Singleton = 1;
     gui_State = struct('gui_Name',       mfilename, ...
@@ -17,6 +23,10 @@ function varargout = Athena_hist(varargin)
     end
 
 
+%% Athena_hist_OpeningFcn
+% This function is called during the interface opening, and it sets all the
+% initial parameters with respect to the arguments passed when it is
+% called.
 function Athena_hist_OpeningFcn(hObject, eventdata, handles, varargin)
     handles.output = hObject;
     guidata(hObject, handles);
@@ -47,12 +57,14 @@ function Athena_hist_OpeningFcn(hObject, eventdata, handles, varargin)
     end
     dataPath_text_Callback(hObject, eventdata, handles)
     
-
-    
+   
 function varargout = Athena_hist_OutputFcn(hObject, eventdata, handles) 
     varargout{1} = handles.output;
 
-
+    
+%% dataPath_text_Callback
+% This function is called when the dataPath is modified, in order to
+% refresh the interface, and to set the available measures.
 function dataPath_text_Callback(hObject, eventdata, handles)
     auxPath = pwd;
     funDir = mfilename('fullpath');
@@ -94,6 +106,9 @@ function dataPath_text_CreateFcn(hObject, eventdata, handles)
     end
 
 
+%% Run_Callback
+% This function is executed when the Run button is pushed, and it execute
+% the histogram analysis.
 function Run_Callback(hObject, eventdata, handles)
     if strcmp(get(handles.loc, 'Visible'), 'off') 
         areas_list = get(handles.area, 'String');
@@ -192,7 +207,10 @@ function Run_Callback(hObject, eventdata, handles)
         end
     end
     
-    
+
+%% histogram_initialization
+% This function provides all the data and parameters which have to be used
+% in the histogram analysis.
 function [PAT, HC, bins, measure, band_name, location] = ...
     histogram_initialization(handles, flag)
 
@@ -298,7 +316,10 @@ function [PAT, HC, bins, measure, band_name, location] = ...
             strcat("'", band_name, "'"),')'));
     end
 
-    
+
+%% data_search_Callback
+% This function allows to search the data directory through the file
+% explorer.
 function data_search_Callback(hObject, eventdata, handles)
 	d = uigetdir;
     if d ~= 0
@@ -307,6 +328,8 @@ function data_search_Callback(hObject, eventdata, handles)
     end
 
 
+%% back_Callback
+% Thif function switches to the Statistical Analysis list interface.
 function back_Callback(hObject, eventdata, handles)
     funDir = mfilename('fullpath');
     funDir = split(funDir, 'Graphics');
@@ -321,6 +344,9 @@ function back_Callback(hObject, eventdata, handles)
     Athena_statistics(dataPath, measure, sub, loc, sub_types)
 
 
+%% export_Callback
+% This function allows to export the results of the histogram analysis on
+% an external figure.
 function export_Callback(hObject, eventdata, handles, flag)
     if nargin == 3
         flag = '';
@@ -342,6 +368,9 @@ function export_Callback(hObject, eventdata, handles, flag)
     end
 
 
+%% meas_Callback
+% This function sets the available frequency bands and spatial subdividions
+% with respect to the selected measure.
 function meas_Callback(hObject, eventdata, handles)
     dataPath = get(handles.dataPath_text, 'String');
     measure = define_measure(handles);
@@ -396,6 +425,9 @@ function band_CreateFcn(hObject, eventdata, handles)
     end
 
 
+%% area_Callback
+% This function set the available locations with respect to the selected
+% spatial subdivision.
 function area_Callback(hObject, eventdata, handles)
     locations = area_definition(handles, handles.meas, handles.area);
     set(handles.loc, 'Value', 1)
@@ -432,6 +464,8 @@ function medium_Callback(hObject, eventdata, handles)
 function low_Callback(hObject, eventdata, handles)
 
 
+%% define_measure
+% This function returns the name of the selected measure.
 function measure = define_measure(handles)
     measures_list = get(handles.meas, 'String');
     if iscell(measures_list)

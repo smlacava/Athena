@@ -1,3 +1,8 @@
+%% Athena_utility
+% This interface allows to select one of the utilities which are available
+% in the toolbox.
+
+
 function varargout = Athena_utility(varargin)
     gui_Singleton = 1;
     gui_State = struct('gui_Name',       mfilename, ...
@@ -17,6 +22,10 @@ function varargout = Athena_utility(varargin)
     end
 
 
+%% Athena_utility_OpeningFcn
+% This function is called during the interface opening, and it sets all the
+% initial parameters with respect to the arguments passed when it is
+% called.
 function Athena_utility_OpeningFcn(hObject, eventdata, handles, varargin)
     handles.output = hObject;
     guidata(hObject, handles);
@@ -50,6 +59,8 @@ function varargout = Athena_utility_OutputFcn(hObject, eventdata, handles)
     varargout{1} = handles.output;
 
 
+%% back_Callback
+% This function switches to the initial interface of the toolbox.
 function back_Callback(hObject, eventdata, handles)
 	openAnalysis('back', handles)
     
@@ -57,22 +68,33 @@ function back_Callback(hObject, eventdata, handles)
 function axes3_CreateFcn(hObject, eventdata, handles)
 
 
+%% file_decompress_Callback
+% This utility switches to the File Decompression interface.
 function file_decompress_Callback(hObject, eventdata, handles)
 	openAnalysis('file_decompress', handles)
 
 
+%% signals_divider_Callback
+% This function switches to the Signals Divider interface.
 function signals_divider_Callback(hObject, eventdata, handles)
 	openAnalysis('signals_divider', handles)
 
 
+%% folder_decompressor_Callback
+% This function switches to the Archive Decompression interface.
 function folder_decompressor_Callback(hObject, eventdata, handles)
     openAnalysis('folder_decompress', handles)
 
 
+%% signals_extraction_Callback
+% This function switches to the Signals Extraction interface.
 function signals_extraction_Callback(hObject, eventdata, handles)
     openAnalysis('signals_extraction', handles)
 
-    
+
+%% openAnalysis
+% This function switches to another interface, with respect to the pushed
+% button.
 function openAnalysis(utility, handles)
     analysis_list = {'folder_decompress', 'file_decompress', ...
         'signals_divider', 'signals_extraction', 'resample', ...
@@ -96,9 +118,14 @@ function openAnalysis(utility, handles)
         an_handle(dataPath, measure, sub, loc, sub_types)
     end
 
+
+%% resample_Callback
+% This function switches to the Signals Resampling interface.
 function resample_Callback(hObject, eventdata, handles)
 	openAnalysis('resample', handles)
 
 
+%% common_loc_Callback
+% This function switches to the Common Locations Extraction interface.
 function common_loc_Callback(hObject, eventdata, handles)
     openAnalysis('common_loc', handles)

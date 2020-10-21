@@ -1,3 +1,8 @@
+%% Athena_submaking
+% This interface allows to create a subjects list, indicating the group to
+% which they belong.
+
+
 function varargout = Athena_submaking(varargin)
     gui_Singleton = 1;
     gui_State = struct('gui_Name',       mfilename, ...
@@ -17,6 +22,10 @@ function varargout = Athena_submaking(varargin)
     end
 
 
+%% Athena_submaking_OpeningFcn
+% This function is called during the interface opening, and it sets all the
+% initial parameters with respect to the arguments passed when it is
+% called.
 function Athena_submaking_OpeningFcn(hObject, ~, handles, varargin)
     handles.output = hObject;
     guidata(hObject, handles);
@@ -63,10 +72,13 @@ function Athena_submaking_OpeningFcn(hObject, ~, handles, varargin)
         set(handles.sub_types, 'Data', varargin{5})
     end
 
+    
 function varargout = Athena_submaking_OutputFcn(~, ~, handles) 
     varargout{1} = handles.output;
 
 
+%% back_Callback
+% This function switches to the Temporal and Spatial Management interface.
 function back_Callback(~, ~, handles)
     funDir = mfilename('fullpath');
     funDir = split(funDir, 'Graphics');
@@ -91,6 +103,9 @@ function subs_CreateFcn(hObject, ~, ~)
     end
 
 
+%% save_Callback
+% This function saves the subjects list, inside the main data directory, as
+% 'Subjects.mat'.
 function save_Callback(hObject, eventdata, handles)
     dataPath = get(handles.aux_dataPath, 'String');
     

@@ -1,3 +1,8 @@
+%% Athena_statistics
+% This interface allows to select the statistical analysis from the list of
+% the currently available ones.
+
+
 function varargout = Athena_statistics(varargin)
     gui_Singleton = 1;
     gui_State = struct('gui_Name',       mfilename, ...
@@ -17,6 +22,10 @@ function varargout = Athena_statistics(varargin)
     end
 
 
+%% Athena_statistics_OpeningFcn
+% This function is called during the interface opening, and it sets all the
+% initial parameters with respect to the arguments passed when it is
+% called.
 function Athena_statistics_OpeningFcn(hObject, eventdata, handles, varargin)
     handles.output = hObject;
     guidata(hObject, handles);
@@ -50,6 +59,8 @@ function varargout = Athena_statistics_OutputFcn(hObject, eventdata, handles)
     varargout{1} = handles.output;
 
 
+%% back_Callback
+% This function switches to the Analysis list interface.
 function back_Callback(hObject, eventdata, handles)
 	openAnalysis('back', handles)
     
@@ -57,27 +68,39 @@ function back_Callback(hObject, eventdata, handles)
 function axes3_CreateFcn(hObject, eventdata, handles)
 
 
+%% Distr_Callback
+% This function switches to the Distribution Analysis interface.
 function Distr_Callback(hObject, eventdata, handles)
 	openAnalysis('distributions', handles)
 
 
+%% MeasCorr_Callback
+% This function switches to the Measures Correlation Analysis interface.
 function MeasCorr_Callback(hObject, eventdata, handles)
    openAnalysis('measures_correlation', handles)
 
 
+%% utest_Callback
+% This function switches to the U-Test Analysis interface.
 function utest_Callback(hObject, eventdata, handles)
 	openAnalysis('utest', handles)
 
 
+%% IndCorr_Callback
+% This function switches to the Index Correlation Analysis interface.
 function IndCorr_Callback(hObject, eventdata, handles)
     openAnalysis('index_correlation', handles)
 
 
-
+%% Hist_Callback
+% This function switches to the Histogram Analysis interface.
 function Hist_Callback(hObject, eventdata, handles)
     openAnalysis('histogram', handles)
 
 
+%% openAnalysis
+% This function is used to switch the interface with respect to the
+% pushed button.
 function openAnalysis(analysis, handles)
     analysis_list = {'histogram', 'utest', 'index_correlation', ...
         'measures_correlation', 'distributions', ...
@@ -102,6 +125,8 @@ function openAnalysis(analysis, handles)
     an_handle = analysis_interfaces{strcmp(analysis_list, analysis)};
     an_handle(dataPath, measure, sub, loc, sub_types)
 
-    
+
+%% DescStat_Callback
+% This function switches to the Descriptive Statistical Analysis interface.
 function DescStat_Callback(hObject, eventdata, handles)
     openAnalysis('descriptive_statistics', handles)

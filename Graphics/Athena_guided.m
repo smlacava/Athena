@@ -1,3 +1,8 @@
+%% Athena_guided
+% This interface allows to start the driven pipeline, selecting the measure
+% which has to be extracted on the signals contained inside a directory.
+
+
 function varargout = Athena_guided(varargin)
     gui_Singleton = 1;
     gui_State = struct('gui_Name',       mfilename, ...
@@ -17,6 +22,10 @@ function varargout = Athena_guided(varargin)
     end
 
 
+%% Athena_guided_OpeningFcn
+% This function is called during the interface opening, and it sets all the
+% initial parameters with respect to the arguments passed when it is
+% called.
 function Athena_guided_OpeningFcn(hObject, eventdata, handles, varargin)
     handles.output = hObject;
     guidata(hObject, handles);
@@ -54,13 +63,13 @@ function Athena_guided_OpeningFcn(hObject, eventdata, handles, varargin)
     
     Athena_history_update({}, 1);
     
-
-    
+  
 function varargout = Athena_guided_OutputFcn(hObject, eventdata, handles) 
     varargout{1} = handles.output;
 
 
 function dataPath_text_Callback(hObject, eventdata, handles)
+
 
 function dataPath_text_CreateFcn(hObject, eventdata, handles)
     if ispc && isequal(get(hObject, 'BackgroundColor'), ...
@@ -129,6 +138,8 @@ function totBand_text_CreateFcn(hObject, eventdata, handles)
     end
 
 
+%% Run_Callback
+% This function switches to the Measure Parameters Selection interface.
 function Run_Callback(hObject, eventdata, handles)  
     [~, ~, sub, loc, sub_types] = GUI_transition(handles, 'dataPath', ...
         'measure');
@@ -150,7 +161,10 @@ function Run_Callback(hObject, eventdata, handles)
     close(Athena_guided)
     Athena_params(dataPath, measure, sub, loc, sub_types)
     
-    
+
+%% data_search_Callback
+% This function allows to search the data directory through the file
+% explorer.
 function data_search_Callback(hObject, eventdata, handles)
     d = uigetdir;
     if d ~= 0
@@ -169,6 +183,8 @@ function meas_CreateFcn(hObject, eventdata, handles)
 function meas_Callback(hObject, eventdata, handles)
 
 
+%% back_Callback
+% This function switches to the first interface of the toolbox.
 function back_Callback(hObject, eventdata, handles)
     funDir = mfilename('fullpath');
     funDir = split(funDir, 'Graphics');
@@ -190,6 +206,8 @@ function back_Callback(hObject, eventdata, handles)
 function axes3_CreateFcn(hObject, eventdata, handles)
 
 
+%% next_Callback
+% This function switches to the Temporal and Spatial Management interface.
 function next_Callback(~, eventdata, handles)
     funDir = mfilename('fullpath');
     funDir = split(funDir, 'Graphics');

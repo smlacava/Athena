@@ -1,3 +1,11 @@
+%% Athena
+% This interface is the first one of the toolbox, and allows to choose to
+% follow the driven pipeline, the batch pipeline, to watch and filter the
+% signals through the display mode, to analyze their specta, to execute a
+% time-frequency analysis on them, or to use one of the utilities offered
+% by Athena.
+
+
 function varargout = Athena(varargin)
     gui_Singleton = 1;
     gui_State = struct('gui_Name',       mfilename, ...
@@ -10,7 +18,7 @@ function varargout = Athena(varargin)
         gui_State.gui_Callback = str2func(varargin{1});
     end
     
-    if version_info() == 1
+    if isempty(varargin) && version_info() == 1
         Athena
         return;
     end
@@ -22,6 +30,11 @@ function varargout = Athena(varargin)
     end
 
 
+%% Athena_OpeningFcn
+% This function is called during the interface opening, and it sets all the
+% initial parameters with respect to the arguments passed when it is
+% called (it also gives information about the current version and allows to 
+% update it to the most recent online version).
 function Athena_OpeningFcn(hObject, ~, handles, varargin)
     handles.output = hObject;
     guidata(hObject, handles);
@@ -99,42 +112,61 @@ function varargout = Athena_OutputFcn(~, ~, handles)
     varargout{1} = handles.output;
 
 
+%% back_Callback
+% This function closes the toolbox.
 function back_Callback(~, ~, ~)
-    close(Athena)
+    close(Athena(1))
+
     
+%% utility_Callback
+% This function switches to the Utilities list interface.
 function utility_Callback(~, ~, handles)
     [dataPath, measure, sub, loc] = GUI_transition(handles);
-    close(Athena)
+    close(Athena(1))
     Athena_utility(dataPath, measure, sub, loc)
+  
     
 function axes3_CreateFcn(~, ~, ~)
 
 
+%% guided_Callback
+% This function switches to the first interface of the Driven pipeline.
 function guided_Callback(~, ~, handles)
     [dataPath, measure, sub, loc] = GUI_transition(handles);
-    close(Athena)
+    close(Athena(1))
     Athena_guided(dataPath, measure, sub, loc)
     
-    
+
+%% tf_analysis_Callback
+% This function switches to the first interface of the Time-Frequency
+% analysis modality.
 function tf_analysis_Callback(~, ~, handles)
     [dataPath, measure, sub, loc] = GUI_transition(handles);
-    close(Athena)
+    close(Athena(1))
     Athena_tfPath(dataPath, measure, sub, loc)
 
-    
-function batch_Callback(hObject, eventdata, handles)
+
+%% batch_Callback
+% This function switches to the Batch Strudy interface.
+function batch_Callback(~, ~, handles)
     [dataPath, measure, sub, loc] = GUI_transition(handles);
-    close(Athena)
+    close(Athena(1))
     Athena_batch(dataPath, measure, sub, loc)
     
-    
-function spectrum_Callback(hObject, eventdata, handles)
+
+%% spectrum_Callback
+% This function switches to the first interface of the Spectral analysis
+% modality.
+function spectrum_Callback(~, ~, handles)
     [dataPath, measure, sub, loc] = GUI_transition(handles);
-    close(Athena)
+    close(Athena(1))
     Athena_freqPath(dataPath, measure, sub, loc)
     
-    
-function display_Callback(hObject, eventdata, handles)
+
+%% display_Callback
+% This function switches to the first interface of the Signals Display
+% modality.
+function display_Callback(~, ~, handles)
     [dataPath, measure, sub, loc] = GUI_transition(handles);
-    close(Athena)
+    close(Athena(1))
     Athena_sigPath(dataPath, measure, sub, loc)

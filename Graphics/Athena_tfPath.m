@@ -1,3 +1,8 @@
+%% Athena_tfPath
+% This function allows to choose the data directory which contains the
+% time series of which execute the time-frequency analysis.
+
+
 function varargout = Athena_tfPath(varargin)
     gui_Singleton = 1;
     gui_State = struct('gui_Name',       mfilename, ...
@@ -17,6 +22,10 @@ function varargout = Athena_tfPath(varargin)
     end
 
 
+%% Athena_hist_OpeningFcn
+% This function is called during the interface opening, and it sets all the
+% initial parameters with respect to the arguments passed when it is
+% called.
 function Athena_tfPath_OpeningFcn(hObject, eventdata, handles, varargin)
     handles.output = hObject;
     guidata(hObject, handles);
@@ -63,7 +72,10 @@ function dataPath_text_CreateFcn(hObject, eventdata, handles)
         set(hObject, 'BackgroundColor', 'white');
     end
 
-    
+
+%% data_search_Callback
+% This function allows to search the data directory through the file
+% explorer.
 function data_search_Callback(hObject, eventdata, handles)
     d = uigetdir;
     if d ~= 0
@@ -71,7 +83,8 @@ function data_search_Callback(hObject, eventdata, handles)
     end
 
 
-
+%% back_Callback
+% This function switches to the initial interface of the toolbox.
 function back_Callback(hObject, eventdata, handles)
     funDir = mfilename('fullpath');
     funDir = split(funDir, 'Graphics');
@@ -91,6 +104,8 @@ function back_Callback(hObject, eventdata, handles)
 function axes3_CreateFcn(hObject, eventdata, handles)
 
 
+%% next_Callback
+% This function switches to the Time-Frequency Analysis interface.
 function next_Callback(~, eventdata, handles)
     funDir = mfilename('fullpath');
     funDir = split(funDir, 'Graphics');

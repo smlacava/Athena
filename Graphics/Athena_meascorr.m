@@ -1,3 +1,8 @@
+%% Athena_meascorr
+% This interface allows to execute the correlation analysis between two
+% different measures.
+
+
 function varargout = Athena_meascorr(varargin)
     gui_Singleton = 1;
     gui_State = struct('gui_Name',       mfilename, ...
@@ -17,6 +22,10 @@ function varargout = Athena_meascorr(varargin)
     end
 
 
+%% Athena_meascorr_OpeningFcn
+% This function is called during the interface opening, and it sets all the
+% initial parameters with respect to the arguments passed when it is
+% called.
 function Athena_meascorr_OpeningFcn(hObject, eventdata, handles, varargin)
     handles.output = hObject;
     guidata(hObject, handles);
@@ -52,6 +61,9 @@ function varargout = Athena_meascorr_OutputFcn(hObject, eventdata, handles)
     varargout{1} = handles.output;
 
 
+%% dataPath_text_Callback
+% This function is called when the dataPath is modified, in order to
+% refresh the interface, and to set the available measures.
 function dataPath_text_Callback(hObject, eventdata, handles)
     dataPath = get(handles.dataPath_text, 'String');
     set_measures(dataPath, handles);
@@ -78,6 +90,9 @@ function dataPath_text_CreateFcn(hObject, eventdata, handles)
     end
 
 
+%% Run_Callback
+% This function is used when the Run button is pushed, and it executes the
+% correlation analysis between the two chosen measures.
 function Run_Callback(hObject, eventdata, handles)
     funDir = mfilename('fullpath');
     funDir = split(funDir, 'Graphics');
@@ -166,6 +181,9 @@ function Run_Callback(hObject, eventdata, handles)
         string(save_check_fig), ',', strcat("'", format, "'"), ')'));
        
 
+%% data_search_Callback
+% This function allows to search the data directory through the file
+% explorer.
 function data_search_Callback(hObject, eventdata, handles)
 	d = uigetdir;
     if d ~= 0
@@ -192,6 +210,8 @@ function data_search_Callback(hObject, eventdata, handles)
     end
 
 
+%% back_Callback
+% This function switches to the Statistical Analysis list interface.
 function back_Callback(hObject, eventdata, handles)
     funDir = mfilename('fullpath');
     funDir = split(funDir, 'Graphics');
@@ -228,6 +248,9 @@ function meas2_CreateFcn(hObject, eventdata, handles)
         set(hObject, 'BackgroundColor', 'white');
     end
    
+    
+%% set_measures
+% This function set the list of available measures.
 function set_measures(path, handles)
     measures = available_measures(path, 1);
     set(handles.meas1, 'String', measures);

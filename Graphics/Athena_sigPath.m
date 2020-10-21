@@ -1,3 +1,8 @@
+%% Athena_sigpath
+% This interface allows to choose the data directory which contains the
+% time series which have to be shown in the Display modality.
+
+
 function varargout = Athena_sigPath(varargin)
     gui_Singleton = 1;
     gui_State = struct('gui_Name',       mfilename, ...
@@ -17,6 +22,10 @@ function varargout = Athena_sigPath(varargin)
     end
 
 
+%% Athena_sigPath_OpeningFcn
+% This function is called during the interface opening, and it sets all the
+% initial parameters with respect to the arguments passed when it is
+% called.
 function Athena_sigPath_OpeningFcn(hObject, eventdata, handles, varargin)
     handles.output = hObject;
     guidata(hObject, handles);
@@ -63,7 +72,10 @@ function dataPath_text_CreateFcn(hObject, eventdata, handles)
         set(hObject, 'BackgroundColor', 'white');
     end
 
-    
+
+%% data_search_Callback
+% This function allows to search the data directory through the file
+% explorer.
 function data_search_Callback(hObject, eventdata, handles)
     d = uigetdir;
     if d ~= 0
@@ -71,7 +83,8 @@ function data_search_Callback(hObject, eventdata, handles)
     end
 
 
-
+%% back_Callback
+% This function switches to the initial interface of the toolbox.
 function back_Callback(hObject, eventdata, handles)
     funDir = mfilename('fullpath');
     funDir = split(funDir, 'Graphics');
@@ -79,7 +92,7 @@ function back_Callback(hObject, eventdata, handles)
     addpath 'Auxiliary'
     addpath 'Graphics'
     [~, measure, sub, loc, sub_types] = GUI_transition(handles, ...
-'dataPath', 'measure');
+        'dataPath', 'measure');
     dataPath = string(get(handles.dataPath_text, 'String'));
     close(Athena_sigPath)
     if strcmp('es. C:\User\Data', dataPath)
@@ -91,6 +104,8 @@ function back_Callback(hObject, eventdata, handles)
 function axes3_CreateFcn(hObject, eventdata, handles)
 
 
+%% next_Callback
+% This function switches to the Signals Display interface.
 function next_Callback(~, eventdata, handles)
     funDir = mfilename('fullpath');
     funDir = split(funDir, 'Graphics');

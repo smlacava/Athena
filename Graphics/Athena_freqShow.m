@@ -1,3 +1,8 @@
+%% Athena_freqShow
+% This interface allows to analyze the power spectrum related to each
+% location, for each signal contained in the data directory.
+
+
 function varargout = Athena_freqShow(varargin)
     gui_Singleton = 1;
     gui_State = struct('gui_Name',       mfilename, ...
@@ -16,7 +21,11 @@ function varargout = Athena_freqShow(varargin)
         gui_mainfcn(gui_State, varargin{:});
     end
 
-    
+
+%% Athena_freqShow_OpeningFcn
+% This function is called during the interface opening, and it sets all the
+% initial parameters with respect to the arguments passed when it is
+% called.
 function Athena_freqShow_OpeningFcn(hObject, ~, handles, varargin)
     handles.output = hObject;
     guidata(hObject, handles);
@@ -100,6 +109,8 @@ function varargout = Athena_freqShow_OutputFcn(~, ~, handles)
     varargout{1} = handles.output;
 
 
+%% back_Callback
+% This function switches to the first interface of the toolbox.
 function back_Callback(~, ~, handles)
     [dataPath, measure, sub, loc, sub_types] = GUI_transition(handles);
     close(Athena_freqShow)
@@ -109,6 +120,9 @@ function back_Callback(~, ~, handles)
 function signal_CreateFcn(~, ~, ~)
 
 
+%% next_Callback
+% This function allows to show the power spectrum related to the following
+% signal's file in the data directory.
 function next_Callback(hObject, eventdata, handles)
     case_number = str2double(get(handles.case_number, 'String'))+2;
     set(handles.case_number, 'String', string(case_number));
@@ -134,7 +148,10 @@ function time_text_CreateFcn(hObject, ~, ~)
         set(hObject,'BackgroundColor','white');
     end
 
-    
+
+%% Previous_Callback
+% This function allows to show the power spectrum related to the previous
+% signal's file in the data directory.
 function Previous_Callback(~, ~, handles)    
     dataPath = get(handles.aux_dataPath, 'String');
     dataPath = path_check(dataPath);
@@ -201,7 +218,10 @@ function Previous_Callback(~, ~, handles)
         set(handles.case_number, 'String', '1');
     end
     
-    
+
+%% right_Callback
+% This function allows to show the power spectrum related to the following
+% one second forward time window.
 function right_Callback(~, ~, handles)
     [data, fmin, fmax, time, fs] = get_data(handles);
     time = time+1;
@@ -214,7 +234,10 @@ function right_Callback(~, ~, handles)
     end
     freqPlot(handles, data)
     
-    
+
+%% left_Callback
+% This function allows to show the power spectrum related to the previous
+% one second backward time window.
 function left_Callback(~, ~, handles)
     [data, fmin, fmax, time, fs] = get_data(handles);
     time = time-1;
@@ -226,7 +249,10 @@ function left_Callback(~, ~, handles)
     end
     freqPlot(handles, data)
     
-    
+
+%% big_right_Callback
+% This function allows to show the power spectrum related to the following
+% time window.
 function big_right_Callback(~, ~, handles)
     [data, fmin, fmax, time, fs] = get_data(handles);
     dt = time(2)-time(1);
@@ -239,7 +265,10 @@ function big_right_Callback(~, ~, handles)
     end
     freqPlot(handles, data)
     
-    
+
+%% big_left_Callback
+% This function allows to show the power spectrum related to the previous
+% time window.
 function big_left_Callback(~, ~, handles)
     [data, fmin, fmax, time, fs] = get_data(handles);
     dt = time(2)-time(1);
@@ -251,7 +280,10 @@ function big_left_Callback(~, ~, handles)
     end
     freqPlot(handles, data)
 
-    
+
+%% fs_ClickedCallback
+% This function allows to set the sampling frequency, if its value is not
+% already contained in the signal's file.
 function fs_ClickedCallback(~, ~, handles)
     try
         fs_check = get(handles.fs_check, 'String');
@@ -286,6 +318,9 @@ function fs_ClickedCallback(~, ~, handles)
 function amplitude_ClickedCallback(~, ~, ~)
 
 
+%% time_window_ClickedCallback
+% This function allows to set the length (in seconds) of the time window
+% related to the shown power spectrum.
 function time_window_ClickedCallback(~, ~, handles)
     try
         [data, fmin, fmax, time, fs] = get_data(handles);
@@ -305,6 +340,9 @@ function time_window_ClickedCallback(~, ~, handles)
     end
     
 
+%% Go_to_ClickedCallback
+% This function allows to set the first time instant related to the time
+% window of the shown power spectrum.
 function Go_to_ClickedCallback(~, ~, handles)
     try
         [data, fmin, fmax, time, fs] = get_data(handles);
@@ -322,7 +360,10 @@ function Go_to_ClickedCallback(~, ~, handles)
     catch
     end
     
-    
+
+%% freqPlot
+% This function shows the power spectrum related to the selected time
+% window of the chosen location by using the selected parameters.
 function freqPlot(handles, varargin)
     try
         locs_ind = get(handles.locs_ind, 'Data');
@@ -354,7 +395,9 @@ function freqPlot(handles, varargin)
     catch
     end
     
-    
+
+%% Loc_ClickedCallback
+% This function allows to set the locations list's file.
 function Loc_ClickedCallback(~, ~, handles)
     try
         msg = 'Select the file which contains the locations of the signal';
@@ -375,7 +418,9 @@ function Loc_ClickedCallback(~, ~, handles)
     catch
     end
     
-    
+
+%% LocsToShow_ClickedCallback
+% This function allows to select the location which has to be analyzed.
 function LocsToShow_ClickedCallback(~, ~, handles)
     locs = get(handles.locs_matrix, 'Data');
     data = get_data(handles);
@@ -397,7 +442,10 @@ function LocsToShow_ClickedCallback(~, ~, handles)
         freqPlot(handles, data, fs, locs)
     end
 
-    
+
+%% forward_show_ClickedCallback
+% This function shows the power spectrum, automatically going forward in
+% time, one second per interaction.
 function forward_show_ClickedCallback(hObject, eventdata, handles)
      set_off(handles, 'forward')
      while 1
@@ -410,8 +458,11 @@ function forward_show_ClickedCallback(hObject, eventdata, handles)
          pause(1)
      end
 
-    
- function backwards_show_ClickedCallback(hObject, eventdata, handles)
+
+%% backwards_show_ClickedCallback
+% This function shows the power spectrum, automatically going backward in
+% time, one second per interaction.
+function backwards_show_ClickedCallback(hObject, eventdata, handles)
      set_off(handles, 'backwards')
      while 1
          if check_off(handles, 'backwards')
@@ -423,7 +474,11 @@ function forward_show_ClickedCallback(hObject, eventdata, handles)
          pause(1)
      end
  
- function big_forward_show_ClickedCallback(hObject, eventdata, handles)
+     
+%% big_forward_show_ClickedCallback
+% This function shows the power spectrum, automatically going forward in
+% time, one time window per interaction.
+function big_forward_show_ClickedCallback(hObject, eventdata, handles)
      set_off(handles, 'big_forward')
      while 1
          if check_off(handles, 'big_forward')
@@ -434,8 +489,12 @@ function forward_show_ClickedCallback(hObject, eventdata, handles)
          big_right_Callback(hObject, eventdata, handles)
          pause(1)
      end
+   
      
- function big_backwards_show_ClickedCallback(hObject, eventdata, handles)
+%% big_backwards_show_ClickedCallback
+% This function shows the power spectrum, automatically going backward in
+% time, one time window per interaction.
+function big_backwards_show_ClickedCallback(hObject, eventdata, handles)
      set_off(handles, 'big_backwards')
      while 1
          if check_off(handles, 'big_backwards')
@@ -447,7 +506,11 @@ function forward_show_ClickedCallback(hObject, eventdata, handles)
          pause(1)
      end
  
- function set_off(handles, hand_name_not)
+
+%% set_off
+% This function stops all the automatic power spectrum time window
+% switching.
+function set_off(handles, hand_name_not)
      hands = {handles.back_show, handles.forward_show, ...
          handles.stop_show, handles.big_back_show, ...
          handles.big_forward_show};
@@ -460,8 +523,13 @@ function forward_show_ClickedCallback(hObject, eventdata, handles)
      for i = 1:length(values)
          set(hands{i}, 'State', values{i})
      end
+
      
- function check = check_off(handles, hand_name)
+%% check_off
+% This function checks if some of the automatic time window switching
+% options are running (it returns 1 if one of them is running, 0
+% otherwise).
+function check = check_off(handles, hand_name)
      check = 0;
      if strcmpi(get(handles.stop_show, 'State'), 'on')
          check = 1;
@@ -480,37 +548,50 @@ function forward_show_ClickedCallback(hObject, eventdata, handles)
          end
      end
          
- 
- function end_show_ClickedCallback(~, ~, handles)
+
+%% end_show_ClickedCallback
+% This function shows the power spectrum related to the last available time 
+% window.
+function end_show_ClickedCallback(~, ~, handles)
      axes(handles.signal);
      [data, ~, ~, time, fs] = get_data(handles);
      final = floor(length(data)/fs);
      dt = time(2)-time(1);
      set(handles.time_shown_value, 'Data', [final-dt final]);
      freqPlot(handles)
+  
      
-     
- function start_show_ClickedCallback(~, ~, handles)
+%% start_show_ClickedCallback
+% This function shows the power spectrum related to the first available
+% time window.
+function start_show_ClickedCallback(~, ~, handles)
      axes(handles.signal);
      [data, ~, ~, time, fs] = get_data(handles);
      dt = time(2)-time(1);
      set(handles.time_shown_value, 'Data', [0 dt]);
      freqPlot(handles);
-       
- function stop_show_ClickedCallback(~, ~, handles)
+
+     
+%% stop_show_ClickedCallback
+% This function stops all the automatic time window switching modalities.
+function stop_show_ClickedCallback(~, ~, handles)
      set(handles.big_forward_show, 'State', 'off')
      set(handles.big_back_show, 'State', 'off')
      set(handles.forward_show, 'State', 'off')
      set(handles.back_show, 'State', 'off')
    
-    
+
+%% location_index
+% This function return the index related to the selected location.
 function locs_ind = location_index(locs, data)
      locs_ind = ones(length(locs), 1);
      if isempty(locs_ind)
          locs_ind = ones(min(size(data)), 1);
      end
     
-    
+
+%% get_data
+% This function returns the current signal and the related parameters.
 function [data, fmin, fmax, time, fs] = get_data(handles)
     data = get(handles.signal_matrix, 'Data');
     fmin = str2double(get(handles.fmin, 'String'));
@@ -519,6 +600,9 @@ function [data, fmin, fmax, time, fs] = get_data(handles)
     fs = str2double(get(handles.fs_text, 'String'));
 
 
+%% fmin_Callback
+% This function is used when the lower cut frequency is changed, in order
+% to execute some controls on the value and to show the power spectrum.
 function fmin_Callback(hObject, eventdata, handles)
         frequencies = get(handles.freq_matrix, 'Data');
     try
@@ -550,7 +634,9 @@ function fmin_CreateFcn(hObject, eventdata, handles)
     end
 
 
-
+%% fmax_Callback
+% This function is used when the higher cut frequency is changed, in order
+% to execute some controls on the value and to show the power spectrum.
 function fmax_Callback(hObject, eventdata, handles)
     frequencies = get(handles.freq_matrix, 'Data');
     try
@@ -573,6 +659,7 @@ function fmax_Callback(hObject, eventdata, handles)
         problem("Invalid maximum frequency value")
     end
     set(handles.fmax, 'String', string(frequencies{2}));
+   
     
 function fmax_CreateFcn(hObject, eventdata, handles)
     if ispc && isequal(get(hObject,'BackgroundColor'), ...
@@ -580,6 +667,10 @@ function fmax_CreateFcn(hObject, eventdata, handles)
         set(hObject,'BackgroundColor','white');
     end
 
+
+%% screen_ClickedCallback
+% This function is used to save a screenshot of the shown power spectrum,
+% inside a subdirectory of the current directory.
 function screen_ClickedCallback(hObject, eventdata, handles)
     dataPath = path_check(get(handles.aux_dataPath, 'String'));
     outDir = create_directory(dataPath, 'Images');

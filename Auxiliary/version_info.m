@@ -1,6 +1,7 @@
 %% version_info
 % This function shows information about the local toolbox version and
-% checks if there are new remote versions.
+% checks if there are new remote versions (in this case, the user can also 
+% automatically download the updated version).
 %
 % new_version = version_info()
 %
@@ -33,12 +34,16 @@ function new_version = version_info()
         disp(' ')
         disp('Local commit hash:')
         disp(SHA1text(1:end-1))
-        disp(' ')
-        disp('Remote commit hash:')
     catch
     end
     
+    if connection_check() == 0
+        return;
+    end
+    
     try
+        disp(' ')
+        disp('Remote commit hash:')
         diary ON
         !git ls-remote https://github.com/smlacava/Athena/
         disp(' ')
@@ -62,7 +67,7 @@ function new_version = version_info()
             if strcmpi(user_decision(...
                     'Do you want to download the new version?', ...
                     'New version detected'), 'yes')
-                !git fetch https://github.com/smlacava/Athena/
+                !git pull https://github.com/smlacava/Athena/
                 new_version = 1;
             end
         end

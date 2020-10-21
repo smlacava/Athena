@@ -1,3 +1,9 @@
+%% Athena_params
+% This interface allows to set the parameters of the selected measure, and
+% to extract if from each temporal series contained inside the chosen data
+% directory.
+
+
 function varargout = Athena_params(varargin)
     gui_Singleton = 1;
     gui_State = struct('gui_Name',       mfilename, ...
@@ -16,7 +22,11 @@ function varargout = Athena_params(varargin)
         gui_mainfcn(gui_State, varargin{:});
     end
 
-    
+
+%% Athena_params_OpeningFcn
+% This function is called during the interface opening, and it sets all the
+% initial parameters with respect to the arguments passed when it is
+% called.
 function Athena_params_OpeningFcn(hObject, eventdata, handles, ...
     varargin)
     handles.output = hObject;
@@ -69,6 +79,9 @@ function varargout = Athena_params_OutputFcn(~, ~, handles)
     varargout{1} = handles.output;
 
 
+%% fs_text_Callback
+% This function is used when the sampling frequency parameter is changed,
+% to verify the possibility to use it on the signals.
 function fs_text_Callback(hObject, eventdata, handles)
     dataPath = get(handles.aux_dataPath, 'String');
     cases = define_cases(dataPath);
@@ -97,7 +110,6 @@ function fs_text_Callback(hObject, eventdata, handles)
     set(handles.TotTime, 'String', TotTime);
 
     
-    
 function fs_text_CreateFcn(hObject, eventdata, handles)
     if ispc && isequal(get(hObject, 'BackgroundColor'), ...
             get(0, 'defaultUicontrolBackgroundColor'))
@@ -105,10 +117,14 @@ function fs_text_CreateFcn(hObject, eventdata, handles)
     end
 
 
+%% cf_text_Callback
+% This function is used to adapt the total frequency band parameter when
+% the cut frequencies list is modified by the user.
 function cf_text_Callback(hObject, eventdata, handles)
     [~, ~, totBand] = automatic_parameters(handles, "cf");
     set(handles.totBand_text, 'String', totBand)
 
+    
 function cf_text_CreateFcn(hObject, eventdata, handles)
     if ispc && isequal(get(hObject, 'BackgroundColor'), ...
             get(0, 'defaultUicontrolBackgroundColor'))
@@ -116,10 +132,14 @@ function cf_text_CreateFcn(hObject, eventdata, handles)
     end
 
 
+%% epNum_text_Callback
+% This function is used to set the suggested time for each epoch when the
+% number of epochs is modified by the user.
 function epNum_text_Callback(hObject, eventdata, handles)
     [~, epTime, ~] = automatic_parameters(handles, "epNum");
     set(handles.epTime_text, 'String', epTime)
 
+    
 function epNum_text_CreateFcn(hObject, eventdata, handles)
     if ispc && isequal(get(hObject, 'BackgroundColor'), ...
             get(0, 'defaultUicontrolBackgroundColor'))
@@ -130,6 +150,7 @@ function epNum_text_CreateFcn(hObject, eventdata, handles)
 function epTime_text_Callback(hObject, eventdata, handles)
     [~, ~, ~] = automatic_parameters(handles, "epTime");
 
+    
 function epTime_text_CreateFcn(hObject, eventdata, handles)
     if ispc && isequal(get(hObject, 'BackgroundColor'), ...
             get(0, 'defaultUicontrolBackgroundColor'))
@@ -137,11 +158,15 @@ function epTime_text_CreateFcn(hObject, eventdata, handles)
     end
 
 
+%% tStart_text_Callback
+% This function suggests the number of epochs and the time length of each
+% one, when the starting time parameter is modified by the user.
 function tStart_text_Callback(hObject, eventdata, handles)
     [epNum, epTime, ~] = automatic_parameters(handles, "tStart");
     set(handles.epNum_text, 'String', epNum)
     set(handles.epTime_text, 'String', epTime)
 
+    
 function tStart_text_CreateFcn(hObject, eventdata, handles)
     if ispc && isequal(get(hObject, 'BackgroundColor'), ...
             get(0, 'defaultUicontrolBackgroundColor'))
@@ -159,6 +184,9 @@ function totBand_text_CreateFcn(hObject, eventdata, handles)
     end
 
 
+%% Run_Callback
+% This function is used when the Run button is pushed, and it extract the
+% measure, using the selected parameters.
 function Run_Callback(hObject, eventdata, handles)
     dataPath = char_check(get(handles.aux_dataPath, 'String'));
     dataPath = path_check(dataPath);
@@ -239,6 +267,9 @@ function Run_Callback(hObject, eventdata, handles)
     success();
 
 
+%% back_Callback
+% This function switches to the initial interface of the Driven Pipeline
+% modality.
 function back_Callback(hObject, eventdata, handles)
     funDir = mfilename('fullpath');
     funDir = split(funDir, 'Graphics');
@@ -253,6 +284,8 @@ function back_Callback(hObject, eventdata, handles)
 function axes3_CreateFcn(hObject, eventdata, handles)
 
 
+%% next_Callback
+% This function switches to the Temporal and Spatial Management interface.
 function next_Callback(~, eventdata, handles)
     funDir = mfilename('fullpath');
     funDir = split(funDir, 'Graphics');

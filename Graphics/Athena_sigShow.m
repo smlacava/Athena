@@ -1,3 +1,9 @@
+%% Athena_sigShow
+% This interface allows to show the signals, to filter it, to take a 
+% picture of its shown time window, to save a piece of it, rereference it, 
+% and explore it manually or automatically.
+
+
 function varargout = Athena_sigShow(varargin)
     gui_Singleton = 1;
     gui_State = struct('gui_Name',       mfilename, ...
@@ -16,7 +22,11 @@ function varargout = Athena_sigShow(varargin)
         gui_mainfcn(gui_State, varargin{:});
     end
 
-    
+
+%% Athena_sigShow_OpeningFcn
+% This function is called during the interface opening, and it sets all the
+% initial parameters with respect to the arguments passed when it is
+% called.
 function Athena_sigShow_OpeningFcn(hObject, ~, handles, varargin)
     handles.output = hObject;
     guidata(hObject, handles);
@@ -90,6 +100,8 @@ function varargout = Athena_sigShow_OutputFcn(~, ~, handles)
     varargout{1} = handles.output;
 
 
+%% back_Callback
+% This function switches to the initial interface of the toolbox.
 function back_Callback(~, ~, handles)
     [dataPath, measure, sub, loc, sub_types] = GUI_transition(handles);
     close(Athena_sigShow)
@@ -99,6 +111,8 @@ function back_Callback(~, ~, handles)
 function signal_CreateFcn(~, ~, ~)
 
 
+%% next_Callback
+% This function switches to the following time series.
 function next_Callback(hObject, eventdata, handles)
     case_number = str2double(get(handles.case_number, 'String'))+2;
     set(handles.case_number, 'String', string(case_number));
@@ -124,7 +138,9 @@ function time_text_CreateFcn(hObject, ~, ~)
         set(hObject,'BackgroundColor','white');
     end
 
-    
+
+%% Previous_Callback
+% This function switches to the previous time series.
 function Previous_Callback(~, ~, handles)    
     dataPath = get(handles.aux_dataPath, 'String');
     dataPath = path_check(dataPath);
@@ -174,7 +190,9 @@ function Previous_Callback(~, ~, handles)
         set(handles.case_number, 'String', '1');
     end
     
-    
+
+%% right_Callback
+% This function switches the shown time window a second forward.
 function right_Callback(~, ~, handles)
     axes(handles.signal);
     Lim = xlim;
@@ -188,6 +206,9 @@ function right_Callback(~, ~, handles)
         xlim([Limit-Lim(2)+Lim(1)-1 Limit]);
     end
     
+    
+%% left_Callback
+% This function switches the shown time window a second backward.
 function left_Callback(~, ~, handles)
     axes(handles.signal);
     Lim = xlim;
@@ -205,7 +226,9 @@ function left_Callback(~, ~, handles)
         end
     end
     
-    
+
+%% big_right_Callback
+% This function switches to the following time window.
 function big_right_Callback(~, ~, handles)
     axes(handles.signal);
     Lim = xlim;
@@ -219,7 +242,9 @@ function big_right_Callback(~, ~, handles)
         xlim([Limit-dt Limit]);
     end
     
-    
+
+%% big_left_Callback
+% This function switches to the previous time window.
 function big_left_Callback(~, ~, handles)
     axes(handles.signal);
     Lim = xlim;
@@ -231,7 +256,10 @@ function big_left_Callback(~, ~, handles)
         xlim([1 dt+1])
     end
 
-    
+
+%% fs_ClickedCallback
+% This function allows to set the sampling frequency, if its value is not
+% already inside the time series file.
 function fs_ClickedCallback(~, ~, handles)
     try
         fs_check = get(handles.fs_check, 'String');
@@ -270,6 +298,8 @@ function fs_ClickedCallback(~, ~, handles)
 function amplitude_ClickedCallback(~, ~, ~)
 
 
+%% time_window_ClickedCallback
+% This function allows to change the length of the shown time window.
 function time_window_ClickedCallback(~, ~, handles)
     try
         data = get(handles.signal_matrix, 'Data');
@@ -291,6 +321,9 @@ function time_window_ClickedCallback(~, ~, handles)
     end
     
 
+%% Go_to_ClickedCallback
+% This function shown the time window starting with the selected time
+% instant.
 function Go_to_ClickedCallback(~, ~, handles)
     try
         axes(handles.signal);
@@ -315,6 +348,9 @@ function Go_to_ClickedCallback(~, ~, handles)
     end
     
 
+%% zoom_Callback
+% This function shown the amplitude of the time series, multiplied by the
+% inserted value.
 function zoom_Callback(~, ~, handles)
     axis(handles.signal);
     Lim = floor(xlim/str2double(get(handles.fs_text, 'String')));
@@ -323,7 +359,9 @@ function zoom_Callback(~, ~, handles)
         get(handles.locs_matrix, 'Data'), Lim(1), Lim(end));
     
     
-    
+%% sigPlot
+% This function shows the chosen time window (between t_start and t_end) of
+% the time series (data), setting its sampling frequency (fs).
 function sigPlot(handles, data, fs, ~, t_start, t_end)
     switch nargin
         case 4
@@ -372,6 +410,9 @@ function sigPlot(handles, data, fs, ~, t_start, t_end)
     time_window(handles)
 
 
+%% TimeToSave_ClickedCallback
+% This function allows to set the length of the time window of the time 
+% series which has to be saved.
 function TimeToSave_ClickedCallback(~, ~, handles)
     try
         data = get(handles.signal_matrix, 'Data');
@@ -386,10 +427,17 @@ function TimeToSave_ClickedCallback(~, ~, handles)
     end
     
 
+%% tStart_text_Callback
+% This function sets the initial instant of the time window of the time
+% series which has to be saved.
 function tStart_text_Callback(~, ~, handles)
     time_window(handles)
     
-    
+
+%% time_window
+% This function shows the initial time instant and the final one of the
+% time window which is eventually saved, through a black vertical line and
+% a red one, respectively.
 function time_window(handles)
     tStart = str2double(get(handles.tStart_text, 'String'));
     fs = str2double(get(handles.fs_text, 'String'));
@@ -420,6 +468,12 @@ function time_window(handles)
     hold off;
     
 
+%% Run_Callback
+% This function saves the time window of the time series between the black
+% and the red vertical lines, filtered if the Filtered button is pushed
+% (non-filtered otherwise), related to the only shown channels, in a data
+% structure containing the parameters used by the toolbox, in a .mat file
+% inside a subdirectory of the main data directory.
 function Run_Callback(~, ~, handles)
     dataPath = path_check(get(handles.aux_dataPath, 'String'));
     subject = get(handles.Title, 'String');
@@ -456,7 +510,10 @@ function Run_Callback(~, ~, handles)
     save(dataPath, 'data');
     success()
     
-    
+
+%% Loc_ClickedCallback
+% This function allows to select the file containing the list of locations,
+% if they are not already in the time series file.
 function Loc_ClickedCallback(~, ~, handles)
     if not(isempty(get(handles.locs_matrix, 'Data')))
         problem('The locations are already present in the file')
@@ -494,7 +551,9 @@ function Loc_ClickedCallback(~, ~, handles)
     catch
     end
     
-    
+
+%% LocsToShow_ClickedCallback
+% This function allows to select the channels which have to be shown.
 function LocsToShow_ClickedCallback(~, ~, handles)
     locs = get(handles.locs_matrix, 'Data');
     data = get_data(handles);
@@ -514,7 +573,10 @@ function LocsToShow_ClickedCallback(~, ~, handles)
         sigPlot(handles, data, fs, locs)
     end
     
-    
+
+%% Filter_ClickedCallback
+% This function allows to filter the time series, selecting the minimum and
+% the maximum time frequency.
 function Filter_ClickedCallback(~, ~, handles)
     fmin = str2double(get(handles.fmin, 'String'));
     fmax = str2double(get(handles.fmax, 'String'));
@@ -556,7 +618,10 @@ function Filter_ClickedCallback(~, ~, handles)
         end
     end
 
-    
+
+%% forward_show_ClickedCallback
+% This function switches automatically the time window of the time series,
+% one second forward per step.
 function forward_show_ClickedCallback(hObject, eventdata, handles)
     set_off(handles, 'forward')
     while 1
@@ -569,7 +634,10 @@ function forward_show_ClickedCallback(hObject, eventdata, handles)
         pause(1)
     end
 
-    
+
+%% backwards_show_ClickedCallback
+% This function switches automatically the time window of the time series,
+% one second backward per step,
 function backwards_show_ClickedCallback(hObject, eventdata, handles)
     set_off(handles, 'backwards')
     while 1
@@ -582,6 +650,10 @@ function backwards_show_ClickedCallback(hObject, eventdata, handles)
         pause(1)
     end
 
+
+%% big_forward_show_ClickedCallback
+% This function switches automatically the time window of the time series,
+% one time window forward per step.
 function big_forward_show_ClickedCallback(hObject, eventdata, handles)
     set_off(handles, 'big_forward')
     while 1
@@ -594,6 +666,10 @@ function big_forward_show_ClickedCallback(hObject, eventdata, handles)
         pause(1)
     end
     
+    
+%% big_backwards_show_ClickedCallback
+% This function switches automatically the time window of the time series,
+% one time window backward per step,
 function big_backwards_show_ClickedCallback(hObject, eventdata, handles)
     set_off(handles, 'big_backwards')
     while 1
@@ -606,6 +682,9 @@ function big_backwards_show_ClickedCallback(hObject, eventdata, handles)
         pause(1)
     end
 
+    
+%% set_off
+% This function puts off the automatic time window switchers.
 function set_off(handles, hand_name_not)
     hands = {handles.back_show, handles.forward_show, ...
         handles.stop_show, handles.big_back_show, ...
@@ -620,6 +699,10 @@ function set_off(handles, hand_name_not)
         set(hands{i}, 'State', values{i})
     end
     
+
+%% check_off
+% This function returns 1 if one of the automatic time window switchers is
+% currently running (0 otherwise).
 function check = check_off(handles, hand_name)
     check = 0;
     if strcmpi(get(handles.stop_show, 'State'), 'on')
@@ -640,26 +723,37 @@ function check = check_off(handles, hand_name)
     end
         
 
+%% end_show_ClickedCallback
+% This function shows the last time window of the time series.
 function end_show_ClickedCallback(~, ~, handles)
     axes(handles.signal);
     final = length(get(handles.signal_matrix, 'Data'));
     Lim = xlim;
     dt = Lim(2)-Lim(1);
     xlim([final-dt final]);
-    
+ 
+
+%% start_show_ClickedCallback
+% This function shows the first time window of the time series.
 function start_show_ClickedCallback(~, ~, handles)
     axes(handles.signal);
     Lim = xlim;
     dt = Lim(2)-Lim(1);
     xlim([1 dt+1]);
       
+
+%% stop_show_ClickedCallback
+% This function stops the automatic time window switch.
 function stop_show_ClickedCallback(~, ~, handles)
     set(handles.big_forward_show, 'State', 'off')
     set(handles.big_back_show, 'State', 'off')
     set(handles.forward_show, 'State', 'off')
     set(handles.back_show, 'State', 'off')
     
-    
+
+%% Filtered_button_Callback
+% This function switches between the original time series (released button)
+% and the filtered one (pushed button).
 function Filtered_button_Callback(~, ~, handles)
     locs = get(handles.locs_matrix, 'Data');
     fs = str2double(get(handles.fs_text, 'String'));
@@ -684,14 +778,21 @@ function Filtered_button_Callback(~, ~, handles)
         problem('The signal has not been filtered')
     end
 
-    
+
+%% location_index
+% This function returns an ones array having the length equal to the number
+% of locations of the signal (obtained from locs if it is not empty, from
+% data otherwise).
 function locs_ind = location_index(locs, data)
     locs_ind = ones(length(locs), 1);
     if isempty(locs_ind)
         locs_ind = ones(min(size(data)), 1);
     end
     
-    
+
+%% reset_filtered
+% This function is used when the filtering cut frequencies are changed, in
+% order to recompute the filtered signal.
 function reset_filtered(handles)
     set(handles.filt_button_check, 'String', '0');
     set(handles.Filtered_button, 'BackgroundColor', [0.43 0.8 0.72]);
@@ -710,6 +811,9 @@ function reset_filtered(handles)
     end
     
     
+%% get_data
+% This function is used to return the time series (data), and the minimum
+% and the maximum filtering cut frequencies (fmin and fmax, respectively).
 function [data, fmin, fmax] = get_data(handles)
     if strcmp(get(handles.filt_button_check, 'String'), '1')
     	data = get(handles.filt_matrix, 'Data');
@@ -720,7 +824,11 @@ function [data, fmin, fmax] = get_data(handles)
         fmin = 0;
         fmax = 1000;
     end
-    
+ 
+
+%% reref_ClickedCallback
+% This function is used to rereference the time series, selecting the
+% reference through the Rereference Selection interface.
 function reref_ClickedCallback(~, ~, handles)
     data = get_data(handles);
     fs = str2double(get(handles.fs_text, 'String'));
@@ -760,7 +868,9 @@ function reref_ClickedCallback(~, ~, handles)
     sigPlot(handles, data, fs, locs, floor((t(1)-1)/fs), floor(t(2)/fs))
     
     
-    
+%% screen_ClickedCallback
+% This function takes a picture of the currently shown time window of the
+% time series, and saves it in a subdirectory of the main data directory.
 function screen_ClickedCallback(hObject, eventdata, handles)
     dataPath = path_check(get(handles.aux_dataPath, 'String'));
     outDir = create_directory(dataPath, 'Images');

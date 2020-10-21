@@ -1,3 +1,8 @@
+%% Athena_scatter
+% This interface allows to execute a scatter plot analysis between two
+% measures, highlighting the single groups of subjects.
+
+
 function varargout = Athena_scatter(varargin)
     gui_Singleton = 1;
     gui_State = struct('gui_Name',       mfilename, ...
@@ -17,6 +22,10 @@ function varargout = Athena_scatter(varargin)
     end
 
 
+%% Athena_scatter_OpeningFcn
+% This function is called during the interface opening, and it sets all the
+% initial parameters with respect to the arguments passed when it is
+% called.
 function Athena_scatter_OpeningFcn(hObject, eventdata, handles, varargin)
     handles.output = hObject;
     guidata(hObject, handles);
@@ -45,11 +54,13 @@ function Athena_scatter_OpeningFcn(hObject, eventdata, handles, varargin)
     dataPath_text_Callback(hObject, eventdata, handles)
     
 
-    
 function varargout = Athena_scatter_OutputFcn(hObject, eventdata, handles) 
     varargout{1} = handles.output;
 
 
+%% dataPath_text_Callback
+% This function is called when the dataPath is modified, in order to
+% refresh the interface, and to set the available measures.
 function dataPath_text_Callback(hObject, eventdata, handles)
     auxPath = pwd;
     funDir = mfilename('fullpath');
@@ -102,6 +113,9 @@ function dataPath_text_CreateFcn(hObject, eventdata, handles)
     end
 
 
+%% Run_Callback
+% This function is used when the Run button is pushed, and it generates the
+% scatter plot between the selected measures.
 function Run_Callback(hObject, eventdata, handles)
     funDir = mfilename('fullpath');
     funDir = split(funDir, 'Graphics');
@@ -159,7 +173,10 @@ function Run_Callback(hObject, eventdata, handles)
         set(handles.help_button, 'Visible', 'off')
     end
     
-    
+
+%% measures_scatter_initialization
+% This function returns the data and the parameters used to generate the
+% scatter plot.
 function [PAT1, HC1, PAT2, HC2, measure1, measure2, band_name1, ...
     band_name2, location1, location2] = ...
     measures_scatter_initialization(handles)
@@ -272,6 +289,9 @@ function [PAT1, HC1, PAT2, HC2, measure1, measure2, band_name1, ...
         ',', strcat("'", band_name2, "'"), ',', sub_types_list, ')'));
     
 
+%% data_search_Callback
+% This function allows to search the data directory through the file
+% explorer.
 function data_search_Callback(hObject, eventdata, handles)
 	d = uigetdir;
     if d ~= 0
@@ -280,6 +300,8 @@ function data_search_Callback(hObject, eventdata, handles)
     end
 
 
+%% back_Callback
+% This function switches to the Analysis list interface.
 function back_Callback(hObject, eventdata, handles)
     funDir = mfilename('fullpath');
     funDir = split(funDir, 'Graphics');
@@ -294,6 +316,9 @@ function back_Callback(hObject, eventdata, handles)
     Athena_an(dataPath, measure, sub, loc, sub_types)
 
 
+%% export_Callback
+% Thif function shows the scatter plot of the two selected measure on an
+% external figure.
 function export_Callback(hObject, eventdata, handles)
     sub_types = get(handles.sub_types, 'Data');
     if strcmp(get(handles.loc1, 'Visible'), 'off') || ...
@@ -327,6 +352,7 @@ function export_Callback(hObject, eventdata, handles)
         ylabel(strcat(measure2, " ", location2, " ", string(band2)))
     end
 
+    
 function loc2_Callback(hObject, eventdata, handles)
     
 
@@ -340,7 +366,6 @@ function loc2_CreateFcn(hObject, eventdata, handles)
 %% measure_definition
 % This function evaluate the frequency bands and the areas related to the
 % selected extracted measure.
-
 function measure_definition(handles, number)
     number = string(number);
     measure_handle = strcat('handles.meas', number);
@@ -394,6 +419,10 @@ function measure_definition(handles, number)
         set(eval(band_text_handle), 'Enable', 'off')
     end
 
+    
+%% area2_Callback
+% This function sets the available location when the type of spatial
+% subdivision is chosen for the second measure.
 function area2_Callback(hObject, eventdata, handles)
     locations = area_definition(handles, handles.meas2, handles.area2);
     set(handles.loc2, 'Value', 1)
@@ -423,7 +452,10 @@ function band2_CreateFcn(hObject, eventdata, handles)
         set(hObject,'BackgroundColor','white');
     end
 
-
+    
+%% meas2_Callback
+% This function sets the spatial subdivisions and the frequency bands which
+% are available for the selected second measure.
 function meas2_Callback(hObject, eventdata, handles)
     measure_definition(handles, 2)
 
@@ -435,6 +467,9 @@ function meas2_CreateFcn(hObject, eventdata, handles)
     end
 
 
+%% meas1_Callback
+% This function sets the spatial subdivisions and the frequency bands which
+% are available for the selected first measure.
 function meas1_Callback(hObject, eventdata, handles)
     measure_definition(handles, 1)
 
@@ -456,6 +491,9 @@ function band1_CreateFcn(hObject, eventdata, handles)
     end
 
 
+%% area1_Callback
+% This function sets the available location when the type of spatial
+% subdivision is chosen for the first measure.
 function area1_Callback(hObject, eventdata, handles)
     locations = area_definition(handles, handles.meas1, handles.area1);
     set(handles.loc1, 'Value', 1)

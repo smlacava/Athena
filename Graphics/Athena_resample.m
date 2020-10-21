@@ -1,3 +1,8 @@
+%% Athena_resample
+% This interface allows to resample all the signals, contained inside the
+% same data directory, to the same sampling frequency.
+
+
 function varargout = Athena_resample(varargin)
     gui_Singleton = 1;
     gui_State = struct('gui_Name',       mfilename, ...
@@ -17,6 +22,10 @@ function varargout = Athena_resample(varargin)
     end
 
 
+%% Athena_resample_OpeningFcn
+% This function is called during the interface opening, and it sets all the
+% initial parameters with respect to the arguments passed when it is
+% called.
 function Athena_resample_OpeningFcn(hObject, eventdata, handles, varargin)
     handles.output = hObject;
     guidata(hObject, handles);
@@ -62,6 +71,10 @@ function varargout = Athena_resample_OutputFcn(hObject, eventdata, handles)
     varargout{1} = handles.output;
 
 
+%% dataPath_text_Callback
+% This function is called when the dataPath is modified, in order to
+% refresh the interface, and to set the sampling frequency of the first
+% time series as the corresponding parameter.
 function dataPath_text_Callback(hObject, eventdata, handles)
     dataPath = path_check(get(handles.dataPath_text, 'String'));
     if exist(dataPath, 'dir')
@@ -72,13 +85,17 @@ function dataPath_text_Callback(hObject, eventdata, handles)
         end
     end
 
+    
 function dataPath_text_CreateFcn(hObject, eventdata, handles)
     if ispc && isequal(get(hObject, 'BackgroundColor'), ...
             get(0, 'defaultUicontrolBackgroundColor'))
         set(hObject, 'BackgroundColor', 'white');
     end
 
-    
+
+%% data_search_Callback
+% This function allows to search the data directory through the file
+% explorer.
 function data_search_Callback(hObject, eventdata, handles)
     aux_path = get(handles.dataPath_text, 'String');
     d = uigetdir;
@@ -90,6 +107,8 @@ function data_search_Callback(hObject, eventdata, handles)
     end
 
 
+%% back_Callback
+% This function switches to the Utilities list interface.
 function back_Callback(hObject, eventdata, handles)
     funDir = mfilename('fullpath');
     funDir = split(funDir, 'Graphics');
@@ -111,12 +130,17 @@ function axes3_CreateFcn(hObject, eventdata, handles)
 
 function fs_text_Callback(hObject, eventdata, handles)
 
+
 function fs_text_CreateFcn(hObject, eventdata, handles)
     if ispc && isequal(get(hObject,'BackgroundColor'), ...
             get(0,'defaultUicontrolBackgroundColor'))
         set(hObject,'BackgroundColor','white');
     end
 
+
+%% RUN_Callback
+% This function is used when the Run button is pushed, and it resamples all
+% the signals and saves them in a subdirectory of the chosen directory.
 function RUN_Callback(hObject, eventdata, handles)
     dataset_resample(get(handles.dataPath_text, 'String'), ...
         str2double(get(handles.fs_text, 'String')))

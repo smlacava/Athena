@@ -1,3 +1,10 @@
+%% Athena_netmeas
+% This interface allows to compute a network metric on a selected
+% connectivity measure, and to apply the spatial management as well as the 
+% subjects group subdivision, in order to consider it as a common measure 
+% (such as the PSDr) for the analysis.
+
+
 function varargout = Athena_netmeas(varargin)
     gui_Singleton = 1;
     gui_State = struct('gui_Name',       mfilename, ...
@@ -17,6 +24,10 @@ function varargout = Athena_netmeas(varargin)
     end
 
 
+%% Athena_netmeas_OpeningFcn
+% This function is called during the interface opening, and it sets all the
+% initial parameters with respect to the arguments passed when it is
+% called.
 function Athena_netmeas_OpeningFcn(hObject, eventdata, handles, varargin)
     handles.output = hObject;
     guidata(hObject, handles);
@@ -57,12 +68,14 @@ function Athena_netmeas_OpeningFcn(hObject, eventdata, handles, varargin)
     set(handles.network, 'String', network_names)
     set(handles.network_args, 'String', network_metrics);
     
-
     
 function varargout = Athena_netmeas_OutputFcn(hObject, eventdata, handles) 
     varargout{1} = handles.output;
 
 
+%% dataPath_text_Callback
+% This function is called when the dataPath is modified, in order to
+% refresh the interface, and to set the available measures.
 function dataPath_text_Callback(hObject, eventdata, handles)
     auxPath = pwd;
     funDir = mfilename('fullpath');
@@ -105,6 +118,7 @@ function dataPath_text_Callback(hObject, eventdata, handles)
     set(handles.normGroup, 'Visible', 'off')
     set(handles.normText, 'Visible', 'off')
     set(handles.network_text, 'Visible', 'off')
+ 
     
 function dataPath_text_CreateFcn(hObject, eventdata, handles)
     if ispc && isequal(get(hObject, 'BackgroundColor'), ...
@@ -113,6 +127,9 @@ function dataPath_text_CreateFcn(hObject, eventdata, handles)
     end
 
 
+%% Run_Callback
+% This function is used when the Run button is pushed, and it extract a
+% network metric on the selected connectivity measure.
 function Run_Callback(hObject, eventdata, handles)
     [dataPath, measure, netmeas, locations_file, normFLAG, ...
         network_measure_name] = network_measure_initialization(handles);
@@ -136,7 +153,10 @@ function Run_Callback(hObject, eventdata, handles)
     success(strcat('You will find the resulting files inside a', ...
         " subdirectory of the ", measure, " measure"))
         
-    
+
+%% network_measure_initialization
+% This function provides the data and the parameters required for the
+% network measure extraction.
 function [dataPath, measure, network_measure, locations_file, normFLAG, ...
     network_measure_name] = network_measure_initialization(handles)
     
@@ -153,7 +173,10 @@ function [dataPath, measure, network_measure, locations_file, normFLAG, ...
     
     locations_file = get(handles.aux_loc, 'String');
 
-    
+
+%% data_search_Callback
+% This function allows to search the data directory through the file
+% explorer.
 function data_search_Callback(hObject, eventdata, handles)
 	d = uigetdir;
     if d ~= 0
@@ -162,6 +185,8 @@ function data_search_Callback(hObject, eventdata, handles)
     end
 
 
+%% back_Callback
+% This function switches to the Analysis list interface.
 function back_Callback(hObject, eventdata, handles)
     funDir = mfilename('fullpath');
     funDir = split(funDir, 'Graphics');
@@ -176,6 +201,9 @@ function back_Callback(hObject, eventdata, handles)
     Athena_an(dataPath, measure, sub, loc, sub_types)
 
 
+%% meas_Callback
+% This function sets the available network metrics which can be extractes 
+% and shows all the possible parameters.
 function meas_Callback(hObject, eventdata, handles)
     dataPath = get(handles.dataPath_text, 'String');
     measure = define_measure(handles);
@@ -204,7 +232,9 @@ function meas_CreateFcn(hObject, eventdata, handles)
         set(hObject,'BackgroundColor','white');
     end
     
-    
+
+%% define_measure
+% This function returns the name of the selected measure.
 function measure = define_measure(handles)
     measures_list = get(handles.meas, 'String');
     if iscell(measures_list)

@@ -1,3 +1,8 @@
+%% Athena_locsSelecting
+% This interface allows to select subset of locations, among the ones
+% presented in a list.
+
+
 function varargout = Athena_locsSelecting(varargin)
     gui_Singleton = 1;
     gui_State = struct('gui_Name',       mfilename, ...
@@ -17,6 +22,10 @@ function varargout = Athena_locsSelecting(varargin)
     end
 
 
+%% Athena_locsSelecting_OpeningFcn
+% This function is called during the interface opening, and it sets all the
+% initial parameters with respect to the arguments passed when it is
+% called.
 function Athena_locsSelecting_OpeningFcn(hObject, ~, handles, varargin)
     handles.output = hObject;
     guidata(hObject, handles);
@@ -38,12 +47,14 @@ function varargout = Athena_locsSelecting_OutputFcn(~, ~, handles)
     varargout{1} = handles.output;
 
 
+%% back_callback
+% This function closes the interface, returning a 0 to the calling
+% function.
 function back_Callback(~, ~, handles)
     assignin('base','Athena_locsSelecting', 0);
         close(Athena_locsSelecting)
 
     
-
 function axes3_CreateFcn(~, ~, ~)
 
 
@@ -57,6 +68,9 @@ function locs_CreateFcn(hObject, ~, ~)
     end
 
 
+%% save_Callback
+% This function closes the interface, returning the selected locations to
+% the calling function.
 function save_Callback(~, ~, handles)
         selectedLocs = get(handles.locs, 'Value');
         %set(handles.output, 'UserData', selectedList);

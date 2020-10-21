@@ -1,3 +1,11 @@
+%% Athena_epmean
+% This interface allows to compute the average between the epochs of the 
+% measures, and execute the subjects grouping into the belonging class 
+% related matrices as well as the spatial subdivision, in order to obtain
+% the measure value for each macroarea (frontal, parietal, occipital,
+% central and temporal), for the single channels, its overall spatial mean
+% and the asymmetry between the right hemisphere and the left one.
+
 function varargout = Athena_epmean(varargin)
     gui_Singleton = 1;
     gui_State = struct('gui_Name',       mfilename, ...
@@ -17,6 +25,10 @@ function varargout = Athena_epmean(varargin)
     end
 
 
+%% Athena_epmean_OpeningFcn
+% This function is called during the interface opening, and it sets all the
+% initial parameters with respect to the arguments passed when it is
+% called.
 function Athena_epmean_OpeningFcn(hObject, eventdata, handles, varargin)
     handles.output = hObject;
     guidata(hObject, handles);
@@ -70,7 +82,6 @@ function Athena_epmean_OpeningFcn(hObject, eventdata, handles, varargin)
     end
 
         
-
 function varargout = Athena_epmean_OutputFcn(hObject, eventdata, handles) 
     varargout{1} = handles.output;
 
@@ -84,7 +95,10 @@ function sub_text_CreateFcn(hObject, eventdata, handles)
         set(hObject, 'BackgroundColor', 'white');
     end
 
-
+    
+%% dataPath_text_Callback
+% This function is called when the dataPath is modified, in order to set
+% the location file.
 function dataPath_text_Callback(hObject, eventdata, handles)
     path = get(handles.dataPath_text, 'String');
     if strcmpi(get(handles.aux_loc, 'String'), 'Static Text') && ...
@@ -101,6 +115,10 @@ function dataPath_text_CreateFcn(hObject, eventdata, handles)
     end
 
 
+%% Run_Callback
+% This function is called when the Run button is pushed, in order to
+% compute the temporal average, the subjects grouping and the spatial 
+% subdivision.
 function Run_Callback(hObject, eventdata, handles)
     dataPath = get(handles.dataPath_text, 'String');
     dataPath = path_check(dataPath);
@@ -167,7 +185,11 @@ function Run_Callback(hObject, eventdata, handles)
     management_update_file(dataPath, locs, sub);
     success();
 
-    
+
+%% data_search_Callback
+% This function is called when the directory-searcher button is pushed, in
+% order to open the file searcher and changes the settings with respect to
+% the analyzed study directory.
 function data_search_Callback(hObject, eventdata, handles)
     d = uigetdir;
     if d ~= 0
@@ -175,6 +197,8 @@ function data_search_Callback(hObject, eventdata, handles)
     end
 
 
+%% next_Callback
+% This function switches to the Analysis list interface.
 function next_Callback(~, ~, handles)
     [dataPath, measure, ~, loc, sub_types] = GUI_transition(handles, ...
         'sub');
@@ -217,6 +241,8 @@ function next_Callback(~, ~, handles)
     Athena_an(dataPath, measure, sub, loc, sub_types)
 
 
+%% back_Callback
+% This function switches to the Measure Extraction interface.
 function back_Callback(hObject, eventdata, handles)
     meaext_Callback(hObject, eventdata, handles)
 
@@ -234,13 +260,18 @@ function subjectsFile_CreateFcn(hObject, eventdata, handles)
     end
 
 
+%% sub_search_Callback
+% This function is used to search the subjects list file through the file
+% explorer.
 function sub_search_Callback(~, eventdata, handles)
-    [s,sp] = uigetfile;
+    [s, sp] = uigetfile;
     if s ~= 0
         set(handles.subjectsFile, 'String', strcat(string(sp), string(s)))
     end
 
 
+%% meaext_Callback
+% This function switches to the Measure Extraction interface.
 function meaext_Callback(hObject, eventdata, handles)
     funDir = mfilename('fullpath');
     funDir = split(funDir, 'Graphics');
@@ -256,6 +287,8 @@ function meaext_Callback(hObject, eventdata, handles)
     Athena_guided(dataPath, measure, sub, loc, types)
 
 
+%% subMaking_Callback
+% This function switches to the Subject List File Maker interface.
 function subMaking_Callback(~, ~, handles)
     funDir = mfilename('fullpath');
     funDir = split(funDir, 'Graphics');

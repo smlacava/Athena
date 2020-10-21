@@ -1,3 +1,9 @@
+%% Athena_indcorr
+% This interface allows to execute a correlation analysis between a
+% measure, chosing the related parameters, and an external index or
+% measure, for a group of subjects.
+
+
 function varargout = Athena_indcorr(varargin)
     gui_Singleton = 1;
     gui_State = struct('gui_Name',       mfilename, ...
@@ -16,7 +22,11 @@ function varargout = Athena_indcorr(varargin)
         gui_mainfcn(gui_State, varargin{:});
     end
 
-    
+
+%% Athena_indcorr_OpeningFcn
+% This function is called during the interface opening, and it sets all the
+% initial parameters with respect to the arguments passed when it is
+% called.
 function Athena_indcorr_OpeningFcn(hObject, eventdata, handles, varargin)
     handles.output = hObject;
     guidata(hObject, handles);
@@ -49,12 +59,14 @@ function Athena_indcorr_OpeningFcn(hObject, eventdata, handles, varargin)
     end
     dataPath_text_Callback(hObject, eventdata, handles)
 
-
-    
+ 
 function varargout = Athena_indcorr_OutputFcn(hObject, eventdata, handles) 
     varargout{1} = handles.output;
 
 
+%% dataPath_text_Callback
+% This function is called when the dataPath is modified, in order to
+% refresh the interface, and to set the available measures.
 function dataPath_text_Callback(hObject, eventdata, handles)
     set_handles(hObject, eventdata, handles)
     set_measures(get(handles.dataPath_text, 'String'), handles);
@@ -67,6 +79,10 @@ function dataPath_text_CreateFcn(hObject, eventdata, handles)
     end
 
 
+%% Run_Callback
+% This function is used when the Run button is pushed, and it executes the
+% correlation analysis between a measure and the external data, using the
+% selected parameters
 function Run_Callback(hObject, eventdata, handles)
     funDir = mfilename('fullpath');
     funDir = split(funDir, 'Graphics');
@@ -127,7 +143,10 @@ function Run_Callback(hObject, eventdata, handles)
         string(save_check), ',', strcat("'", corrPath, "'"), ',', ...
         string(save_check_fig), ',', strcat("'", format, "'"), ')'));
     
-   
+
+%% data_search_Callback
+% This function allows to search the data directory through the file
+% explorer.
 function data_search_Callback(hObject, eventdata, handles)
     d = uigetdir;
     if d ~= 0
@@ -143,6 +162,8 @@ function meas_CreateFcn(hObject, eventdata, handles)
     end
 
 
+%% back_Callback
+% This function switches to the Statistical Analysis list interface.
 function back_Callback(~, eventdata, handles)
     funDir = mfilename('fullpath');
     funDir = split(funDir, 'Graphics');
@@ -177,12 +198,18 @@ function ind_text_CreateFcn(hObject, eventdata, handles)
     end
 
 
+%% ind_search_Callback
+% This function allows to search the external index's file through the file
+% explorer.
 function ind_search_Callback(hObject, eventdata, handles)
     [i,ip] = uigetfile;
     if i ~= 0
         set(handles.ind_text, 'String', strcat(string(ip), string(i)))
     end
+
     
+%% set_handles
+% This function updates the interface based on the used subjects list file.
 function set_handles(hObject, eventdata, handles)
     dataPath = get(handles.dataPath_text, 'String');
     subjectsFile = strcat(path_check(dataPath), 'Subjects.mat');
@@ -202,12 +229,17 @@ function set_handles(hObject, eventdata, handles)
         end
     end
     
-    
+
+%% set_measures
+% This function sets the available measures with respect to the selected
+% data directory.
 function set_measures(path, handles)
     measures = available_measures(path, 1);
     set(handles.meas, 'String', measures);
 
 
+%% meas_Callback
+% This function updates the interface with respect to the selected measure.
 function meas_Callback(hObject, eventdata, handles)
     set_handles(hObject, eventdata, handles)
   
