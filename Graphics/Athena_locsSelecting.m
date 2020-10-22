@@ -41,6 +41,15 @@ function Athena_locsSelecting_OpeningFcn(hObject, ~, handles, varargin)
         current_ind(varargin{2} == 0) = [];
         set(handles.locs, 'Value', current_ind);
     end
+    if nargin >= 6
+        if varargin{3} == 1
+            set(handles.title, 'String', '     Subject selection')
+            set(handles.info, 'String', ...
+                'Select the subject you want to show')
+            current_ind = varargin{2};
+            set(handles.locs, 'Value', current_ind(1));
+        end
+    end
     
 
 function varargout = Athena_locsSelecting_OutputFcn(~, ~, handles) 

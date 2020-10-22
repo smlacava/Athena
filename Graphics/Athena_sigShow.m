@@ -505,6 +505,14 @@ function Run_Callback(~, ~, handles)
         sub_name = sub_name{end};
     end
     
+    fNyq = fs/2;
+    fmin = str2double(get(handles.fmin, 'String'));
+    fmax = str2double(get(handles.fmax, 'String'));
+    filt_check = str2double(get(handles.filt_button_check, 'String'));
+    if filt_check == 1 && not(fmin < 0) && not(fmax > fNyq)
+        data.filter_frequency = [fmin fmax];
+    end
+            
     dataPath = path_check(strcat(dataPath, 'Extracted'));
     dataPath = strcat(dataPath, sub_name, '.mat');
     save(dataPath, 'data');
@@ -578,11 +586,11 @@ function LocsToShow_ClickedCallback(~, ~, handles)
 % This function allows to filter the time series, selecting the minimum and
 % the maximum time frequency.
 function Filter_ClickedCallback(~, ~, handles)
+    fs = str2double(get(handles.fs_text, 'String'));
     fmin = str2double(get(handles.fmin, 'String'));
-    fmax = str2double(get(handles.fmax, 'String'));
+    fmax = min(str2double(get(handles.fmax, 'String')), fs/2);
     [fmin, fmax, check] = band_asking(fmin, fmax);
     if check == 1
-        fs = str2double(get(handles.fs_text, 'String'));
         if fmin <= 0 || fmax <= 0
             problem('A cut frequency cannot be less than or equal to 0 Hz')
         elseif fmin >= fmax
@@ -898,4 +906,29 @@ function screen_ClickedCallback(hObject, eventdata, handles)
     end
     imwrite(Image.cdata, char_check(strcat(path_check(outDir), ...
         'Signal_', subject, '_', time, '_', freq, 'Hz.jpg')));
+  
+    
+%% subject_selection_ClickedCallback
+% This function allows to select the subject which has to be shown.
+function subject_selection_ClickedCallback(hObject, eventdata, handles)
+    dataPath = get(handles.aux_dataPath, 'String');
+    dataPath = path_check(dataPath);
+    cases = define_cases(dataPath);
+    case_number = str2double(get(handles.case_number, 'String'));
+    n = Athena_locsSelecting({cases.name}, case_number, 1);
+    waitfor(n);
+    case_n = evalin('base', 'Athena_locsSelecting');
+    if isobject(case_n)
+        close(case_n)
+    end
+    evalin( 'base', 'clear Athena_locsSelecting' )
+    if length(case_n) > 1
+        problem('You can select only a subject')
+        return
+    end
+    if not(isobject(case_n)) && case_number ~= case_n
+        set(handles.case_number, 'String', string(case_n+1))
+        Previous_Callback(hObject, eventdata, handles)
+    end
+    
         

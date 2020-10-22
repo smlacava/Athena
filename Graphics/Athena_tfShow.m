@@ -702,3 +702,27 @@ function screen_ClickedCallback(hObject, eventdata, handles)
     end
     imwrite(Image.cdata, char_check(strcat(path_check(outDir), 'TF_', ...
         subject, '_', location, '_', time, '_', freq, 'Hz.jpg')));
+   
+    
+%% subject_selection_ClickedCallback
+% This function allows to select the subject which has to be shown.
+function subject_selection_ClickedCallback(hObject, eventdata, handles)
+    dataPath = get(handles.aux_dataPath, 'String');
+    dataPath = path_check(dataPath);
+    cases = define_cases(dataPath);
+    case_number = str2double(get(handles.case_number, 'String'));
+    n = Athena_locsSelecting({cases.name}, case_number, 1);
+    waitfor(n);
+    case_n = evalin('base', 'Athena_locsSelecting');
+    if isobject(case_n)
+        close(case_n)
+    end
+    evalin( 'base', 'clear Athena_locsSelecting' )
+    if length(case_n) > 1
+        problem('You can select only a subject')
+        return
+    end
+    if not(isobject(case_n)) && case_number ~= case_n
+        set(handles.case_number, 'String', string(case_n+1))
+        Previous_Callback(hObject, eventdata, handles)
+    end
