@@ -227,12 +227,14 @@ function [locations_file, sub_types] = epmean_and_manage(inDir, type, ...
         waitbar(i/n_cases, f)
     end
      
+    countFirst = countFirst-1;
+    countSecond = countSecond-1;
     waitbar(1, f ,'Saving data')    
     for j = 1:ntypes
         First = struct();
         Second = struct();
-    	First.data = loc_av(j).First;
-        Second.data = loc_av(j).Second;
+    	First.data = matrix_management(loc_av(j).First, countFirst);
+        Second.data = matrix_management(loc_av(j).Second, countSecond);
         First.locations = setup_data{j}.locations;
         Second.locations = setup_data{j}.locations;
         if j == 2
@@ -304,4 +306,30 @@ function aux_locs = set_locations(inDir)
     else
         aux_locs = ask_locations();
     end
+end
+
+
+%% matrix_management
+% This function is used to eliminate the not used rows from the data
+% matrix.
+%
+% data = matrix_management(data, counter)
+%
+% Input:
+%   data is the data matrix
+%   counter is the actual number of subjects
+%
+% Output:
+%   data is the managed data matrix
+
+
+function data = matrix_management(data, counter)
+    N = length(size(data));
+    ind_str = 'data = data(1:counter';
+    for i = 1:N-1
+        ind_str = strcat(ind_str, ',:');
+    end
+    ind_str = strcat(ind_str, ');');
+    
+    eval(ind_str)
 end

@@ -108,10 +108,7 @@ function FOOOFer(fs, cf, nEpochs, dt, inDir, tStart, outTypes, maxPeaks)
     settings = struct();
     settings.max_n_peaks = maxPeaks;
     [time_series, fsOld] = load_data(strcat(inDir, cases(1).name), 1);
-    if fsOld ~= fs
-        [p, q] = rat(fs/fsOld);
-        time_series = resample_signal(time_series', p, q)';
-    end
+    time_series = resample_signal(time_series, fs, fsOld);
     time_series = time_series(:, tStart:end);
     data = squeeze(time_series(1, 1:dt));           
     [~, w] = pwelch(data, [], 0, [], fs);

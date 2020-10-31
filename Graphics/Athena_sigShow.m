@@ -29,6 +29,14 @@ function varargout = Athena_sigShow(varargin)
 % called.
 function Athena_sigShow_OpeningFcn(hObject, ~, handles, varargin)
     handles.output = hObject;
+    try 
+        net_name = strcat(path_check(limit_path(mfilename('fullpath'), ...
+            'Graphics')), 'Classification', filesep, 'TrainedDNN', ...
+            filesep, 'commandNet.mat');
+        load(net_name);
+        handles.net = trainedNet;
+    catch
+    end
     guidata(hObject, handles);
     [x, ~] = imread('logo.png');
     Im = imresize(x, [250 250]);
@@ -94,7 +102,7 @@ function Athena_sigShow_OpeningFcn(hObject, ~, handles, varargin)
     if nargin >= 8
         set(handles.sub_types, 'Data', varargin{5})
     end
-
+    
     
 function varargout = Athena_sigShow_OutputFcn(~, ~, handles) 
     varargout{1} = handles.output;
@@ -324,7 +332,7 @@ function time_window_ClickedCallback(~, ~, handles)
 %% Go_to_ClickedCallback
 % This function shown the time window starting with the selected time
 % instant.
-function Go_to_ClickedCallback(~, ~, handles)
+function Go_to_ClickedCallback(~, ~, handles, time)
     try
         axes(handles.signal);
         maxsize = max(size(get(handles.signal_matrix, 'Data')));
@@ -332,9 +340,11 @@ function Go_to_ClickedCallback(~, ~, handles)
         if Lim(2) < maxsize
             fs = str2double(get(handles.fs_text, 'String'));
             window = Lim(2)-Lim(1)+1;
-            time = value_asking(floor(Lim(1)/fs), 'Go to...', ...
-                'Insert the time you want to inspect', ...
-                floor((maxsize-window)/fs));
+            if nargin < 4
+                time = value_asking(floor(Lim(1)/fs), 'Go to...', ...
+                    'Insert the time you want to inspect', ...
+                    floor((maxsize-window)/fs));
+            end
             Lim = [time*fs+1, time*fs+window];
             if Lim(1) < 0
                 problem('The time cannot be less than 0');
@@ -596,7 +606,7 @@ function Filter_ClickedCallback(~, ~, handles)
         elseif fmin >= fmax
             problem(strcat("The maximum cut frequency has to be ", ...
                 "higher than the lower cut frequency"))
-        elseif fmax >= ceil(fs/2)
+        elseif fmax > fs/2
             problem(strcat("The maximum cut frequency cannot be ", ...
                 "higher than the Nyquist frequency, so it has to be ", ...
                 "less than half the sample rate, which is equal to ", ...
@@ -772,18 +782,24 @@ function Filtered_button_Callback(~, ~, handles)
             set(handles.filt_button_check, 'String', '1');
             set(handles.Filtered_button, 'BackgroundColor', ...
                 [0.29 0.77 0.69]);
+            set(handles.Filtered_button, 'String', 'Filtered')
         else
             data = get(handles.signal_matrix, 'Data');
             set(handles.filt_button_check, 'String', '0');
             set(handles.Filtered_button, 'BackgroundColor', ...
                 [0.43 0.8 0.72]);
+            set(handles.Filtered_button, 'String', 'Filter')
         end
         axis(handles.signal);
         t = xlim;
         sigPlot(handles, data, fs, locs, floor((t(1)-1)/fs), ...
             floor(t(2)/fs))
     else
-        problem('The signal has not been filtered')
+        m = "The signal has not been filtered. Do you want to filter it?"; 
+        t = 'Filtering';
+        if strcmpi(user_decision(m, t), 'yes')
+            Filter_ClickedCallback(1, 1, handles)
+        end
     end
 
 
@@ -931,4 +947,53 @@ function subject_selection_ClickedCallback(hObject, eventdata, handles)
         Previous_Callback(hObject, eventdata, handles)
     end
     
-        
+
+%% Home_WindowKeyPressFcn
+% This function is used to use a speech command when 0 key is pressed.
+function Home_WindowKeyPressFcn(hObject, eventdata, handles)
+    if contains('0123456789', eventdata.Key) || strcmpi(eventdata.Key, ...
+            'backspace') || strcmpi(eventdata.Key, 'delete')
+        if not(strcmpi(get(handles.tStart_text, 'String'), '0'))
+            tStart_text_Callback(hObject, eventdata, handles)
+        end
+        return;
+    end
+    if not(strcmpi(eventdata.Key, 'space'))
+        return;
+    end
+    try
+        set(handles.recording_button, 'Visible', 'on');
+        set(handles.recording_text, 'Visible', 'on');
+        pause(0.001)
+        record = audio_recording();
+        set(handles.recording_button, 'Visible', 'off');
+        set(handles.recording_text, 'Visible', 'off');
+        recorded_command = classify_command(record, handles.net);  
+        if strcmpi(recorded_command, 'up')
+            set(handles.mult, 'String', string(str2double(get(...
+                handles.mult, 'String'))*10))
+            zoom_Callback(hObject, eventdata, handles)
+        elseif strcmpi(recorded_command, 'down')
+            set(handles.mult, 'String', string(max(1, ...
+                str2double(get(handles.mult, 'String'))/10)))
+            zoom_Callback(hObject, eventdata, handles)
+        elseif strcmpi(recorded_command, 'left')
+            left_Callback(hObject, eventdata, handles)
+        elseif strcmpi(recorded_command, 'right')
+            right_Callback(hObject, eventdata, handles)
+        elseif strcmpi(recorded_command, 'zero')
+            Go_to_ClickedCallback(hObject, eventdata, handles, 0)
+        elseif strcmpi(recorded_command, 'stop')
+            set(handles.big_forward_show, 'State', 'off')
+            set(handles.big_back_show, 'State', 'off')
+            set(handles.forward_show, 'State', 'off')
+            set(handles.back_show, 'State', 'off')
+        elseif strcmpi(recorded_command, 'go')
+            big_forward_show_ClickedCallback(hObject, eventdata, handles)
+        elseif strcmpi(recorded_command, 'yes')
+        elseif strcmpi(recorded_command, 'no')
+        elseif strcmpi(recorded_command, 'unknown') || ...
+                strcmpi(recorded_command, 'background')
+        end
+    catch
+    end

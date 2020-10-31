@@ -28,6 +28,14 @@ function varargout = Athena_freqShow(varargin)
 % called.
 function Athena_freqShow_OpeningFcn(hObject, ~, handles, varargin)
     handles.output = hObject;
+    try 
+        net_name = strcat(path_check(limit_path(mfilename('fullpath'), ...
+            'Graphics')), 'Classification', filesep, 'TrainedDNN', ...
+            filesep, 'commandNet.mat');
+        load(net_name);
+        handles.net = trainedNet;
+    catch
+    end
     guidata(hObject, handles);
     try
         handles.signal.Children.CData = [];
@@ -721,4 +729,49 @@ function subject_selection_ClickedCallback(hObject, eventdata, handles)
     if not(isobject(case_n)) && case_number ~= case_n
         set(handles.case_number, 'String', string(case_n+1))
         Previous_Callback(hObject, eventdata, handles)
+    end
+    
+    
+
+%% Home_WindowKeyPressFcn
+% This function is used to use a speech command when 0 key is pressed.
+function Home_WindowKeyPressFcn(hObject, eventdata, handles)
+    if contains('0123456789', eventdata.Key) || strcmpi(eventdata.Key, ...
+            'backspace') || strcmpi(eventdata.Key, 'delete')
+        if not(strcmpi(get(handles.tStart_text, 'String'), '0'))
+            tStart_text_Callback(hObject, eventdata, handles)
+        end
+        return;
+    end
+    if not(strcmpi(eventdata.Key, 'space'))
+        return;
+    end
+    try
+        set(handles.recording_button, 'Visible', 'on');
+        set(handles.recording_text, 'Visible', 'on');
+        pause(0.001)
+        record = audio_recording();
+        set(handles.recording_button, 'Visible', 'off');
+        set(handles.recording_text, 'Visible', 'off');
+        set(handles.recording_button, 'Visible', 'off');
+        recorded_command = classify_command(record, handles.net);  
+        if strcmpi(recorded_command, 'left')
+            left_Callback(hObject, eventdata, handles)
+        elseif strcmpi(recorded_command, 'right')
+            right_Callback(hObject, eventdata, handles)
+        elseif strcmpi(recorded_command, 'zero')
+            Go_to_ClickedCallback(hObject, eventdata, handles, 0)
+        elseif strcmpi(recorded_command, 'stop')
+            set(handles.big_forward_show, 'State', 'off')
+            set(handles.big_back_show, 'State', 'off')
+            set(handles.forward_show, 'State', 'off')
+            set(handles.back_show, 'State', 'off')
+        elseif strcmpi(recorded_command, 'go')
+            big_forward_show_ClickedCallback(hObject, eventdata, handles)
+        elseif strcmpi(recorded_command, 'yes')
+        elseif strcmpi(recorded_command, 'no')
+        elseif strcmpi(recorded_command, 'unknown') || ...
+                strcmpi(recorded_command, 'background')
+        end
+    catch
     end

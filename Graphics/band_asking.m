@@ -21,6 +21,12 @@ function [fmin, fmax, check] = band_asking(fmin, fmax)
         fmin = string(fmin);
         fmax = string(fmax);
     end
+    
+    if nargin < 3
+        fNyq = [];
+    else
+        fNyq = fs/2;
+    end
 
     f = figure;
     bgc = [1 1 1];
@@ -61,7 +67,7 @@ function [fmin, fmax, check] = band_asking(fmin, fmax)
     function fmin_Callback(hObject,eventdata)
          fmin = get(hObject, 'string');
          try
-             fmin = fmin{1};
+             fmin = fmin{1};                 
          catch
          end
     end

@@ -93,6 +93,13 @@ function Athena_OpeningFcn(hObject, ~, handles, varargin)
     addpath 'Network Metrics'
     addpath 'Time Frequency Analysis'
     addpath 'Utility'
+    addpath 'docs'
+    cd('Classification')
+    addpath 'NNC'
+    addpath 'Performance'
+    addpath 'RFC'
+    addpath 'TrainedDNN'
+    cd(char(funDir))
     savepath
     if nargin >= 4
         set(handles.aux_dataPath, 'String', varargin{1})

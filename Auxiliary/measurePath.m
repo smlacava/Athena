@@ -8,8 +8,8 @@
 % Input:
 %   dataPath is the main folder of the study
 %   measure is the name of the measure ("measure-network metric" in case of
-%       network metrics
-%   area is the name of the spatial subdivision
+%       network metrics)
+%   area is the name of the spatial subdivision (optional)
 %
 % Output:
 %   path is the subdirectory related to the spatial subdivision of the

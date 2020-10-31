@@ -242,9 +242,35 @@ function aux_loc_CreateFcn(hObject, eventdata, handles)
     end
 
 
+%% measure_Callback
+% This function is used to set the check buttons when a measure is
+% selected.
 function measure_Callback(hObject, eventdata, handles)
+    measure = define_measure(handles);
+    dataPath = get(handles.dataPath_text, 'String');
+    hands = [handles.asy_button, handles.tot_button, ...
+        handles.glob_button, handles.areas_button];
+    types = {'Asymmetry', 'Total', 'Global', 'Areas'};
+    for i = 1:length(types)
+        try
+            data_name = measurePath(dataPath, measure, types{i});
+            load(strcat(path_check(data_name), 'Second.mat'))
+            if isempty(Second.data)
+                set(hands(i), 'Enable', 'off')
+            else
+                load(strcat(path_check(data_name), 'First.mat'))
+                if isempty(First.data)
+                    set(hands(i), 'Enable', 'off')
+                else
+                    set(hands(i), 'Enable', 'on')
+                end
+            end
+        catch
+            set(hands(i), 'Enable', 'off')
+        end
+    end
 
-
+    
 function measure_CreateFcn(hObject, eventdata, handles)
     if ispc && isequal(get(hObject,'BackgroundColor'), ...
             get(0,'defaultUicontrolBackgroundColor'))

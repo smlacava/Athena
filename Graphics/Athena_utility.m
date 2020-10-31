@@ -98,10 +98,11 @@ function signals_extraction_Callback(hObject, eventdata, handles)
 function openAnalysis(utility, handles)
     analysis_list = {'folder_decompress', 'file_decompress', ...
         'signals_divider', 'signals_extraction', 'resample', ...
-        'common_loc', 'back'};
+        'common_loc', 'common_subjects', 'back'};
     analysis_interfaces = {@Athena_decompressor, ...
         @Athena_decompressor, @Athena_dividerPath, @Athena_extract, ...
-        @Athena_resample, @Athena_commonLoc, @Athena};
+        @Athena_resample, @Athena_commonLoc, @Athena_commonSubjects, ...
+        @Athena};
     funDir = mfilename('fullpath');
     funDir = split(funDir, 'Graphics');
     cd(char(funDir{1}));
@@ -129,3 +130,9 @@ function resample_Callback(hObject, eventdata, handles)
 % This function switches to the Common Locations Extraction interface.
 function common_loc_Callback(hObject, eventdata, handles)
     openAnalysis('common_loc', handles)
+
+    
+%% common_subjects_Callback
+% This function switches to the Common Subjects Extraction interface.
+function common_subjects_Callback(hObject, eventdata, handles)
+    openAnalysis('common_subjects', handles)

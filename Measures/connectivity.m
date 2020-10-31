@@ -121,7 +121,7 @@ function connectivity(fs, cf, nEpochs, dt, inDir, tStart, outTypes, ...
             try
                 [time_series, fsOld, locations] = ...
                     load_data(strcat(inDir, cases(i).name), 1);
-                time_series = resample_signal(time_series', fs, fsOld);
+                time_series = resample_signal(time_series, fs, fsOld);
                 nLoc = size(time_series, 1);
                 conn.data = zeros(nBands, nEpochs, nLoc, nLoc);
                 conn.locations = locations;
