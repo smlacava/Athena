@@ -30,19 +30,20 @@ function Athena_an_OpeningFcn(hObject, eventdata, handles, varargin)
     [x, ~] = imread('logo.png');
     Im = imresize(x, [250 250]);
     set(handles.help_button, 'CData', Im)
-    if nargin >= 4
+    if nargin >= 4 && not(islogical(varargin{1}))
+
         set(handles.aux_dataPath, 'String', varargin{1})
     end
-    if nargin >= 5
+    if nargin >= 5 && not(islogical(varargin{2}))
         set(handles.aux_measure, 'String', varargin{2})
     end
-    if nargin >= 6
+    if nargin >= 6 && not(islogical(varargin{3}))
         set(handles.aux_sub, 'String', varargin{3})
     end
-    if nargin >= 7
+    if nargin >= 7 && not(islogical(varargin{4}))
         set(handles.aux_loc, 'String', varargin{4})
     end
-    if nargin >= 8
+    if nargin >= 8 && not(islogical(varargin{5}))
         set(handles.sub_types, 'Data', varargin{5})
     end
     auxPath = pwd;

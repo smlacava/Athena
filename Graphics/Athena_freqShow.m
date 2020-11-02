@@ -775,3 +775,31 @@ function Home_WindowKeyPressFcn(hObject, eventdata, handles)
         end
     catch
     end
+
+    
+%% Home_KeyPressFcn
+% This function is used to use a keyboard command.
+function Home_KeyPressFcn(hObject, eventdata, handles)
+    if strcmpi(eventdata.Key, 'leftarrow')
+        left_Callback(hObject, eventdata, handles)
+    elseif strcmpi(eventdata.Key, 'rightarrow')
+        right_Callback(hObject, eventdata, handles)
+    end
+
+    
+%% fmin_KeyPressFcn
+% This function is used to use a keyboard command on the fmin edit text.
+function fmin_KeyPressFcn(hObject, eventdata, handles)
+    if strcmpi(eventdata.Key, 'downarrow') || strcmpi(eventdata.Key, ...
+        'uparrow')
+        uicontrol(handles.fmax);
+    end
+
+    
+%% fmax_KeyPressFcn
+% This function is used to use a keyboard command on the fmax edit text.
+function fmax_KeyPressFcn(hObject, eventdata, handles)
+    if strcmpi(eventdata.Key, 'downarrow') || strcmpi(eventdata.Key, ...
+        'uparrow')
+        uicontrol(handles.fmin);
+    end

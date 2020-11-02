@@ -37,6 +37,9 @@ function varargout = Athena_mergsig2(varargin)
 function Athena_mergsig2_OpeningFcn(hObject, eventdata, handles, varargin)
     handles.output = hObject;
     guidata(hObject, handles);
+    if strcmpi(get(handles.back_check, 'String'), '1')
+        return;
+    end
     [x, ~] = imread('logo.png');
     Im = imresize(x, [250 250]);
     set(handles.help_button, 'CData', Im)
@@ -75,6 +78,10 @@ function Athena_mergsig2_OpeningFcn(hObject, eventdata, handles, varargin)
     set(handles.slider, 'Max', 1)
     set(handles.slider, 'SliderStep', [1, 1000000000000])
     set(handles.slider, 'Value', 1)
+    if strcmpi(get(handles.measure1, 'Visible'), 'off')
+        set(handles.options1, 'Visible', 'off');
+        set(handles.add1, 'Visible', 'off')
+    end
 
     
 function varargout = Athena_mergsig2_OutputFcn(hObject, ~, handles) 
@@ -92,6 +99,11 @@ function dataPath_text_Callback(hObject, eventdata, handles)
     end 
     set(handles.aux_dataPath, 'String', dataPath);
     measures = available_measures(dataPath, 1, 1);
+    if isempty(measures) && strcmpi(get(handles.measure1, 'Visible'), 'on')
+        set(handles.measure1, 'Visible', 'off')
+        problem('Measures not found')
+        return
+    end
     set(handles.measure1, 'String', measures)
     set(handles.measure1, 'Value', 1)
     del_callback(hObject, eventdata, handles, 1);
@@ -299,6 +311,7 @@ function back_Callback(hObject, eventdata, handles)
     if strcmp(dataPath, 'es. C:\User\Data')
         dataPath="Static Text";
     end
+    set(handles.back_check, 'String', '1');
     close(Athena_mergsig2)
     Athena_an(dataPath, measure, sub, loc, sub_types)
 
@@ -321,6 +334,7 @@ function Classification_Callback(hObject, eventdata, handles)
     addpath 'Auxiliary'
     addpath 'Graphics'
     [dataPath, measure, sub, loc, sub_types] = GUI_transition(handles);
+    set(handles.back_check, 'String', '1');
     close(Athena_mergsig2)
     Athena_selectClass(dataPath, measure, sub, loc, sub_types)
 

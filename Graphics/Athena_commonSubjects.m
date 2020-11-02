@@ -129,3 +129,23 @@ function Run_Callback(hObject, eventdata, handles)
     subjects_management(get(handles.dataPath_text, 'String'), ...
         get(handles.dataPath2_text, 'String'));
     success()
+
+    
+%% dataPath_KeyPressFcn
+% This function is used to use a keyboard command on the first data
+% directory edit text.
+function dataPath_KeyPressFcn(hObject, eventdata, handles)
+    if strcmpi(eventdata.Key, 'downarrow') || ...
+            strcmpi(eventdata.Key, 'uparrow')
+        uicontrol(handles.dataPath2_text);
+    end
+    
+
+%% dataPath2_KeyPressFcn
+% This function is used to use a keyboard command on the second data
+% directory edit text.
+function dataPath2_KeyPressFcn(hObject, eventdata, handles)
+    if strcmpi(eventdata.Key, 'downarrow') || ...
+            strcmpi(eventdata.Key, 'uparrow')
+        uicontrol(handles.dataPath_text);
+    end

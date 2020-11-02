@@ -296,3 +296,77 @@ function next_Callback(~, eventdata, handles)
     close(Athena_params)
     Athena_epmean(dataPath, measure, sub, loc, sub_types)
     
+
+    
+%% fs_KeyPressFcn
+% This function is used to use a keyboard command on the sampling frequency
+% edit text.
+function fs_KeyPressFcn(hObject, eventdata, handles)
+    if strcmpi(eventdata.Key, 'downarrow')
+        uicontrol(handles.cf_text);
+    elseif strcmpi(eventdata.Key, 'uparrow')
+        if strcmpi(get(handles.totBand_text, 'Visible'), 'on')
+            uicontrol(handles.totBand_text);
+        else
+            uicontrol(handles.tStart_text);
+        end
+    end
+    
+        
+%% cf_KeyPressFcn
+% This function is used to use a keyboard command on the cut frequencies
+% list edit text.
+function cf_KeyPressFcn(hObject, eventdata, handles)
+    if strcmpi(eventdata.Key, 'downarrow')
+        uicontrol(handles.epNum_text);
+    elseif strcmpi(eventdata.Key, 'uparrow')
+        uicontrol(handles.fs_text);
+    end
+    
+    
+%% epNum_KeyPressFcn
+% This function is used to use a keyboard command on the epochs number edit
+% text.
+function epNum_KeyPressFcn(hObject, eventdata, handles)
+    if strcmpi(eventdata.Key, 'downarrow')
+        uicontrol(handles.epTime_text);
+    elseif strcmpi(eventdata.Key, 'uparrow')
+        uicontrol(handles.cf_text);
+    end
+        
+    
+%% epTime_KeyPressFcn
+% This function is used to use a keyboard command on the epochs time edit
+% text.
+function epTime_KeyPressFcn(hObject, eventdata, handles)
+    if strcmpi(eventdata.Key, 'downarrow')
+        uicontrol(handles.tStart_text);
+    elseif strcmpi(eventdata.Key, 'uparrow')
+        uicontrol(handles.epNum_text);
+    end
+        
+    
+%% tStart_KeyPressFcn
+% This function is used to use a keyboard command on the first epoch's 
+% starting time edit text.
+function tStart_KeyPressFcn(hObject, eventdata, handles)
+    if strcmpi(eventdata.Key, 'downarrow')
+        if strcmpi(get(handles.totBand_text, 'Visible'), 'on')
+            uicontrol(handles.totBand_text);
+        else
+            uicontrol(handles.fs_text);
+        end
+    elseif strcmpi(eventdata.Key, 'uparrow')
+        uicontrol(handles.epTime_text);
+    end
+    
+    
+%% totBand_KeyPressFcn
+% This function is used to use a keyboard command on the total frequency
+% band edit text.
+function totBand_KeyPressFcn(hObject, eventdata, handles)
+    if strcmpi(eventdata.Key, 'downarrow')
+        uicontrol(handles.fs_text);
+    elseif strcmpi(eventdata.Key, 'uparrow')
+        uicontrol(handles.tStart_text);
+    end

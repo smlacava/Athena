@@ -180,3 +180,36 @@ function timeWindow_text_CreateFcn(hObject, eventdata, handles)
             get(0,'defaultUicontrolBackgroundColor'))
         set(hObject,'BackgroundColor','white');
     end
+
+    
+%% fs_KeyPressFcn
+% This function is used to use a keyboard command on the sampling frequency
+% edit text.
+function fs_KeyPressFcn(hObject, eventdata, handles)
+    if strcmpi(eventdata.Key, 'downarrow')
+        uicontrol(handles.timeWindow_text);
+    elseif strcmpi(eventdata.Key, 'uparrow')
+        uicontrol(handles.epNum_text);
+    end
+    
+    
+%% timeWindow_KeyPressFcn
+% This function is used to use a keyboard command on the time window edit
+% text.
+function timeWindow_KeyPressFcn(hObject, eventdata, handles)
+    if strcmpi(eventdata.Key, 'downarrow')
+        uicontrol(handles.epNum_text);
+    elseif strcmpi(eventdata.Key, 'uparrow')
+        uicontrol(handles.fs_text);
+    end
+    
+    
+%% epNum_KeyPressFcn
+% This function is used to use a keyboard command on the epochs number edit
+% text.
+function epNum_KeyPressFcn(hObject, eventdata, handles)
+    if strcmpi(eventdata.Key, 'downarrow')
+        uicontrol(handles.fs_text);
+    elseif strcmpi(eventdata.Key, 'uparrow')
+        uicontrol(handles.timeWindow_text);
+    end

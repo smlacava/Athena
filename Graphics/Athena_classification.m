@@ -58,9 +58,9 @@ function Athena_classification_OpeningFcn(hObject, eventdata, handles, ...
             set(handles.fraction_text, 'String', '0.1')
             set(handles.FResample, 'Tooltip', ...
                 'This is the fraction of dataset used for the validation')
-            set(handles.nTrees, 'String', 'Hidden layers')
+            set(handles.nTrees, 'String', 'Hidden neurons')
             set(handles.nTrees, 'Tooltip', ...
-                'This is the number of hidden layers')
+                'This is the number of neurons in the hidden layer')
             set(handles.yes_button, 'Visible', 'off')
             set(handles.no_button, 'Visible', 'off')
             set(handles.Title, 'String', ' Neural Network Classification')
@@ -259,6 +259,13 @@ function default_parameters_Callback(hObject, eventdata, handles)
     set(handles.TTS_button, 'Enable', value)
     set(handles.nodes_text, 'Enable', value)
     set(handles.fraction_text, 'Enable', value)
+    
+    if get(handles.DTclassifier, 'Value') == 1 && ...
+            strcmpi(get(handles.DTclassifier, 'Enable'), 'on') && ...
+            strcmpi(get(handles.DTclassifier, 'Visible'), 'on')
+        set(handles.nodes_text, 'Enable', 'off')
+        set(handles.fraction_text, 'Enable', 'off')
+    end
 
 
 %% DTclassifier_Callback
@@ -276,3 +283,60 @@ function DTclassifier_Callback(hObject, eventdata, handles)
     set(handles.fraction_text, 'String', r_num{dt_par})
     set(handles.nodes_text, 'Enable', value)
     set(handles.fraction_text, 'Enable', value)
+
+    
+%% repetitions_KeyPressFcn
+% This function is used to use a keyboard command on the repetitions edit 
+% text.
+function repetitions_KeyPressFcn(hObject, eventdata, handles)
+    if strcmpi(eventdata.Key, 'downarrow')
+        uicontrol(handles.train_text);
+    elseif strcmpi(eventdata.Key, 'uparrow')
+        if strcmpi(get(handles.fraction_text, 'Enable'), 'on')
+            uicontrol(handles.fraction_text);
+        elseif strcmpi(get(handles.nodes_text, 'Enable'), 'on')
+            uicontrol(handles.nodes_text);
+        else
+            uicontrol(handles.train_text);
+        end
+    end
+
+    
+%% train_KeyPressFcn
+% This function is used to use a keyboard command on the training fraction 
+% edit text.
+function train_KeyPressFcn(hObject, eventdata, handles)
+    if strcmpi(eventdata.Key, 'downarrow')
+        if strcmpi(get(handles.nodes_text, 'Enable'), 'on')
+            uicontrol(handles.nodes_text);
+        elseif strcmpi(get(handles.fraction_text, 'Enable'), 'on')
+            uicontrol(handles.fraction_text);
+        else
+            uicontrol(handles.repetitions_text);
+        end
+    elseif strcmpi(eventdata.Key, 'uparrow')
+        uicontrol(handles.repetitions_text);
+    end
+
+    
+%% nodes_KeyPressFcn
+% This function is used to use a keyboard command on the nodes/trees number
+% edit text.
+function nodes_KeyPressFcn(hObject, eventdata, handles)
+    if strcmpi(eventdata.Key, 'downarrow')
+        uicontrol(handles.fraction_text);
+    elseif strcmpi(eventdata.Key, 'uparrow')
+        uicontrol(handles.train_text);
+    end
+    
+
+%% fraction_KeyPressFcn
+% This function is used to use a keyboard command on the trees resampling
+% fraction edit text.
+function fraction_KeyPressFcn(hObject, eventdata, handles)
+    if strcmpi(eventdata.Key, 'downarrow')
+        uicontrol(handles.repetitions_text);
+    elseif strcmpi(eventdata.Key, 'uparrow')
+        uicontrol(handles.nodes_text);
+    end
+   

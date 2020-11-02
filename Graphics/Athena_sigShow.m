@@ -949,7 +949,8 @@ function subject_selection_ClickedCallback(hObject, eventdata, handles)
     
 
 %% Home_WindowKeyPressFcn
-% This function is used to use a speech command when 0 key is pressed.
+% This function is used to use a speech command when the spacebar is 
+% pressed on the keyboard.
 function Home_WindowKeyPressFcn(hObject, eventdata, handles)
     if contains('0123456789', eventdata.Key) || strcmpi(eventdata.Key, ...
             'backspace') || strcmpi(eventdata.Key, 'delete')
@@ -996,4 +997,22 @@ function Home_WindowKeyPressFcn(hObject, eventdata, handles)
                 strcmpi(recorded_command, 'background')
         end
     catch
+    end
+  
+    
+%% Home_KeyPressFcn
+% This function is used to use a keyboard command.
+function Home_KeyPressFcn(hObject, eventdata, handles)
+    if strcmpi(eventdata.Key, 'leftarrow')
+        left_Callback(hObject, eventdata, handles)
+    elseif strcmpi(eventdata.Key, 'rightarrow')
+        right_Callback(hObject, eventdata, handles)
+    elseif strcmpi(eventdata.Key, 'uparrow')
+        set(handles.mult, 'String', string(str2double(get(handles.mult, ...
+            'String'))*10))
+        zoom_Callback(hObject, eventdata, handles)
+    elseif strcmpi(eventdata.Key, 'downarrow')
+        set(handles.mult, 'String', string(max([1, ...
+            str2double(get(handles.mult, 'String'))/10])))
+        zoom_Callback(hObject, eventdata, handles)
     end

@@ -299,3 +299,24 @@ function subMaking_Callback(~, ~, handles)
     sub = string(get(handles.subjectsFile, 'String'));
     Athena_submaking(dataPath, measure, sub, loc)
     close(Athena_epmean)
+    
+     
+%% dataPath_KeyPressFcn
+% This function is used to use a keyboard command on the data directory
+% edit text.
+function dataPath_KeyPressFcn(hObject, eventdata, handles)
+    if strcmpi(eventdata.Key, 'downarrow') || ...
+            strcmpi(eventdata.Key, 'uparrow')
+        uicontrol(handles.subjectsFile);
+    end
+    
+    
+    
+%% subjectsFile_KeyPressFcn
+% This function is used to use a keyboard command on the data directory
+% edit text.
+function subjectsFile_KeyPressFcn(hObject, eventdata, handles)
+    if strcmpi(eventdata.Key, 'downarrow') || ...
+            strcmpi(eventdata.Key, 'uparrow')
+        uicontrol(handles.dataPath_text);
+    end

@@ -145,3 +145,23 @@ function RUN_Callback(hObject, eventdata, handles)
     dataset_resample(get(handles.dataPath_text, 'String'), ...
         str2double(get(handles.fs_text, 'String')))
     success()
+
+    
+%% fs_KeyPressFcn
+% This function is used to use a keyboard command on the sampling frequency
+% edit text.
+function fs_KeyPressFcn(hObject, eventdata, handles)
+    if strcmpi(eventdata.Key, 'downarrow') || ...
+            strcmpi(eventdata.Key, 'uparrow')
+        uicontrol(handles.dataPath_text);
+    end
+    
+    
+%% dataPath_KeyPressFcn
+% This function is used to use a keyboard command on the data directory
+% edit text.
+function dataPath_KeyPressFcn(hObject, eventdata, handles)
+    if strcmpi(eventdata.Key, 'downarrow') || ...
+            strcmpi(eventdata.Key, 'uparrow')
+        uicontrol(handles.fs_text);
+    end
