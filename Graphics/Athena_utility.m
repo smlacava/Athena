@@ -98,11 +98,11 @@ function signals_extraction_Callback(hObject, eventdata, handles)
 function openAnalysis(utility, handles)
     analysis_list = {'folder_decompress', 'file_decompress', ...
         'signals_divider', 'signals_extraction', 'resample', ...
-        'common_loc', 'common_subjects', 'back'};
+        'common_loc', 'common_subjects', 'history2script', 'back'};
     analysis_interfaces = {@Athena_decompressor, ...
         @Athena_decompressor, @Athena_dividerPath, @Athena_extract, ...
         @Athena_resample, @Athena_commonLoc, @Athena_commonSubjects, ...
-        @Athena};
+        @Athena_history2script, @Athena};
     funDir = mfilename('fullpath');
     funDir = split(funDir, 'Graphics');
     cd(char(funDir{1}));
@@ -136,3 +136,10 @@ function common_loc_Callback(hObject, eventdata, handles)
 % This function switches to the Common Subjects Extraction interface.
 function common_subjects_Callback(hObject, eventdata, handles)
     openAnalysis('common_subjects', handles)
+
+
+%% history2script_Callback
+% This function switches to the Hitory to Script interface.
+function history2script_Callback(hObject, eventdata, handles)
+    openAnalysis('history2script', handles)
+
