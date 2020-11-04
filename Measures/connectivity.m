@@ -2,8 +2,8 @@
 % This function computes the connectivity between EEG channels or ROIs,
 % using the phase locking value (PLV), the phase lag index (PLI), the
 % magnitude-squared coherence (MSC), the amplitude envelope correlation 
-% corrected (also called orthogonalized, AECo) or the amplitude envelope 
-% correlation not corrected (AEC).
+% corrected (also called orthogonalized, AECo), the amplitude envelope 
+% correlation not corrected (AEC), or the mutual information (MI).
 %
 % connectivity(fs, cf, nEpochs, dt, inDir, tStart, outTypes, filter_name)
 %
@@ -52,6 +52,7 @@ function connectivity(fs, cf, nEpochs, dt, inDir, tStart, outTypes, ...
         "AECc", "AEC_c", "aecc", "aec_c", "Aecc", "Aec_c"];
     MSCnames = ["coherence", "MSC", "coh", "msc", "COH", "Coherence"];
     ICOHnames = ["ICOH", "Coherency", "coherency"];
+    MInames = ["mutual_information", "MI", "Mutual_Information"];
     
     inDir = path_check(inDir);
     cases = define_cases(inDir);
@@ -84,6 +85,8 @@ function connectivity(fs, cf, nEpochs, dt, inDir, tStart, outTypes, ...
                 outTypes = [outTypes, "coherence"];
             elseif contains(sup(i, 1), ICOHnames)
                 outTypes = [outTypes, "ICOH"];
+            elseif contains(sup(i, 1) , MInames)
+                outTypes = [outTypes, "mutual_information"];
             end
         end
         if length(outDirs) == length(outTypes)
@@ -104,6 +107,8 @@ function connectivity(fs, cf, nEpochs, dt, inDir, tStart, outTypes, ...
             outTypes(i) = "ICOH";
         elseif contains(outTypes(i, 1), MSCnames)
             outTypes(i) = "coherence";
+        elseif contains(outTypes(i, 1), MInames)
+            outTypes(i) = "mutual_information";
         end
     end
     
@@ -149,6 +154,9 @@ function connectivity(fs, cf, nEpochs, dt, inDir, tStart, outTypes, ...
                         elseif strcmpi(outTypes(c), "ICOH")
                             conn.data(j, k, :, :) = ...
                                 imaginary_coherency(data);
+                        elseif strcmpi(outTypes(c), "mutual_information")
+                            conn.data(j, k, :, :) = ...
+                                mutual_information(data, 'max');
                         end
                     end
                 end

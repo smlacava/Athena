@@ -50,7 +50,8 @@ function batch_measureExtraction(parameters, dataPath, measure, cf)
             spectral_entropy(fs, cf, epNum, epTime, dataPath, tStart)
             
         elseif strcmpi(measure{m}, 'approximate_entropy') || ...
-                strcmpi(measure{m}, 'sample_entropy')
+                strcmpi(measure{m}, 'sample_entropy') || ...
+                strcmpi(measure{m}, 'discretized_entropy')
             time_entropy(fs, cf, epNum, epTime, dataPath, tStart, ...
                 [measure{m}], filter_name);
             

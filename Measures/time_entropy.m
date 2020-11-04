@@ -12,7 +12,8 @@
 %   inDir is the directory containing each case
 %   tStart is the starting time (in seconds) to computate the first sample
 %       of the first epoch
-%   outTypes is the list of entropy types to compute (sample_entropy, )
+%   outTypes is the list of entropy types to compute (sample_entropy, 
+%       approximate entropy or discretized entropy)
 %   filter_name is the name of the filtering function (athena_filter as
 %       default)
 %   m is the embedding dimension (its maximum value is the number of
@@ -53,6 +54,7 @@ function time_entropy(fs, cf, nEpochs, dt, inDir, tStart, outTypes, ...
     
     SampEn_names = ["sample_entropy", "SampEn", "SaEn"];
     AppEn_names = ["approximate_entropy", "AppEn", "ApEn"];
+    DiscEn_names = ["discretized_entropy", "DiscEn", "DE"];
     
     inDir = path_check(inDir);
     cases = define_cases(inDir);
@@ -75,6 +77,8 @@ function time_entropy(fs, cf, nEpochs, dt, inDir, tStart, outTypes, ...
         for i = 1:length(sup)
             if contains(sup(i, 1), SampEn_names)
             	outTypes = [outTypes, "sample_entropy"];
+            elseif contains(sup(i, 1), DiscEn_names)
+                outTypes = [outTypes, "discretized_entropy"];
             elseif contains(sup(i, 1), AppEn_names)
                 outTypes = [outTypes, "approximate_entropy"];
             end
@@ -87,6 +91,8 @@ function time_entropy(fs, cf, nEpochs, dt, inDir, tStart, outTypes, ...
     for i = 1:length(outTypes)
         if contains(outTypes(i), SampEn_names)
         	outTypes(i) = "sample_entropy";
+        elseif contains(outTypes(i), DiscEn_names)
+            outTypes(i) = "discretized_entropy";
         elseif contains(outTypes(i), AppEn_names)
         	outTypes(i) = "approximate_entropy";
         end
@@ -106,10 +112,7 @@ function time_entropy(fs, cf, nEpochs, dt, inDir, tStart, outTypes, ...
             try
                 [time_series, fsOld, locations] = ...
                     load_data(strcat(inDir, cases(i).name), 1);
-                if fsOld ~= fs
-                    [p, q] = rat(fs/fsOld);
-                    time_series = resample_signal(time_series', p, q)';
-                end
+                time_series = resample_signal(time_series, fs, fsOld);
                 nLoc = size(time_series, 1);
                 en.data = zeros(nBands, nEpochs, nLoc);
                 en.locations = locations;
@@ -125,6 +128,10 @@ function time_entropy(fs, cf, nEpochs, dt, inDir, tStart, outTypes, ...
                             if strcmpi(outTypes(c), "sample_entropy")
                                 en.data(j, k, loc) = ...
                                     sample_entropy(data, m, r);
+                            elseif strcmpi(outTypes(c), ... 
+                                    "discretized_entropy")
+                                en.data(j, k, loc) = ...
+                                    discretized_entropy(data);
                             elseif strcmpi(outTypes(c), ...
                                     "approximate_entropy")
                                 en.data(j, k, loc) = ...

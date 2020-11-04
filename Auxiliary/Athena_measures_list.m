@@ -38,9 +38,9 @@ function measures = Athena_measures_list(cellFLAG, aperiodicFLAG, ...
     end
     
     connectivity_measures = {'PLI', 'PLV', 'AEC', 'AECo', 'Coherence', ...
-        'ICOH'};
+        'ICOH', 'mutual_information'};
     powerentropy_measures = {'PSDr', 'PEntropy', 'sample_entropy', ...
-        'approximate_entropy'};
+        'approximate_entropy', 'discretized_entropy'};
     aperiodic_measures = {'Offset', 'Exponent'};
     
     measures = {};

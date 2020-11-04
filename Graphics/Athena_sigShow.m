@@ -965,8 +965,8 @@ function Home_WindowKeyPressFcn(hObject, eventdata, handles)
     try
         set(handles.recording_button, 'Visible', 'on');
         set(handles.recording_text, 'Visible', 'on');
-        pause(0.001)
-        record = audio_recording();
+        pause(0.0000001);
+        record = audio_recording(16e3, 2);
         set(handles.recording_button, 'Visible', 'off');
         set(handles.recording_text, 'Visible', 'off');
         recorded_command = classify_command(record, handles.net);  
@@ -982,6 +982,10 @@ function Home_WindowKeyPressFcn(hObject, eventdata, handles)
             left_Callback(hObject, eventdata, handles)
         elseif strcmpi(recorded_command, 'right')
             right_Callback(hObject, eventdata, handles)
+        elseif strcmpi(recorded_command, 'backward')
+            big_left_Callback(hObject, eventdata, handles)
+        elseif strcmpi(recorder_command, 'forward')
+            big_right_Callback(hObject, eventdata, handles)
         elseif strcmpi(recorded_command, 'zero')
             Go_to_ClickedCallback(hObject, eventdata, handles, 0)
         elseif strcmpi(recorded_command, 'stop')
@@ -991,6 +995,20 @@ function Home_WindowKeyPressFcn(hObject, eventdata, handles)
             set(handles.back_show, 'State', 'off')
         elseif strcmpi(recorded_command, 'go')
             big_forward_show_ClickedCallback(hObject, eventdata, handles)
+        elseif strcmpi(recorded_command, 'on')
+            if strcmpi(get(handles.Filtered_button, 'String'), 'Filter')
+                Filtered_button_Callback(hObject, eventdata, handles)
+            end
+        elseif strcmpi(recorded_command, 'off')
+            if strcmpi(get(handles.Filtered_button, 'String'), 'Filtered')
+                Filtered_button_Callback(hObject, eventdata, handles)
+            end
+        elseif strcmpi(recorded_command, 'follow')
+            axes(handles.signal);
+            Lim = xlim;
+            fs = str2double(get(handles.fs_text, 'String'));
+            set(handles.tStart_text, 'String', string(floor(Lim(1)/fs)))
+            tStart_text_Callback(hObject, eventdata, handles)
         elseif strcmpi(recorded_command, 'yes')
         elseif strcmpi(recorded_command, 'no')
         elseif strcmpi(recorded_command, 'unknown') || ...
