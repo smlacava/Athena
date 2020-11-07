@@ -1,5 +1,5 @@
 %% information
-% This function is used to communicate Information to the user.
+% This function is used to communicate some information to the user.
 %
 % f = information(message, title)
 %
@@ -52,10 +52,21 @@ function f = information(message, title, okFLAG)
             'FontWeight', 'bold', 'Units', 'normalized', ...
             'Position', [0.35 0.05 0.3 0.25], 'Callback', 'close', ...
             'ForegroundColor', fgc, 'BackgroundColor', btn); 
+        set(f, 'KeyPressFcn', {@enter_key_pressed});
     end
     movegui(f, 'center')
     set(f, 'Visible', 'on')
     if okFLAG == 1
         waitfor(hok);
+    end
+end
+
+
+%% enter_key_pressed
+% This function closes the interface if the return key is used.
+
+function enter_key_pressed(varargin)
+    if strcmpi(varargin{2}.Key, 'return')
+        close(varargin{1})
     end
 end

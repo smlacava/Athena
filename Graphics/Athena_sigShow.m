@@ -60,11 +60,18 @@ function Athena_sigShow_OpeningFcn(hObject, ~, handles, varargin)
         case_name = split(cases(1).name, '.');
         case_name = case_name{1};
         set(handles.Title, 'String', strcat("    subject: ", case_name));
-        [data, fs, locs] = load_data(strcat(dataPath, cases(1).name));
+        [data, fs, locs, chanlocs] = load_data(strcat(dataPath, ...
+            cases(1).name));
         if size(data, 1) > size(data, 2)
             data = data';
         end
         locs_ind = location_index(locs, data);
+        try
+            set(handles.chanlocs, 'Data', ...
+                double([chanlocs.X; chanlocs.Y; chanlocs.Z]'))
+        catch
+            set(handles.chanlocs, 'Data', []);
+        end
         set(handles.locs_ind, 'Data', locs_ind);
         set(handles.locs_matrix, 'Data', locs);
         set(handles.signal_matrix, 'Data', data);
@@ -149,7 +156,7 @@ function time_text_CreateFcn(hObject, ~, ~)
 
 %% Previous_Callback
 % This function switches to the previous time series.
-function Previous_Callback(~, ~, handles)    
+function Previous_Callback(hObject, ~, handles)    
     dataPath = get(handles.aux_dataPath, 'String');
     dataPath = path_check(dataPath);
     case_number = str2double(get(handles.case_number, 'String'))-1;
@@ -161,8 +168,14 @@ function Previous_Callback(~, ~, handles)
         fchild(1).JavaPeer.setForeground(...
             fchild(1).JavaPeer.getBackground.BLUE)
         fchild(1).JavaPeer.setStringPainted(true)
-        [data, fs, locs] = load_data(strcat(dataPath, ...
+        [data, fs, locs, chanlocs] = load_data(strcat(dataPath, ...
             cases(case_number).name));
+        try
+            set(handles.chanlocs, 'Data', ...
+                double([chanlocs.X; chanlocs.Y; chanlocs.Z]'))
+        catch
+            set(handles.chanlocs, 'Data', []);
+        end
         waitbar(0.5, f, 'Processing your data')
         hold off
         if size(data, 1) > size(data, 2)
@@ -545,9 +558,12 @@ function Loc_ClickedCallback(~, ~, handles)
             definput = 'es. C:\User\Locationsfile.mat';
         end
         filename = file_asking(definput, title, msg);
-        [data, ~, locs] = load_data(filename);
+        [data, ~, locs, chanlocs] = load_data(filename);
         if isempty(locs)
             locs = data;
+        end
+        if isempty(locs)
+            locs = {chanlocs(:).labels};
         end
         if size(locs, 2) > size(locs, 1)
             locs = locs';
@@ -577,7 +593,12 @@ function LocsToShow_ClickedCallback(~, ~, handles)
     data = get_data(handles);
     fs = str2double(get(handles.fs_text, 'String'));
     current_ind = get(handles.locs_ind, 'Data');
-    locs_ind = Athena_locsSelecting(locs, current_ind);
+    chanlocs = get(handles.chanlocs, 'Data');
+    if not(isempty(chanlocs))
+        locs_ind = Athena_locsSelecting(locs, current_ind, chanlocs);
+    else
+        locs_ind = Athena_locsSelecting(locs, current_ind);
+    end
     waitfor(locs_ind);
     selectedLocs = evalin('base', 'Athena_locsSelecting');
     if isobject(selectedLocs)
@@ -799,6 +820,7 @@ function Filtered_button_Callback(~, ~, handles)
         t = 'Filtering';
         if strcmpi(user_decision(m, t), 'yes')
             Filter_ClickedCallback(1, 1, handles)
+            Filtered_button_Callback(1, 1, handles)
         end
     end
 
@@ -1033,4 +1055,6 @@ function Home_KeyPressFcn(hObject, eventdata, handles)
         set(handles.mult, 'String', string(max([1, ...
             str2double(get(handles.mult, 'String'))/10])))
         zoom_Callback(hObject, eventdata, handles)
+    elseif strcmpi(eventdata.Key, 'return')
+        Filtered_button_Callback(hObject, eventdata, handles)
     end

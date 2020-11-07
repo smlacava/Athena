@@ -3,7 +3,7 @@
 % series, subjects file, locations file, etc.), in different formats (.mat,
 % .edf, .xls').
 %
-% [data, fs, locs] = load_data(dataFile, locFLAG)
+% [data, fs, locs, chanlocs] = load_data(dataFile, locFLAG)
 % 
 % input:
 %   dataFile is the data file to load (with his path)
@@ -17,11 +17,17 @@
 %       ([]) if it is not present in the data file
 %   locs is a cell matrix which contains in the first column the names of
 %       every location, it is empty ({}) if it is not present in the file
+%   chanlocs is a structure which contains the names of the channels in the
+%       labels field, and the related coordinates in the X, Y and Z fields
+%       (it is an empty vector if it is not present in the data file)
 
-function [data, fs, locs] = load_data(dataFile, locFLAG, varargin)
-    [data_name, fs_name, loc_name] = check_parameters(varargin);
+function [data, fs, locs, chanlocs] = load_data(dataFile, locFLAG, ...
+        varargin)
+    [data_name, fs_name, loc_name, chanlocs_name] = ...
+        check_parameters(varargin);
     fs = [];
     locs = {};
+    chanlocs = [];
     if nargin == 1
         locFLAG = 0;
     end
@@ -56,6 +62,16 @@ function [data, fs, locs] = load_data(dataFile, locFLAG, varargin)
                 fs = data.srate;
             end
             
+            aux_chanlocs = [];
+            if not(strcmp(chanlocs_name, '')) && isfield(data, ...
+                    chanlocs_name)
+                aux_chanlocs = eval(strcat('data.', chanlocs_name));
+            elseif isfield(data, 'channels_locations')
+            	aux_chanlocs = data.channels_locations;
+            elseif isfield(data, 'chanlocs')
+                aux_chanlocs = data.chanlocs;
+            end
+            
             if not(strcmp(loc_name, '')) && isfield(data, loc_name)
                 locs = eval(strcat('data.', loc_name));
             elseif isfield(data, 'chanlocs')
@@ -74,6 +90,33 @@ function [data, fs, locs] = load_data(dataFile, locFLAG, varargin)
             try
                 locs = {locs.labels};
             catch
+            end
+            
+            if not(isempty(aux_chanlocs))
+                try
+                    L = length(locs);
+                    N = length(aux_chanlocs);
+                    chanlocs = struct();
+                    for i = 1:L
+                        for j = 1:N
+                            if strcmpi(locs{i}, aux_chanlocs(j).labels)
+                                chanlocs(i).labels = ...
+                                    aux_chanlocs(j).labels;
+                                if isempty(aux_chanlocs(j).X)
+                                    chanlocs(i).X = nan;
+                                    chanlocs(i).Y = nan;
+                                    chanlocs(i).Z = nan;
+                                else
+                                    chanlocs(i).X = aux_chanlocs(j).X;
+                                    chanlocs(i).Y = aux_chanlocs(j).Y;
+                                    chanlocs(i).Z = aux_chanlocs(j).Z;
+                                end
+                            end
+                        end
+                    end
+                catch
+                    chanlocs = [];
+                end
             end
             
             if not(strcmp(data_name, '')) && isfield(data, data_name)
@@ -174,6 +217,7 @@ function [data, fs, locs] = load_data(dataFile, locFLAG, varargin)
             if size(data, 1) ~= size(locs)
                 data = [];
                 locs = [];
+                chanlocs = [];
             end
         end
     end
@@ -186,11 +230,18 @@ function [data, fs, locs] = load_data(dataFile, locFLAG, varargin)
         data = reshape(data, [dims(1), dims(2)*dims(3)]);
     end
 end
-    
-function [data_name, fs_name, loc_name] = check_parameters(parameters)
+
+
+%% chack_parameters
+% This function takes the parameters related to the optional name-value
+% arguments of the load_data function.
+
+function [data_name, fs_name, loc_name, chanlocs_name] = ...
+    check_parameters(parameters)
     data_name = '';
     fs_name = '';
     loc_name = '';
+    chanlocs_name = '';
     try
         parameters = parameters{:};
         for i = 1:length(parameters)
@@ -200,6 +251,8 @@ function [data_name, fs_name, loc_name] = check_parameters(parameters)
                 fs_name = parameters{i+1};
             elseif strcmpi(parameters{i}, 'locations')
                 loc_name = parameters{i+1};
+            elseif strcmpi(parameters{i}, 'channels_locations')
+                chanlocs_name = parameters{i+1};
             end
         end
     catch

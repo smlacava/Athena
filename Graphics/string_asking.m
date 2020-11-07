@@ -41,7 +41,7 @@ function [dataPath, f] = string_asking(definput, msg, title)
     set(f, 'Visible', 'on')
     waitfor(he)
 
-    function dataPath_Callback(hObject,eventdata)
+    function dataPath_Callback(hObject, eventdata)
          dataPath = get(hObject, 'string');
     end
 end

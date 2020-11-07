@@ -41,7 +41,6 @@ function answer = user_decision(msg, title)
     movegui(f, 'center')
     set(f, 'Visible', 'on')
     waitfor(hno)
-    
     function ok_Callback(hObject, eventdata)
          answer = 'yes';
          no_Callback(hObject, eventdata)

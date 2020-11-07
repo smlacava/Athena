@@ -55,9 +55,10 @@ The measures extractably by ATHENA can be divided in:
   - **PLI** (Phase Lag Index)
   - **PLV** (Phase Locking Value)
   - **AEC** (Amplitude Envelope Correlation)
-  - **corrected AEC** (Amplitude Envelope Correlation)
+  - **Corrected AEC** (Amplitude Envelope Correlation)
   - **Coherence**
   - **ICOH** (Cohenency)
+  - **Mutual Information**
 - *Power measures*
   - **relative PSD** (Power Spectral Density) 
 - *Background measures*
@@ -67,6 +68,7 @@ The measures extractably by ATHENA can be divided in:
   - **Spectral Entropy**
   - **Sample Entropy**
   - **Approximate Entropy**
+  - **Discretized Entropy**
   
   
 The *parameters* to choose to extract the measures are:

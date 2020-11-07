@@ -59,7 +59,8 @@ function [fmin, fmax, check] = band_asking(fmin, fmax)
     hbar = uicontrol('Style', 'text', 'Units', 'normalized', ...
         'Position', [0 0.99 0.2 0.01], 'String', '', ...
         'FontUnits', 'normalized', ...
-        'BackgroundColor', fgc, 'ForegroundColor', 'k');
+            'BackgroundColor', fgc, 'ForegroundColor', 'k');
+    set(f, 'KeyPressFcn', {@enter_key_pressed});
     movegui(f, 'center')
     set(f, 'Visible', 'on')
     waitfor(hok);
@@ -85,5 +86,16 @@ function [fmin, fmax, check] = band_asking(fmin, fmax)
          fmax = str2double(fmax);
          fmin = str2double(fmin);
          close(f);
+    end
+end
+
+
+
+%% enter_key_pressed
+% This function closes the interface if the return key is used.
+
+function enter_key_pressed(varargin)
+    if strcmpi(varargin{2}.Key, 'return')
+        close(varargin{1})
     end
 end

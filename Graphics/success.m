@@ -46,7 +46,19 @@ function success(msg)
         'Position', [0 0.98 0.3 0.02], 'String', '', ...
         'FontUnits', 'normalized', ...
         'BackgroundColor', fgc, 'ForegroundColor', 'k');
+    set(f, 'KeyPressFcn', {@enter_key_pressed});
+    set(hok, 'KeyPressFcn', {@enter_key_pressed});
     movegui(f, 'center')
     set(f, 'Visible', 'on')
     waitfor(hok);
+end
+
+
+%% enter_key_pressed
+% This function closes the interface if the return key is used.
+
+function enter_key_pressed(varargin)
+    if strcmpi(varargin{2}.Key, 'return')
+        close(varargin{1})
+    end
 end
