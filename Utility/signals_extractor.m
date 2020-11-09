@@ -34,8 +34,8 @@ function signals_extractor(dataPath, fs)
         name = split(cases(i).name, '.');
         name = split(name{1}, filesep);
         name = name{end};
-        [time_series, fsOld, locs] = load_data(strcat(dataPath, ...
-            cases(i).name));
+        [time_series, fsOld, locs, chanlocs] = ...
+            load_data(strcat(dataPath, cases(i).name));
         if not(isempty(fs)) && not(isempty(fsOld))
             [p, q] = rat(fs/fsOld);
             time_series = resample(time_series', p, q)';
@@ -48,6 +48,9 @@ function signals_extractor(dataPath, fs)
         end
         if not(isempty(locs))
             data.locations = locs;
+        end
+        if not(isempty(chanlocs))
+            data.chanlocs = chanlocs;
         end
         info_data = whos('data');
         if info_data.bytes > 2e+09

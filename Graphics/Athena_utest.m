@@ -116,6 +116,7 @@ function dataPath_text_Callback(hObject, eventdata, handles)
             set(hands(i), 'Enable', 'off')
         end
     end
+    measure_Callback(hObject, eventdata, handles)
 
 
 function dataPath_text_CreateFcn(hObject, eventdata, handles)

@@ -135,11 +135,13 @@ function save_subjects(cases, subjects_list, locations)
                     strtok(subjects_list(j).name, '.')) || ...
                     contains(strtok(subjects_list(j).name, '.'), ...
                     strtok(cases(i).name, '.'))
-                [ts, fs, locs] = load_data(strcat(dataPath,cases(i).name));
+                [ts, fs, locs, chanlocs] = ...
+                    load_data(strcat(dataPath,cases(i).name));
                 ts = sort_locations(ts, locs, locations);
                 data.time_series = ts;
                 data.fs = fs;
                 data.locations = locations;
+                data.chanlocs = chanlocs;
                 save(strcat(outPath, strtok(cases(i).name, '.'), ...
                     '.mat'), 'data');
             end

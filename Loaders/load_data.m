@@ -74,8 +74,6 @@ function [data, fs, locs, chanlocs] = load_data(dataFile, locFLAG, ...
             
             if not(strcmp(loc_name, '')) && isfield(data, loc_name)
                 locs = eval(strcat('data.', loc_name));
-            elseif isfield(data, 'chanlocs')
-                locs = data.chanlocs;
             elseif isfield(data, 'locs')
                 locs = data.locs;
             elseif isfield(data, 'locations')
@@ -86,10 +84,11 @@ function [data, fs, locs, chanlocs] = load_data(dataFile, locFLAG, ...
                 locs = data.label;
             elseif isfield(data, 'labels')
                 locs = data.labels;
+            elseif isfield(data, 'chanlocs')
+                locs = data.chanlocs;
             end
-            try
+            if isstruct(locs) && isfield(locs, 'labels')
                 locs = {locs.labels};
-            catch
             end
             
             if not(isempty(aux_chanlocs))

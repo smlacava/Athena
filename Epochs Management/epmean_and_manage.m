@@ -53,7 +53,8 @@ function [locations_file, sub_types] = epmean_and_manage(inDir, type, ...
     
     
     % setup
-    [measure, ~, locations] = load_data(strcat(inDir, cases(1).name));
+    [measure, ~, locations, chanlocs] = ...
+        load_data(strcat(inDir, cases(1).name));
     aux_loc_file = strcat(path_check(inDir), 'Locations.mat');
     if isempty(locations) 
         if not(isempty(locations_file)) && check_loc_file(locations_file)
@@ -140,7 +141,8 @@ function [locations_file, sub_types] = epmean_and_manage(inDir, type, ...
     waitbar(0, f, 'Computing temporal averages and spatial management')
     n_cases = length(cases);
     for i = 1:n_cases
-        [measure, ~, locs] = load_data(strcat(inDir, cases(i).name));
+        [measure, ~, locs, aux_chanlocs] = ...
+            load_data(strcat(inDir, cases(i).name));
         if isempty(locs)
             if isempty(locations)
                 locs = {};
@@ -168,6 +170,7 @@ function [locations_file, sub_types] = epmean_and_manage(inDir, type, ...
                 save(strcat(av_paths{j}, cases(i).name), 'aux_data') 
                 [ind, del_ind] = match_locations(...
                     setup_data{j}.locations, aux_data.locations);
+                chanlocs = match_chanlocs(aux_chanlocs, chanlocs);
                 if length(size(loc_av(j).First)) == 3
                     loc_av(j).First(:, :, del_ind) = [];
                     loc_av(j).Second(:, :, del_ind) = [];
@@ -250,6 +253,13 @@ function [locations_file, sub_types] = epmean_and_manage(inDir, type, ...
         locations = [];
     end
     save(locations_file, 'locations')
+    
+    chanlocs = sort_chanlocs(aux_chanlocs, locations);
+    chanlocs_file = strcat(path_check(limit_path(inDir, type)), ...
+        'Channel_locations.mat');
+    if not(isempty(chanlocs))
+        save(chanlocs_file, 'chanlocs');
+    end
     close(f)
 end
 

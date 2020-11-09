@@ -16,7 +16,8 @@
 %   Parietal is the row vector of the parietal area indices
 
 
-function [Central, Frontal, Temporal, Occipital, Parietal] = areas_manager(locations)
+function [Central, Frontal, Temporal, Occipital, Parietal] = ...
+    areas_manager(locations)
     Central=[];
     Frontal=[];
     Temporal=[];
@@ -48,15 +49,19 @@ function [Central, Frontal, Temporal, Occipital, Parietal] = areas_manager(locat
             end
             if contains(loc, "C")
                 Central = [Central, i];
-            elseif contains(loc, "F")
+            end
+            if contains(loc, "F")
                 Frontal = [Frontal, i];
             elseif contains(loc, "A")
                 Frontal = [Frontal, i];
-            elseif contains(loc, "T")
+            end
+            if contains(loc, "T")
                 Temporal = [Temporal, i];
-            elseif contains(loc, "O")
+            end
+            if contains(loc, "O")
                 Occipital = [Occipital, i];
-            elseif contains(loc, "P")
+            end
+            if contains(loc, "P")
                 Parietal = [Parietal, i];
             end
         end

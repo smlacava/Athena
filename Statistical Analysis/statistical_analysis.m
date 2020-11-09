@@ -109,9 +109,12 @@ function [P, Psig, data, data_sig] = statistical_analysis(First, ...
         locs, bands_names, data, Psig, data_sig);
     
     show_figures(data, data_names, P, bands_names, locs, Psig, ...
-        statanType, statanDir, save_check)
+        statanType, statanDir, save_check, dataPath)
 end
 
+
+%% compute_feature_names
+% This function computes the features names related to the p-value table.
 
 function feature_names = compute_feature_names(locs, bands_names)
     nLocs = length(locs);
@@ -125,6 +128,10 @@ function feature_names = compute_feature_names(locs, bands_names)
     end
 end
 
+
+%% save_data
+% This function is used to save the results related to the statistical
+% analysis.
 
 function [statanType, statanDir] = save_data(dataPath, measure, ...
     analysis, locs, bands_names, data, Psig, data_sig)
@@ -152,8 +159,12 @@ function [statanType, statanDir] = save_data(dataPath, measure, ...
 end
 
 
+%% show_figures
+% This function shows tables and figures related to the statistical
+% analysis executed.
+
 function show_figures(data, data_names, P, bands_names, locs, Psig, ...
-    statanType, statanDir, save_check)
+    statanType, statanDir, save_check, dataPath)
     bg_color = [1 1 1];
     sig = (size(Psig, 1) ~= 0 && not(logical(sum(sum(strcmp(Psig, ''))))));
     if save_check == 1
@@ -186,6 +197,14 @@ function show_figures(data, data_names, P, bands_names, locs, Psig, ...
             'Name', 'Statistical Analysis - Significant Results');
         ps = uitable(fs3, 'Data', cellstr(Psig), 'Position', ...
             [20 20 2000, 400], 'ColumnName', {'Significant comparisons'});
+    end
+    if not(isempty(locs)) && not(isempty(Psig))
+        sd = spatial_subdivision(locs);
+        if strcmpi(sd, "Total")
+            shows_significant_locations(dataPath, Psig);
+        elseif strcmpi(sd, "Areas")
+            shows_significant_areas(dataPath, Psig);
+        end
     end
 end
 
@@ -229,5 +248,75 @@ function [First, Second, locs] = check_data(First, Second, locs)
     end
     if ischar(Second) || isstring(Second)
         Second = load_data(Second);
+    end
+end
+
+
+%% shows_significant_locations
+% This function shows the locations related to the significant comparisons.
+
+function shows_significant_locations(dataPath, Psig)
+    [dataPath, measure] = split_measurePath(dataPath);
+    chanlocs_file = strcat(path_check(dataPath), 'Channel_locations.mat');
+    if not(exist(chanlocs_file, 'file'))
+        return;
+    end
+    load(chanlocs_file)
+    aux_struct = struct();
+    aux_struct.chanlocs = chanlocs;
+    channels = [];
+    bands = [];
+    L = length(Psig);
+    nLocs = length(chanlocs);
+    for i = 1:L
+        aux_res = split(Psig(i));
+        channels = [channels, string(aux_res(1))];
+        bands = [bands, string(aux_res(3))];
+    end
+    band_labels = categories(categorical(bands));
+    for i = 1:length(band_labels)
+        idx = zeros(length(chanlocs), 1);
+        channels_list = [];
+        for j = 1:L
+            if strcmpi(bands(j), band_labels{i})
+                channels_list = [channels_list, string(channels(j))];
+            end
+        end
+        for j = 1:length(channels_list)
+            for k = 1:nLocs
+                if strcmpi(channels_list(j), chanlocs(k).labels) == 1
+                    idx(k) = 1;
+                    break;
+                end
+            end
+        end
+        show_locations(aux_struct, {chanlocs(:).labels}, idx, ...
+            strcat(measure, " ", band_labels{i}, " Hz"));
+    end
+end
+
+
+%% shows_significant areas
+% This function shows the areas related to the significant comparisons.
+
+function shows_significant_areas(dataPath, Psig)
+    [~, measure] = split_measurePath(dataPath);
+    areas = [];
+    bands = [];
+    L = length(Psig);
+    for i = 1:L
+        aux_res = split(Psig(i));
+        areas = [areas, string(aux_res(1))];
+        bands = [bands, string(aux_res(3))];
+    end
+    band_labels = categories(categorical(bands));
+    for i = 1:length(band_labels)
+        areas_list = [];
+        for j = 1:L
+            if strcmpi(bands(j), band_labels{i})
+                areas_list = [areas_list, string(areas(j))];
+            end
+        end
+        show_areas(areas_list, strcat(measure, " ", band_labels{i}, " Hz"));
     end
 end

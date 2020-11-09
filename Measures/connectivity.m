@@ -124,12 +124,13 @@ function connectivity(fs, cf, nEpochs, dt, inDir, tStart, outTypes, ...
     for c = 1:length(outTypes)
         for i = 1:length(cases) 
             try
-                [time_series, fsOld, locations] = ...
+                [time_series, fsOld, locations, chanlocs] = ...
                     load_data(strcat(inDir, cases(i).name), 1);
                 time_series = resample_signal(time_series, fs, fsOld);
                 nLoc = size(time_series, 1);
                 conn.data = zeros(nBands, nEpochs, nLoc, nLoc);
                 conn.locations = locations;
+                conn.chanlocs = chanlocs;
                 for j = 1:nBands
                     for k = 1:nEpochs
                         ti = ((k-1)*dt)+tStart;

@@ -9,7 +9,8 @@
 %   cellFLAG has to be 1 in order to obtain the list as a cell array, or 0
 %       to obtain a string array (0 by default)
 %   aperiodicFLAG has to be 1 in order to insert the aperiodic measures in
-%       the list, or 0 to avoid them (1 by default)
+%       the list, or 0 to avoid them, or 'all' to consider all the flags 
+%       related to the measure types as 1 (1 by default)
 %   connectivityFLAG has to be 1 in order to insert the connectivity
 %       measures in the list, or 0 to avoid them (1 by default)
 %   powerentropyFLAG has to be 1 in order to insert the power measures and
@@ -34,6 +35,12 @@ function measures = Athena_measures_list(cellFLAG, aperiodicFLAG, ...
         connectivityFLAG = 1;
     end
     if nargin < 4
+        powerentropyFLAG = 1;
+    end
+    
+    if ischar(aperiodicFLAG) && strcmpi(aperiodicFLAG, 'all')
+        aperiodicFLAG = 1;
+        connectivityFLAG = 1;
         powerentropyFLAG = 1;
     end
     

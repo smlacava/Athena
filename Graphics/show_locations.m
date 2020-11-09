@@ -3,25 +3,34 @@
 % check their names by clicking on the points representing them, and
 % eventually to highlight some of them.
 %
-% f = show_locations(data, locations_list, enabled)
+% f = show_locations(data, locations_list, enabled, title)
 %
 % Input:
 %   data is the data structure containing the locations information in the
 %       chanlocs field (names and coordinates in X, Y, Z)
 %   locations_list is the cell array which contains the list of considered 
-%       locations (optional, no highlighted channels if it is not given)
+%       locations (optional, no highlighted channels if it is not given or
+%       given as an empty array)
 %   enables is an array in which each element is 0 or 1 if the related
 %       channel in the locations_list array has to be highlighted or not,
-%       respectively (optional, no highlighted channels if it is not given)
+%       respectively (optional, no highlighted channels if it is not given 
+%       or given as an empty array)
+%   title is the title of the figure ('Channels locations' by default)
 %
 % Output:
 %   f is the handle to the figure
 
-function f = show_locations(data, locations_list, enabled)
-    if nargin == 1
+function f = show_locations(data, locations_list, enabled, title)
+    if nargin < 2 || isempty(locations_list)
         enabled = [];
+    end
+    if nargin < 3 || isempty(locations_list)
         locations_list = [];
     end
+    if nargin < 4
+        title = 'Channel locations';
+    end
+    
     if not(isfield(data, 'chanlocs'))
         return;
     end
@@ -29,11 +38,12 @@ function f = show_locations(data, locations_list, enabled)
         'Graphics')), 'docs', filesep, 'head.png');
     head = imread(filename);
     f = figure('Visible', 'off', 'MenuBar', 'none', 'ToolBar', 'none', ...
-        'name', 'Channel locations', 'NumberTitle','off');
+        'name', title, 'NumberTitle','off');
     axis([-110.4, 110.4, -112,  100]);
     set(gca,'XColor', 'none','YColor','none')
     im = image([-110.4, 110.4], [-112,  100], head);
     hold on
+    
     locations = data.chanlocs;
     X = [];
     Y = [];
@@ -65,6 +75,7 @@ function f = show_locations(data, locations_list, enabled)
         h = scatter(aux_Y, aux_X, 'MarkerEdgeColor', 'b', ...
             'MarkerFaceColor', [0.43, 0.8, 0.72]);
     end
+    
     s = scatter(Y, X, 'MarkerFaceColor', 'none');
     f.Children.XColor = 'w';
     f.Children.YColor = 'w';

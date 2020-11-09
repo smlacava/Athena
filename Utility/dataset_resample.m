@@ -22,7 +22,7 @@ function dataset_resample(dataPath, fs)
     fchild(1).JavaPeer.setStringPainted(true)
     
     for i = 1:length(cases)
-        [time_series, fsOld, locs] = ...
+        [time_series, fsOld, locs, chanlocs] = ...
             load_data(strcat(dataPath, cases(i).name));
         if not(isempty(fsOld))
             if fs > fsOld
@@ -37,6 +37,7 @@ function dataset_resample(dataPath, fs)
         end
         data.locations = locs;
         data.fs = fs;
+        data.chanlocs = chanlocs;
         save(strcat(outPath, strtok(cases(i).name, '.'), '.mat'), 'data');
         waitbar(i/length(cases), f)
     end

@@ -49,8 +49,8 @@ function signals_divider(dataPath, time_window, n_time_series, fs)
     try
         for i = 1:n_cases
             name = define_case_name(cases(i).name);            
-            [time_series, fsOld, locs] = load_data(strcat(dataPath, ...
-                cases(i).name));
+            [time_series, fsOld, locs, chanlocs] = ...
+                load_data(strcat(dataPath, cases(i).name));
             if not(isempty(fs)) && not(isempty(fsOld))
                 [p, q] = rat(fs/fsOld);
                 time_series = resample(time_series', p, q)';
@@ -66,6 +66,9 @@ function signals_divider(dataPath, time_window, n_time_series, fs)
                 end
                 if not(isempty(locs))
                     data.locations = locs;
+                end
+                if not(isempty(chanlocs))
+                    data.chanlocs = chanlocs;
                 end
                 save(strcat(outDir, name, 'seg', seg_names(n), '.mat'), ...
                     'data')

@@ -143,13 +143,15 @@ function save_with_common_locations(dataPath, locations)
     N = length(cases);
     
     for i = 1:N
-        [ts, fs, locs] = load_data(strcat(dataPath, cases(i).name));
+        [ts, fs, locs, chanlocs] = ...
+            load_data(strcat(dataPath, cases(i).name));
         locs = locations_check(locs);
         [ind, ~] = match_locations(locations, locs);
         
         data.time_series = ts(ind, :);
         data.fs = fs;
         data.locations = locations;
+        data.chanlocs = chanlocs;
         
         save(strcat(outPath, strtok(cases(i).name, '.'), '.mat'), 'data')
         

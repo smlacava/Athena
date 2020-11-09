@@ -73,7 +73,7 @@ function varargout = Athena_locsSelecting_OutputFcn(~, ~, handles)
 % This function closes the interface, returning a 0 to the calling
 % function.
 function back_Callback(~, ~, handles)
-    close(findobj('type', 'figure', 'name', 'Channel locations'))
+    close(findobj('type', 'figure', 'name', 'Channels locations'))
     assignin('base','Athena_locsSelecting', 0);
     close(Athena_locsSelecting)
 
@@ -95,7 +95,7 @@ function locs_CreateFcn(hObject, ~, ~)
 % This function closes the interface, returning the selected locations to
 % the calling function.
 function save_Callback(~, ~, handles)
-        close(findobj('type', 'figure', 'name', 'Channel locations'))
+        close(findobj('type', 'figure', 'name', 'Channels locations'))
         selectedLocs = get(handles.locs, 'Value');
         %set(handles.output, 'UserData', selectedList);
         assignin('base','Athena_locsSelecting', selectedLocs);

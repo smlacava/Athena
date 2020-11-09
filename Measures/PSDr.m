@@ -48,12 +48,13 @@ function PSDr(fs, cf, nEpochs, dt, inDir, tStart, relBand)
 
     for i = 1:length(cases)
         try
-            [time_series, fsOld, locations] = ...
+            [time_series, fsOld, locations, chanlocs] = ...
                 load_data(strcat(inDir, cases(i).name), 1);
             time_series = resample_signal(time_series, fs, fsOld);
             time_series = time_series(:, tStart:end);
             psdr.data = zeros(nBands, nEpochs, size(time_series, 1));
             psdr.locations = locations;
+            psdr.chanlocs = chanlocs;
             for k = 1:nEpochs
         
                 for j = 1:size(time_series, 1)

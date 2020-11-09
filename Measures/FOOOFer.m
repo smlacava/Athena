@@ -127,7 +127,7 @@ function FOOOFer(fs, cf, nEpochs, dt, inDir, tStart, outTypes, maxPeaks)
    
     for i = 1:length(cases)
         try
-            [time_series, fsOld, locations] = ...
+            [time_series, fsOld, locations, chanlocs] = ...
                 load_data(strcat(inDir, cases(i).name), 1);
             time_series = resample_signal(time_series, fs, fsOld);
             time_series = time_series(:, tStart:end);
@@ -136,6 +136,7 @@ function FOOOFer(fs, cf, nEpochs, dt, inDir, tStart, outTypes, maxPeaks)
             setup_data = zeros(nEpochs, nLoc);
             offset.data = setup_data;
             offset.locations = locations;
+            offset.chanlocs = chanlocs;
             exponent = offset;
             error = offset;
             r_squared = offset;
