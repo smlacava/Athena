@@ -16,21 +16,19 @@ function AECo = amplitude_envelope_correlation_orth(sig)
     AECo = zeros(nLoc, nLoc);
     complex_sig = hilbert(sig);
 
-    for i = 1:nLoc
-        for j = 1:nLoc
-            if i < j       
-                ort1 = orthog_timedomain(sig(:, i), sig(:, j));
-                complex_ort1 = abs(hilbert(ort1));
-                AEC1 = abs(corrcoef(complex_ort1, abs(complex_sig(:, i))));
+    for i = 1:nLoc-1
+        for j = i+1:nLoc     
+            ort1 = orthog_timedomain(sig(:, i), sig(:, j));
+            complex_ort1 = abs(hilbert(ort1));
+            AEC1 = abs(corrcoef(complex_ort1, abs(complex_sig(:, i))));
         
-                ort2 = orthog_timedomain(sig(:, j), sig(:, i));
-                complex_ort2 = abs(hilbert(ort2));
-                AEC2 = abs(corrcoef(complex_ort2, abs(complex_sig(:, j))));
+            ort2 = orthog_timedomain(sig(:, j), sig(:, i));
+            complex_ort2 = abs(hilbert(ort2));
+            AEC2 = abs(corrcoef(complex_ort2, abs(complex_sig(:, j))));
         
-                AEC_mean = (AEC1(1, 2)+AEC2(1, 2))/2;        
-                AECo(i, j) = AEC_mean;                
-                AECo(j, i) = AECo(i, j);        
-            end       
-        end
+            AEC_mean = (AEC1(1, 2)+AEC2(1, 2))/2;        
+            AECo(i, j) = AEC_mean;                
+            AECo(j, i) = AECo(i, j);        
+        end       
     end
 end

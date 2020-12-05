@@ -15,12 +15,10 @@ function MSC = magnitude_squared_coherence(sig)
     nLoc = size(sig, 2);
     MSC = zeros(nLoc, nLoc);
 
-    for i = 1:nLoc
-        for j = 1:nLoc
-            if i < j
-                MSC(i, j) = mean(mscohere(sig(:, i), sig(:, j)));    
-                MSC(j, i) = MSC(i, j);     
-            end
+    for i = 1:nLoc-1
+        for j = i+1:nLoc
+            MSC(i, j) = mean(mscohere(sig(:, i), sig(:, j)));    
+            MSC(j, i) = MSC(i, j);     
         end
     end
 end

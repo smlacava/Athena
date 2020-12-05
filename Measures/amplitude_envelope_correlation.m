@@ -16,15 +16,13 @@ function AEC = amplitude_envelope_correlation(sig)
     AEC = zeros(nLoc, nLoc);
     complex_sig = hilbert(sig);
 
-    for i = 1:nLoc
-        for j = 1:nLoc
-            if i < j        
-                AEC1 = abs(corrcoef(...
-                    abs(complex_sig(:, j)), abs(complex_sig(:, i))));        
-                AEC_mean = AEC1(1, 2);        
-                AEC(i, j) = AEC_mean;       
-                AEC(j, i) = AEC(i, j);        
-            end
+    for i = 1:nLoc-1
+        for j = i+1:nLoc        
+            AEC1 = abs(corrcoef(abs(complex_sig(:, j)), ...
+                abs(complex_sig(:, i))));        
+            AEC_mean = AEC1(1, 2);        
+            AEC(i, j) = AEC_mean;       
+            AEC(j, i) = AEC(i, j);        
         end
     end
 end

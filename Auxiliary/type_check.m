@@ -15,8 +15,7 @@
 function [type, connCheck] = type_check(measure)
     type = string(measure);
     connCheck = 0;
-    if sum(strcmpi(measure, ["PLI", "PLV", "AEC", "AECo", "MSC", ...
-            "coherence", "ICOH", "mutual_information"]))
+    if sum(strcmpi(measure, Athena_measures_list(0, 0, 1, 0)))
         type = "CONN";
         connCheck = 1;
     elseif strcmpi(measure, "exponent")

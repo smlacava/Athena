@@ -17,22 +17,20 @@ function ICOH = imaginary_coherency(sig)
     ICOH = zeros(nLoc, nLoc);
     phase = angle(hilbert(sig));
     
-    for i = 1:nLoc
-        for j = 1:nLoc
-            if i < j
-                a = abs(sig(:, i));
-                b = abs(sig(:, j));
+    for i = 1:nLoc-1
+        for j = i+1:nLoc
+            a = abs(sig(:, i));
+            b = abs(sig(:, j));
                 
-                % Note that each term would be divided by the number of 
-                % samples, however this can be avoided because it would be 
-                % simplified in the final equation
-                Cab = sum(a.*b.*sin(phase(:, i) - phase(:, j)));
-                Caa = sum(a.*a);
-                Cbb = sum(b.*b);
-                
-                ICOH(i, j) = abs(Cab/sqrt(Caa*Cbb));
-                ICOH(j, i) = ICOH(i, j);
-            end
+            % Note that each term would be divided by the number of 
+            % samples, however this can be avoided because it would be 
+            % simplified in the final equation
+            Cab = sum(a.*b.*sin(phase(:, i) - phase(:, j)));
+            Caa = sum(a.*a);
+            Cbb = sum(b.*b);
+               
+            ICOH(i, j) = abs(Cab/sqrt(Caa*Cbb));
+            ICOH(j, i) = ICOH(i, j);
         end
     end
 end

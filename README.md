@@ -59,6 +59,7 @@ The measures extractably by ATHENA can be divided in:
   - **Coherence**
   - **ICOH** (Cohenency)
   - **Mutual Information**
+  - **Correlation coefficient**
 - *Power measures*
   - **relative PSD** (Power Spectral Density) 
 - *Background measures*
@@ -71,6 +72,13 @@ The measures extractably by ATHENA can be divided in:
   - **Discretized Entropy**
 - *Autocorrelation measures*
   - **Hurst exponent**
+- *Statistical information*
+  - **Mean**
+  - **Median**
+  - **Standard deviation**
+  - **Skewness**
+  - **Kurtosis**
+  - **Variance**
   
 The *parameters* to choose to extract the measures are:
 - **fs**: it is the sampling frequency, it can be automatically chosen if the parameter is present in the time series

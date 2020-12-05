@@ -53,6 +53,7 @@ function connectivity(fs, cf, nEpochs, dt, inDir, tStart, outTypes, ...
     MSCnames = ["coherence", "MSC", "coh", "msc", "COH", "Coherence"];
     ICOHnames = ["ICOH", "Coherency", "coherency"];
     MInames = ["mutual_information", "MI", "Mutual_Information"];
+    CCnames = ["correlation", "correlation_coefficient", "CC"];
     
     inDir = path_check(inDir);
     cases = define_cases(inDir);
@@ -85,8 +86,10 @@ function connectivity(fs, cf, nEpochs, dt, inDir, tStart, outTypes, ...
                 outTypes = [outTypes, "coherence"];
             elseif contains(sup(i, 1), ICOHnames)
                 outTypes = [outTypes, "ICOH"];
-            elseif contains(sup(i, 1) , MInames)
+            elseif contains(sup(i, 1), MInames)
                 outTypes = [outTypes, "mutual_information"];
+            elseif contains(sup(i, 1), CCnames)
+                outTypes = [outTypes, "correlation_coefficient"];
             end
         end
         if length(outDirs) == length(outTypes)
@@ -109,6 +112,8 @@ function connectivity(fs, cf, nEpochs, dt, inDir, tStart, outTypes, ...
             outTypes(i) = "coherence";
         elseif contains(outTypes(i, 1), MInames)
             outTypes(i) = "mutual_information";
+        elseif contains(outTypes(i, 1), CCnames)
+            outTypes(i) = "correlation_coefficient";
         end
     end
     
@@ -158,6 +163,10 @@ function connectivity(fs, cf, nEpochs, dt, inDir, tStart, outTypes, ...
                         elseif strcmpi(outTypes(c), "mutual_information")
                             conn.data(j, k, :, :) = ...
                                 mutual_information(data, 'max');
+                        elseif strcmpi(outTypes(c), ...
+                                "correlation_coefficient")
+                            conn.data(j, k, :, :) = ...
+                                correlation_coefficient(data);
                         end
                     end
                 end

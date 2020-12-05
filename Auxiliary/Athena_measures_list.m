@@ -3,7 +3,7 @@
 % allowed measures.
 %
 % measures = Athena_measures_list(cellFLAG, aperiodicFLAG, ...
-%         connectivityFLAG, powerentropyFLAG)
+%         connectivityFLAG, univariateFLAG)
 %
 % Input:
 %   cellFLAG has to be 1 in order to obtain the list as a cell array, or 0
@@ -13,19 +13,19 @@
 %       related to the measure types as 1 (1 by default)
 %   connectivityFLAG has to be 1 in order to insert the connectivity
 %       measures in the list, or 0 to avoid them (1 by default)
-%   powerentropyFLAG has to be 1 in order to insert the power measures, the
-%       entropy measures and the autocorrelation measures in the list, or 0 
-%       to avoid them (1 by default)
+%   univariateFLAG has to be 1 in order to insert the power measures, the
+%       entropy measures, the autocorrelation measures  and the statistical
+%       measures in the list, or 0 to avoid them (1 by default)
 %       
 % 
 % Output:
-%   measures is the list of allowed measures (in order power measures,
+%   measures is the list of allowed measures (in order univariate measures,
 %       connectivity measures and aperiodic measures, if all the FLAGs are 
 %       set to 1)
 
 
 function measures = Athena_measures_list(cellFLAG, aperiodicFLAG, ...
-    connectivityFLAG, powerentropyFLAG)
+    connectivityFLAG, univariateFLAG)
     if nargin < 1
         cellFLAG = 0;
     end
@@ -36,23 +36,24 @@ function measures = Athena_measures_list(cellFLAG, aperiodicFLAG, ...
         connectivityFLAG = 1;
     end
     if nargin < 4
-        powerentropyFLAG = 1;
+        univariateFLAG = 1;
     end
     
     if ischar(aperiodicFLAG) && strcmpi(aperiodicFLAG, 'all')
         aperiodicFLAG = 1;
         connectivityFLAG = 1;
-        powerentropyFLAG = 1;
+        univariateFLAG = 1;
     end
     
     connectivity_measures = {'PLI', 'PLV', 'AEC', 'AECo', 'Coherence', ...
-        'ICOH', 'mutual_information'};
+        'ICOH', 'mutual_information', 'correlation_coefficient'};
     powerentropy_measures = {'PSDr', 'PEntropy', 'sample_entropy', ...
-        'approximate_entropy', 'discretized_entropy', 'Hurst'};
+        'approximate_entropy', 'discretized_entropy', 'Median', 'Mean', ...
+        'Skewness', 'Kurtosis', 'Standard_deviation', 'Variance', 'Hurst'};
     aperiodic_measures = {'Offset', 'Exponent'};
     
     measures = {};
-    if powerentropyFLAG == 1
+    if univariateFLAG == 1
         measures = [measures, powerentropy_measures];
     end
     if connectivityFLAG == 1
