@@ -69,7 +69,8 @@ The measures extractably by ATHENA can be divided in:
   - **Sample Entropy**
   - **Approximate Entropy**
   - **Discretized Entropy**
-  
+- *Autocorrelation measures*
+  - **Hurst exponent**
   
 The *parameters* to choose to extract the measures are:
 - **fs**: it is the sampling frequency, it can be automatically chosen if the parameter is present in the time series
