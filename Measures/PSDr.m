@@ -63,13 +63,13 @@ function PSDr(fs, cf, nEpochs, dt, inDir, tStart, relBand)
                     bandPower = zeros(nBands, 1);
 
                     for b = 1:nBands
-                        [infft, supft] = band_index(w, cf(b+cfstart), ...
-                            cf(b+cfstart+1));
+                        [infft, supft] = band_boundaries(w, ...
+                            cf(b+cfstart), cf(b+cfstart+1));
 
                         bandPower(b, 1) = sum(pxx(infft:supft));
                     end     
                     
-                    [infft, supft] = band_index(w, relBand(1), ...
+                    [infft, supft] = band_boundaries(w, relBand(1), ...
                         relBand(end));
                     totalPower = sum(pxx(infft:supft));             
 
@@ -94,31 +94,4 @@ function PSDr(fs, cf, nEpochs, dt, inDir, tStart, relBand)
         waitbar(i/length(cases), f)
     end
     close(f)
-end
-
-
-%% band_index
-% This function computes the minimum value and the maximum value of a
-% vector of frequencies, related to the frequency values nearest to two
-% different frequencies.
-%
-% [infft, supft] = band_index(w, min_band, max_band)
-%
-% Input:
-%   w is the vector of frequencies
-%   min_band is the minimum frequency to search
-%   max_band is the maximum frequency to search
-%
-% Output:
-%   infft is the minimum frequency value
-%   supft is the maximum frequency value
-
-function [infft, supft] = band_index(w, min_band, max_band)
-    fPre = [find(w > min_band, 1), find(w > min_band, 1)-1];
-    [~,y] = min([w(fPre(1))-min_band, min_band-w(fPre(2))]);
-    infft = fPre(y);
-                
-    fPost = [find(w > max_band, 1), find(w > max_band, 1)-1];
-    [~,y] = min([w(fPost(1))-max_band, max_band-w(fPost(2))]);
-    supft = fPost(y);
 end

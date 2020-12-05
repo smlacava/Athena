@@ -14,7 +14,8 @@ function new_version = version_info()
     disp(" ")
     disp("Athena")
     try
-        text=fileread('.git/HEAD');
+        text=fileread(strcat(limit_path(mfilename('fullpath'), ...
+            'Auxiliary'), '.git/HEAD'));
     catch
         disp('git folder not found')
         return

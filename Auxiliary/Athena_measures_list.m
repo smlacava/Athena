@@ -13,8 +13,9 @@
 %       related to the measure types as 1 (1 by default)
 %   connectivityFLAG has to be 1 in order to insert the connectivity
 %       measures in the list, or 0 to avoid them (1 by default)
-%   powerentropyFLAG has to be 1 in order to insert the power measures and
-%       the entropy measures in the list, or 0 to avoid them (1 by default)
+%   powerentropyFLAG has to be 1 in order to insert the power measures, the
+%       entropy measures and the autocorrelation measures in the list, or 0 
+%       to avoid them (1 by default)
 %       
 % 
 % Output:
@@ -47,7 +48,7 @@ function measures = Athena_measures_list(cellFLAG, aperiodicFLAG, ...
     connectivity_measures = {'PLI', 'PLV', 'AEC', 'AECo', 'Coherence', ...
         'ICOH', 'mutual_information'};
     powerentropy_measures = {'PSDr', 'PEntropy', 'sample_entropy', ...
-        'approximate_entropy', 'discretized_entropy'};
+        'approximate_entropy', 'discretized_entropy', 'Hurst'};
     aperiodic_measures = {'Offset', 'Exponent'};
     
     measures = {};

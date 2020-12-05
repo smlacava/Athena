@@ -54,7 +54,9 @@ function batch_measureExtraction(parameters, dataPath, measure, cf)
                 strcmpi(measure{m}, 'discretized_entropy')
             time_entropy(fs, cf, epNum, epTime, dataPath, tStart, ...
                 [measure{m}], filter_name);
-            
+        elseif strcmpi(measure{m}, 'Hurst')
+            autocorrelation_measures(fs, cf, epNum, epTime, dataPath, ...
+                tStart, [measure{m}], filter_name);
         elseif strcmpi(measure{m}, 'offset') || ...
                 strcmpi(measure{m}, 'exponent')
             cf_bg = [cf(1), cf(end)];

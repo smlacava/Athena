@@ -124,7 +124,6 @@ function FOOOFer(fs, cf, nEpochs, dt, inDir, tStart, outTypes, maxPeaks)
     f_range = [w(inferior) w(superior)];
     clear time_series
 
-   
     for i = 1:length(cases)
         try
             [time_series, fsOld, locations, chanlocs] = ...
@@ -149,7 +148,6 @@ function FOOOFer(fs, cf, nEpochs, dt, inDir, tStart, outTypes, maxPeaks)
             fooofed_spectrum.locations = locations;
             bg_fit = fooofed_spectrum;
             power_spectrum = bg_fit;
-        
             for k = 1:nEpochs
                 for j = 1:nLoc
                     data = squeeze(time_series(j, dt*(k-1)+1:k*dt));           
@@ -159,6 +157,7 @@ function FOOOFer(fs, cf, nEpochs, dt, inDir, tStart, outTypes, maxPeaks)
                     offset.data(k, j) = fooof_results.background_params(1);
                     exponent.data(k, j) = ...
                         fooof_results.background_params(2);
+                    
                     r_squared.data(k, j) = fooof_results.r_squared;
                     error.data(k, j) = fooof_results.error;
                     fooofed_spectrum.data(k, j, :) = ...
