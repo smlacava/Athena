@@ -380,6 +380,9 @@ function meas_Callback(hObject, eventdata, handles)
             "Channels"])
         cases = define_cases(dataPath);
         load(strcat(dataPath, cases(1).name));
+        if exist('network_data', 'var')
+            data = network_data;
+        end
         bands = Athena_bands_management(dataPath, measure, data);
         if iscell(bands) || isstring(bands)
             set(handles.band, 'String', string(bands))

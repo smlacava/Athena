@@ -11,7 +11,7 @@
 %   locations_list is the cell array which contains the list of considered 
 %       locations (optional, no highlighted channels if it is not given or
 %       given as an empty array)
-%   enables is an array in which each element is 0 or 1 if the related
+%   enabled is an array in which each element is 0 or 1 if the related
 %       channel in the locations_list array has to be highlighted or not,
 %       respectively (optional, no highlighted channels if it is not given 
 %       or given as an empty array)

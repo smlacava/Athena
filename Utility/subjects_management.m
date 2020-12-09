@@ -64,10 +64,8 @@ function common = common_elements(test, retest)
             try 
                 cond = strcmpi(test{i}, retest{j});
             catch
-                cond = contains(strtok(test(i).name, '.'), ...
-                    strtok(retest(j).name, '.')) || ...
-                    contains(strtok(retest(j).name, '.'), ...
-                    strtok(test(i).name, '.'));
+                cond = strcmpi(name_normalization(test(i).name), ...
+                    name_normalization(retest(j).name));
             end
             if cond == 1
                 check = 1;
@@ -128,13 +126,18 @@ end
 function save_subjects(cases, subjects_list, locations)
     dataPath = path_check(cases(1).folder);
     outPath = path_check(create_directory(dataPath, 'Common_Subjects'));
+    N = length(cases);
     data = struct();
-    for i = 1:length(cases)
+    for i = 1:N
+            f = waitbar(0,'Saving the common subjects', 'Color', ...
+                '[1 1 1]');
+            fchild = allchild(f);
+            fchild(1).JavaPeer.setForeground(...
+                fchild(1).JavaPeer.getBackground.BLUE)
+            fchild(1).JavaPeer.setStringPainted(true)
         for j = 1:length(subjects_list)
-            if contains(strtok(cases(i).name, '.'), ...
-                    strtok(subjects_list(j).name, '.')) || ...
-                    contains(strtok(subjects_list(j).name, '.'), ...
-                    strtok(cases(i).name, '.'))
+            if strcmpi(name_normalization(cases(i).name), ...
+                    name_normalization(subjects_list(j).name))
                 [ts, fs, locs, chanlocs] = ...
                     load_data(strcat(dataPath,cases(i).name));
                 ts = sort_locations(ts, locs, locations);
@@ -146,7 +149,9 @@ function save_subjects(cases, subjects_list, locations)
                     '.mat'), 'data');
             end
         end
+        waitbar(i/N, f)
     end
+    close(f)
 end
 
 
@@ -172,20 +177,10 @@ function subjects = common_subjects_matrix(subjects, subjects_list)
     for i = 1:length(subjects)
         check = 0;
         for j = 1:length(subjects_list)
-            try
-                if contains(subjects_list(j).name, subjects{i, 1}) || ...
-                        contains(subjects{i, 1}, subjects_list(j).name)
-                    check = 1;
-                    break;
-                end
-            catch
-                if contains(subjects_list(j).name, ...
-                        string(subjects(i, 1))) || ...
-                        contains(string(subjects(i, 1)), ...
-                        subjects_list(j).name)
-                    check = 1;
-                    break;
-                end
+            if strcmpi(name_normalization(subjects_list(j).name), ...
+                    name_normalization(subjects(i, 1)))
+                check = 1;
+                break;
             end
         end
         if check == 0
@@ -193,4 +188,28 @@ function subjects = common_subjects_matrix(subjects, subjects_list)
         end
     end
     subjects(del_ind, :) = [];
+end
+
+
+
+%% name_normalization
+% This function limits the name of the considered subject to the first
+% invalid symbol (".", "_", "-").
+%
+% name = name_normalization(name)
+%
+% Input:
+%   name is the name to normalize
+%
+% Output:
+%   name is the normalized name
+
+function name = name_normalization(name)
+    symbols = {'.', '_', '-'};
+    if iscell(name)
+        name = string(name);
+    end
+    for i = 1:length(symbols)
+        name = strtok(name, symbols{i});
+    end
 end

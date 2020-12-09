@@ -52,7 +52,7 @@ function [data, sub_list, alpha, bg_color, locs, bands_names, P, RHO, ...
     addpath 'Auxiliary'
 
     bg_color = [1 1 1];
-    im = imread('untitled3.png');
+    im = imread('logo.png');
     try
         measures = get(handles.meas1, 'String');
         measure = measures{get(handles.meas1, 'Value')};

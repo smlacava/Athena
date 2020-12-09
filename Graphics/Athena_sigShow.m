@@ -600,6 +600,13 @@ function LocsToShow_ClickedCallback(~, ~, handles)
         locs_ind = Athena_locsSelecting(locs, current_ind);
     end
     waitfor(locs_ind);
+    figures = findall(0,'type','figure');
+    for i = 1:length(figures)
+        if strcmpi(figures(i).Name, 'Current channels')
+            close(figures(i))
+            break;
+        end
+    end
     selectedLocs = evalin('base', 'Athena_locsSelecting');
     if isobject(selectedLocs)
         close(selectedLocs)

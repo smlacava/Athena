@@ -60,7 +60,8 @@ function Athena_locsSelecting_OpeningFcn(hObject, ~, handles, varargin)
                 aux.chanlocs(i).Y = chanlocs(i, 2);
                 aux.chanlocs(i).Z = chanlocs(i, 3);
             end
-            handles.f = show_locations(aux, locs, varargin{2});
+            f = show_locations(aux, locs, varargin{2});
+            f.Name = 'Current channels';
         end
     end
     

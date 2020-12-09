@@ -39,7 +39,7 @@ function Athena_history2script_OpeningFcn(hObject, eventdata, handles, varargin)
     if nargin >= 4
         aux_dataPath = varargin{1};
         if not(strcmp(aux_dataPath, 'Static Text'))
-            set(handles.dataPath1_text, 'String', varargin{1})
+            set(handles.dataPath_text, 'String', varargin{1})
         end
     end
     if nargin >= 5
