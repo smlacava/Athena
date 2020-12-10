@@ -17,7 +17,11 @@ function varargout = Athena(varargin)
     if nargin && ischar(varargin{1})
         gui_State.gui_Callback = str2func(varargin{1});
     end
-    
+    funDir = mfilename('fullpath');
+    funDir = split(funDir, 'Athena');
+    funDir = strcat(funDir{1}, filesep, 'Athena');
+    cd(char(funDir));
+    addpath 'Auxiliary'
     if isempty(varargin) && version_info() == 1
         Athena
         return;
