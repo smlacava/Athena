@@ -19,10 +19,10 @@ function varargout = Athena(varargin)
     end
     cd(fileparts(which(mfilename)));
     addpath 'Auxiliary'
-    if isempty(varargin) && version_info() == 1
-        Athena
-        return;
-    end
+%     if isempty(varargin) && version_info() == 1
+%         Athena
+%         return;
+%     end
 
     if nargout
         [varargout{1:nargout}] = gui_mainfcn(gui_State, varargin{:});
