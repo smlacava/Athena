@@ -18,7 +18,7 @@ function varargout = Athena(varargin)
         gui_State.gui_Callback = str2func(varargin{1});
     end
     cd(fileparts(which(mfilename)));
-    addpath 'Auxiliary'
+%   addpath 'Auxiliary'
 %     if isempty(varargin) && version_info() == 1
 %         Athena
 %         return;
@@ -79,7 +79,7 @@ function Athena_OpeningFcn(hObject, ~, handles, varargin)
         'band and the time window to analyze')));
     funDir = mfilename('fullpath');
     funDir = split(funDir, 'Athena');
-    funDir = strcat(funDir{1}, filesep, 'Athena');
+    funDir = strcat(funDir{1}, 'Athena');
     cd(char(funDir));
     addpath 'Graphics'
     addpath 'Auxiliary'
