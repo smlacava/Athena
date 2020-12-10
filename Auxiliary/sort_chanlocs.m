@@ -17,12 +17,20 @@ function chanlocs = sort_chanlocs(chanlocs, locations)
     idx = [];
     for i = 1:L
         for j = 1:N
-            if contains(chanlocs(j).labels, locations{i}) || ...
-                    contains(locations{i}, chanlocs(j).labels)
+            if strcmpi(normalize_name(chanlocs(j).labels), ...
+                    normalize_name(locations{i}))
                 idx = [idx, j];
                 break;
             end
         end
     end
     chanlocs = chanlocs(idx);
+end
+
+
+function name = normalize_name(name)
+    symbols = {'_', '-'};
+    for i = 1:length(symbols)
+        name = strtok(name, symbols{i});
+    end
 end

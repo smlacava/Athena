@@ -23,12 +23,20 @@ function chanlocs = match_chanlocs(chanlocs, new_chanlocs)
     idx = [];
     for i = 1:L
         for j = 1:new_L
-            if contains(chanlocs(i).labels, new_chanlocs(j).labels) || ...
-                contains(new_chanlocs(j).labels, chanlocs(i).labels)
+            if strcmpi(normalize_name(chanlocs(i).labels), ...
+                    normalize_name(new_chanlocs(j).labels))
                 idx = [idx, i];
                 break;
             end
         end
     end
     chanlocs = chanlocs(idx);
+end
+
+
+function name = normalize_name(name)
+    symbols = {'_', '-'};
+    for i = 1:length(symbols)
+        name = strtok(name, symbols{i});
+    end
 end
