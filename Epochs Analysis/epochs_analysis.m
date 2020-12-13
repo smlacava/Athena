@@ -64,11 +64,18 @@ function epochs_analysis(dataPath, name, anType, measure, epochs, ...
         loc = locations(:, 1);
     end
     
+    conn_measures = Athena_measures_list(0, 0, 1, 0);
+    connCHECK = 0;
+    for i = 1:length(conn_measures)
+        if strcmpi(conn_measures(i), measure)
+            connCHECK = 1;
+            break;
+        end
+    end
     dataPath = limit_path(dataPath, measure);
     if strcmp(anType, 'asymmetry')
         [RightLoc, LeftLoc] = asymmetry_manager(loc);
-        if (strcmp(measure, 'PSDr') || strcmp(measure, 'offset') ...
-                || strcmp(measure, 'exponent'))
+        if connCHECK == 0
             epan_asy(data, epochs, bands, measure, name, RightLoc, ...
                 LeftLoc, save_check, format, dataPath)
         else
@@ -76,8 +83,7 @@ function epochs_analysis(dataPath, name, anType, measure, epochs, ...
                 LeftLoc, save_check, format, dataPath)
         end
     elseif strcmp(anType, 'global')
-        if (strcmp(measure, 'PSDr') || strcmp(measure, 'offset') ...
-                || strcmp(measure, 'exponent'))
+        if connCHECK == 0
             epan_glob(data, epochs, bands, measure, name, ...
                 save_check, format, dataPath)
         else
@@ -87,8 +93,7 @@ function epochs_analysis(dataPath, name, anType, measure, epochs, ...
     elseif strcmp(anType, 'areas')
         [CentralLoc, FrontalLoc, TemporalLoc, OccipitalLoc, ...
             ParietalLoc] = areas_manager(loc);
-        if (strcmp(measure, 'PSDr') || strcmp(measure, 'offset') ...
-                || strcmp(measure, 'exponent'))
+        if connCHECK == 0
             epan_areas(data, epochs, bands, measure, name, CentralLoc, ...
                 FrontalLoc, TemporalLoc, OccipitalLoc, ParietalLoc, ...
                 save_check, format, dataPath)
@@ -98,8 +103,7 @@ function epochs_analysis(dataPath, name, anType, measure, epochs, ...
                 ParietalLoc, save_check, format, dataPath)
         end
     else
-        if (strcmp(measure, 'PSDr') || strcmp(measure, 'offset') ...
-                || strcmp(measure, 'exponent'))
+        if connCHECK == 0
             epan_tot(data, epochs, bands, measure, name, loc, ...
                 save_check, format, dataPath)
         else

@@ -31,6 +31,7 @@ function [data, fs, locs, chanlocs] = load_data(dataFile, locFLAG, ...
     if nargin == 1
         locFLAG = 0;
     end
+    dataFile = fullfile_check(dataFile);
     
     athenaFLAG = 0;
     avoid_locs = {'PHOTICPH', 'IBI', 'BURSTS', 'SUPPR', 'PHOTICREF'};

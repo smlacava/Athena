@@ -50,7 +50,8 @@ function data = classification_data_settings(dataPath, analysis_types, ...
     [data, features] = create_data(cases, types, dataPath, features, data);
     features = check_features(features);
     data = array2table(data, 'VariableNames', features);
-    save(strcat(outPath, 'Classification_Data.mat'), 'data')
+    save(fullfile_check(strcat(outPath, 'Classification_Data.mat')), ...
+        'data')
 end
 
 
@@ -60,7 +61,7 @@ function [data, features] = significant_data(cases, types, dataPath, ...
     n_cases = length(cases);
     for i = 1:n_cases
         if logical(sum(strcmpi(cases(i).name, types)))
-            load(strcat(dataPath, cases(i).name))
+            load(fullfile_check(strcat(dataPath, cases(i).name)))
             if not(isempty(statAnResult.dataSig))
                 if size(statAnResult.Psig, 2) > size(statAnResult.Psig, 1)
                     statAnResult.Psig = statAnResult.Psig';
@@ -87,7 +88,7 @@ function [data, features] = all_data(cases, types, dataPath, features, ...
     n_cases = length(cases);
     for i = 1:n_cases
         if logical(sum(strcmpi(cases(i).name, types)))
-            load(strcat(dataPath, cases(i).name))
+            load(fullfile_check(strcat(dataPath, cases(i).name)))
             if not(isempty(statAnData.data))
                 if size(statAnData.feature_names, 2) > ...
                         size(statAnData.feature_names, 1)

@@ -32,7 +32,7 @@ function Athena_tfShow_OpeningFcn(hObject, ~, handles, varargin)
         net_name = strcat(path_check(limit_path(mfilename('fullpath'), ...
             'Graphics')), 'Classification', filesep, 'TrainedDNN', ...
             filesep, 'commandNet.mat');
-        load(net_name);
+        load(fullfile_check(net_name));
         handles.net = trainedNet;
     catch
     end

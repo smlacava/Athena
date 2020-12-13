@@ -54,9 +54,10 @@ function signals_extractor(dataPath, fs)
         end
         info_data = whos('data');
         if info_data.bytes > 2e+09
-            save(strcat(outDir, name, '.mat'), 'data', '-v7.3')
+            save(fullfile_check(strcat(outDir, name, '.mat')), ...
+                'data', '-v7.3')
         else
-            save(strcat(outDir, name, '.mat'), 'data')
+            save(fullfile_check(strcat(outDir, name, '.mat')), 'data')
         end
         clear data
         clear time_series

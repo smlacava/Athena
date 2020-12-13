@@ -80,7 +80,7 @@ function dataPath_text_Callback(hObject, eventdata, handles)
     if exist(subjectsFile, 'file')
         set(handles.aux_sub, 'String', subjectsFile)
         try
-            sub_info = load(subjectsFile);
+            sub_info = load(fullfile_check(subjectsFile));
             aux_sub_info = fields(sub_info);
             eval(strcat("sub_info = sub_info.", aux_sub_info{1}, ";"));
             sub_types = categories(categorical(sub_info(:, end)));
@@ -101,11 +101,13 @@ function dataPath_text_Callback(hObject, eventdata, handles)
     for i = 1:length(types)
         try
             data_name = measurePath(dataPath, measure, types{i});
-            load(strcat(path_check(data_name), 'Second.mat'))
+            load(fullfile_check(strcat(path_check(data_name), ...
+                'Second.mat')))
             if isempty(Second.data)
                 set(hands(i), 'Enable', 'off')
             else
-                load(strcat(path_check(data_name), 'First.mat'))
+                load(fullfile_check(strcat(path_check(data_name), ...
+                    'First.mat')))
                 if isempty(First.data)
                     set(hands(i), 'Enable', 'off')
                 else
@@ -255,7 +257,8 @@ function measure_Callback(hObject, eventdata, handles)
     for i = 1:length(types)
         try
             data_name = measurePath(dataPath, measure, types{i});
-            load(strcat(path_check(data_name), 'Second.mat'))
+            load(fullfile_check(strcat(path_check(data_name), ...
+                'Second.mat')))
             if isempty(Second.data)
                 set(hands(i), 'Enable', 'off')
             else

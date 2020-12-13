@@ -37,9 +37,10 @@ function batch_random_forest(parameters)
         mkdir(resultDir);
     end
     if sum(strcmp(parameters{45}, 'true'))
-        save(strcat(path_check(resultDir), 'StatisticsRF.mat'), ...
-            'statistics')
+        save(fullfile_check(strcat(path_check(resultDir), ...
+            'StatisticsRF.mat')), 'statistics')
     else
-       save(strcat(path_check(resultDir), 'Statistics.mat'), 'statistics')
+       save(fullfile_check(strcat(path_check(resultDir), ...
+           'Statistics.mat')), 'statistics')
     end
 end

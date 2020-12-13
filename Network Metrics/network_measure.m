@@ -104,7 +104,7 @@ function network_measure(dataPath, measure, network_measure, loc_file, ...
     countFirst = 1;
     countSecond = 1;
     for i = 1:length(cases)
-        load(strcat(inDir, cases(i).name));
+        load(fullfile_check(strcat(inDir, cases(i).name)));
         for band = 1:nBands
             aux_data = data_management(data, locations, band, bands_list);
             if i == 1 && band == 1
@@ -115,7 +115,7 @@ function network_measure(dataPath, measure, network_measure, loc_file, ...
             
         end
         network_data.locations = locations;
-        save(strcat(outDir, cases(i).name), 'network_data')
+        save(fullfile_check(strcat(outDir, cases(i).name)), 'network_data')
         
         if i == 1
             [globFirst, globSecond, asyFirst, asySecond, ...
@@ -127,22 +127,22 @@ function network_measure(dataPath, measure, network_measure, loc_file, ...
         [globFirst, globSecond, ~, ~] = group_assignment(aux_data, ...
             globFirst, globSecond, countFirst, countSecond, Subjects, ...
             sub_types{1}, cases(i).name);
-        save(strcat(globDir, cases(i).name), 'aux_data');
+        save(fullfile_check(strcat(globDir, cases(i).name)), 'aux_data');
         aux_data = total_av(network_data);
         [totFirst, totSecond, ~, ~] = group_assignment(aux_data, ...
             totFirst, totSecond, countFirst, countSecond, Subjects, ...
             sub_types{1}, cases(i).name);
-        save(strcat(totDir, cases(i).name), 'aux_data');
+        save(fullfile_check(strcat(totDir, cases(i).name)), 'aux_data');
         aux_data = areas_av(network_data);
         [areasFirst, areasSecond, ~, ~] = group_assignment(aux_data, ...
             areasFirst, areasSecond, countFirst, countSecond, Subjects, ...
             sub_types{1}, cases(i).name);
-        save(strcat(areasDir, cases(i).name), 'aux_data');
+        save(fullfile_check(strcat(areasDir, cases(i).name)), 'aux_data');
         aux_data = asymmetry_av(network_data);
         [asyFirst, asySecond, countFirst, countSecond] = ...
             group_assignment(aux_data, asyFirst, asySecond, countFirst, ...
             countSecond, Subjects, sub_types{1}, cases(i).name);
-        save(strcat(asyDir, cases(i).name), 'aux_data');
+        save(fullfile_check(strcat(asyDir, cases(i).name)), 'aux_data');
         waitbar(i/length(cases), f)
     end
     
@@ -387,8 +387,8 @@ function save_groups(globFirst, globSecond, asyFirst, asySecond, ...
     Second.data = globSecond;
     First.locations = "global";
     Second.locations = "global";
-    save(strcat(globDir, 'First.mat'), 'First')
-    save(strcat(globDir, 'Second.mat'), 'Second')
+    save(fullfile_check(strcat(globDir, 'First.mat')), 'First')
+    save(fullfile_check(strcat(globDir, 'Second.mat')), 'Second')
     
     First = struct();
     Second = struct();
@@ -396,8 +396,8 @@ function save_groups(globFirst, globSecond, asyFirst, asySecond, ...
     Second.data = totSecond;
     First.locations = total;
     Second.locations = total;
-    save(strcat(totDir, 'First.mat'), 'First')
-    save(strcat(totDir, 'Second.mat'), 'Second')
+    save(fullfile_check(strcat(totDir, 'First.mat')), 'First')
+    save(fullfile_check(strcat(totDir, 'Second.mat')), 'Second')
     
     First = struct();
     Second = struct();
@@ -405,8 +405,8 @@ function save_groups(globFirst, globSecond, asyFirst, asySecond, ...
     Second.data = asySecond;
     First.locations = "asymmetry";
     Second.locations = "asymmetry";
-    save(strcat(asyDir, 'First.mat'), 'First')
-    save(strcat(asyDir, 'Second.mat'), 'Second')
+    save(fullfile_check(strcat(asyDir, 'First.mat')), 'First')
+    save(fullfile_check(strcat(asyDir, 'Second.mat')), 'Second')
     
     First = struct();
     Second = struct();
@@ -414,7 +414,7 @@ function save_groups(globFirst, globSecond, asyFirst, asySecond, ...
     Second.data = areasSecond;
     First.locations = areas;
     Second.locations = areas;
-    save(strcat(areasDir, 'First.mat'), 'First')
-    save(strcat(areasDir, 'Second.mat'), 'Second')
+    save(fullfile_check(strcat(areasDir, 'First.mat')), 'First')
+    save(fullfile_check(strcat(areasDir, 'Second.mat')), 'Second')
 end
     

@@ -88,7 +88,7 @@ function PSDr(fs, cf, nEpochs, dt, inDir, tStart, relBand)
             end
             filename = strcat(outDir, strtok(name, '.'), '.mat');
     
-            save(filename, 'psdr'); 
+            save(fullfile_check(filename), 'psdr'); 
         catch
         end %end try
         waitbar(i/length(cases), f)

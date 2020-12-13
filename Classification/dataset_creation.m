@@ -61,7 +61,8 @@ function data = dataset_creation(dataPath, analysis_types, ...
     [data, features] = create_data(types, dataPath, features, data);
     features = check_features(features);
     data = array2table(data, 'VariableNames', features);
-    save(strcat(outPath, 'Classification_Data.mat'), 'data')
+    save(fullfile_check(strcat(outPath, 'Classification_Data.mat')), ...
+        'data')
 end
 
 
@@ -80,8 +81,8 @@ function [data, features] = all_data(types, dataPath, features, ...
             aux_band2 = split(bands(end), '-');
             bands = string(strcat(aux_band, '-', aux_band2{2}));
         end
-        load(strcat(path_check(auxPath), 'Second.mat'));
-        load(strcat(path_check(auxPath), 'First.mat'));
+        load(fullfile_check(strcat(path_check(auxPath), 'Second.mat')));
+        load(fullfile_check(strcat(path_check(auxPath), 'First.mat')));
         for loc = 1:length(Second.locations)
             for band = 1:length(bands)
                 feat = strcat(measure, '_', area, '_', ...

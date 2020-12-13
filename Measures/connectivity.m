@@ -181,7 +181,7 @@ function connectivity(fs, cf, nEpochs, dt, inDir, tStart, outTypes, ...
                     name = cases(i).name;
                 end
                 filename = strcat(outDir, strtok(name, '.'), '.mat');
-                save(filename, 'conn');
+                save(fullfile_check(filename), 'conn');
             catch
             end %end try
             waitbar((i+(c-1)*length(cases))/...

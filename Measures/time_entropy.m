@@ -152,7 +152,7 @@ function time_entropy(fs, cf, nEpochs, dt, inDir, tStart, outTypes, ...
                     name = cases(i).name;
                 end
                 filename = strcat(outDir, strtok(name, '.'), '.mat');
-                save(filename, 'en');
+                save(fullfile_check(filename), 'en');
             catch
             end %end try
             waitbar((i+(c-1)*length(cases))/...

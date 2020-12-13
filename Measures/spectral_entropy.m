@@ -65,7 +65,7 @@ function spectral_entropy(fs, cf, nEpochs, dt, inDir, tStart)
             end
             filename = strcat(outDir, strtok(name, '.'), '.mat');
     
-            save(filename, 'se'); 
+            save(fullfile_check(filename), 'se'); 
         catch
         end
         waitbar(i/length(cases), f)

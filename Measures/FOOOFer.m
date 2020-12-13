@@ -188,7 +188,7 @@ function FOOOFer(fs, cf, nEpochs, dt, inDir, tStart, outTypes, maxPeaks)
                     name = cases(i).name;
                 end
                 filename = strcat(outDir, strtok(name, '.'), '.mat');    
-                save(filename, outTypes(s)); 
+                save(fullfile_check(filename), outTypes(s)); 
             end
             clear time_series
         catch

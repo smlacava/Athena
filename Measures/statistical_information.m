@@ -165,7 +165,7 @@ function statistical_information(fs, cf, nEpochs, dt, inDir, tStart, ...
                     name = cases(i).name;
                 end
                 filename = strcat(outDir, strtok(name, '.'), '.mat');
-                save(filename, 'sa');
+                save(fullfile_check(filename), 'sa');
             catch
             end %end try
             waitbar((i+(c-1)*length(cases))/...

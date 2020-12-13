@@ -142,7 +142,7 @@ function Run_Callback(hObject, eventdata, handles)
     try
         dataFile = strcat(dataPath, path_check('Classification'), ...
             'Classification_data.mat');
-        load(dataFile);
+        load(fullfile_check(dataFile));
     catch
         problem('Bad or missing data file')
         return
@@ -217,7 +217,8 @@ function Run_Callback(hObject, eventdata, handles)
         mkdir(resultDir);
     end
     warning('off','all')
-    save(strcat(path_check(resultDir), 'Statistics.mat'), 'statistics')
+    save(fullfile_check(strcat(path_check(resultDir), ...
+        'Statistics.mat')), 'statistics')
     warning('on','all')
     success();
 

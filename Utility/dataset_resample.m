@@ -38,7 +38,8 @@ function dataset_resample(dataPath, fs)
         data.locations = locs;
         data.fs = fs;
         data.chanlocs = chanlocs;
-        save(strcat(outPath, strtok(cases(i).name, '.'), '.mat'), 'data');
+        save(fullfile_check(strcat(outPath, strtok(cases(i).name, '.'), ...
+            '.mat')), 'data');
         waitbar(i/length(cases), f)
     end
     close(f)

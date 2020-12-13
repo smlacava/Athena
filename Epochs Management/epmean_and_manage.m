@@ -94,7 +94,7 @@ function [locations_file, sub_types] = epmean_and_manage(inDir, type, ...
                 auxID = fopen('auxiliary.txt', 'a');
                 fprintf(char_check(strcat('Locations=', locations_file)));
             end
-            save(locations_file, 'locations')
+            save(fullfile_check(locations_file), 'locations')
         end
     end
     
@@ -166,8 +166,9 @@ function [locations_file, sub_types] = epmean_and_manage(inDir, type, ...
                 aux_data = data;
                 f_av = av_functions{j};
                 aux_data = f_av(aux_data);
-                save(strcat(epDir, cases(i).name), 'data') 
-                save(strcat(av_paths{j}, cases(i).name), 'aux_data') 
+                save(fullfile_check(strcat(epDir, cases(i).name)), 'data') 
+                save(fullfile_check(strcat(av_paths{j}, cases(i).name)),...
+                    'aux_data') 
                 [ind, del_ind] = match_locations(...
                     setup_data{j}.locations, aux_data.locations);
                 chanlocs = match_chanlocs(aux_chanlocs, chanlocs);
@@ -226,7 +227,7 @@ function [locations_file, sub_types] = epmean_and_manage(inDir, type, ...
                 end
             end
         end
-        save(strcat(epDir, cases(i).name), 'data')
+        save(fullfile_check(strcat(epDir, cases(i).name)), 'data')
         waitbar(i/n_cases, f)
     end
      
@@ -242,31 +243,24 @@ function [locations_file, sub_types] = epmean_and_manage(inDir, type, ...
         Second.locations = setup_data{j}.locations;
         if j == 2
             locations = First.locations;
-            save(strcat(path_check(inDir), 'Locations.mat'), 'locations')
+            save(fullfile_check(strcat(path_check(inDir), ...
+                'Locations.mat')), 'locations')
         end
-        save(strcat(av_paths{j}, 'First.mat'), 'First')
-        save(strcat(av_paths{j}, 'Second.mat'), 'Second')
+        save(fullfile_check(strcat(av_paths{j}, 'First.mat')), 'First')
+        save(fullfile_check(strcat(av_paths{j}, 'Second.mat')), 'Second')
     end
     locations_file = strcat(path_check(limit_path(inDir, type)), ...
         'Locations.mat');
     if isempty(locations)
         locations = [];
     end
-    try
-        save(locations_file, 'locations')
-    catch
-        save(strcat(filesep, locations_file), 'locations')
-    end
+    save(fullfile_check(locations_file), 'locations')
     
     chanlocs = sort_chanlocs(aux_chanlocs, locations);
     chanlocs_file = strcat(path_check(limit_path(inDir, type)), ...
         'Channel_locations.mat');
     if not(isempty(chanlocs))
-        try
-            save(chanlocs_file, 'chanlocs')
-        catch
-            save(strcat(filesep, chanlocs_file), 'chanlocs')
-        end
+        save(fullfile_check(chanlocs_file), 'chanlocs')
     end
     close(f)
 end

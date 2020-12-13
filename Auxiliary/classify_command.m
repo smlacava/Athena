@@ -20,7 +20,7 @@
 function recorded_command = classify_command(record, trainedNet, fs, ...
     duration)
     if nargin < 2
-        load('commandNet.mat');
+        load(fullfile_check('commandNet.mat'));
     end
     if nargin < 3
         fs = 16e3;
@@ -30,7 +30,7 @@ function recorded_command = classify_command(record, trainedNet, fs, ...
     end
     
     if ischar(trainedNet)
-        load(trainedNet);
+        load(fullfile_check(trainedNet));
     end
     
     epsil = 1e-6;

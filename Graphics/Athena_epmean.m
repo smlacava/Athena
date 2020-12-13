@@ -63,7 +63,8 @@ function Athena_epmean_OpeningFcn(hObject, eventdata, handles, varargin)
                 strcat(path_check(path), 'Subjects.mat'))            
         end
         try
-            sub_info = load(get(handles.subjectsFile, 'String'));
+            sub_info = load(fullfile_check(get(handles.subjectsFile, ...
+                'String')));
             aux_sub_info = fields(sub_info);
             eval(strcat("sub_info = sub_info.", aux_sub_info{1}, ";"));
             sub_types = categories(categorical(sub_info(:, end)));
@@ -161,8 +162,8 @@ function Run_Callback(hObject, eventdata, handles)
     	return
     else
         subjects = load_data(sub);
-        save(strcat(path_check(get(handles.aux_dataPath, 'String')), ...
-            'Subjects.mat'), 'subjects')
+        save(fullfile_check(strcat(path_check(get(handles.aux_dataPath, ...
+            'String')), 'Subjects.mat')), 'subjects')
     end
     if not(exist('type', 'var'))
         aux_type = split(dataPath, filesep);

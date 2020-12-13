@@ -230,8 +230,8 @@ function Run_Callback(hObject, eventdata, handles)
                 cellstr(data.Properties.VariableNames(2:end))', ...
                 'Position', [20 20 525 375], 'ColumnName', {'Features'});
         end
-        save(strcat(path_check(dataPath), 'Classification', filesep, ...
-            'Classification_Data.mat'), 'data')
+        save(fullfile_check(strcat(path_check(dataPath), ...
+            'Classification', filesep, 'Classification_Data.mat')), 'data')
     end
     
     anType_text = '{';

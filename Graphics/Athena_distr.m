@@ -79,7 +79,7 @@ function dataPath_text_Callback(hObject, eventdata, handles)
     if exist(subjectsFile, 'file')
         set(handles.aux_sub, 'String', subjectsFile)
         try
-            sub_info = load(subjectsFile);
+            sub_info = load(fullfile_check(subjectsFile));
             aux_sub_info = fields(sub_info);
             eval(strcat("sub_info = sub_info.", aux_sub_info{1}, ";"));
             sub_types = categories(categorical(sub_info(:, end)));
@@ -341,7 +341,7 @@ function meas_Callback(hObject, eventdata, handles)
         set(handles.area, 'String', ["Areas", "Asymmetry", "Global", ...
             "Channels"])
         cases = define_cases(dataPath);
-        load(strcat(dataPath, cases(1).name));
+        load(fullfile_check(strcat(dataPath, cases(1).name)));
         if exist('network_data', 'var')
             data = network_data;
         end

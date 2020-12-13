@@ -14,29 +14,16 @@ function new_version = version_info()
     disp(" ")
     disp("Athena")
     try
-        text=fileread(strcat(limit_path(mfilename('fullpath'), ...
-            'Auxiliary'), '.git/HEAD'));
+        text = fileread(strcat(limit_path(mfilename('fullpath'), ...
+            'Auxiliary'), 'version.txt'));
     catch
-        disp('git folder not found')
+        disp('version file not found')
         return
     end
     
-    diary version.txt
-    
-    diary OFF
-    
-    parsed=textscan(text,'%s');
-    path=parsed{1}{2};
-    [pathstr, name, ext]=fileparts(path);
-    SHA1text=fileread(fullfile(['.git/' pathstr],[name ext]));
-    
-    try
-        !git describe --tags --abbrev=0
-        disp(' ')
-        disp('Local commit hash:')
-        disp(SHA1text(1:end-1))
-    catch
-    end
+    disp(' ')
+    disp('Local version:')
+    disp(text)
     
     if connection_check() == 0
         return;
@@ -44,37 +31,31 @@ function new_version = version_info()
     
     try
         disp(' ')
-        disp('Remote commit hash:')
-        diary ON
-        !git ls-remote https://github.com/smlacava/Athena/
+        data = webread('https://github.com/smlacava/Athena/wiki/Version');
+        data = split(data, '<div class="markdown-body">');
+        data = split(data{2}, '<p>');
+        data = split(data{2}, '</p>');
+        remote_version = data{1};
+        disp('Remote version:')
+        disp(remote_version)
         disp(' ')
-        diary OFF
-        auxID = fopen('version.txt', 'r');
-        fseek(auxID, 0, 'bof');
-        while ~feof(auxID)
-            prop = fgetl(auxID);
-            if contains(prop, 'refs/heads/master')
-                SHA1remote = split(prop);
-                SHA1remote = SHA1remote{1};
-                break;
-            end
-        end
-        fclose(auxID);
-        if strcmpi(SHA1text, SHA1remote) || ...
-               strcmpi(SHA1text(1:end-1), SHA1remote)
+        if strcmpi(text, remote_version)
             disp('No new available version')
         else
             disp('New available version')
             if strcmpi(user_decision(...
                     'Do you want to download the new version?', ...
                     'New version detected'), 'yes')
-                !git pull https://github.com/smlacava/Athena/
-                new_version = 1;
+                try
+                    !git pull https://github.com/smlacava/Athena/
+                    new_version = 1;
+                catch
+                    new_version = 0;
+                    disp('Git not found')
+                end
             end
         end
     catch
-        diary OFF
     end
-    delete version.txt
     disp(" ")
 end

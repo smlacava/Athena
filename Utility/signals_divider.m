@@ -70,8 +70,8 @@ function signals_divider(dataPath, time_window, n_time_series, fs)
                 if not(isempty(chanlocs))
                     data.chanlocs = chanlocs;
                 end
-                save(strcat(outDir, name, 'seg', seg_names(n), '.mat'), ...
-                    'data')
+                save(fullfile_check(strcat(outDir, name, 'seg', ...
+                    seg_names(n), '.mat')), 'data')
             end
             waitbar(i/n_cases, f);
         end

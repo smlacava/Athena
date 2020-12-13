@@ -149,6 +149,6 @@ end
 
 function data = check_data(data)
     if ischar(data) || isstring(data)
-        load(data);
+        load(fullfile_check(data));
     end
 end
