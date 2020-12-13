@@ -262,11 +262,7 @@ function [locations_file, sub_types] = epmean_and_manage(inDir, type, ...
     chanlocs_file = strcat(path_check(limit_path(inDir, type)), ...
         'Channel_locations.mat');
     if not(isempty(chanlocs))
-        try
-            save(chanlocs_file, 'chanlocs')
-        catch
-            save(strcat(filesep, chanlocs_file), 'chanlocs')
-        end
+        save(chanlocs_file, 'chanlocs');
     end
     close(f)
 end
