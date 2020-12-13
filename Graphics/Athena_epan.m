@@ -128,8 +128,7 @@ function dataPath_text_CreateFcn(hObject, eventdata, handles)
 % This function is called when the Run button is pushed, and it shows the
 % measure variation using the set parameters.
 function Run_Callback(hObject, eventdata, handles)
-    measures_list = get(handles.Measures_list, 'String');
-    measure = measures_list(get(handles.Measures_list, 'Value'));
+    measure = options_list(handles.Measures_list);
     dataPath = get(handles.dataPath_text, 'String');
     dataPath = path_check(dataPath);
     if not(exist(dataPath, 'dir'))
@@ -164,8 +163,7 @@ function Run_Callback(hObject, eventdata, handles)
     addpath 'Epochs Analysis'
 
     loc = get(handles.aux_loc, 'String');
-    subList = get(handles.Subjects, 'String');
-    subName = subList(get(handles.Subjects, 'Value'));
+    subName = options_list(handles.Subjects);
     
     if get(handles.asy_button, 'Value') == 1
         anType = 'asymmetry';
@@ -179,7 +177,7 @@ function Run_Callback(hObject, eventdata, handles)
     epochs_analysis(dataPath, subName, anType, measure, epochs, bands, ...
         loc, save_check, format)
     Athena_history_update(strcat('epochs_analysis(', ...
-        strcat("'", dataPath, "'"), ',', strcat("'", subName{1}, "'"), ...
+        strcat("'", dataPath, "'"), ',', strcat("'", subName, "'"), ...
             ',', strcat("'", anType, "'"), ',', ...
             strcat("'", measure, "'"), ',', string(epochs), ',', ...
             string(bands), ',', strcat("'", loc, "'"), ',', ...

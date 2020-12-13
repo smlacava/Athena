@@ -161,7 +161,7 @@ function [dataPath, measure, network_measure, locations_file, normFLAG, ...
     network_measure_name] = network_measure_initialization(handles)
     
     dataPath = get(handles.dataPath_text, 'String');
-    measure = define_measure(handles);
+    measure = options_list(handles.meas);
  
     network_measures_list = get(handles.network, 'String');
     network_measures_args = get(handles.network_args, 'String');
@@ -206,7 +206,7 @@ function back_Callback(hObject, eventdata, handles)
 % and shows all the possible parameters.
 function meas_Callback(hObject, eventdata, handles)
     dataPath = get(handles.dataPath_text, 'String');
-    measure = define_measure(handles);
+    measure = options_list(handles.meas);
     dataPath = strcat(path_check(dataPath), path_check(measure));
     if exist(dataPath, 'dir')
         cases = define_cases(dataPath);
@@ -230,17 +230,6 @@ function meas_CreateFcn(hObject, eventdata, handles)
     if ispc && isequal(get(hObject,'BackgroundColor'), ...
             get(0,'defaultUicontrolBackgroundColor'))
         set(hObject,'BackgroundColor','white');
-    end
-    
-
-%% define_measure
-% This function returns the name of the selected measure.
-function measure = define_measure(handles)
-    measures_list = get(handles.meas, 'String');
-    if iscell(measures_list)
-        measure = measures_list{get(handles.meas, 'Value')};
-    else
-    	measure = measures_list;
     end
 
 

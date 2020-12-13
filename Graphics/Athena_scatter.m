@@ -182,14 +182,8 @@ function [PAT1, HC1, PAT2, HC2, measure1, measure2, band_name1, ...
     measures_scatter_initialization(handles)
 
     dataPath = get(handles.dataPath_text, 'String');
-    measures_list = get(handles.meas1, 'String');
-    if iscell(measures_list)
-        measure1 = measures_list(get(handles.meas1, 'Value'));
-        measure2 = measures_list(get(handles.meas2, 'Value'));
-    else 
-        measure1 = measures_list;
-        measure2 = measures_list;
-    end
+    measure1 = options_list(handles.meas1);
+    measure2 = options_list(handles.meas2);
     
     bands_list1 = get(handles.band1, 'String');
     bands_list2 = get(handles.band2, 'String');
@@ -377,12 +371,7 @@ function measure_definition(handles, number)
     loc_text_handle = strcat('handles.location', number, '_text');
     
     dataPath = get(handles.dataPath_text, 'String');
-    measures_list = get(eval(measure_handle), 'String');
-    if iscell(measures_list)
-        measure = measures_list(get(eval(measure_handle), 'Value'));
-    else
-        measure = measures_list;
-    end
+    measure = options_list(eval(measure_handle));
     dataPath = Athena_measure_path_management(dataPath, measure);
     if exist(dataPath, 'dir')
         set(eval(area_handle), 'String', ["Areas", "Asymmetry", ...

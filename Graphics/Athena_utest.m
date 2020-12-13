@@ -137,7 +137,7 @@ function Run_Callback(hObject, eventdata, handles)
     end
     dataPath = get(handles.dataPath_text, 'String');
     dataPath = path_check(dataPath);
-    measure = define_measure(handles);
+    measure = options_list(handles.measure);
     if not(exist(dataPath, 'dir'))
     	problem(strcat("Directory ", dataPath, " not found"));
         return;
@@ -247,7 +247,7 @@ function aux_loc_CreateFcn(hObject, eventdata, handles)
 % This function is used to set the check buttons when a measure is
 % selected.
 function measure_Callback(hObject, eventdata, handles)
-    measure = define_measure(handles);
+    measure = options_list(handles.measure);
     dataPath = get(handles.dataPath_text, 'String');
     hands = [handles.asy_button, handles.tot_button, ...
         handles.glob_button, handles.areas_button];
@@ -278,13 +278,3 @@ function measure_CreateFcn(hObject, eventdata, handles)
         set(hObject,'BackgroundColor','white');
     end
 
-
-%% define_measure
-% This function returns the name of the selected measure.
-function measure = define_measure(handles)
-    measures_list = get(handles.measure, 'String');
-    if iscell(measures_list)
-        measure = measures_list{get(handles.measure, 'Value')};
-    else
-    	measure = measures_list;
-    end

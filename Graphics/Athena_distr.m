@@ -201,7 +201,7 @@ function [PAT, HC, parameter, measure, band_name, location] = ...
         flag = '';
     end
     dataPath = get(handles.dataPath_text, 'String');
-    measure = define_measure(handles);
+    measure = options_list(handles.meas);
     
     bands_list = get(handles.band, 'String');
     band = get(handles.band, 'Value');
@@ -335,7 +335,7 @@ function export_Callback(hObject, eventdata, handles, flag)
 % are available for the selected measure.
 function meas_Callback(hObject, eventdata, handles)
     dataPath = get(handles.dataPath_text, 'String');
-    measure = define_measure(handles);
+    measure = options_list(handles.meas);
     dataPath = Athena_measure_path_management(dataPath, measure);
     if exist(dataPath, 'dir')
         set(handles.area, 'String', ["Areas", "Asymmetry", "Global", ...
@@ -394,7 +394,7 @@ function band_CreateFcn(hObject, eventdata, handles)
 % measure and the selected spatial subdivision.
 function area_Callback(hObject, eventdata, handles)
     dataPath = get(handles.dataPath_text, 'String');
-    measure = define_measure(handles);
+    measure = options_list(handles.meas);
     areas_list = get(handles.area, 'String');
     area = areas_list(get(handles.area, 'Value'));
     if strcmpi(area, 'Channels')
@@ -433,14 +433,3 @@ function mean_Callback(hObject, eventdata, handles)
 
 
 function median_Callback(hObject, eventdata, handles)
-
-
-%% define_measure
-% This function returns the selected measure.
-function measure = define_measure(handles)
-    measures_list = get(handles.meas, 'String');
-    if iscell(measures_list)
-        measure = measures_list{get(handles.meas, 'Value')};
-    else
-    	measure = measures_list;
-    end

@@ -164,7 +164,7 @@ function [dataPath, measure, area, band, location, ...
         flag = '';
     end
     dataPath = get(handles.dataPath_text, 'String');
-    measure = define_measure(handles);
+    measure = options_list(handles.meas);
     
     bands_list = get(handles.band, 'String');
     band = get(handles.band, 'Value');
@@ -282,7 +282,7 @@ function export_Callback(hObject, eventdata, handles, flag)
 % measure.
 function meas_Callback(hObject, eventdata, handles)
     dataPath = get(handles.dataPath_text, 'String');
-    measure = define_measure(handles);
+    measure = options_list(handles.meas);
     dataPath = Athena_measure_path_management(dataPath, measure);
     if exist(dataPath, 'dir')
         set(handles.area, 'String', ["Areas", "Asymmetry", "Global", ...
@@ -366,15 +366,4 @@ function loc_CreateFcn(hObject, eventdata, handles)
     if ispc && isequal(get(hObject,'BackgroundColor'), ...
             get(0,'defaultUicontrolBackgroundColor'))
         set(hObject,'BackgroundColor','white');
-    end
-
-
-%% define_measure
-% This function returns the selected measure.
-function measure = define_measure(handles)
-    measures_list = get(handles.meas, 'String');
-    if iscell(measures_list)
-        measure = measures_list{get(handles.meas, 'Value')};
-    else
-    	measure = measures_list;
     end

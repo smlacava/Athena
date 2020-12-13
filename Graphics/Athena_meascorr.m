@@ -111,9 +111,8 @@ function Run_Callback(hObject, eventdata, handles)
     [~, sub_list, alpha, bg_color, locs, bands_names, P, RHO, nLoc, ...
         nBands, analysis, sub_group] = correlation_setting(handles);
     
-    meas_state = [get(handles.meas1, 'Value') get(handles.meas2, 'Value')];
-    meas_list = string(get(handles.meas1, 'String'));
-    measures = meas_list(meas_state);
+    measures = [{options_list(handles.meas1)} ...
+        {options_list(handles.meas2)}];
     
     dataPath = path_check(get(handles.aux_dataPath, 'String'));
     measure_path = measurePath(dataPath, measures{1}, analysis); 
