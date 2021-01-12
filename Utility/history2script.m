@@ -26,15 +26,16 @@ function history2script(filename, commentFLAG)
         delete(filename)
     end
     
+    auxID = fopen(filename, 'w');
     history = evalin('base', 'Athena_history');
     L = length(history);
-    auxID = fopen(filename, 'a+');
-    fseek(auxID, 0, 'bof');
     previous = '';
+    fseek(auxID, 0, 'bof');
     for i = 1:L
         input_check = 0;
         aux_history = split(history{i}, '(');
         aux_history = split(aux_history(1), " ");
+        aux_history = split(aux_history(end), "=");
         aux_history = aux_history(end);
         
         if commentFLAG == 1 && not(strcmp(previous, aux_history))

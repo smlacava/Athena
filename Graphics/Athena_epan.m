@@ -88,33 +88,44 @@ function dataPath_text_Callback(hObject, eventdata, handles)
         catch
         end
     end
-    cd(dataPath)
-    if exist('auxiliary.txt', 'file')
-        auxID = fopen('auxiliary.txt', 'r');
-        fseek(auxID, 0, 'bof');
-        while ~feof(auxID)
-            proper = fgetl(auxID);
-            if contains(proper, 'Subjects=')
-                subsFile = split(proper,'=');
-                subsFile = subsFile{2};
-                subs = load_data(subsFile);
-                subs = string(subs(:,1))';
-            end
-            if contains(proper, 'Locations=')
-                locations = split(proper, '=');
-                locations = locations{2};
-                set(handles.aux_loc, 'String', locations)
-            end
-        end
-        fclose(auxID);     
-        set(handles.Subjects, 'String', subs);
-    end
     if exist(dataPath, 'dir')
+        cd(dataPath)
         measures = available_measures(dataPath, 0, 1);
         set(handles.Measures_list, 'String', measures)
         set(handles.Measures_list, 'Value', 1)
+        checkS = 0;
+        checkL = 0;
+        for m = 1:length(measures)
+            if checkL == 1 && checkS == 1
+                break;
+            end
+            aux_file = strcat(path_check(dataPath), ...
+                path_check(measures(m)), 'auxiliary.txt');
+            if exist(aux_file, 'file')
+                auxID = fopen(aux_file, 'r');
+                fseek(auxID, 0, 'bof');
+                while ~feof(auxID)
+                    proper = fgetl(auxID);
+                    if contains(proper, 'Subjects=')
+                        subsFile = split(proper,'=');
+                        subsFile = subsFile{2};
+                        subs = load_data(subsFile);
+                        subs = string(subs(:,1))';
+                        checkS = 1;
+                    end
+                    if contains(proper, 'Locations=')
+                        locations = split(proper, '=');
+                        locations = locations{2};
+                        set(handles.aux_loc, 'String', locations)
+                        checkL = 1;
+                    end
+                end
+                fclose(auxID);
+                set(handles.Subjects, 'String', subs);
+            end
+        end
+        cd(auxPath)
     end
-    cd(auxPath)
 
 
 function dataPath_text_CreateFcn(hObject, eventdata, handles)
