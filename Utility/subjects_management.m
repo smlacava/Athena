@@ -128,13 +128,12 @@ function save_subjects(cases, subjects_list, locations)
     outPath = path_check(create_directory(dataPath, 'Common_Subjects'));
     N = length(cases);
     data = struct();
+    f = waitbar(0,'Saving the common subjects', 'Color', '[1 1 1]');
+    fchild = allchild(f);
+    fchild(1).JavaPeer.setForeground(...
+        fchild(1).JavaPeer.getBackground.BLUE)
+    fchild(1).JavaPeer.setStringPainted(true)
     for i = 1:N
-            f = waitbar(0,'Saving the common subjects', 'Color', ...
-                '[1 1 1]');
-            fchild = allchild(f);
-            fchild(1).JavaPeer.setForeground(...
-                fchild(1).JavaPeer.getBackground.BLUE)
-            fchild(1).JavaPeer.setStringPainted(true)
         for j = 1:length(subjects_list)
             if strcmpi(name_normalization(cases(i).name), ...
                     name_normalization(subjects_list(j).name))
