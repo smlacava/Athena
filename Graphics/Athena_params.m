@@ -40,6 +40,14 @@ function Athena_params_OpeningFcn(hObject, eventdata, handles, ...
         set(handles.aux_dataPath, 'String', dataPath)
         cases = define_cases(dataPath);
         [data, fs] = load_data(strcat(dataPath, cases(1).name), 1);
+        set(handles.aux_data_matrix, 'Data', data);
+        if isempty(fs)
+            set(handles.fsOld, 'String', string(-1))
+        else
+            set(handles.fsOld, 'String', string(fs))
+        end
+        aux_format = split(cases(1).name, '.');
+        set(handles.file_format, 'String', aux_format{end});
         if not(isempty(fs))
             set(handles.fs_text, 'String', string(fs));
             info = strcat("Sampling frequency detected: the signal", ...
@@ -84,7 +92,12 @@ function varargout = Athena_params_OutputFcn(~, ~, handles)
 % to verify the possibility to use it on the signals.
 function fs_text_Callback(hObject, eventdata, handles)
     dataPath = get(handles.aux_dataPath, 'String');
-    cases = define_cases(dataPath);
+    format = get(handles.file_format, 'String');
+    if strcmpi(format, 'False')
+        cases = define_cases(dataPath);
+    else
+        cases = define_cases(dataPath, 1, strcat('.', format));
+    end
     [data, fs_old] = load_data(strcat(dataPath, cases(1).name), 1);
     fs = str2double(get(handles.fs_text, 'String'));
     TotTime = "T";
@@ -102,7 +115,7 @@ function fs_text_Callback(hObject, eventdata, handles)
         TotTime = "Sampling frequency detected: t";
         fs = fs_old;
     end
-    [epNum, epTime, ~] = automatic_parameters(handles, "fs");
+    [epNum, epTime, ~] = automatic_parameters(handles, "fs", format);
     set(handles.epNum_text, 'String', epNum)
     set(handles.epTime_text, 'String', epTime)
     TotTime = strcat(TotTime, "he signal has a time window of ", ...
@@ -121,7 +134,8 @@ function fs_text_CreateFcn(hObject, eventdata, handles)
 % This function is used to adapt the total frequency band parameter when
 % the cut frequencies list is modified by the user.
 function cf_text_Callback(hObject, eventdata, handles)
-    [~, ~, totBand] = automatic_parameters(handles, "cf");
+    [~, ~, totBand] = automatic_parameters(handles, "cf", ...
+        get(handles.file_format, 'String'));
     set(handles.totBand_text, 'String', totBand)
 
     
@@ -136,7 +150,8 @@ function cf_text_CreateFcn(hObject, eventdata, handles)
 % This function is used to set the suggested time for each epoch when the
 % number of epochs is modified by the user.
 function epNum_text_Callback(hObject, eventdata, handles)
-    [~, epTime, ~] = automatic_parameters(handles, "epNum");
+    [~, epTime, ~] = automatic_parameters(handles, "epNum", ...
+        get(handles.file_format, 'String'));
     set(handles.epTime_text, 'String', epTime)
 
     
@@ -148,7 +163,8 @@ function epNum_text_CreateFcn(hObject, eventdata, handles)
 
 
 function epTime_text_Callback(hObject, eventdata, handles)
-    [~, ~, ~] = automatic_parameters(handles, "epTime");
+    [~, ~, ~] = automatic_parameters(handles, "epTime", ...
+        get(handles.file_format, 'String'));
 
     
 function epTime_text_CreateFcn(hObject, eventdata, handles)
@@ -162,7 +178,8 @@ function epTime_text_CreateFcn(hObject, eventdata, handles)
 % This function suggests the number of epochs and the time length of each
 % one, when the starting time parameter is modified by the user.
 function tStart_text_Callback(hObject, eventdata, handles)
-    [epNum, epTime, ~] = automatic_parameters(handles, "tStart");
+    [epNum, epTime, ~] = automatic_parameters(handles, "tStart", ...
+        get(handles.file_format, 'String'));
     set(handles.epNum_text, 'String', epNum)
     set(handles.epTime_text, 'String', epTime)
 

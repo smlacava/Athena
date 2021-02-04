@@ -236,8 +236,17 @@ function next_Callback(~, ~, handles)
                     "Select the locations file");
             end
         end
-    end       
-                
+    end 
+    if isempty(sub_types)
+        aux = load_data(sub);
+        aux_types = unique(aux(:, 2));
+        for i = 1:length(aux_types)
+            sub_types = [sub_types, char(aux_types(i))];
+        end
+        if length(sub_types) == 1
+            sub_types = ['None', sub_types];
+        end
+    end
     close(Athena_epmean)
     Athena_an(dataPath, measure, sub, loc, sub_types)
 

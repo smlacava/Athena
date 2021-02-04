@@ -2,29 +2,53 @@
 % This function is used to automatically set the parameters of the measure 
 % to extract if a parameter is modified.
 %
-% [epNum, epTime, totBand] = automatic_parameters(handles, modified_param)
+% [epNum, epTime, totBand] = automatic_parameters(handles, ...
+%         modified_param, format, time_series, fsOld)
 %
-% input:
+% Input:
 %   handles are the GUI handles
 %   modified_param is the name of the modified parameter (fs for the
 %       sampling frequency, tStart for the starting time, epNum for the
 %       number of epochs, epTime for the time of each epoch or cf for the 
 %       cut frequencies)
-% output:
+%   format is the format of the data files, or 'False' search if an 
+%       unspecified format has to be searched (optional, False by default)
+%   time_series is the data matrix (0 by default)
+%   fsOld is the current sampling frequency (0 by default)
+%
+% Output:
 %   epNum is the number of epochs
 %   epTime is the time of each epoch
 %   totBand is a string which represent the cut frequencies of the total
 %       frequency band
 
 function [epNum, epTime, totBand] = automatic_parameters(handles, ...
-    modified_param)
+    modified_param, format, time_series, fsOld)
+    if nargin == 2
+        format = 'False';
+    end
+    if nargin == 3
+        time_series = 0;
+    end
+    if nargin == 4
+        fsOld = 0;
+    end
+    
     w_ep = 20; % whished minimum epoch length
     dataPath = char_check(get(handles.aux_dataPath, 'String'));
     dataPath = path_check(dataPath);
-    cases = define_cases(dataPath);
-    [time_series, fsOld] = load_data(strcat(dataPath, cases(1).name));
+    
+    if time_series == 0 || fsOld == 0 
+        if strcmpi(format, 'False')
+            cases = define_cases(dataPath);
+        else
+            cases = define_cases(dataPath, 1, format);
+        end
+        [time_series, fsOld] = load_data(strcat(dataPath, cases(1).name));
+    end
+    
     fs = str2double(get(handles.fs_text, 'String'));
-    if fsOld ~= fs
+    if fsOld ~= fs & fsOld ~= -1
         [p, q] = rat(fs/fsOld);
         time_series = resample(time_series', p, q)';
     end

@@ -3,7 +3,8 @@
 % using the phase locking value (PLV), the phase lag index (PLI), the
 % magnitude-squared coherence (MSC), the amplitude envelope correlation 
 % corrected (also called orthogonalized, AECo), the amplitude envelope 
-% correlation not corrected (AEC), or the mutual information (MI).
+% correlation not corrected (AEC), the mutual information (MI), or the
+% weighted phase lag index (wPLI).
 %
 % connectivity(fs, cf, nEpochs, dt, inDir, tStart, outTypes, filter_name)
 %
@@ -54,6 +55,7 @@ function connectivity(fs, cf, nEpochs, dt, inDir, tStart, outTypes, ...
     ICOHnames = ["ICOH", "Coherency", "coherency"];
     MInames = ["mutual_information", "MI", "Mutual_Information"];
     CCnames = ["correlation", "correlation_coefficient", "CC"];
+    wPLInames = ["wPLI", "w_PLI"];
     
     inDir = path_check(inDir);
     cases = define_cases(inDir);
@@ -74,8 +76,8 @@ function connectivity(fs, cf, nEpochs, dt, inDir, tStart, outTypes, ...
         end
         sup = split(sup, ',');
         for i = 1:length(sup)
-            if contains(sup(i, 1), PLInames)
-            	outTypes = [outTypes, "PLI"];
+            if contains(sup(i, 1), wPLInames)
+            	outTypes = [outTypes, "wPLI"];
             elseif contains(sup(i, 1), PLVnames)
                 outTypes = [outTypes, "PLV"];
             elseif contains(sup(i, 1), AECOnames)
@@ -90,6 +92,8 @@ function connectivity(fs, cf, nEpochs, dt, inDir, tStart, outTypes, ...
                 outTypes = [outTypes, "mutual_information"];
             elseif contains(sup(i, 1), CCnames)
                 outTypes = [outTypes, "correlation_coefficient"];
+            elseif contains(sup(i, 1), PLInames)
+                outTypes = [outTypes, "PLI"];
             end
         end
         if length(outDirs) == length(outTypes)
@@ -98,8 +102,8 @@ function connectivity(fs, cf, nEpochs, dt, inDir, tStart, outTypes, ...
     end
     
     for i = 1:length(outTypes)
-        if contains(outTypes(i), PLInames)
-        	outTypes(i) = "PLI";
+        if contains(outTypes(i), wPLInames)
+        	outTypes(i) = "wPLI";
         elseif contains(outTypes(i), PLVnames)
         	outTypes(i) = "PLV";
         elseif contains(outTypes(i), AECOnames)
@@ -114,6 +118,8 @@ function connectivity(fs, cf, nEpochs, dt, inDir, tStart, outTypes, ...
             outTypes(i) = "mutual_information";
         elseif contains(outTypes(i, 1), CCnames)
             outTypes(i) = "correlation_coefficient";
+        elseif contains(outTypes(i, 1), PLInames)
+            outTypes(i) = "PLI";
         end
     end
     
@@ -167,6 +173,9 @@ function connectivity(fs, cf, nEpochs, dt, inDir, tStart, outTypes, ...
                                 "correlation_coefficient")
                             conn.data(j, k, :, :) = ...
                                 correlation_coefficient(data);
+                        elseif strcmpi(outTypes(c), "wPLI")
+                            conn.data(j, k, :, :) = ...
+                                weighted_phase_lag_index(data);
                         end
                     end
                 end

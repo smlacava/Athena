@@ -1246,3 +1246,69 @@ function Global65_Callback(hObject, eventdata, handles)
 function Areas65_Callback(hObject, eventdata, handles)
 function Asymmetry65_Callback(hObject, eventdata, handles)
 function checkbox358_Callback(hObject, eventdata, handles)
+function measure66_CreateFcn(hObject, eventdata, handles)
+    if ispc && isequal(get(hObject,'BackgroundColor'), ...
+            get(0,'defaultUicontrolBackgroundColor'))
+        set(hObject,'BackgroundColor','white');
+    end
+function measure67_Callback(hObject, eventdata, handles)
+function checkbox364_Callback(hObject, eventdata, handles)
+function Global67_Callback(hObject, eventdata, handles)
+function Areas67_Callback(hObject, eventdata, handles)
+function Asymmetry67_Callback(hObject, eventdata, handles)
+function Channels66_Callback(hObject, eventdata, handles)
+function Global66_Callback(hObject, eventdata, handles)
+function Areas66_Callback(hObject, eventdata, handles)
+function Asymmetry66_Callback(hObject, eventdata, handles)
+function checkbox363_Callback(hObject, eventdata, handles)
+function checkbox368_Callback(hObject, eventdata, handles)
+function measure68_Callback(hObject, eventdata, handles)
+function measure68_CreateFcn(hObject, eventdata, handles)
+    if ispc && isequal(get(hObject,'BackgroundColor'), ...
+            get(0,'defaultUicontrolBackgroundColor'))
+        set(hObject,'BackgroundColor','white');
+    end
+function measure67_CreateFcn(hObject, eventdata, handles)
+    if ispc && isequal(get(hObject,'BackgroundColor'), ...
+            get(0,'defaultUicontrolBackgroundColor'))
+        set(hObject,'BackgroundColor','white');
+    end
+function Channels68_Callback(hObject, eventdata, handles)
+function Global68_Callback(hObject, eventdata, handles)
+function Areas68_Callback(hObject, eventdata, handles)
+function Asymmetry68_Callback(hObject, eventdata, handles)
+function checkbox373_Callback(hObject, eventdata, handles)
+
+
+% --- Executes on button press in checkbox378.
+function checkbox378_Callback(hObject, eventdata, handles)
+% hObject    handle to checkbox378 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of checkbox378
+
+
+% --- Executes on button press in Asymmetry70.
+function Asymmetry70_Callback(hObject, eventdata, handles)
+% hObject    handle to Asymmetry70 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of Asymmetry70
+
+
+% --- Executes on button press in add70.
+function add70_Callback(hObject, eventdata, handles)
+% hObject    handle to add70 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --- Executes on button press in checkbox383.
+function checkbox383_Callback(hObject, eventdata, handles)
+% hObject    handle to checkbox383 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of checkbox383

@@ -52,7 +52,11 @@ function Athena_meascorr_OpeningFcn(hObject, eventdata, handles, varargin)
     if nargin >= 8
         sub_types = varargin{5};
         set(handles.sub_types, 'Data', sub_types)
-        set(handles.PAT, 'String', sub_types{2})
+        if length(sub_types) > 1
+            set(handles.PAT, 'String', sub_types{2})
+        else
+            set(handles.PAT, 'Visible', 'off')
+        end
         set(handles.HC, 'String', sub_types{1})
     end
     

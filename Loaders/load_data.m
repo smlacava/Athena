@@ -229,8 +229,41 @@ function [data, fs, locs, chanlocs] = load_data(dataFile, locFLAG, ...
     if athenaFLAG == 0 && length(dims) == 3
         data = reshape(data, [dims(1), dims(2)*dims(3)]);
     end
+    
+    if not(iscell(data) || ischar(data) || isstring(data))
+        [data, locs, chanlocs] = remove_nan(data, locs, chanlocs);   
+    end
 end
 
+
+%% remove_nan
+% This function removes the channels showing any nan value.
+
+function [data, locs, chanlocs] = remove_nan(data, locs, chanlocs)
+    if length(size(data)) == 2
+        idx = [];
+        for ch = 1:size(data, 1)
+            if sum(isnan(data(ch, :))) > 0
+                idx = [idx, ch];
+                display(strcat("Channel ", string(ch), " removed"))
+            end
+        end
+        if not(isempty(idx))
+            data(idx, :) = [];
+            if not(isempty(locs))
+                try
+                    locs(idx) = [];
+                catch
+                    locs{idx} = [];
+                end
+            end
+            if not(isempty(chanlocs))
+                chanlocs(idx) = [];
+            end
+        end
+    end
+end
+        
 
 %% chack_parameters
 % This function takes the parameters related to the optional name-value
