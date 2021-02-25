@@ -1,11 +1,11 @@
-%% asymmetry_av
+%% asymmetry_conn_av
 % This function computes the asymmetry of a connectivity measure for a
 % subject and the resulting values are the differences between the right
 % locations and the left locations (so, a positive value means an increased
 % mean value of the measure in right locations respect to left locations,
 % while a negative value means the opposite)
 %
-% [data_areas] = asymmetry_av(data)
+% [data_areas] = asymmetry_conn_av(data)
 %
 % input:
 %   data is the input structure which contains the measure for each 

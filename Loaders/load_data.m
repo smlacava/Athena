@@ -237,15 +237,28 @@ end
 
 
 %% remove_nan
-% This function removes the channels showing any nan value.
+% This function removes the channels showing too many nan values, and 
+% linearly interpolates them otherwise (if a record related to a single 
+% channel shows more than 1% of the total samples as nan values, then it is 
+% discarded).
 
 function [data, locs, chanlocs] = remove_nan(data, locs, chanlocs)
     if length(size(data)) == 2
         idx = [];
-        for ch = 1:size(data, 1)
-            if sum(isnan(data(ch, :))) > 0
-                idx = [idx, ch];
-                display(strcat("Channel ", string(ch), " removed"))
+        N = size(data, 1);
+        tol = floor(size(data, 2)*0.01); % tolerance
+        for ch = 1:N
+            aux_nan = isnan(data(ch, :));
+            if sum(aux_nan) > 0
+                if sum(aux_nan) < tol
+                    data(ch, :) = fillmissing(data(ch, :), 'linear', 2, ...
+                        'EndValues','nearest');
+                    display(strcat("Missing values in channel ", ...
+                        string(ch), ": interpolated"))
+                else
+                    idx = [idx, ch];
+                    display(strcat("Channel ", string(ch), " removed"))
+                end
             end
         end
         if not(isempty(idx))

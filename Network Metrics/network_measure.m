@@ -62,15 +62,17 @@ function network_measure(dataPath, measure, network_measure, loc_file, ...
     network_metrics = {'betweenness_centrality', ...
         'closeness_centrality', 'clustering_coefficient', ...
         'eigenvector_centrality', 'generank_centrality', ...
-        'katz_centrality', 'strength', 'subgraph_centrality'};
+        'katz_centrality', 'strength', 'subgraph_centrality', ...
+        'MST_degree'};
     network_names = {'Betweenness Centrality', ...
         'Closeness Centrality', 'Clustering Coefficient', ...
         'Eigenvector Centrality', 'Generank Centrality', ...
-        'Katz Centrality', 'Strength', 'Subgraph Centrality'};
+        'Katz Centrality', 'Strength', 'Subgraph Centrality', ...
+        'MST Degree'};
     functions = {@betweenness_centrality, ...
         @closeness_centrality, @clustering_coefficient, ...
         @eigenvector_centrality, @generank_centrality, ...
-        @katz_centrality, @strength, @subgraph_centrality};
+        @katz_centrality, @strength, @subgraph_centrality, @mst_degree};
     network_function = functions(strcmpi(network_measure, network_metrics));
     network_function = network_function{1};
     network = network_names(strcmpi(network_measure, network_metrics));
@@ -95,10 +97,14 @@ function network_measure(dataPath, measure, network_measure, loc_file, ...
     totDir = strcat(path_check(outDir), 'Total', filesep);
     asyDir = strcat(path_check(outDir), 'Asymmetry', filesep);
     areasDir = strcat(path_check(outDir), 'Areas', filesep);
+    hemiDir = strcat(path_check(outDir), 'Hemispheres', filesep);
+    hemiareasDir = strcat(path_check(outDir), 'Hemispheres_Areas', filesep);
     create_directory(globDir);
     create_directory(totDir);
     create_directory(asyDir);
     create_directory(areasDir);
+    create_directory(hemiDir);
+    create_directory(hemiareasDir);
    
     network_data = struct();
     countFirst = 1;
@@ -120,35 +126,57 @@ function network_measure(dataPath, measure, network_measure, loc_file, ...
         if i == 1
             [globFirst, globSecond, asyFirst, asySecond, ...
                 areasFirst, areasSecond, totFirst, totSecond, ...
-                areas, total] = groups_initialization(network_data, ...
-                nFirst, nSecond, nBands);
+                hemiFirst, hemiSecond, hemiareasFirst, hemiareasSecond, ...
+                areas, total, hemispheres, hemiareas] = ...
+                groups_initialization(network_data, nFirst, nSecond, nBands);
         end
+        
         aux_data = global_av(network_data);
         [globFirst, globSecond, ~, ~] = group_assignment(aux_data, ...
             globFirst, globSecond, countFirst, countSecond, Subjects, ...
             sub_types{1}, cases(i).name);
         save(fullfile_check(strcat(globDir, cases(i).name)), 'aux_data');
+        
         aux_data = total_av(network_data);
         [totFirst, totSecond, ~, ~] = group_assignment(aux_data, ...
             totFirst, totSecond, countFirst, countSecond, Subjects, ...
             sub_types{1}, cases(i).name);
         save(fullfile_check(strcat(totDir, cases(i).name)), 'aux_data');
+        
         aux_data = areas_av(network_data);
         [areasFirst, areasSecond, ~, ~] = group_assignment(aux_data, ...
             areasFirst, areasSecond, countFirst, countSecond, Subjects, ...
             sub_types{1}, cases(i).name);
         save(fullfile_check(strcat(areasDir, cases(i).name)), 'aux_data');
+        
         aux_data = asymmetry_av(network_data);
         [asyFirst, asySecond, countFirst, countSecond] = ...
             group_assignment(aux_data, asyFirst, asySecond, countFirst, ...
             countSecond, Subjects, sub_types{1}, cases(i).name);
         save(fullfile_check(strcat(asyDir, cases(i).name)), 'aux_data');
+        
+        aux_data = hemiareas_av(network_data);
+        [hemiareasFirst, hemiareasSecond, ~, ~] = ...
+            group_assignment(aux_data, hemiareasFirst, hemiareasSecond, ...
+            countFirst, countSecond, Subjects, sub_types{1}, ...
+            cases(i).name);
+        save(fullfile_check(strcat(hemiareasDir, cases(i).name)), ...
+            'aux_data');
+        
+        aux_data = hemispheres_av(network_data);
+        [hemiFirst, hemiSecond, ~, ~] = group_assignment(aux_data, ...
+            hemiFirst, hemiSecond, countFirst, countSecond, Subjects, ...
+            sub_types{1}, cases(i).name);
+        save(fullfile_check(strcat(hemiDir, cases(i).name)), 'aux_data');
+        
         waitbar(i/length(cases), f)
     end
     
     save_groups(globFirst, globSecond, asyFirst, asySecond, areasFirst, ...
-        areasSecond, totFirst, totSecond, areas, total, globDir, ...
-        asyDir, areasDir, totDir);
+        areasSecond, totFirst, totSecond, hemiFirst, hemiSecond, ...
+        hemiareasFirst, hemiareasSecond, areas, total, hemispheres, ...
+        hemiareas, globDir, asyDir, areasDir, totDir, hemiDir, ...
+        hemiareasDir);
     close(f)
 end
 
@@ -267,25 +295,46 @@ end
 %       single locations
 %   totSecond is the 0s matrix related to the second group of subjects in
 %       the single locations
+%   hemiFirst is the 0s matrix related to the first group of subjects in
+%       the single hemispheres
+%   hemiSecond is the 0s matrix related to the second group of subjects in
+%       the single hemispheres
+%   hemiareasFirst is the 0s matrix related to the first group of subjects
+%       in the single areas in the single hemispheres
+%   hemiareasSecond is the 0s matrix related to the second group of
+%       subjects in the single areas in the single hemispheres
 
 
 function [globFirst, globSecond, asyFirst, asySecond, areasFirst, ...
-    areasSecond, totFirst, totSecond, areas, total] = ...
-    groups_initialization(network_data, nFirst, nSecond, nBands)
+    areasSecond, totFirst, totSecond, hemiFirst, hemiSecond, ...
+    hemiareasFirst, hemiareasSecond, areas, total, hemispheres, ...
+    hemiareas] = groups_initialization(network_data, nFirst, nSecond, ...
+    nBands)
     
-    aux_data = areas_av(network_data);
+    areas_data = areas_av(network_data);
+    hemi_data = hemispheres_av(network_data);
+    hemiareas_data = hemiareas_av(network_data);
     
-    areas = aux_data.locations;
+    areas = areas_data.locations;
     total = network_data.locations;
+    hemispheres = hemi_data.locations;
+    hemiareas = hemiareas_data.locations;
     
 	globFirst = zeros(nFirst, nBands);
     globSecond = zeros(nSecond, nBands);
     asyFirst = zeros(nFirst, nBands);
     asySecond = zeros(nSecond, nBands);
-    areasFirst = zeros(nFirst, nBands, length(aux_data.locations));
-    areasSecond = zeros(nSecond, nBands, length(aux_data.locations));
+    areasFirst = zeros(nFirst, nBands, length(areas_data.locations));
+    areasSecond = zeros(nSecond, nBands, length(areas_data.locations));
     totFirst = zeros(nFirst, nBands, length(network_data.locations));
     totSecond = zeros(nSecond, nBands, length(network_data.locations));
+    hemiFirst = zeros(nFirst, nBands, length(hemi_data.locations));
+    hemiSecond = zeros(nSecond, nBands, length(hemi_data.locations));
+    hemiareasFirst = zeros(nFirst, nBands, ...
+        length(hemiareas_data.locations));
+    hemiareasSecond = zeros(nSecond, nBands, ...
+        length(hemiareas_data.locations));
+    
 end
 
 %% group_assignment
@@ -378,8 +427,10 @@ end
 
 
 function save_groups(globFirst, globSecond, asyFirst, asySecond, ...
-    areasFirst, areasSecond, totFirst, totSecond, areas, total, ...
-    globDir, asyDir, areasDir, totDir)
+    areasFirst, areasSecond, totFirst, totSecond, hemiFirst, ...
+    hemiSecond, hemiareasFirst, hemiareasSecond, areas, total, ...
+    hemispheres, hemiareas, globDir, asyDir, areasDir, totDir, hemiDir, ...
+    hemiareasDir)
     
     First = struct();
     Second = struct();
@@ -416,5 +467,23 @@ function save_groups(globFirst, globSecond, asyFirst, asySecond, ...
     Second.locations = areas;
     save(fullfile_check(strcat(areasDir, 'First.mat')), 'First')
     save(fullfile_check(strcat(areasDir, 'Second.mat')), 'Second')
+    
+    First = struct();
+    Second = struct();
+    First.data = hemiareasFirst;
+    Second.data = hemiareasSecond;
+    First.locations = hemiareas;
+    Second.locations = hemiareas;
+    save(fullfile_check(strcat(hemiareasDir, 'First.mat')), 'First')
+    save(fullfile_check(strcat(hemiareasDir, 'Second.mat')), 'Second')
+    
+    First = struct();
+    Second = struct();
+    First.data = hemiFirst;
+    Second.data = hemiSecond;
+    First.locations = hemispheres;
+    Second.locations = hemispheres;
+    save(fullfile_check(strcat(hemiDir, 'First.mat')), 'First')
+    save(fullfile_check(strcat(hemiDir, 'Second.mat')), 'Second')
 end
     

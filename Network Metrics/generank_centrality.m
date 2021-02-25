@@ -11,7 +11,7 @@
 %   normFLAG has to be 1 in order to normalize the generank centrality
 %       vector as gr/max(gr), 0 otherwise (1 by default)
 %   d_factor is the damping factor (0.85 as default)
-%   gr_probability is the initial PageRank probability (vector of 1s as
+%   gr_probability is the initial GeneRank probability (vector of 1s as
 %       default)
 %
 % Output:

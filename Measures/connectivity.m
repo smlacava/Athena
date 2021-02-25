@@ -133,7 +133,7 @@ function connectivity(fs, cf, nEpochs, dt, inDir, tStart, outTypes, ...
     end
     
     for c = 1:length(outTypes)
-        for i = 1:length(cases) 
+        for i = 1:length(cases)
             try
                 [time_series, fsOld, locations, chanlocs] = ...
                     load_data(strcat(inDir, cases(i).name), 1);

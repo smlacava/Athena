@@ -1,13 +1,13 @@
 %% closeness_centrality(data)
-% This function computes the closeness centrality.
+% This function computes the closeness centrality (Sabidussi, 1966: The 
+% centrality index of a graph).
 %
 % cc = closeness_centrality(data, normFLAG)
 %
 % Input:
 %   data is the (nodes x nodes) adjacency matrix
 %   normFLAG has to be 1 in order to normalize the closeness centrality
-%       vector as cc/max(cc) (considering bc as the betweenness 
-%       centrality vector and n as the number of nodes), 0 otherwise (1 by 
+%       vector as cc/max(cc), 0 otherwise (1 by 
 %       default)
 %
 % Output

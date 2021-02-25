@@ -1,6 +1,8 @@
 %% subgraph_centrality
-% This function computes the Subgraph centrality of each node, considering
-% the adjacency matrix.
+% This function computes the Subgraph centrality (or communicability) of 
+% each node, considering the adjacency matrix (Estrada E. and 
+% Rodriguez-Velazquez J. A., 2005: Subgraph centrality in complex networks; 
+% Estrada E. and Hatano N., 2008: Communicability in complex networks).
 %
 % sgc = subgraph_centrality(data, normFLAG)
 %
@@ -20,8 +22,11 @@ function sgc = subgraph_centrality(data, normFLAG)
     
     data = squeeze(data);
     N = length(data);
-    exp_data = expm(data);
-    sgc = exp_data(1:N:end)';
+    D = eye(N);
+    D(1:N+1:N*N) = 1.0./sqrt(D(1:N+1:N*N)); % weights normalization
+    data_norm = D*data*D;
+    sgc = expm(data_norm);
+    sgc = sgc(1:N+1:N*N);
     
     if normFLAG == 1
         sgc = value_normalization(sgc, 'minmax');

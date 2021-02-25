@@ -42,12 +42,15 @@ function [locations_file, sub_types] = epmean_and_manage(inDir, type, ...
     totDir = path_check(subdir(epDir, 'Total'));
     asyDir = path_check(subdir(epDir, 'Asymmetry'));
     globDir = path_check(subdir(epDir, 'Global'));
+    hemiDir = path_check(subdir(epDir, 'Hemispheres'));
+    hemiareasDir = path_check(subdir(epDir, 'Hemispheres_Areas'));
 
     cases = define_cases(inDir);
     [Subjects, sub_types, nSUB, nFirst, nSecond] = ...
         define_sub_types(subFile);
-    av_functions = {@asymmetry_av, @total_av, @global_av, @areas_av};
-    av_paths = {asyDir, totDir, globDir, areasDir};
+    av_functions = {@asymmetry_av, @total_av, @global_av, @areas_av, ...
+        @hemispheres_av, @hemiareas_av};
+    av_paths = {asyDir, totDir, globDir, areasDir, hemiDir, hemiareasDir};
     ntypes = length(av_paths);
     locFLAG = 0;
     
@@ -111,14 +114,16 @@ function [locations_file, sub_types] = epmean_and_manage(inDir, type, ...
         nBands = size(measure, 1);
         ind_ep = 2;
         av_functions = {@asymmetry_conn_av, @total_conn_av, ...
-            @global_conn_av, @areas_conn_av};
+            @global_conn_av, @areas_conn_av, @hemispheres_conn_av, ...
+            @hemiareas_conn_av};
     end 
     setup_size = zeros(ntypes, 1);
     loc_av = [];
     data.measure = squeeze(mean(measure, ind_ep));
     data.locations = locations;
     setup_data = {};
-    directories = {epDir, asyDir, globDir, areasDir, totDir};
+    directories = {epDir, asyDir, globDir, areasDir, totDir, hemiDir, ...
+        hemiareasDir};
     for d = 1:length(directories)
         if not(exist(directories{d}, 'dir'))
             mkdir(directories{d})

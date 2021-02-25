@@ -17,6 +17,7 @@ function [Right, Left] = asymmetry_manager(locations)
     Left = [];
     Right = [];
     for i = 1:length(locations)
+        try
         if contains(locations(i, 1), ["pars", "orbito", ...
                 "paracentral", "anterior", "temporal", "fusiform", ...
                 "ento", "parahippocampal", "lingual", "cuneus", ...
@@ -24,6 +25,8 @@ function [Right, Left] = asymmetry_manager(locations)
                 "precuneus", "posterior", "isthmus"])
         	deskilFLAG = 1;
             break;
+        end
+        catch
         end
     end
     if deskilFLAG == 1

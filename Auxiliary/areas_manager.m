@@ -25,6 +25,7 @@ function [Central, Frontal, Temporal, Occipital, Parietal] = ...
     Parietal=[];
     
     for i = 1:length(locations)
+        try
         if contains(locations(i, 1), ["frontal", "pars", "orbito", ...
                 "paracentral", "anterior"])
         	Frontal = [Frontal, i];
@@ -37,6 +38,8 @@ function [Central, Frontal, Temporal, Occipital, Parietal] = ...
         elseif contains(locations(i, 1), ["parietal", "supramarginal", ...
                 "postcentral", "precuneus", "posterior", "isthmus"])
         	Parietal = [Parietal, i];
+        end
+        catch
         end
     end
     if isempty(Central) && isempty(Frontal) && isempty(Temporal) ...

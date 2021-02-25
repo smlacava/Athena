@@ -42,17 +42,34 @@ function new_version = version_info()
         if strcmpi(text, remote_version)
             disp('No new available version')
         else
-            disp('New available version')
-            if strcmpi(user_decision(...
-                    'Do you want to download the new version?', ...
-                    'New version detected'), 'yes')
-                try
-                    !git pull https://github.com/smlacava/Athena/
-                    new_version = 1;
-                catch
-                    new_version = 0;
-                    disp('Git not found')
+            current = split(text(2:end), '.');
+            remote = split(remote_version(2:end), '.');
+            check = 0;
+            for sub = 1:length(remote)
+                if str2double(remote{sub}) < str2double(current{sub})
+                    break;
                 end
+                if str2double(remote{sub}) > str2double(current{sub})
+                    disp('New available version')
+                    if strcmpi(user_decision(...
+                            'Do you want to download the new version?', ...
+                            'New version detected'), 'yes')
+                        try
+                            !git pull https://github.com/smlacava/Athena/
+                            new_version = 1;
+                        catch
+                            new_version = 0;
+                            disp('Git not found')
+                            disp('You can download it manually at https://github.com/smlacava/Athena')
+                            disp('Otherwise, you can continue to use the previous version')
+                        end
+                    end
+                    check = 1;
+                    break;
+                end
+            end
+            if check == 0
+                disp('No new available version')
             end
         end
     catch

@@ -31,6 +31,10 @@ function [P, Psig, data_sig] = u_test(first_group, second_group, ...
     label, first_name, second_name, alpha)
 
     [P, H] = ranksum(first_group, second_group, 'alpha', alpha);
+    if isnan(P)
+        [P, H] = ranksum(first_group, second_group, 'alpha', alpha, ...
+            'method', 'exact');
+    end
     if nargin > 2
         Psig = [];
         data_sig = [];
@@ -43,9 +47,9 @@ function [P, Psig, data_sig] = u_test(first_group, second_group, ...
                 string(first_median), ", ", second_name, " median = ", ...
                 string(second_median), ")");
             if diff > 0
-            	Psig = strcat(label, " major in ", first_name, med_text);
+            	Psig = strcat(label, " higher in ", first_name, med_text);
             else
-            	Psig = strcat(label, " major in ", second_name, med_text);
+            	Psig = strcat(label, " higher in ", second_name, med_text);
             end
         end
     end
