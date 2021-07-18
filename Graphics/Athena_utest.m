@@ -95,29 +95,6 @@ function dataPath_text_Callback(hObject, eventdata, handles)
         set(handles.measure, 'String', measures)
         set(handles.measure, 'Value', 1)
     end
-    hands = [handles.asy_button, handles.tot_button, ...
-        handles.glob_button, handles.areas_button];
-    types = {'Asymmetry', 'Total', 'Global', 'Areas'};
-    for i = 1:length(types)
-        try
-            data_name = measurePath(dataPath, measure, types{i});
-            load(fullfile_check(strcat(path_check(data_name), ...
-                'Second.mat')))
-            if isempty(Second.data)
-                set(hands(i), 'Enable', 'off')
-            else
-                load(fullfile_check(strcat(path_check(data_name), ...
-                    'First.mat')))
-                if isempty(First.data)
-                    set(hands(i), 'Enable', 'off')
-                else
-                    set(hands(i), 'Enable', 'on')
-                end
-            end
-        catch
-            set(hands(i), 'Enable', 'off')
-        end
-    end
     measure_Callback(hObject, eventdata, handles)
 
 
@@ -160,10 +137,16 @@ function Run_Callback(hObject, eventdata, handles)
         'Hemispheres_Areas'};
     analysis = an_paths(an_selected == 1);
     
+    averaged = get(handles.averaged, 'Value');
     data_name = measurePath(dataPath, measure, analysis);
     try
-        [HC, ~, locs] = load_data(strcat(data_name, 'First.mat'));
-        PAT = load_data(strcat(data_name, 'Second.mat'));
+        if averaged == 1
+            [HC, ~, locs] = load_data(strcat(data_name, 'First.mat'));
+            PAT = load_data(strcat(data_name, 'Second.mat'));
+        else
+            [HC, ~, locs] = load_data(strcat(data_name, 'First_ep.mat'));
+            PAT = load_data(strcat(data_name, 'Second_ep.mat')); 
+        end
     catch
         problem(strcat(measure, " epochs averaging of not computed"));
         return;
@@ -184,7 +167,7 @@ function Run_Callback(hObject, eventdata, handles)
         strcat("'", measure, "'"), ',', strcat("'", analysis{1}, "'"), ...
         ",", sub_text, ',', string(save_check), ')'));
     statistical_analysis(HC, PAT, locs, cons, dataPath, measure, ...
-        analysis, get(handles.sub_types, 'Data'), save_check);
+        analysis, get(handles.sub_types, 'Data'), save_check, averaged);
 
 
 %% data_search_Callback
@@ -255,8 +238,10 @@ function measure_Callback(hObject, eventdata, handles)
     measure = options_list(handles.measure);
     dataPath = get(handles.dataPath_text, 'String');
     hands = [handles.asy_button, handles.tot_button, ...
-        handles.glob_button, handles.areas_button];
-    types = {'Asymmetry', 'Total', 'Global', 'Areas'};
+        handles.glob_button, handles.areas_button, handles.hemi_button, ...
+        handles.hemiareas_button];
+    types = {'Asymmetry', 'Total', 'Global', 'Areas', 'Hemispheres', ...
+        'Hemispheres_Areas'};
     for i = 1:length(types)
         try
             data_name = measurePath(dataPath, measure, types{i});
@@ -283,3 +268,6 @@ function measure_CreateFcn(hObject, eventdata, handles)
             get(0,'defaultUicontrolBackgroundColor'))
         set(hObject,'BackgroundColor','white');
     end
+
+
+function averaged_Callback(hObject, eventdata, handles)

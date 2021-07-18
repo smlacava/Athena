@@ -113,7 +113,8 @@ function Run_Callback(hObject, eventdata, handles)
     if strcmp(get(handles.loc, 'Visible'), 'off') 
         areas_list = get(handles.area, 'String');
         area = areas_list(get(handles.area, 'Value'));
-        if strcmpi(area, 'Channels') || strcmp(area, 'Areas')
+        if strcmpi(area, 'Channels') || strcmp(area, 'Areas') || ...
+                strcmp(area, "Hemispheres") || strcmp(area, "Hemi-Areas")
             return;
         end
     end
@@ -179,7 +180,9 @@ function [dataPath, measure, area, band, location, ...
     if strcmpi(area, 'Channels')
         area = "Total";
     end
-    
+    if strcmpi(area, 'Hemi-Areas')
+        area = "Hemispheres_Areas";
+    end
     measure_path = measurePath(dataPath, measure, area);
     
     locations_list = get(handles.loc, 'String');
@@ -286,7 +289,7 @@ function meas_Callback(hObject, eventdata, handles)
     dataPath = Athena_measure_path_management(dataPath, measure);
     if exist(dataPath, 'dir')
         set(handles.area, 'String', ["Areas", "Asymmetry", "Global", ...
-            "Channels"])
+            "Channels", "Hemispheres", "Hemi-Areas"])
         cases = define_cases(dataPath);
         load(fullfile_check(strcat(dataPath, cases(1).name)));
         if exist('network_data', 'var')

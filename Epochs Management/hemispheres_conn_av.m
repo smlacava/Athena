@@ -28,22 +28,22 @@ function [data_hemispheres] = hemispheres_conn_av(data)
         if length(size(data.measure)) == 3
             data_hemispheres.measure(:, count) = ...
                 sum(squeeze(sum(data.measure(:, Right, Right), 2)), ...
-                2)/(R*R-R);
+                2)/R;
         else
             data_hemispheres.measure(:, count) = ...
-                sum(sum(data.measure(Right, Right)))/(R*R-R);
+                sum(sum(data.measure(Right, Right)))/R;
         end
         data_hemispheres.locations = "Right";
         count = count+1;
     end
     if L ~= 0
+        L = L*L-L;
         if length(size(data.measure)) == 3
             data_hemispheres.measure(:, count) = ...
-                sum(squeeze(sum(data.measure(:, Left, Left), 2)), ...
-                2)/(L*L-L);
+                sum(squeeze(sum(data.measure(:, Left, Left), 2)), 2)/L;
         else
             data_hemispheres.measure(:, count) = ...
-                sum(sum(data.measure(Left, Left)))/(L*L-L);
+                sum(sum(data.measure(Left, Left)))/L;
         end
         data_hemispheres.locations = [data_hemispheres.locations, "Left"];
     end

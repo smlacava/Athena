@@ -82,11 +82,9 @@ function Athena_sigShow_OpeningFcn(hObject, ~, handles, varargin)
         else
             set(handles.fs_text, 'String', '1');
             fs = 1;
-            set(handles.fs_check, 'String', 'not detected');
-            set(handles.fs_text, 'String', string(value_asking(1, ...
-                'Sampling frequency not found', ...
-                'Insert the sampling frequency of this time series')));
-            
+            fs_ClickedCallback(1, 1, handles)
+            set(handles.fs_check, 'String', 'not detected');  
+            fs = str2double(get(handles.fs_text, 'String'));
         end
         tw = str2double(get(handles.time_window_value, 'String'));
         set(handles.time_window_value, 'String', ...
@@ -287,7 +285,7 @@ function fs_ClickedCallback(~, ~, handles)
         data = get(handles.signal_matrix, 'Data');
         locs = get(handles.locs_matrix, 'Data');
         fs = str2double(get(handles.fs_text, 'String'));
-        if strcmp(fs, 'not detected')
+        if strcmp(get(handles.fs_check, 'String'), 'not detected')
             fs = 1;
         end
         if fs == 1
@@ -310,7 +308,8 @@ function fs_ClickedCallback(~, ~, handles)
             sigPlot(handles, data, fs, locs, Lim(1)-sliding_check, ...
                 Lim(2))
         else
-            problem('The sampling frequency is already setted in the file');
+            problem(strcat("The sampling frequency is already set at ", ...
+                string(fs), " Hz in the file"));
         end
     catch
     end
@@ -428,8 +427,9 @@ function sigPlot(handles, data, fs, ~, t_start, t_end)
         yticks([1:selected]*delta);
         yticklabels(locs(locs_ind == 1));
     end
-    xticks(0:fs:Limit);
-    xticklabels(string([0:floor(Limit/fs)]));
+    tick_step = 0.1*(t_end-t_start+1);
+    xticks(0:tick_step:Limit);
+    xticklabels(string([0:tick_step/fs:floor(Limit/fs)]));
     time_window(handles)
 
 
@@ -485,9 +485,8 @@ function time_window(handles)
     xStart = (fs*(tStart) + 1)*ones(1, 2);
     xEnd = fs*(tStart+time)*ones(1, 2);
     verticalLine = [0, ymax];
-    width = ceil((window(2)-window(1))/10000);
-    plot(xStart, verticalLine, 'k', 'LineWidth', width)
-    plot(xEnd, verticalLine, 'r', 'LineWidth', width)
+    plot(xStart, verticalLine, 'k', 'LineWidth', 0.5)
+    plot(xEnd, verticalLine, 'r', 'LineWidth', 0.5)
     hold off;
     
 
@@ -629,7 +628,7 @@ function Filter_ClickedCallback(~, ~, handles)
     fmax = min(str2double(get(handles.fmax, 'String')), fs/2);
     [fmin, fmax, check] = band_asking(fmin, fmax);
     if check == 1
-        if fmin <= 0 || fmax <= 0
+        if fmin < 0 || fmax < 0
             problem('A cut frequency cannot be less than or equal to 0 Hz')
         elseif fmin >= fmax
             problem(strcat("The maximum cut frequency has to be ", ...

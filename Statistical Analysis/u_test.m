@@ -4,10 +4,10 @@
 % output a matrix which can be used for other statistical analysis or 
 % classification analysis with other software applications
 % 
-% [P, Psig, data_sig] = u_test(first_group, second_group, label, ...
-%       first_name, second_name, alpha)
+% [P, Psig, data_sig, U] = u_test(first_group, second_group, ...
+%       label, first_name, second_name, alpha)
 %
-% input:
+% Input:
 %   first_group is the name of the file (with its directory) which contains
 %   	the matrix subjects*bands*locations of the first group of subjects
 %   second_group is the name of the file (with its directory) which 
@@ -19,20 +19,23 @@
 %   alpha is the alpha value (if the p-value of a comparison is less than
 %       this value, the comparison can be considered as significant)
 %
-% output:
+% Output:
 %   P is the p-value matrix
 %   Psig gives information about the significant (empty if the comparison
 %       is not significant)
 %   dataSig is the matrix related to the measure of each subject in 
 %       significant comparisons
+%   U is a row vector which contains the test statistic for the first group
+%       as first element, and the test statistic for the second group as 
+%       second element
 
 
-function [P, Psig, data_sig] = u_test(first_group, second_group, ...
+function [P, Psig, data_sig, U] = u_test(first_group, second_group, ...
     label, first_name, second_name, alpha)
 
-    [P, H] = ranksum(first_group, second_group, 'alpha', alpha);
+    [P, H, STAT] = ranksum(first_group, second_group, 'alpha', alpha);
     if isnan(P)
-        [P, H] = ranksum(first_group, second_group, 'alpha', alpha, ...
+        [P, H, STAT] = ranksum(first_group, second_group, 'alpha', alpha, ...
             'method', 'exact');
     end
     if nargin > 2
@@ -52,5 +55,17 @@ function [P, Psig, data_sig] = u_test(first_group, second_group, ...
             	Psig = strcat(label, " higher in ", second_name, med_text);
             end
         end
+    end
+    if nargout > 3
+        N1 = length(first_group);
+        U1 = STAT.ranksum-((N1*(N1+1))/2);
+        [P, ~, STAT] = ranksum(second_group, first_group, 'alpha', alpha);
+        if isnan(P)
+            [P, ~, STAT] = ranksum(second_group, first_group, 'alpha', ...
+                alpha, 'method', 'exact');
+        end
+        N2 = length(second_group);
+        U2 = STAT.ranksum-((N2*(N2+1))/2);
+        U = [U1, U2];
     end
 end

@@ -44,7 +44,7 @@ function [results, group_names] = ...
     end
         
     measure_path = measurePath(dataPath, measure, area);  
-    if sum(contains(area, {'Asymmetry', 'Global'})) == 0
+    if sum(contains(area, {'Asymmetry', 'Global'})) > 0
         location_number = 1;
     end
     

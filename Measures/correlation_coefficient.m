@@ -9,7 +9,7 @@
 %   sig is the input matrix (in the format time x locations)
 %
 % OUTPUT:
-%   CC is the matrix of the phase lag index 
+%   CC is the matrix of the correlation coefficient 
 
 function CC = correlation_coefficient(sig) 
     

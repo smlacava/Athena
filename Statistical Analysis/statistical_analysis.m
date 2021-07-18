@@ -2,8 +2,9 @@
 % This function computes the statistical analysis between two groups of
 % subjects and saves data relative to significant comparisons
 %
-% [P, Psig, data, data_sig] = statistical_analysis(First, Second, locs, ...
-%     cons, dataPath, measure, analysis, group_types, save_check)
+% [P, Psig, data, data_sig, STATs] = statistical_analysis(First, ...
+%     Second, locs, cons, dataPath, measure, analysis, group_types, ...
+%     save_check, averaged, test)
 %
 % input:
 %   First is the data matrix relative to the first group of subjects 
@@ -26,6 +27,10 @@
 %       groups of subjects
 %   save_check has to be 1 if the user want to save also the resulting 
 %       tables (0 by default)
+%   averaged has to be 1 if the data matrices are related to epochs
+%       averaged data, 0 otherwise (0 by default)
+%   test is the name of the test, among 'utest' and 'ttest' ('utest' by
+%       default)
 %
 % output:
 %   P is the matrix of p-values for each comparison
@@ -35,16 +40,25 @@
 %       (exportable for external analysis)
 %   data_sig is the matrix of values statistically compared and resulted as
 %       significant
+%   STATs is the test statistic (a single value for each test in the t-test
+%       case, two elements on the same row in the u-test case)
 
-function [P, Psig, data, data_sig] = statistical_analysis(First, ...
+function [P, Psig, data, data_sig, STATs] = statistical_analysis(First, ...
     Second, locs, cons, dataPath, measure, analysis, group_types, ...
-    save_check)
+    save_check, averaged, test)
     if nargin <= 7
         group_types = {'Group 0', 'Group 1'};
     end
     if nargin <= 8
         save_check = 0;
     end
+    if nargin <= 9
+        averaged = 0;
+    end
+    if nargin <= 10
+        test = 'utest';
+    end
+    
     
     [First, Second, locs] = check_data(First, Second, locs);
     
@@ -56,6 +70,19 @@ function [P, Psig, data, data_sig] = statistical_analysis(First, ...
         nBands = size(First, 2);
     end
     alpha = alpha_levelling(cons, nLocs, nBands);
+    
+    if strcmpi(string(test), "utest")
+    	test_handle = @u_test;
+        if nBands > 1
+            STATs = zeros(1, 1, 2);
+        else
+            STATs = zeros(1, 2);
+        end
+    else
+    	test_handle = @t_test;
+        STATs = zeros(1, 1);
+    end
+    
     P = zeros(nBands, nLocs);
     Psig = {};
     data_sig = [];
@@ -85,19 +112,37 @@ function [P, Psig, data, data_sig] = statistical_analysis(First, ...
                 index = j+nBands*(i-1);
                 data_names{index} = char_check(strcat(aux_loc, ...
                     " - ", bands_names{j}));
-                [P(j, i), aux_Psig, aux_data] = u_test(First(:, j, i), ...
-                    Second(:, j, i), char_check(strcat(locs{i}, " - ", ...
+                if averaged == 0
+                    first_data = First(:, j, i);
+                    second_data = Second(:, j, i);
+                else
+                    first_data = First(:, :, j, i);
+                    second_data = Second(:, :, j, i);
+                end
+                [P(j, i), aux_Psig, aux_data, STAT] = ...
+                    test_handle(first_data(:), ...
+                    second_data(:), char_check(strcat(locs{i}, " - ", ...
                     bands_names{j})), group_types{1}, ...
                     group_types{2}, alpha);
+                STATs(j, i, :) = STAT;
                 data(1:nSecond, index) = Second(:, j, i);
                 data(nSecond+1:end, index) = First(:, j, i);
                 Psig = [Psig; aux_Psig];
                 data_sig = [data_sig, aux_data];
             end
         else
-            [P(i), aux_Psig, aux_data] = u_test(Second(:, i), ...
-                First(:, i), char_check(locs{i}), group_types{1}, ...
-                group_types{2}, alpha);
+                if averaged == 0
+                    first_data = First(:, :, :, i);
+                    second_data = Second(:, :, :, i);
+                else
+                    first_data = First(:, :, i);
+                    second_data = Second(:, :, i);
+                end
+            [P(i), aux_Psig, aux_data, STAT] = ...
+                test_handle(first_data(:), second_data(:), ...
+                char_check(locs{i}), group_types{1}, group_types{2}, ...
+                alpha);
+            STATs(i, :) = STAT;
             data(1:nSecond, i) = Second(:, i);
             data(nSecond+1:end, i) = First(:, i);
             Psig = [Psig, aux_Psig];
@@ -193,6 +238,9 @@ function show_figures(data, data_names, P, bands_names, locs, Psig, ...
     p = uitable(fs2, 'Data', P, 'Position', [20 20 525 375], ...
         'RowName', bands_names, 'ColumnName', locs);
     if sig
+        if size(Psig, 1) < size(Psig, 2)
+            Psig = Psig';
+        end
         fs3 = figure('Color', bg_color, 'NumberTitle', 'off', ...
             'Name', 'Statistical Analysis - Significant Results');
         ps = uitable(fs3, 'Data', cellstr(Psig), 'Position', ...

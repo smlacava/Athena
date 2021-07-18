@@ -36,7 +36,8 @@ function network_measure(dataPath, measure, network_measure, loc_file, ...
     if nargin < 4
         loc_file = [];
     end
-    inDir = identify_directory(dataPath, measure);
+    %inDir = identify_directory(dataPath, measure)
+    inDir = path_check(strcat(path_check(dataPath), measure));
     cases = define_cases(inDir);
     if nargin < 5 || isempty(subFile)
         nSUB = length(cases);
@@ -55,7 +56,9 @@ function network_measure(dataPath, measure, network_measure, loc_file, ...
         normFLAG = 'minmax';
     end
     
-    if not(ischar(normFLAG))
+    if isa(normFLAG, 'double') & normFLAG == 1
+        normFLAG = 'minmax';
+    elseif not(ischar(normFLAG))
         normFLAG = 'none';
     end 
     
@@ -73,9 +76,16 @@ function network_measure(dataPath, measure, network_measure, loc_file, ...
         @closeness_centrality, @clustering_coefficient, ...
         @eigenvector_centrality, @generank_centrality, ...
         @katz_centrality, @strength, @subgraph_centrality, @mst_degree};
-    network_function = functions(strcmpi(network_measure, network_metrics));
+    network_function = functions(strcmpi(network_measure, ...
+        network_metrics));
+    if isempty(network_function)
+        network_function = functions(strcmpi(network_measure, ...
+            network_names));
+        network = network_names(strcmpi(network_measure, network_names));
+    else
+        network = network_names(strcmpi(network_measure, network_metrics));
+    end
     network_function = network_function{1};
-    network = network_names(strcmpi(network_measure, network_metrics));
     network = network{1};
     
     dataPath = path_check(strcat(path_check(dataPath), measure));
@@ -111,14 +121,22 @@ function network_measure(dataPath, measure, network_measure, loc_file, ...
     countSecond = 1;
     for i = 1:length(cases)
         load(fullfile_check(strcat(inDir, cases(i).name)));
+        if nBands == 0
+            nBands = size(conn.data, 1);
+        end
         for band = 1:nBands
-            aux_data = data_management(data, locations, band, bands_list);
-            if i == 1 && band == 1
-                network_data.measure = zeros(nBands, length(aux_data));
+            for epoch = 1:size(conn.data, 2)
+                aux_data = data_management(conn, locations, band, ...
+                    bands_list, epoch);
+                if i == 1 && band == 1 && epoch == 1
+                    nEpochs = size(conn.data, 2);
+                    network_data.measure = zeros(nBands, ...
+                        nEpochs, length(aux_data));
+                end
+                network_data.measure(band, epoch, :) = ...
+                    value_normalization(network_function(aux_data, 0)', ...
+                    normFLAG);
             end
-            network_data.measure(band, :) = value_normalization(...
-                network_function(aux_data, 0)', normFLAG);
-            
         end
         network_data.locations = locations;
         save(fullfile_check(strcat(outDir, cases(i).name)), 'network_data')
@@ -127,35 +145,37 @@ function network_measure(dataPath, measure, network_measure, loc_file, ...
             [globFirst, globSecond, asyFirst, asySecond, ...
                 areasFirst, areasSecond, totFirst, totSecond, ...
                 hemiFirst, hemiSecond, hemiareasFirst, hemiareasSecond, ...
-                areas, total, hemispheres, hemiareas] = ...
-                groups_initialization(network_data, nFirst, nSecond, nBands);
+                areas_names, channels_names, hemispheres_names, ...
+                hemiareas_names] = ...
+                groups_initialization(network_data, nFirst, nSecond, ...
+                nBands, nEpochs);
         end
         
-        aux_data = global_av(network_data);
+        aux_data = globality(network_data);
         [globFirst, globSecond, ~, ~] = group_assignment(aux_data, ...
             globFirst, globSecond, countFirst, countSecond, Subjects, ...
             sub_types{1}, cases(i).name);
         save(fullfile_check(strcat(globDir, cases(i).name)), 'aux_data');
         
-        aux_data = total_av(network_data);
+        aux_data = total(network_data);
         [totFirst, totSecond, ~, ~] = group_assignment(aux_data, ...
             totFirst, totSecond, countFirst, countSecond, Subjects, ...
             sub_types{1}, cases(i).name);
         save(fullfile_check(strcat(totDir, cases(i).name)), 'aux_data');
         
-        aux_data = areas_av(network_data);
+        aux_data = areas(network_data);
         [areasFirst, areasSecond, ~, ~] = group_assignment(aux_data, ...
             areasFirst, areasSecond, countFirst, countSecond, Subjects, ...
             sub_types{1}, cases(i).name);
         save(fullfile_check(strcat(areasDir, cases(i).name)), 'aux_data');
         
-        aux_data = asymmetry_av(network_data);
-        [asyFirst, asySecond, countFirst, countSecond] = ...
+        aux_data = asymmetry(network_data);
+        [asyFirst, asySecond, ~, ~] = ...
             group_assignment(aux_data, asyFirst, asySecond, countFirst, ...
             countSecond, Subjects, sub_types{1}, cases(i).name);
         save(fullfile_check(strcat(asyDir, cases(i).name)), 'aux_data');
         
-        aux_data = hemiareas_av(network_data);
+        aux_data = hemiareas(network_data);
         [hemiareasFirst, hemiareasSecond, ~, ~] = ...
             group_assignment(aux_data, hemiareasFirst, hemiareasSecond, ...
             countFirst, countSecond, Subjects, sub_types{1}, ...
@@ -163,8 +183,9 @@ function network_measure(dataPath, measure, network_measure, loc_file, ...
         save(fullfile_check(strcat(hemiareasDir, cases(i).name)), ...
             'aux_data');
         
-        aux_data = hemispheres_av(network_data);
-        [hemiFirst, hemiSecond, ~, ~] = group_assignment(aux_data, ...
+        aux_data = hemispheres(network_data);
+        [hemiFirst, hemiSecond, countFirst, countSecond] = ...
+            group_assignment(aux_data, ...
             hemiFirst, hemiSecond, countFirst, countSecond, Subjects, ...
             sub_types{1}, cases(i).name);
         save(fullfile_check(strcat(hemiDir, cases(i).name)), 'aux_data');
@@ -174,9 +195,9 @@ function network_measure(dataPath, measure, network_measure, loc_file, ...
     
     save_groups(globFirst, globSecond, asyFirst, asySecond, areasFirst, ...
         areasSecond, totFirst, totSecond, hemiFirst, hemiSecond, ...
-        hemiareasFirst, hemiareasSecond, areas, total, hemispheres, ...
-        hemiareas, globDir, asyDir, areasDir, totDir, hemiDir, ...
-        hemiareasDir);
+        hemiareasFirst, hemiareasSecond, areas_names, channels_names, hemispheres_names, ...
+        hemiareas_names, globDir, asyDir, areasDir, totDir, hemiDir, ...
+        hemiareasDir, countFirst-1, countSecond-1);
     close(f)
 end
 
@@ -186,7 +207,7 @@ end
 % only common locations for all the subjects, averaging between the
 % epochs, and finally considering the analyzed frequency band.
 %
-% data = data_management(conn, locations, band, bands_list)
+% data = data_management(conn, locations, band, bands_list, epoch)
 %
 % Input:
 %   conn is the structure which contains the data matrix and the locations
@@ -196,23 +217,24 @@ end
 %   band is the number of frequency band to analyze
 %   bands_list is the list of the frequency bands on which the connectivity
 %       measure is computed
+%   epochs is the number of epoch which has to be considered
 %
 % Output:
 %   data is the (locations x locations) managed data matrix
 
 
-function data = data_management(conn, locations, band, bands_list)
-    if length(size(conn.measure)) == 4
-        data = squeeze(conn.measure(band, :, :, :));
+function data = data_management(conn, locations, band, bands_list, epoch)
+    if length(size(conn.data)) == 4
+        data = squeeze(conn.data(band, epoch, :, :));
         if length(size(data)) > 2
             data = squeeze(mean(data, 1));
         end
     elseif length(bands_list) > 1
-        data = squeeze(conn.measure(band, :, :));
-    elseif length(size(conn.measure)) == 3
-        data = squeeze(mean(conn.measure, 1));
+        data = squeeze(conn.data(band, :, :));
+    elseif length(size(conn.data)) == 3
+        data = squeeze(conn.data(epoch, :, :));
     else
-        data = conn.measure;
+        data = conn.data;
     end
     if isempty(conn.locations)
         return;
@@ -270,13 +292,14 @@ end
 %
 % [globFirst, globSecond, asyFirst, asySecond, areasFirst, areasSecond, ...
 %    totFirst, totSecond] = groups_initialization(network_data, nFirst, ...
-%    nSecond, nBands)
+%    nSecond, nBands, nEpochs)
 %
 % Input:
 %   network_data is the network measure related to a subject
 %   nFirst is the number of subjects belonging to the first group
 %   nSecond is the number of subjects belonging to the second group
 %   nBands is the number of analyzed frequency bands
+%   nEpochs is the number of analyzed epochs
 %
 % Output:
 %   globFirst is the 0s matrix related to the first group of subjects in
@@ -309,7 +332,7 @@ function [globFirst, globSecond, asyFirst, asySecond, areasFirst, ...
     areasSecond, totFirst, totSecond, hemiFirst, hemiSecond, ...
     hemiareasFirst, hemiareasSecond, areas, total, hemispheres, ...
     hemiareas] = groups_initialization(network_data, nFirst, nSecond, ...
-    nBands)
+    nBands, nEpochs)
     
     areas_data = areas_av(network_data);
     hemi_data = hemispheres_av(network_data);
@@ -320,21 +343,22 @@ function [globFirst, globSecond, asyFirst, asySecond, areasFirst, ...
     hemispheres = hemi_data.locations;
     hemiareas = hemiareas_data.locations;
     
-	globFirst = zeros(nFirst, nBands);
-    globSecond = zeros(nSecond, nBands);
-    asyFirst = zeros(nFirst, nBands);
-    asySecond = zeros(nSecond, nBands);
-    areasFirst = zeros(nFirst, nBands, length(areas_data.locations));
-    areasSecond = zeros(nSecond, nBands, length(areas_data.locations));
-    totFirst = zeros(nFirst, nBands, length(network_data.locations));
-    totSecond = zeros(nSecond, nBands, length(network_data.locations));
-    hemiFirst = zeros(nFirst, nBands, length(hemi_data.locations));
-    hemiSecond = zeros(nSecond, nBands, length(hemi_data.locations));
-    hemiareasFirst = zeros(nFirst, nBands, ...
-        length(hemiareas_data.locations));
-    hemiareasSecond = zeros(nSecond, nBands, ...
-        length(hemiareas_data.locations));
+    first_dims = [nFirst, nBands, nEpochs];
+    second_dims = [nSecond, nBands, nEpochs];
     
+	globFirst = zeros(first_dims);
+    globSecond = zeros(second_dims);
+    asyFirst = zeros(first_dims);
+    asySecond = zeros(second_dims);
+    areasFirst = zeros([first_dims, length(areas_data.locations)]);
+    areasSecond = zeros([second_dims, length(areas_data.locations)]);
+    totFirst = zeros([first_dims, length(network_data.locations)]);
+    totSecond = zeros([second_dims, length(network_data.locations)]);
+    hemiFirst = zeros([first_dims, length(hemi_data.locations)]);
+    hemiSecond = zeros([second_dims, length(hemi_data.locations)]);
+    hemiareasFirst = zeros([first_dims, length(hemiareas_data.locations)]);
+    hemiareasSecond = zeros([second_dims, ...
+        length(hemiareas_data.locations)]);
 end
 
 %% group_assignment
@@ -381,9 +405,9 @@ function [First, Second, countFirst, countSecond] = ...
     
     if patient_check(Subjects(k, end), sub_type)
         if dim == 2
-            First(countFirst, :, :) = aux_data.measure;
-        elseif dim == 3
             First(countFirst, :, :, :) = aux_data.measure;
+        elseif dim == 3
+            First(countFirst, :, :, :, :) = aux_data.measure;
         end
         countFirst = countFirst+1;
     else
@@ -403,7 +427,7 @@ end
 %
 % save_groups(globFirst, globSecond, asyFirst, asySecond, areasFirst, ...
 %    areasSecond, totFirst, totSecond, areas, total, globDir, asyDir, ...
-%    areasDir, totDir)
+%    areasDir, totDir, nFirst, nSecond)
 %
 % Input:
 %   globFirst is the matrix related to the first group in the global area
@@ -424,66 +448,133 @@ end
 %   asyDir is the output directory related to the asymmetry analysis
 %   areasDir is the output directory related to the macroareas analysis
 %   totDir is the output directory related to the single locations analysis
+%   nFirst is the number of subjects belonging to the first group
+%   nSecond is the number of subjects belonging to the second group
 
 
 function save_groups(globFirst, globSecond, asyFirst, asySecond, ...
     areasFirst, areasSecond, totFirst, totSecond, hemiFirst, ...
     hemiSecond, hemiareasFirst, hemiareasSecond, areas, total, ...
     hemispheres, hemiareas, globDir, asyDir, areasDir, totDir, hemiDir, ...
-    hemiareasDir)
+    hemiareasDir, nFirst, nSecond)
+
+    nBands = size(globFirst, 2);
+    first_check = nFirst > 0;
+    second_check = nSecond > 0;
     
-    First = struct();
-    Second = struct();
-    First.data = globFirst;
-    Second.data = globSecond;
-    First.locations = "global";
-    Second.locations = "global";
-    save(fullfile_check(strcat(globDir, 'First.mat')), 'First')
-    save(fullfile_check(strcat(globDir, 'Second.mat')), 'Second')
+    if first_check
+        First = struct();
+        First.data = globFirst(1:nFirst, :, :, :);
+        First.locations = "global";
+        save(fullfile_check(strcat(globDir, 'First_ep.mat')), 'First')
+        First.data = reshape(mean(First.data, 3), ...
+            [nFirst, nBands, size(First.data, 4)]);
+        save(fullfile_check(strcat(globDir, 'First.mat')), 'First')
+    end
+    if second_check
+        Second = struct();
+        Second.data = globSecond(1:nSecond, :, :, :);
+            Second.locations = "global";
+        save(fullfile_check(strcat(globDir, 'Second_ep.mat')), 'Second')   
+        Second.data = reshape(mean(Second.data, 3), ...
+            [nSecond, nBands, size(Second.data, 4)]);
+        save(fullfile_check(strcat(globDir, 'Second.mat')), 'Second')
+    end
     
-    First = struct();
-    Second = struct();
-    First.data = totFirst;
-    Second.data = totSecond;
-    First.locations = total;
-    Second.locations = total;
-    save(fullfile_check(strcat(totDir, 'First.mat')), 'First')
-    save(fullfile_check(strcat(totDir, 'Second.mat')), 'Second')
+    if first_check
+        First = struct();
+        First.data = totFirst(1:nFirst, :, :, :);
+        First.locations = total;
+        save(fullfile_check(strcat(totDir, 'First_ep.mat')), 'First')
+        First.data = reshape(mean(First.data, 3), ...
+            [nFirst, nBands, size(First.data, 4)]);
+        save(fullfile_check(strcat(totDir, 'First.mat')), 'First')
+    end
+    if second_check
+        Second = struct();
+        Second.data = totSecond(1:nSecond, :, :, :);
+        Second.locations = total;
+        save(fullfile_check(strcat(totDir, 'Second_ep.mat')), 'Second')
+        Second.data = reshape(mean(Second.data, 3), ...
+            [nSecond, nBands, size(Second.data, 4)]);
+        save(fullfile_check(strcat(totDir, 'Second.mat')), 'Second')
+    end
     
-    First = struct();
-    Second = struct();
-    First.data = asyFirst;
-    Second.data = asySecond;
-    First.locations = "asymmetry";
-    Second.locations = "asymmetry";
-    save(fullfile_check(strcat(asyDir, 'First.mat')), 'First')
-    save(fullfile_check(strcat(asyDir, 'Second.mat')), 'Second')
+    if first_check
+        First = struct();
+        First.data = asyFirst(1:nFirst, :, :, :);
+        First.locations = "asymmetry";
+        save(fullfile_check(strcat(asyDir, 'First_ep.mat')), 'First')
+        First.data = reshape(mean(First.data, 3), ...
+            [nFirst, nBands, size(First.data, 4)]);
+        save(fullfile_check(strcat(asyDir, 'First.mat')), 'First')
+    end
+    if second_check
+        Second = struct();
+        Second.data = asySecond(1:nSecond, :, :, :);
+        Second.locations = "asymmetry";
+        save(fullfile_check(strcat(asyDir, 'Second_ep.mat')), 'Second')
+        Second.data = reshape(mean(Second.data, 3), ...
+            [nSecond, nBands, size(Second.data, 4)]);
+        save(fullfile_check(strcat(asyDir, 'Second.mat')), 'Second')
+    end
+
+    if first_check    
+        First = struct();
+        First.data = areasFirst(1:nFirst, :, :, :);
+        First.locations = areas;
+        save(fullfile_check(strcat(areasDir, 'First_ep.mat')), 'First')
+        First.data = reshape(mean(First.data, 3), ...
+            [nFirst, nBands, size(First.data, 4)]);
+        save(fullfile_check(strcat(areasDir, 'First.mat')), 'First')
+    end
+    if second_check
+        Second = struct();
+        Second.data = areasSecond(1:nSecond, :, :, :);
+        Second.locations = areas;
+        save(fullfile_check(strcat(areasDir, 'Second_ep.mat')), 'Second')
+        Second.data = reshape(mean(Second.data, 3), ...
+            [nSecond, nBands, size(Second.data, 4)]);
+        save(fullfile_check(strcat(areasDir, 'Second.mat')), 'Second')
+    end
     
-    First = struct();
-    Second = struct();
-    First.data = areasFirst;
-    Second.data = areasSecond;
-    First.locations = areas;
-    Second.locations = areas;
-    save(fullfile_check(strcat(areasDir, 'First.mat')), 'First')
-    save(fullfile_check(strcat(areasDir, 'Second.mat')), 'Second')
+    if first_check    
+        First = struct();
+        First.data = hemiareasFirst(1:nFirst, :, :, :);
+        First.locations = hemiareas;
+        save(fullfile_check(strcat(hemiareasDir, 'First_ep.mat')), 'First')
+        First.data = reshape(mean(First.data, 3), ...
+            [nFirst, nBands, size(First.data, 4)]);
+        save(fullfile_check(strcat(hemiareasDir, 'First.mat')), 'First')
+    end
+    if second_check
+        Second = struct();
+        Second.data = hemiareasSecond(1:nSecond, :, :, :);
+        Second.locations = hemiareas;
+        save(fullfile_check(strcat(hemiareasDir, 'Second_ep.mat')), ...
+            'Second')
+        Second.data = reshape(mean(Second.data, 3), ...
+            [nSecond, nBands, size(Second.data, 4)]);
+        save(fullfile_check(strcat(hemiareasDir, 'Second.mat')), 'Second')
+    end
     
-    First = struct();
-    Second = struct();
-    First.data = hemiareasFirst;
-    Second.data = hemiareasSecond;
-    First.locations = hemiareas;
-    Second.locations = hemiareas;
-    save(fullfile_check(strcat(hemiareasDir, 'First.mat')), 'First')
-    save(fullfile_check(strcat(hemiareasDir, 'Second.mat')), 'Second')
-    
-    First = struct();
-    Second = struct();
-    First.data = hemiFirst;
-    Second.data = hemiSecond;
-    First.locations = hemispheres;
-    Second.locations = hemispheres;
-    save(fullfile_check(strcat(hemiDir, 'First.mat')), 'First')
-    save(fullfile_check(strcat(hemiDir, 'Second.mat')), 'Second')
+    if first_check
+        First = struct();
+        First.data = hemiFirst(1:nFirst, :, :, :);
+        First.locations = hemispheres;
+        save(fullfile_check(strcat(hemiDir, 'First_ep.mat')), 'First')
+        First.data = reshape(mean(First.data, 3), ...
+            [nFirst, nBands, size(First.data, 4)]);
+        save(fullfile_check(strcat(hemiDir, 'First.mat')), 'First')
+    end
+    if second_check
+        Second = struct();
+        Second.data = hemiSecond(1:nSecond, :, :, :);
+        Second.locations = hemispheres;
+        save(fullfile_check(strcat(hemiDir, 'Second_ep.mat')), 'Second')
+        Second.data = reshape(mean(Second.data, 3), ...
+            [nSecond, nBands, size(Second.data, 4)]);
+        save(fullfile_check(strcat(hemiDir, 'Second.mat')), 'Second')
+    end
 end
     

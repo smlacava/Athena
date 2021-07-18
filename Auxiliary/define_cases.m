@@ -3,15 +3,17 @@
 % series present in the selected directory.
 %
 % cases = define_cases(dataPath, check, extension)
+% cases = define_cases(dataPath, extension)
 %
 % input:
 %   dataPath is the directory which contains the time series to extract or
 %       to analyze
 %   check is the variable which has to be 1 if the check on the cases names
-%       has to be computed (1 by default)
+%       has to be computed (1 by default, note that it will be considered
+%       as the extension argument if it is a char)
 %   exstension is the extension of the files which have to be searched
 %       (optional, if it is not selected, the function will search .mat, 
-%       .edf, .eeg, .csv, .txt, .xls and .xlsx files)
+%       .edf, .eeg, .csv, .txt, .set, .xls and .xlsx files)
 %
 % output:
 %   cases is a structure which contains a time series name as the first
@@ -19,12 +21,16 @@
 
 
 function cases = define_cases(dataPath, check, extension)
-    if nargin == 1
+    if nargin < 2
         check = 1;
     end
     if nargin < 3
         extension =[];
     end
+    if ischar(check)
+        extension = check;
+    end
+    
     
     dataPath = path_check(dataPath);
     extensions = define_extensions(extension);
@@ -54,7 +60,7 @@ function cases = check_cases(cases, check)
         toAvoid = {'Locations', 'Subjects', 'StatAn', 'Index', 'PSDr', ...
             'AEC', 'AECc', 'AECo', 'offset', 'exponential', 'PLI', ...
             'PLV', 'coherence', 'ICOH', 'First', 'Second', ...
-            'Classification', 'Figures'};
+            'Classification', 'Figures', 'Channel_locations', 'chanlocs'};
         for i = 1:length(toAvoid)
             cases = cases(not(contains({cases.name}, toAvoid{i})));
         end
@@ -84,7 +90,7 @@ end
 
 function extensions = define_extensions(extension)
     extensions = {'*.mat', '*.edf', '*.eeg', '*.csv', '*.txt', '*.xls', ...
-        '*.xlsx'};
+        '*.xlsx', '*.set'};
     if not(isempty(extension))
         if not(contains(extension, '.'))
             extension = char_check(strcat('.', extension));

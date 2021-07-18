@@ -113,7 +113,8 @@ function Run_Callback(hObject, eventdata, handles)
     if strcmp(get(handles.loc, 'Visible'), 'off') 
         areas_list = get(handles.area, 'String');
         area = areas_list(get(handles.area, 'Value'));
-        if strcmpi(area, 'Channels') || strcmp(area, 'Areas')
+        if strcmpi(area, 'Channels') || strcmp(area, 'Areas') || ...
+                strcmp(area, 'Hemi-Areas') || strcmp(area, 'Hemispheres')
             return;
         end
     end
@@ -232,6 +233,9 @@ function [PAT, HC, bins, measure, band_name, location] = ...
     end
     if strcmpi(area, 'Channels')
         area = "Total";
+    end
+    if strcmpi(area, 'Hemi-Areas')
+        area = "Hemispheres_Areas";
     end
     
     measure_path = measurePath(dataPath, measure, area);
@@ -354,7 +358,8 @@ function export_Callback(hObject, eventdata, handles, flag)
     if strcmp(get(handles.loc, 'Visible'), 'off') 
         areas_list = get(handles.area, 'String');
         area = areas_list(get(handles.area, 'Value'));
-        if strcmpi(area, 'Channels') || strcmp(area, 'Areas')
+        if strcmpi(area, 'Channels') || strcmp(area, 'Areas') || ...
+                strcmp(area, "Hemispheres") || strcamp(area, 'Hemi-Areas')
             return;
         end
     end
@@ -377,7 +382,7 @@ function meas_Callback(hObject, eventdata, handles)
     dataPath = Athena_measure_path_management(dataPath, measure);
     if exist(dataPath, 'dir')
         set(handles.area, 'String', ["Areas", "Asymmetry", "Global", ...
-            "Channels"])
+            "Channels", "Hemispheres", "Hemi-Areas"])
         cases = define_cases(dataPath);
         load(strcat(dataPath, cases(1).name));
         if exist('network_data', 'var')

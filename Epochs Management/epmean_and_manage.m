@@ -50,6 +50,8 @@ function [locations_file, sub_types] = epmean_and_manage(inDir, type, ...
         define_sub_types(subFile);
     av_functions = {@asymmetry_av, @total_av, @global_av, @areas_av, ...
         @hemispheres_av, @hemiareas_av};
+    n_functions = {@asymmetry, @total, @globality, @areas, ...
+        @hemispheres, @hemiareas};
     av_paths = {asyDir, totDir, globDir, areasDir, hemiDir, hemiareasDir};
     ntypes = length(av_paths);
     locFLAG = 0;
@@ -116,9 +118,15 @@ function [locations_file, sub_types] = epmean_and_manage(inDir, type, ...
         av_functions = {@asymmetry_conn_av, @total_conn_av, ...
             @global_conn_av, @areas_conn_av, @hemispheres_conn_av, ...
             @hemiareas_conn_av};
+        n_functions = {@asymmetry_conn, @total_conn, @global_conn, ...
+            @areas_conn, @hemispheres_conn, @hemiareas_conn};
     end 
+    nEpochs = size(measure, ind_ep);
     setup_size = zeros(ntypes, 1);
     loc_av = [];
+    loc_n = [];
+    data_n.measure = measure;
+    data_n.locations = locations;
     data.measure = squeeze(mean(measure, ind_ep));
     data.locations = locations;
     setup_data = {};
@@ -138,6 +146,8 @@ function [locations_file, sub_types] = epmean_and_manage(inDir, type, ...
         setup_size(j) = length(setup_data{j}.locations);  
         loc_av(j).First = zeros(nFirst, nBands, setup_size(j));
         loc_av(j).Second = zeros(nSecond, nBands, setup_size(j));
+        loc_n(j).First = zeros(nFirst, nBands, nEpochs, setup_size(j));
+        loc_n(j).Second = zeros(nSecond, nBands, nEpochs, setup_size(j));
     end
     
     
@@ -160,6 +170,7 @@ function [locations_file, sub_types] = epmean_and_manage(inDir, type, ...
         end
         data.measure = measure;
         data.locations = locs;
+        data_n = data;
         data.measure = squeeze(mean(data.measure, ind_ep));
         for j = 1:ntypes
             check_type = not(isempty(loc_av(j).First)) || ...
@@ -168,8 +179,11 @@ function [locations_file, sub_types] = epmean_and_manage(inDir, type, ...
                 if size(data.measure, 2) == 1
                     data.measure = data.measure';
                 end
-                aux_data = data;
                 f_av = av_functions{j};
+                f_n = n_functions{j};
+                aux_data = data;
+                aux_data_n = data_n;
+                aux_data_n = f_n(aux_data_n);
                 aux_data = f_av(aux_data);
                 save(fullfile_check(strcat(epDir, cases(i).name)), 'data') 
                 save(fullfile_check(strcat(av_paths{j}, cases(i).name)),...
@@ -180,16 +194,24 @@ function [locations_file, sub_types] = epmean_and_manage(inDir, type, ...
                 if length(size(loc_av(j).First)) == 3
                     loc_av(j).First(:, :, del_ind) = [];
                     loc_av(j).Second(:, :, del_ind) = [];
+                    loc_n(j).First(:, :, :, del_ind) = [];
+                    loc_n(j).Second(:, :, :, del_ind) = [];
                 else
                     loc_av(j).First(:, del_ind) = [];
                     loc_av(j).Second(:, del_ind) = [];
+                    loc_n(j).First(:, :, del_ind) = [];
+                    loc_n(j).Second(:, :, del_ind) = [];
                 end
                 setup_data{j}.locations(del_ind) = [];
                 if length(size(aux_data.measure)) == 2 ...
                         && min(size(aux_data.measure)) ~= 1
                     aux_data.measure = aux_data.measure(:, ind);
+                    aux_data_n.measure = aux_data_n.measure(:, :, ind);
                 elseif nBands == 1
                     aux_data.measure = aux_data.measure(ind);
+                    if length(size(aux_data_n.measure)) > 2
+                        aux_data_n.measure = aux_data_n.measure(:, :, ind);
+                    end
                 end
             end
             for k = 1:nSUB
@@ -203,21 +225,29 @@ function [locations_file, sub_types] = epmean_and_manage(inDir, type, ...
                                 sub_types{1})
                                 loc_av(j).First(countFirst, :) = ...
                                     aux_data.measure';
+                                loc_n(j).First(countFirst, :, :, :) = ...
+                                    aux_data_n.measure;
                                 countFirst = countFirst+floor(j/ntypes);
                             else
                                 loc_av(j).Second(countSecond, :) = ...
                                     aux_data.measure';
+                                loc_n(j).Second(countSecond, :, :, :) = ...
+                                    aux_data_n.measure;
                                 countSecond = countSecond+floor(j/ntypes);
                             end
                         else
                             if patient_check(Subjects(k, end), ...
                                 sub_types{1})
                                 loc_av(j).First(countFirst, :, :) = ...
-                                aux_data.measure;
+                                    aux_data.measure;
+                                loc_n(j).First(countFirst, :, :, :) = ...
+                                    aux_data_n.measure;
                                 countFirst = countFirst+floor(j/ntypes);
                             else
                                 loc_av(j).Second(countSecond, :, :) = ...
                                     aux_data.measure;
+                                loc_n(j).Second(countSecond, :, :, :) = ...
+                                    aux_data_n.measure;
                                 countSecond = countSecond+floor(j/ntypes);
                             end
                         end
@@ -259,6 +289,23 @@ function [locations_file, sub_types] = epmean_and_manage(inDir, type, ...
     if isempty(locations)
         locations = [];
     end
+    
+    for j = 1:ntypes
+        First = struct();
+        Second = struct();
+    	First.data = matrix_management(loc_n(j).First, countFirst);
+        Second.data = matrix_management(loc_n(j).Second, countSecond);
+        First.locations = setup_data{j}.locations;
+        Second.locations = setup_data{j}.locations;
+        save(fullfile_check(strcat(av_paths{j}, 'First_ep.mat')), 'First')
+        save(fullfile_check(strcat(av_paths{j}, 'Second_ep.mat')), 'Second')
+    end
+    locations_file = strcat(path_check(limit_path(inDir, type)), ...
+        'Locations.mat');
+    if isempty(locations)
+        locations = [];
+    end
+    
     save(fullfile_check(locations_file), 'locations')
     
     chanlocs = sort_chanlocs(aux_chanlocs, locations);

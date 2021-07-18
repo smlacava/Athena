@@ -110,15 +110,15 @@ function connectivity(fs, cf, nEpochs, dt, inDir, tStart, outTypes, ...
         	outTypes(i) = "AECo";
         elseif contains(outTypes(i), AECnames)
         	outTypes(i) = "AEC";
-        elseif contains(outTypes(i, 1), ICOHnames)
+        elseif contains(outTypes(i), ICOHnames)
             outTypes(i) = "ICOH";
-        elseif contains(outTypes(i, 1), MSCnames)
+        elseif contains(outTypes(i), MSCnames)
             outTypes(i) = "coherence";
-        elseif contains(outTypes(i, 1), MInames)
+        elseif contains(outTypes(i), MInames)
             outTypes(i) = "mutual_information";
-        elseif contains(outTypes(i, 1), CCnames)
+        elseif contains(outTypes(i), CCnames)
             outTypes(i) = "correlation_coefficient";
-        elseif contains(outTypes(i, 1), PLInames)
+        elseif contains(outTypes(i), PLInames)
             outTypes(i) = "PLI";
         end
     end

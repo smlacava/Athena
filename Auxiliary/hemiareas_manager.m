@@ -77,16 +77,15 @@ function [CentralR, FrontalR, TemporalR, OccipitalR, ParietalR, ...
         for i = 1:length(locations)
             loc = char(locations{i, 1});
             n = length(loc);
-            aux = zeros(1, n);
-            ind = 1:n;
+            R_cond = 0;
             for c = 1:n
-                aux(1, c) = str2double(loc(c));
+                if not(isnan(str2double(loc(c))))
+                    if mod(str2double(loc(c)), 2) == 0
+                        R_cond = 1;
+                        continue;
+                    end
+                end
             end
-            if sum(not(isnan(aux))) == 0
-                continue;
-            end
-            R_cond = (mod(str2double(loc(max((isnan(aux)==0).*ind))), ...
-                2) == 0);
             if contains(loc, "LOC") || contains(loc, "ROC")
                 continue;
             end

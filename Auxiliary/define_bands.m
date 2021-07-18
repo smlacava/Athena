@@ -39,6 +39,10 @@ function bands = define_bands(dataPath, bands, backFLAG)
         return;
     end
     
+    if strcmpi(class(bands), 'double') & bands == 1
+        bands = {'Band'};
+    end
+    
     if exist(dataFile, 'file')
         parameters = read_file(dataFile);
         cf = search_parameter(parameters, 'cf');

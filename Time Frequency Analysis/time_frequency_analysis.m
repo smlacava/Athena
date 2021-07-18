@@ -81,9 +81,9 @@ function [tf, times, frequencies, f_ticks, t_ticks, n_steps] = ...
     n_tot = [1:size(data, 2)]/fs;
     [~, idxmin] = min(abs(n_tot-tmin));
     [~, idxmax] = min(abs(n_tot-tmax));
-    if idxmin == 1 && fs ~= 1
-        idxmax = idxmax+1;
-    end
+    %if idxmin == 1 && fs ~= 1
+    %    idxmax = idxmax+1;
+    %end
         
     n_samples = size(data(:, idxmin:idxmax), 2);
     times = [0:n_samples-1]/fs;

@@ -32,7 +32,7 @@ function distribution_histogram_analysis(dataPath, measure, area, ...
     measure_path = path_check(strcat(path_check(dataPath), ...
         path_check(measure), path_check('Epmean'), area));
     
-    if sum(contains(area, {'Asymmetry', 'Global'})) == 0
+    if sum(contains(area, {'Asymmetry', 'Global'})) > 0
         location_number = 1;
     end
     

@@ -85,13 +85,7 @@ function measures_correlation(xData, yData, sub_list, bands_names, ...
     
     if save_check == 1
         aux_locs = locs;
-        if sum(contains(locs, {'Frontal', 'Parietal', 'Occipital', ...
-                'Central', 'Temporal'})) > 1
-            locs = 'Areas';
-        elseif not(contains(locs, 'Asymmetry')) && ...
-                not(contains(locs, 'Global'))
-            locs = 'Channels';
-        end
+        locs = locations2area(locs);
         save_name = strcat(dataPath, filesep, 'correlation_', ...
             measures{1}, '_', measures{2}, '_', locs);
         p_table = array2table(P');

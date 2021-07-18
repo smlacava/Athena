@@ -1,4 +1,4 @@
-%% total_conn_av
+%% total_av
 % This function computes the value of a non-connectivity measure for each
 % location and each frequency band of a subject
 %

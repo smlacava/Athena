@@ -73,10 +73,10 @@ function scatter_analysis(dataPath, first_measure, second_measure, ...
     
     check1 = 0;
     check2 = 0;
-    if sum(contains(first_area, {'Asymmetry', 'Global'})) == 0
+    if sum(contains(first_area, {'Asymmetry', 'Global'})) > 0
         check1 = 1;
     end
-    if sum(contains(second_area, {'Asymmetry', 'Global'})) == 0
+    if sum(contains(second_area, {'Asymmetry', 'Global'})) > 0
         check2 = 1;
     end
     

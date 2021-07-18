@@ -77,13 +77,7 @@ function index_correlation(data, sub_list, bands_names, measure, Index, ...
     
     if save_check == 1
         aux_locs = locs;
-        if sum(contains(locs, {'Frontal', 'Parietal', 'Occipital', ...
-                'Central', 'Temporal'})) > 1
-            locs = 'Areas';
-        elseif not(contains(locs, 'Asymmetry')) && ...
-                not(contains(locs, 'Global'))
-            locs = 'Channels';
-        end
+        locs = locations2area(locs);
             
         save_name = strcat(dataPath, filesep, 'correlation_', ...
             measure, '_Index_', locs);

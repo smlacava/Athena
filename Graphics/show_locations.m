@@ -3,7 +3,7 @@
 % check their names by clicking on the points representing them, and
 % eventually to highlight some of them.
 %
-% f = show_locations(data, locations_list, enabled, title)
+% f = show_locations(data, locations_list, enabled, title, enabled2)
 %
 % Input:
 %   data is the data structure containing the locations information in the
@@ -16,11 +16,15 @@
 %       respectively (optional, no highlighted channels if it is not given 
 %       or given as an empty array)
 %   title is the title of the figure ('Channels locations' by default)
+%   enabled2 is an array in which each element is 0 or 1 if the related
+%       channel in the locations_list array has to be highlighted or not,
+%       respectively, with a second color (optional, no highlighted 
+%       channels if it is not given or given as an empty array)
 %
 % Output:
 %   f is the handle to the figure
 
-function f = show_locations(data, locations_list, enabled, title)
+function f = show_locations(data, locations_list, enabled, title, enabled2)
     if nargin < 2 || isempty(locations_list)
         enabled = [];
     end
@@ -29,6 +33,9 @@ function f = show_locations(data, locations_list, enabled, title)
     end
     if nargin < 4
         title = 'Channel locations';
+    end
+    if nargin < 5
+        enabled2 = [];
     end
     
     if not(isfield(data, 'chanlocs'))
@@ -74,6 +81,20 @@ function f = show_locations(data, locations_list, enabled, title)
         end
         h = scatter(aux_Y, aux_X, 'MarkerEdgeColor', 'b', ...
             'MarkerFaceColor', [0.43, 0.8, 0.72]);
+    end
+    
+    if not(isempty(enabled2)) && not(isempty(locations_list))
+        aux_X = [];
+        aux_Y = [];
+        for i = 1:N
+            idx = find(strcmpi(names{i}, locations_list));
+            if not(isempty(idx)) && enabled2(i) == 1
+                aux_X = [aux_X, X(i)];
+                aux_Y = [aux_Y, Y(i)];
+            end
+        end
+        h2 = scatter(aux_Y, aux_X, 'MarkerEdgeColor', 'b', ...
+            'MarkerFaceColor', [1, 0.2, 0]);
     end
     
     s = scatter(Y, X, 'MarkerFaceColor', 'none');

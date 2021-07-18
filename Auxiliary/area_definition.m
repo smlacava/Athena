@@ -25,6 +25,9 @@ function locations = area_definition(handles, meas_handle, area_handle)
     if strcmpi(area, 'Channels')
         area = "Total";
     end
+    if strcmpi(area, 'Hemi-Areas')
+        area = "Hemispheres_Areas";
+    end
     if contains(measure, '-')
          aux_meas = split(measure, '-');
          [~, ~, locations] = load_data(strcat(path_check(dataPath), ...

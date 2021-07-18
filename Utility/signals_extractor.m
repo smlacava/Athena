@@ -16,9 +16,27 @@ function signals_extractor(dataPath, fs)
     if nargin < 2
         fs = [];
     end
+    
+    dataPath = path_check(dataPath);
+    comp_names = {'.tar.gz', '.tar', '.tgz', '.zip', '.gz'};
+    comp_check = 0;
+    for c = comp_names
+        cases = define_cases(dataPath, 1, c);
+        if not(isempty(cases))
+            comp_check = 1;
+            break;
+        end
+    end
+    
+    if comp_check == 1
+        for i = 1:length(cases)
+            decompress(strcat(dataPath, cases(i).name));
+        end
+    end
+        
     cases = define_cases(dataPath);
     cases(contains({cases.name}, 'Converted')) = [];
-    dataPath = path_check(dataPath);
+    
     n_cases = length(cases);
     
     f = waitbar(0,'Extracting your data', ...

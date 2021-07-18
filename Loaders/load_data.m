@@ -1,7 +1,7 @@
 %% load_data
 % This function is used to load the external data in the toolbox (time
 % series, subjects file, locations file, etc.), in different formats (.mat,
-% .edf, .xls').
+% .edf, .xls, .txt, .set, .csv, .eeg).
 %
 % [data, fs, locs, chanlocs] = load_data(dataFile, locFLAG)
 % 
@@ -37,11 +37,13 @@ function [data, fs, locs, chanlocs] = load_data(dataFile, locFLAG, ...
     avoid_locs = {'PHOTICPH', 'IBI', 'BURSTS', 'SUPPR', 'PHOTICREF'};
     avoid_locs_cont = {'DC', 'EKG'};
     loc_types = {'AF', 'FT', 'FC', 'FP', 'TP', 'CP', 'LO', 'SO', 'IO', ...
-        'PO', 'CB', 'SP', 'O', 'T', 'F', 'C', 'A', 'P', 'M'};
+        'PO', 'CB', 'SP', 'O', 'T', 'F', 'C', 'A', 'P', 'M', 'Fp'};
     loc_others = {'Chin', 'NAS', 'Neck', 'RPA', 'LPA', 'ROC', 'LOC', ...
         'EMG'};
     loc_list = {};
-    
+    if contains(dataFile, '.set')
+        data = load_set(dataFile);
+    end
     if contains(dataFile, '.mat')
         data = load(dataFile);
         split_file = split(dataFile, filesep);
@@ -52,95 +54,106 @@ function [data, fs, locs, chanlocs] = load_data(dataFile, locFLAG, ...
         end
         data = struct2cell(data);
         data = data{1};
-        if isstruct(data)
-            if not(strcmp(fs_name, '')) && isfield(data, fs_name)
-                fs = eval(strcat('data.', fs_name));
-            elseif isfield(data, 'fs')
-                fs = data.fs;
-            elseif isfield(data, 'frequency')
-                fs = data.frequency;
-            elseif isfield(data, 'srate')
-                fs = data.srate;
-            end
-            
-            aux_chanlocs = [];
-            if not(strcmp(chanlocs_name, '')) && isfield(data, ...
-                    chanlocs_name)
-                aux_chanlocs = eval(strcat('data.', chanlocs_name));
-            elseif isfield(data, 'channels_locations')
-            	aux_chanlocs = data.channels_locations;
-            elseif isfield(data, 'chanlocs')
-                aux_chanlocs = data.chanlocs;
-            end
-            
-            if not(strcmp(loc_name, '')) && isfield(data, loc_name)
-                locs = eval(strcat('data.', loc_name));
-            elseif isfield(data, 'locs')
-                locs = data.locs;
-            elseif isfield(data, 'locations')
-                locs = data.locations;
-            elseif isfield(data, 'channels')
-                locs = data.channels;
-            elseif isfield(data, 'label')
-                locs = data.label;
-            elseif isfield(data, 'labels')
-                locs = data.labels;
-            elseif isfield(data, 'chanlocs')
-                locs = data.chanlocs;
-            end
-            if isstruct(locs) && isfield(locs, 'labels')
-                locs = {locs.labels};
-            end
-            
-            if not(isempty(aux_chanlocs))
-                try
-                    L = length(locs);
-                    N = length(aux_chanlocs);
-                    chanlocs = struct();
-                    for i = 1:L
-                        for j = 1:N
-                            if strcmpi(locs{i}, aux_chanlocs(j).labels)
-                                chanlocs(i).labels = ...
-                                    aux_chanlocs(j).labels;
-                                if isempty(aux_chanlocs(j).X)
-                                    chanlocs(i).X = nan;
-                                    chanlocs(i).Y = nan;
-                                    chanlocs(i).Z = nan;
-                                else
-                                    chanlocs(i).X = aux_chanlocs(j).X;
-                                    chanlocs(i).Y = aux_chanlocs(j).Y;
-                                    chanlocs(i).Z = aux_chanlocs(j).Z;
-                                end
+    end
+    if exist('data', 'var') & isstruct(data)
+        if not(strcmp(fs_name, '')) && isfield(data, fs_name)
+            fs = eval(strcat('data.', fs_name));
+        elseif isfield(data, 'fs')
+            fs = data.fs;
+        elseif isfield(data, 'frequency')
+            fs = data.frequency;
+        elseif isfield(data, 'srate')
+            fs = data.srate;
+        end
+        
+        aux_chanlocs = [];
+        if not(strcmp(chanlocs_name, '')) && isfield(data, ...
+                chanlocs_name)
+            aux_chanlocs = eval(strcat('data.', chanlocs_name));
+        elseif isfield(data, 'channels_locations')
+            aux_chanlocs = data.channels_locations;
+        elseif isfield(data, 'chanlocs')
+            aux_chanlocs = data.chanlocs;
+        end
+        
+        if not(strcmp(loc_name, '')) && isfield(data, loc_name)
+            locs = eval(strcat('data.', loc_name));
+        elseif isfield(data, 'locs')
+            locs = data.locs;
+        elseif isfield(data, 'locations')
+            locs = data.locations;
+        elseif isfield(data, 'channels')
+            locs = data.channels;
+        elseif isfield(data, 'label')
+            locs = data.label;
+        elseif isfield(data, 'labels')
+            locs = data.labels;
+        elseif isfield(data, 'chanlocs')
+            locs = data.chanlocs;
+        end
+        if isstruct(locs) && isfield(locs, 'labels')
+            locs = {locs.labels};
+        end
+        
+        if not(isempty(aux_chanlocs))
+            try
+                L = length(locs);
+                N = length(aux_chanlocs);
+                chanlocs = struct();
+                for i = 1:L
+                    for j = 1:N
+                        if strcmpi(locs{i}, aux_chanlocs(j).labels)
+                            chanlocs(i).labels = ...
+                                aux_chanlocs(j).labels;
+                            if isempty(aux_chanlocs(j).X)
+                                chanlocs(i).X = nan;
+                                chanlocs(i).Y = nan;
+                                chanlocs(i).Z = nan;
+                            else
+                                chanlocs(i).X = aux_chanlocs(j).X;
+                                chanlocs(i).Y = aux_chanlocs(j).Y;
+                                chanlocs(i).Z = aux_chanlocs(j).Z;
                             end
                         end
                     end
-                catch
-                    chanlocs = [];
                 end
+            catch
+                chanlocs = [];
             end
-            
-            if not(strcmp(data_name, '')) && isfield(data, data_name)
-                data = eval(strcat('data.', data_name));
-            elseif isfield(data, 'data')
-                data = data.data;
-            elseif isfield(data, 'EEG')
-                data = data.EEG;
-            elseif isfield(data, 'MEG')
-                data = data.EEG;
-            elseif isfield(data, 'time_series')
-                data = data.time_series;
-            else
-                data = [];
-            end
-            
         end
-        
-    elseif contains(dataFile, '.xls')
+            
+        if not(strcmp(data_name, '')) && isfield(data, data_name)
+            data = eval(strcat('data.', data_name));
+        elseif isfield(data, 'data')
+            data = data.data;
+        elseif isfield(data, 'EEG')
+            data = data.EEG;
+        elseif isfield(data, 'MEG')
+            data = data.EEG;
+        elseif isfield(data, 'time_series')
+            data = data.time_series;
+        elseif isfield(data, 'ts')
+            data = data.ts;
+        else
+            data = [];
+        end
+            
+    end
+    if contains(dataFile, '.xls')
         data = readxls(dataFile);
     elseif contains(dataFile, '.txt')
-        data = readtxt(dataFile);
+        try
+            data = readtxt_fast(dataFile);
+        catch
+            data = readtx(dataFile);
+        end
     elseif contains(dataFile, '.csv')
-        data = readcsv(dataFile);
+        try
+            data = readcsv_fast(dataFile);
+        catch
+            data = readcsv(dataFile);
+        end
+            
         
     elseif contains(dataFile, '.edf')
         [info, data] = edfread(dataFile);
@@ -243,6 +256,9 @@ end
 % discarded).
 
 function [data, locs, chanlocs] = remove_nan(data, locs, chanlocs)
+    if isstruct(data) & isfield(data, data)
+        data = data.data;
+    end
     if length(size(data)) == 2
         idx = [];
         N = size(data, 1);

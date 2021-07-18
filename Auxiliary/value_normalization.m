@@ -11,7 +11,8 @@
 %       on data, between 'zscore' (subtraction of the mean and division for
 %       the standard deviation), 'max' (division for the maximum), 'minmax'
 %       (subtraction of the minimum and division for the maximum minus the
-%       minimum), no normalization otherwise (no normalization by default)
+%       minimum), 'minmap' (subtract the minimum), no normalization 
+%       otherwise (no normalization by default)
 
 
 function measure = value_normalization(measure, normalization)
@@ -30,5 +31,8 @@ function measure = value_normalization(measure, normalization)
     elseif strcmpi(normalization, 'max')
         max_n = max(measure(:));
         measure = measure./max_n;
+    elseif strcmpi(normalization, 'minmap')
+        min_n = min(measure(:));
+        measure = measure-min_n;
     end
 end
