@@ -112,12 +112,12 @@ function [P, Psig, data, data_sig, STATs] = statistical_analysis(First, ...
                 index = j+nBands*(i-1);
                 data_names{index} = char_check(strcat(aux_loc, ...
                     " - ", bands_names{j}));
-                if averaged == 0
+                if averaged == 1
                     first_data = First(:, j, i);
                     second_data = Second(:, j, i);
                 else
-                    first_data = First(:, :, j, i);
-                    second_data = Second(:, :, j, i);
+                    first_data = First(:, j, :, i);
+                    second_data = Second(:, j, :, i);
                 end
                 [P(j, i), aux_Psig, aux_data, STAT] = ...
                     test_handle(first_data(:), ...
