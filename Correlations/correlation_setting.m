@@ -55,11 +55,18 @@ function [data, sub_list, alpha, bg_color, locs, bands_names, P, RHO, ...
     im = imread('logo.png');
     try
         measures = get(handles.meas1, 'String');
-        measure = measures{get(handles.meas1, 'Value')};
+        meas_idx = get(handles.meas1, 'Value');
     catch
         measures = get(handles.meas, 'String');
-        measure = measures{get(handles.meas, 'Value')};
+        meas_idx = get(handles.meas, 'Value');
     end
+
+    if length(string(measures)) == 1
+        measure = measures;
+    else
+        measure = measures{meas_idx};
+    end
+
     
     an_selected = [get(handles.asy_button, 'Value'), ...
         get(handles.tot_button, 'Value'), ...
