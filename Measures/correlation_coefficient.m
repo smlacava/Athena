@@ -3,7 +3,7 @@
 % signals of different channels or ROIs in the input matrix, returning the
 % related absolute value for each pair.
 %
-% PLI = correlation_coefficient(sig)
+% CC = correlation_coefficient(sig)
 %
 % INPUT:
 %   sig is the input matrix (in the format time x locations)
