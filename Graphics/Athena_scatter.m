@@ -174,6 +174,14 @@ function Run_Callback(hObject, eventdata, handles)
     end
     
 
+%% location_name_check
+% This function returns the actual area name.
+function area = location_name_check(area)
+    if strcmpi(area, "Hemi-areas")
+        area = {'Hemispheres_Areas'};
+    end
+
+
 %% measures_scatter_initialization
 % This function returns the data and the parameters used to generate the
 % scatter plot.
@@ -211,6 +219,8 @@ function [PAT1, HC1, PAT2, HC2, measure1, measure2, band_name1, ...
         area2 = "Total";
     end
     
+    area1 = location_name_check(area1);
+    area2 = location_name_check(area2);
     measure1_path = measurePath(dataPath, measure1, area1);
     measure2_path = measurePath(dataPath, measure2, area2);
     
@@ -375,7 +385,7 @@ function measure_definition(handles, number)
     dataPath = Athena_measure_path_management(dataPath, measure);
     if exist(dataPath, 'dir')
         set(eval(area_handle), 'String', ["Areas", "Asymmetry", ...
-            "Global", "Channels"])
+            "Global", "Channels", "Hemispheres", "Hemi-areas"])
         cases = define_cases(dataPath);
         load(fullfile_check(strcat(dataPath, cases(1).name)));
         if exist('network_data', 'var')

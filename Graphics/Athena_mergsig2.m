@@ -1273,42 +1273,22 @@ function measure67_CreateFcn(hObject, eventdata, handles)
             get(0,'defaultUicontrolBackgroundColor'))
         set(hObject,'BackgroundColor','white');
     end
+function measure69_CreateFcn(hObject, eventdata, handles)
+    if ispc && isequal(get(hObject,'BackgroundColor'), ...
+            get(0,'defaultUicontrolBackgroundColor'))
+        set(hObject,'BackgroundColor','white');
+    end
+function measure70_CreateFcn(hObject, eventdata, handles)
+    if ispc && isequal(get(hObject,'BackgroundColor'), ...
+            get(0,'defaultUicontrolBackgroundColor'))
+        set(hObject,'BackgroundColor','white');
+    end
 function Channels68_Callback(hObject, eventdata, handles)
 function Global68_Callback(hObject, eventdata, handles)
 function Areas68_Callback(hObject, eventdata, handles)
 function Asymmetry68_Callback(hObject, eventdata, handles)
 function checkbox373_Callback(hObject, eventdata, handles)
-
-
-% --- Executes on button press in checkbox378.
 function checkbox378_Callback(hObject, eventdata, handles)
-% hObject    handle to checkbox378 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hint: get(hObject,'Value') returns toggle state of checkbox378
-
-
-% --- Executes on button press in Asymmetry70.
 function Asymmetry70_Callback(hObject, eventdata, handles)
-% hObject    handle to Asymmetry70 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hint: get(hObject,'Value') returns toggle state of Asymmetry70
-
-
-% --- Executes on button press in add70.
 function add70_Callback(hObject, eventdata, handles)
-% hObject    handle to add70 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-
-% --- Executes on button press in checkbox383.
 function checkbox383_Callback(hObject, eventdata, handles)
-% hObject    handle to checkbox383 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hint: get(hObject,'Value') returns toggle state of checkbox383
