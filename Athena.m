@@ -33,6 +33,7 @@ function varargout = Athena(varargin)
         gui_mainfcn(gui_State, varargin{:});
     end
 
+
 %% Athena_OpeningFcn
 % This function is called during the interface opening, and it sets all the
 % initial parameters with respect to the arguments passed when it is
@@ -79,10 +80,9 @@ function Athena_OpeningFcn(hObject, ~, handles, varargin)
         'The Spectrum mode allows to analyze the power spectra of\n', ...
         'your signals, selecting the wished location, the frequency\n', ...
         'band and the time window to analyze')));
-
+    
     funDir = pwd;
     cd(funDir);
-
     addpath 'Graphics'
     addpath 'Auxiliary'
     addpath 'Measures'
@@ -117,6 +117,7 @@ function Athena_OpeningFcn(hObject, ~, handles, varargin)
         set(handles.aux_loc, 'String', varargin{4})
     end
 
+    
 function varargout = Athena_OutputFcn(~, ~, handles) 
     varargout{1} = handles.output;
 
