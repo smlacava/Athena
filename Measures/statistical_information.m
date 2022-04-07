@@ -18,7 +18,7 @@
 %       default)
 
 
-function statistical_information(fs, cf, nEpochs, dt, inDir, tStart, ...
+function vargout = statistical_information(fs, cf, nEpochs, dt, inDir, tStart, ...
     outTypes, filter_name)
 
     if nargin < 6
@@ -43,6 +43,7 @@ function statistical_information(fs, cf, nEpochs, dt, inDir, tStart, ...
     fchild(1).JavaPeer.setStringPainted(true)
     askList = 'Insert the statistical measures separated by a comma';
     
+    vargout = -1;
     filter_handle = eval(strcat('@', filter_name));
 	dt = fs*dt;
     tStart = tStart*fs+1; 
@@ -139,17 +140,23 @@ function statistical_information(fs, cf, nEpochs, dt, inDir, tStart, ...
                             data = data';
                             if strcmpi(outTypes(c), "Variance")
                                 sa.data(j, k, loc) = var(data);
+                                vargout = 0;
                             elseif strcmpi(outTypes(c), ... 
                                     "Standard_deviation")
                                 sa.data(j, k, loc) = std(data);
+                                vargout = 0;
                             elseif strcmpi(outTypes(c), "Mean")
                                 sa.data(j, k, loc) = mean(data);
+                                vargout = 0;
                             elseif strcmpi(outTypes(c), "Median")
                                 sa.data(j, k, loc) = median(data);
+                                vargout = 0;
                             elseif strcmpi(outTypes(c), "Kurtosis")
                                 sa.data(j, k, loc) = kurtosis(data);
+                                vargout = 0;
                             elseif strcmpi(outTypes(c), "Skewness")
                                 sa.data(j, k, loc) = skewness(data);
+                                vargout = 0;
                             end
                         end
                     end

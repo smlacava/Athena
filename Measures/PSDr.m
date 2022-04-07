@@ -18,7 +18,7 @@
 %       value is the maximum between 40 and the last cut frequency)
 
 
-function PSDr(fs, cf, nEpochs, dt, inDir, tStart, relBand)
+function vargout = PSDr(fs, cf, nEpochs, dt, inDir, tStart, relBand)
     switch nargin
         case 5
             tStart = 0;
@@ -32,6 +32,7 @@ function PSDr(fs, cf, nEpochs, dt, inDir, tStart, relBand)
     fchild(1).JavaPeer.setForeground(fchild(1).JavaPeer.getBackground.BLUE)
     fchild(1).JavaPeer.setStringPainted(true)
     
+    vargout = -1;
     cfstart = 0;
     cfstop = length(cf)-1;         
     nBands = cfstop-cfstart;
@@ -45,7 +46,6 @@ function PSDr(fs, cf, nEpochs, dt, inDir, tStart, relBand)
     end
     
     cases = define_cases(inDir);
-
     for i = 1:length(cases)
         try
             [time_series, fsOld, locations, chanlocs] = ...
@@ -55,30 +55,34 @@ function PSDr(fs, cf, nEpochs, dt, inDir, tStart, relBand)
             psdr.data = zeros(nBands, nEpochs, size(time_series, 1));
             psdr.locations = locations;
             psdr.chanlocs = chanlocs;
+
             for k = 1:nEpochs
-        
                 for j = 1:size(time_series, 1)
-                    data = squeeze(time_series(j, dt*(k-1)+1:k*dt));           
+                    
+                    data = squeeze(time_series(j, dt*(k-1)+1:k*dt));
                     [pxx, w] = pwelch(data, [], [], [], fs);
                     bandPower = zeros(nBands, 1);
 
-                    for b = 1:nBands
+                    for b = 1:nEpochs
                         [infft, supft] = band_boundaries(w, ...
                             cf(b+cfstart), cf(b+cfstart+1));
 
                         bandPower(b, 1) = sum(pxx(infft:supft));
+                        vargout = 0;
                     end     
                     
                     [infft, supft] = band_boundaries(w, relBand(1), ...
                         relBand(end));
-                    totalPower = sum(pxx(infft:supft));             
+                    
+                    totalPower = sum(pxx(infft:supft));
 
                     for b = 1:nBands
-                        psdr.data(b, k, j) = bandPower(b, 1)/totalPower;  
+                        psdr.data(b, k, j) = bandPower(b, 1)/totalPower;
                     end
+
                 end
             end
-        
+            
             outDir = path_check(subdir(inDir, 'PSDr'));
             name = split(cases(i).name, filesep);
             if length(name) > 1
@@ -88,9 +92,10 @@ function PSDr(fs, cf, nEpochs, dt, inDir, tStart, relBand)
             end
             filename = strcat(outDir, strtok(name, '.'), '.mat');
     
-            save(fullfile_check(filename), 'psdr'); 
+            save(fullfile_check(filename), 'psdr');
         catch
-        end %end try
+        end
+        %end try
         waitbar(i/length(cases), f)
     end
     close(f)

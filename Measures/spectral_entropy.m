@@ -1,4 +1,4 @@
-%% spectral_entropy
+%%  
 % This function computes the Spectral Entropy, on the single frequency
 % bands and on the single epochs.
 %
@@ -14,7 +14,7 @@
 %       of the first epoch (0 as default)
 
 
-function spectral_entropy(fs, cf, nEpochs, dt, inDir, tStart)
+function vargout = spectral_entropy(fs, cf, nEpochs, dt, inDir, tStart)
     switch nargin
         case 5
             tStart = 0;
@@ -25,13 +25,13 @@ function spectral_entropy(fs, cf, nEpochs, dt, inDir, tStart)
     fchild(1).JavaPeer.setForeground(fchild(1).JavaPeer.getBackground.BLUE)
     fchild(1).JavaPeer.setStringPainted(true)
     
+    vargout = -1;
     cfstart = 0;
     cfstop = length(cf)-1;         
     nBands = cfstop-cfstart;
     dt = fs*dt;
     tStart = tStart*fs+1;
     inDir = path_check(inDir);
-    
     cases = define_cases(inDir);
 
     for i = 1:length(cases)
@@ -48,10 +48,11 @@ function spectral_entropy(fs, cf, nEpochs, dt, inDir, tStart)
                 for j = 1:size(time_series, 1)
                     data = squeeze(time_series(j, dt*(k-1)+1:k*dt));           
                     for b = 1:nBands
-                        [p, fp, tp] = pspectrum(data, fs, 'spectrogram');
+                        [p, fp, tp] = pspectrum(data, fs, ' ');
                         se.data(b, k, j) = pentropy(p, fp, tp, ...
                             'Instantaneous', false, ...
-                            'FrequencyLimits', [cf(b), cf(b+1)]);  
+                            'FrequencyLimits', [cf(b), cf(b+1)]);
+                        vargout = 0;
                     end
                 end
             end

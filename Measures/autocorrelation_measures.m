@@ -19,7 +19,7 @@
 %       default)
 
 
-function autocorrelation_measures(fs, cf, nEpochs, dt, inDir, tStart, ...
+function vargout = autocorrelation_measures(fs, cf, nEpochs, dt, inDir, tStart, ...
     outTypes, filter_name)
 
     if nargin < 6
@@ -38,6 +38,7 @@ function autocorrelation_measures(fs, cf, nEpochs, dt, inDir, tStart, ...
         r = 0.2;
     end
     
+    vargout = -1;
     f = waitbar(0, 'Processing your data', 'Color', '[1 1 1]');
     fchild = allchild(f);
     fchild(1).JavaPeer.setForeground(fchild(1).JavaPeer.getBackground.BLUE)
@@ -115,7 +116,8 @@ function autocorrelation_measures(fs, cf, nEpochs, dt, inDir, tStart, ...
                             data = data';
                             if strcmpi(outTypes(c), "Hurst")
                                 he.data(j, k, loc) = ...
-                                    hurst_exponent(data);                            
+                                    hurst_exponent(data);
+                                vargout = 0;
                             end
                         end
                     end

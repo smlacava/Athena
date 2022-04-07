@@ -22,7 +22,7 @@
 %       to be used as tolerance (0.2 by default)
 
 
-function time_entropy(fs, cf, nEpochs, dt, inDir, tStart, outTypes, ...
+function vargout = time_entropy(fs, cf, nEpochs, dt, inDir, tStart, outTypes, ...
     filter_name, m, r)
 
     if nargin < 6
@@ -47,6 +47,7 @@ function time_entropy(fs, cf, nEpochs, dt, inDir, tStart, outTypes, ...
     fchild(1).JavaPeer.setStringPainted(true)
     askList = 'Insert the entropy measures separated by a comma';
     
+    vargout = -1;
     filter_handle = eval(strcat('@', filter_name));
 	dt = fs*dt;
     tStart = tStart*fs+1; 
@@ -129,14 +130,17 @@ function time_entropy(fs, cf, nEpochs, dt, inDir, tStart, outTypes, ...
                             if strcmpi(outTypes(c), "sample_entropy")
                                 en.data(j, k, loc) = ...
                                     sample_entropy(data, m, r);
+                                vargout = 0;
                             elseif strcmpi(outTypes(c), ... 
                                     "discretized_entropy")
                                 en.data(j, k, loc) = ...
                                     discretized_entropy(data);
+                                vargout = 0;
                             elseif strcmpi(outTypes(c), ...
                                     "approximate_entropy")
                                 en.data(j, k, loc) = ...
                                     approximate_entropy(data, m, r);
+                                vargout = 0;
                             end
                         end
                     end
