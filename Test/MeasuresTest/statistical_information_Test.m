@@ -1,6 +1,6 @@
 %This unit test the statistical_information function. Recommended use a .mat signal named 
 %signal.mat (time serie index must be named data) in Example folder
-%This functions test the output of the statistical_information function for different input
+%These functions test the output of the statistical_information function for different input
 %parameters. Change outTypes for different entropy measures
 %fs sample frequency
 %cf cut frequencies

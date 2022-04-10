@@ -1,6 +1,6 @@
 %This unit test the spectral_entropy function. Recommended use a .mat signal named 
 %signal.mat (time serie index must be named data) in Example folder
-%This functions test the output of the spectral_entropy function for different input
+%These functions test the output of the spectral_entropy function for different input
 %parameters
 %fs sample frequency
 %cf cut frequencies
