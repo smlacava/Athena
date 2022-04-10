@@ -145,3 +145,9 @@ can be used for a classification or other external analysis.
 For any doubt, you can consult the toolbox [**wiki**](https://github.com/smlacava/Athena/wiki/Home). 
 
 > The toolbox is still under construction
+
+
+## Test
+To execute tests, run the command **runtests(directory,'IncludeSubfolders',true)** with the address of the folder **Test** as **directory** or run **runtest('IncludeSubfolders',true)** with the tests directory as **current folder**.
+
+> The toolbox is still under construction

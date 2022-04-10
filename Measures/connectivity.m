@@ -20,7 +20,7 @@
 %   filter_name is the name of the filtering function (athena_filter as
 %       default)
 
-function connectivity(fs, cf, nEpochs, dt, inDir, tStart, outTypes, ...
+function vargout = connectivity(fs, cf, nEpochs, dt, inDir, tStart, outTypes, ...
     filter_name)
 
     switch nargin
@@ -35,6 +35,7 @@ function connectivity(fs, cf, nEpochs, dt, inDir, tStart, outTypes, ...
             filter_name = 'athena_filter';
     end
     
+    vargout = -1;
     f = waitbar(0, 'Processing your data', 'Color', '[1 1 1]');
     fchild = allchild(f);
     fchild(1).JavaPeer.setForeground(fchild(1).JavaPeer.getBackground.BLUE)
@@ -151,31 +152,40 @@ function connectivity(fs, cf, nEpochs, dt, inDir, tStart, outTypes, ...
                         data = data';
                         if strcmpi(outTypes(c), "PLI")
                             conn.data(j, k, :, :) = phase_lag_index(data);
+                            vargout = 0;
                         elseif strcmpi(outTypes(c), "PLV")
                             conn.data(j, k, :, :) = ...
                                 phase_locking_value(data);
+                            vargout = 0;
                         elseif strcmpi(outTypes(c), "AECo")
                             conn.data(j, k, :, :) = ...
                                 amplitude_envelope_correlation_orth(data);
+                            vargout = 0;
                         elseif strcmpi(outTypes(c), "AEC")
                             conn.data(j, k, :, :) = ...
                                 amplitude_envelope_correlation(data);
+                            vargout = 0;
                         elseif strcmpi(outTypes(c), "coherence")
                             conn.data(j, k, :, :) = ...
                                 magnitude_squared_coherence(data);
+                            vargout = 0;
                         elseif strcmpi(outTypes(c), "ICOH")
                             conn.data(j, k, :, :) = ...
                                 imaginary_coherency(data);
+                            vargout = 0;
                         elseif strcmpi(outTypes(c), "mutual_information")
                             conn.data(j, k, :, :) = ...
                                 mutual_information(data, 'max');
+                            vargout = 0;
                         elseif strcmpi(outTypes(c), ...
                                 "correlation_coefficient")
                             conn.data(j, k, :, :) = ...
                                 correlation_coefficient(data);
+                            vargout = 0;
                         elseif strcmpi(outTypes(c), "wPLI")
                             conn.data(j, k, :, :) = ...
                                 weighted_phase_lag_index(data);
+                            vargout = 0;
                         end
                     end
                 end

@@ -24,7 +24,7 @@
 %     are utilized to export only one matrix for each subject
 
 
-function FOOOFer(fs, cf, nEpochs, dt, inDir, tStart, outTypes, maxPeaks)
+function vargout = FOOOFer(fs, cf, nEpochs, dt, inDir, tStart, outTypes, maxPeaks)
     switch nargin
         case 5
             tStart = 0;
@@ -36,12 +36,13 @@ function FOOOFer(fs, cf, nEpochs, dt, inDir, tStart, outTypes, maxPeaks)
         case 7
             maxPeaks = (cf(end)-cf(1))*2;
     end
-           
+    
     f = waitbar(0, 'Processing your data', 'Color', '[1 1 1]');
     fchild = allchild(f);
     fchild(1).JavaPeer.setForeground(fchild(1).JavaPeer.getBackground.BLUE)
     fchild(1).JavaPeer.setStringPainted(true)
     
+    vargout = -1;
 	dt = fs*dt;
     tStart = tStart*fs+1;    
     
@@ -173,6 +174,7 @@ function FOOOFer(fs, cf, nEpochs, dt, inDir, tStart, outTypes, maxPeaks)
                     gaussian_params.data(k, j, 1:sizePeaks) = ...
                         squeeze(reshape(...
                         fooof_results.gaussian_params', 1, sizePeaks));
+                    vargout = 0;
                 end
             end
             
